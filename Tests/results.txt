@@ -1,0 +1,2 @@
+Failure: "(q1[0] == 0.482423782f) && (q1[1] == 0.794853806f) && (q1[2] == 0.343733639f) && (q1[3] == -0.131613404f)" line 93 in TEST_Quaternion.cpp
+Failure: "m1 == m0" line 227 in TEST_Matrix44.cpp
