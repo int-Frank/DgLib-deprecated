@@ -5,6 +5,7 @@
 
 namespace Dg
 {
+  template<typename Real>
   class BoundedSND
   {
   public:
@@ -15,15 +16,15 @@ namespace Dg
     BoundedSND(const BoundedSND&);
     BoundedSND& operator=(const BoundedSND&);
 
-    Dg_Result Init(double a_mean, 
-                   double a_sd, 
-                   double a_lower, 
-                   double a_upper, 
-                   unsigned int a_count = 1024);
+    Dg_Result Init(Real a_mean,
+                   Real a_sd, 
+                   Real a_lower,
+                   Real a_upper,
+                   unsigned int a_nValues = 1024);
 
     bool IsGood() const { return (m_nValues != 0); }
     void Clean();
-    double Get() const;
+    Real Get() const;
 
   private:
 
@@ -31,7 +32,7 @@ namespace Dg
 
   private:
 
-    double * m_values;
+    Real * m_values;
     unsigned int m_nValues;
 
   };

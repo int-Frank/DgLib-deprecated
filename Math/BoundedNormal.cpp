@@ -4,29 +4,33 @@
 
 namespace Dg
 {
-  BoundedSND::~BoundedSND()
+  template<typename Real>
+  BoundedSND<Real>::~BoundedSND()
   {
     delete[] m_values;
   }
 
-  void BoundedSND::_init(const BoundedSND& a_other)
+  template<typename Real>
+  void BoundedSND<Real>::_init(const BoundedSND<Real>& a_other)
   {
     Clean();
 
     if (a_other.m_nValues)
     {
       m_nValues = a_other.m_nValues;
-      m_values = (double*)malloc(m_nValues * sizeof(double));
-      memcpy(m_values, a_other.m_values, m_nValues * sizeof(double));
+      m_values = (Real*)malloc(m_nValues * sizeof(Real));
+      memcpy(m_values, a_other.m_values, m_nValues * sizeof(Real));
     }
   }
 
-  BoundedSND::BoundedSND(const BoundedSND& a_other) : m_values(nullptr), m_nValues(0)
+  template<typename Real>
+  BoundedSND<Real>::BoundedSND(const BoundedSND& a_other) : m_values(nullptr), m_nValues(0)
   {
     _init(a_other);
   }
 
-  BoundedSND& BoundedSND::operator=(const BoundedSND& a_other)
+  template<typename Real>
+  BoundedSND<Real>& BoundedSND<Real>::operator=(const BoundedSND<Real>& a_other)
   {
     if (this == &a_other)
     {
@@ -38,18 +42,20 @@ namespace Dg
     return *this;
   }
 
-  void BoundedSND::Clean()
+  template<typename Real>
+  void BoundedSND<Real>::Clean()
   {
     free(m_values);
     m_values = nullptr;
     m_nValues = 0;
   }
 
-  Dg_Result BoundedSND::Init(double a_mean,
-                             double a_sd,
-                             double a_lower,
-                             double a_upper,
-                             unsigned int a_nValues)
+  template<typename Real>
+  Dg_Result BoundedSND<Real>::Init(Real a_mean,
+                                   Real a_sd,
+                                   Real a_lower,
+                                   Real a_upper,
+                                   unsigned int a_nValues)
   {
     Clean();
 
@@ -61,40 +67,26 @@ namespace Dg
       return DgR_OutOfBounds;
     }
 
-    double normLower = (a_lower - a_mean) / a_sd;
-    double normUpper = (a_upper - a_mean) / a_sd;
-
-    //Range cannot be outside of 6 standard deviations.
-    if (normLower < -6.0 || normUpper > 6.0)
-    {
-      return DgR_OutOfBounds;
-    }
-
-    double dCount = static_cast<double>(a_nValues);
-
-    double intgL = IntegrateND(normLower);
-    double intgU = IntegrateND(normUpper);
+    Real normLower = (a_lower - a_mean) / a_sd;
+    Real normUpper = (a_upper - a_mean) / a_sd;
 
     m_nValues = a_nValues;
-    m_values = (double*)malloc(m_nValues * sizeof(double));
+    m_values = new Real[m_nValues];
 
-    for (unsigned int i = 0; i < m_nValues; ++i)
+    for (unsigned i = 0; i < a_nValues; i++)
     {
-      double intgX = (intgL + (intgU - intgL) * static_cast<double>(i) / m_nValues);
-      double x(0.0);
-      if (!SolveIntegralND(intgX, x))
-      {
-        Clean();
-        return DgR_Failure;
-      }
-      m_values[i] = (x * a_sd) + a_mean;
+      double c = static_cast<double>(normLower + (normUpper - normLower) * static_cast<Real>(i) / static_cast<Real>(m_nValues));
+      c = 2.0 * c - 1;
+      Real inverfResult = static_cast<Real>(inverf(c));
+      m_values[i] = inverfResult * a_sd + a_mean;
     }
 
     return DgR_Success;
   }
 
 
-  double BoundedSND::Get() const
+  template<typename Real>
+  Real BoundedSND<Real>::Get() const
   {
     if (m_nValues == 0)
     {

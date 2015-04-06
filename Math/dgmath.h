@@ -35,7 +35,6 @@ namespace Dg
   extern const double HALFPI_d;
   extern const double INVPI_d;
   extern const double EPSILON_d;
-  extern const double INV_SQRT_2PI_d;
   extern const double SQRT2_d;
 
 #if defined PRECISION_FLOAT
@@ -69,15 +68,9 @@ namespace Dg
   */
   uint32_t FloorPower2(uint32_t input);
 
-  /**
-  * Integrate the standard normal distribution from -inf to a_x
-  */
-  double IntegrateND(double a_x);
-
-  /**
-  * Finds x, such that the integral of the SND function from -inf -> x = a_intgX.
-  */
-  Dg_Result SolveIntegralND(double a_intgX, double& a_out);
+  /// Inverse error function. Uses Mclaurin series expansion approximation.
+  /// \param a_nTerms Number of terms in the series expansion to use. 0 denotes maximum number.
+  double inverf(double a_x, unsigned a_nTerms = 16);
 
   /**
   * Fast integer power function

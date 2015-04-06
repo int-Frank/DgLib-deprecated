@@ -6,9 +6,9 @@
 #include <string>
 
 // ------------------------------------------------------------------------ -
-//	Generate an array of the denominators
+//	Generate constants for the maclaculin expansion of inverf
 //-------------------------------------------------------------------------
-void GenerateERFDenominators(std::vector<double>& a_out, unsigned number)
+void Generate_erf(std::vector<double>& a_out, unsigned number)
 {
   a_out.clear();
 
@@ -30,18 +30,54 @@ void GenerateERFDenominators(std::vector<double>& a_out, unsigned number)
   }
 }
 
-void OutputDenoms(unsigned a_number)
+
+// ------------------------------------------------------------------------ -
+//	Generate constants for the maclaculin expansion of inverf
+//-------------------------------------------------------------------------
+void Generate_inverf(std::vector<double>& a_out, unsigned a_number)
+{
+  double * c = new double[a_number]();
+  c[0] = 1.0;
+  for (unsigned k = 1; k < a_number; ++k)
+  {
+    for (unsigned m = 0; m <= k - 1; m++)
+    {
+      c[k] += (c[m] * c[k - 1 - m]) / ((m + 1) * (2 * m + 1));
+    }
+  }
+
+  double a = 0.88622692545275801364908374167057; //sqrt(pi) / 2
+  double a_sq = a * a;
+  double b = 1.0; //2k + 1
+
+  for (unsigned k = 0; k < a_number; ++k)
+  {
+    a_out.push_back((c[k] * a / b));
+
+    //Prepare values for next iteration
+    a *= a_sq;
+    b += 2.0;
+  }
+
+  delete[] c;
+}
+
+void OutputConstants(const char * a_fileName,
+                     const char * a_header,
+                     unsigned a_number, 
+                     void (*a_funct)(std::vector<double>&, unsigned))
 {
   const unsigned numbers_per_row = 4;
   const unsigned decimal_accuracy = 20;
-  std::string file = "tnd_table.txt";
 
   std::vector<double> results;
-  GenerateERFDenominators(results, a_number);
+  a_funct(results, a_number);
 
   //Open file
-  std::ofstream os(file);
+  std::ofstream os(a_fileName);
   os << std::setprecision(decimal_accuracy);
+
+  os << a_header << std::endl << std::endl;
 
   os << "{";
 
@@ -65,5 +101,5 @@ void OutputDenoms(unsigned a_number)
 
 int main()
 {
-  OutputDenoms(150);
+  OutputConstants("tables.txt", "inverf", 512, Generate_inverf);
 }
