@@ -24,9 +24,6 @@
     <ClCompile Include="dgmath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoundedNormal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SimpleRNG.h">
@@ -110,7 +107,7 @@
     <ClInclude Include="BoundedNormal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utility.h">
+    <ClInclude Include="doxygen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,35 +1,14 @@
-//================================================================================
-// @ CommonMath.cpp
-// 
-// Description: 
-//
-// This files contains some useful math constant definitions.
-//
-// -------------------------------------------------------------------------------
-//
-// Author: Frank Hart
-// Date last modified: 2013
-//
-//================================================================================
+//! @file dgmath.cpp
+//!
+//! @author Frank Hart
+//! @date 4/8/2015
+//!
+//! Definitions from dgmath.cpp
 
 #include "dgmath.h"
 
 namespace Dg
 {
-  const float PI_f            = 3.141592653589793238462643383279f;
-  const float TWOPI_f         = 6.283185307179586476925286766559f;
-  const float HALFPI_f        = 1.570796326794896619231321691639f;
-  const float INVPI_f         = 0.31830988618379067153776752674503f;
-  const float EPSILON_f       = 1.0e-4f;
-  const float SQRT2_f         = 1.4142135623730950488016887242097f;
-
-  const double PI_d           = 3.141592653589793238462643383279;
-  const double TWOPI_d        = 6.283185307179586476925286766559;
-  const double HALFPI_d       = 1.570796326794896619231321691639;
-  const double INVPI_d        = 0.31830988618379067153776752674503;
-  const double EPSILON_d      = static_cast<double>(EPSILON_f);
-  const double SQRT2_d        = 1.4142135623730950488016887242097;
-
   namespace impl
   {
     static uint32_t const TAB32[32] = {
@@ -38,6 +17,7 @@ namespace Dg
       8, 12, 20, 28, 15, 17, 24, 7,
       19, 27, 23, 6, 26, 5, 4, 31 };
 
+    static unsigned N_C_INVERF = 512;
     static double const C_INVERF[] =
     {
       0.88622692545275805, 0.23201366653465452, 0.12755617530559799, 0.086552129241547565,
@@ -212,11 +192,9 @@ namespace Dg
       return 0.0;
     }
 
-    unsigned maxTerms = sizeof(impl::C_INVERF) / sizeof(*impl::C_INVERF);
-
-    if (a_nTerms > maxTerms || a_nTerms == 0)
+    if (a_nTerms > impl::N_C_INVERF || a_nTerms == 0)
     {
-      a_nTerms = maxTerms;
+      a_nTerms = impl::N_C_INVERF;
     }
 
     double x0Sq = a_x * a_x;
@@ -231,4 +209,4 @@ namespace Dg
 
     return result;
   }
-}
+}	//End: inverf()

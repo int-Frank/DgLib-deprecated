@@ -30,7 +30,7 @@ namespace Dg
     //	@	map<U, T>:	U: key
     //						T: m_data
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     class map
     {
       //Internal container which stores the m_data
@@ -90,7 +90,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Constructor
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     map<U, T>::map()
       : m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
@@ -104,7 +104,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Copy Constructor
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     map<U, T>::map(unsigned int new_size)
       : m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
@@ -118,7 +118,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Destructor
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     map<U, T>::~map()
     {
       //Free memory
@@ -133,7 +133,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Initialise map to another.
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     void map<U, T>::init(const map& other)
     {
       //Resize lists
@@ -152,7 +152,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Copy constructor
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     map<U, T>::map(const map& other) :
       m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
@@ -166,7 +166,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Assignment
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     map<U, T>& map<U, T>::operator=(const map& other)
     {
       if (this == &other)
@@ -184,7 +184,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Resize map, erases all m_data before resize.
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     void map<U, T>::resize(unsigned int val)
     {
       //Delete old m_data
@@ -203,7 +203,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Find a value in the map, uses a binary search algorithm
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     bool map<U, T>::find(U key, int& index, int lower) const
     {
       return find(key, index, lower, (m_currentSize - 1));
@@ -216,7 +216,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Find a value in the map within a range, uses a binary search algorithm
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     bool map<U, T>::find(U key, int& index, int lower, int upper) const
     {
       //Check bounds
@@ -252,7 +252,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Extend the map by a factor of 2, keeps all m_data.
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     void map<U, T>::extend()
     {
       //Calculate new size
@@ -275,7 +275,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Insert an element into the map
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     bool map<U, T>::insert(const T& val, U key)
     {
       //Find the index to insert to
@@ -307,7 +307,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Remove an element from the map
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     bool map<U, T>::erase(U key)
     {
       //Find the index
@@ -329,7 +329,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Sets an element to a new value
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     bool map<U, T>::set(U key, const T& val)
     {
       //Find the index to insert to
@@ -349,7 +349,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Reset size to 1
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     void map<U, T>::reset()
     {
       resize(DG_MAP_DEFAULT_SIZE);
@@ -362,7 +362,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //		Set the number of elements to zero
     //--------------------------------------------------------------------------------
-    template<class U, class T>
+    template<typename U, typename T>
     void map<U, T>::clear()
     {
       m_currentSize = 0;

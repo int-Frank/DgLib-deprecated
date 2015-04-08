@@ -519,7 +519,7 @@ namespace Dg
   {
     SimpleRNG generator;
 
-    Real theta = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(Dg::TWOPI));
+    Real theta = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(2.0) * static_cast<Real>(Dg::PI));
     Real phi = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(Dg::PI));
 
     Real sinTheta = sin(theta);

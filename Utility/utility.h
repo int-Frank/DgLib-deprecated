@@ -7,8 +7,11 @@
 #include <string>
 #include <algorithm>
 
+
 namespace Dg
 {
+  //! @ingroup utility
+  //! @{
   enum Dg_Result
   {
     DgR_Success = 0,
@@ -17,20 +20,13 @@ namespace Dg
     DgR_OutOfBounds
   };
 
-  //--------------------------------------------------------------------------------
-  //	@	StringToNumber()
-  //--------------------------------------------------------------------------------
-  /*!
-  * @ingroup utility_io
-  *
-  * @brief Converts a string to a number.
-  *
-  * @param[out] t Output number.
-  * @param[in] s Input string.
-  * @param[in] f The base fo the number to read. (eg std::dec)
-  *
-  * @return True if a number was loaded into the output.
-  */
+  //! @brief Converts a string to a number.
+  //!
+  //! @param[out] t Output number.
+  //! @param[in] s Input string.
+  //! @param[in] f The base fo the number to read. (eg std::dec)
+  //!
+  //! @return True if a number was loaded into the output.
   template <typename Real>
   bool StringToNumber(Real& t,
     const std::string& s,
@@ -41,7 +37,7 @@ namespace Dg
 
   }	//End: StringToNumber()
 
+  //! @}
 }
-
 
 #endif

@@ -1,31 +1,28 @@
-/*!
- * @file SimpleRNG.h
- *
- * @author Frank Hart
- * @date 11/01/2014
- *
- * Class declaration: SimpleRNG
- */
+//! @file SimpleRNG.cpp
+//!
+//! @author Frank Hart
+//! @date 4/8/2015
+//!
+//! Class declaration: SimpleRNG
 
 #ifndef RANDOMBASE_H
 #define RANDOMBASE_H
 
 #include <random>
 
-/*!
- * @ingroup
- *
- * @class SimpleRNG
- *
- * @brief Base class for all random number classes
- *
- * [detailed description]
- *
- * @author John D. Cook 
- * @date 11/01/2014
- */
-namespace Dg
-{
+#include "DgLib_defines.h"
+
+BEGIN_NAMESPACE_DGLIB
+
+   //! @ingroup classes
+   //!
+   //! @class SimpleRNG
+   //!
+   //! @brief A simple random number generator.
+   //! Original code by John D. Cook
+   //!
+   //! @author Frank Hart
+   //! @date 4/8/2015
   class SimpleRNG
   {
   public:
@@ -36,10 +33,10 @@ namespace Dg
     SimpleRNG(const SimpleRNG&) {}
     SimpleRNG& operator= (const SimpleRNG&) { return *this; }
 
-    //! Seed the internal generator
+    //! Seed the internal generator from one value.
     static void SetSeed(unsigned int seed);
 
-    //! Seed the internal generator
+    //! Seed the internal generator from two values.
     static void SetSeed(unsigned int seed1, unsigned int seed2);
 
     //! Produce a uniform random sample from the open interval (0, 1).
@@ -50,7 +47,7 @@ namespace Dg
     template<class Real>
     Real GetUniform(Real a, Real b);
 
-    //! Get random unsigned integer within the interval [a, b]
+    //! Get random unsigned integer within the interval [a, b].
     unsigned int GetUint(unsigned int a, unsigned int b);
 
     //! Get random unsigned integer.
@@ -60,10 +57,11 @@ namespace Dg
     template<class Real>
     Real GetNormal();
 
-    //! Get a Gaussian random sample with specified mean and standard deviation
+    //! Get a Gaussian random sample with specified mean and standard deviation.
     template<class Real>
     Real GetNormal(Real mean, Real std);
 
+    //! Get a Gamma random sample with specified shape and scale.
     template<class Real>
     Real GetGamma(Real shape, Real scale);
 
@@ -115,8 +113,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	SimpleRNG::GetNormal()
   //--------------------------------------------------------------------------------
-  //		
-  //--------------------------------------------------------------------------------
   template<class Real>
   Real SimpleRNG::GetNormal()
   {
@@ -132,8 +128,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	SimpleRNG::GetNormal()
   //--------------------------------------------------------------------------------
-  //		
-  //--------------------------------------------------------------------------------
   template<class Real>
   Real SimpleRNG::GetNormal(Real mean, Real std)
   {
@@ -148,8 +142,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	SimpleRNG::GetGamma()
-  //--------------------------------------------------------------------------------
-  //		
   //--------------------------------------------------------------------------------
   template<class Real>
   Real SimpleRNG::GetGamma(Real shape, Real scale)
@@ -192,7 +184,8 @@ namespace Dg
       return scale*g*std::pow(w, Real(1.0) / shape);
     }
   }	//End: SimpleRNG::GetGamma()
-}
+
+END_NAMESPACE
 
 
 #endif

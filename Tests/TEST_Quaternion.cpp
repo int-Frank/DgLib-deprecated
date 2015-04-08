@@ -43,7 +43,7 @@ TEST(Stack_Quaternion_Construction, creation_Quaternion_Construction)
   v1.Normalize();
   v2.Normalize();
 
-  quat q2(v1, Dg::HALFPI_f);
+  quat q2(v1, Dg::PI_f * 0.5f);
   quat q3(v1, v2);
   quat q4(v1);
 
@@ -121,7 +121,7 @@ TEST(Stack_Quaternion_Operations, creation_Quaternion_Operations)
   float r_dot = Dg::Dot(q1, q0);
 
   vec4 v(1.0f, 0.0f, 0.0f, 0.0f);
-  q0.Set(0.0f, 0.0f, Dg::HALFPI_f);
+  q0.Set(0.0f, 0.0f, Dg::PI_f * 0.5f);
 
   vec4 result = q0.Rotate(v);
   CHECK(result == vec4(0.0f, 1.0f, 0.0f, 0.0f));
