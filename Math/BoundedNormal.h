@@ -3,22 +3,22 @@
 //! @author Frank Hart
 //! @date 4/8/2015
 //!
-//! Class declaration: SBoundedNormal
+//! Class declaration: BoundedNormal
 
 #ifndef BOUNDEDNORMAL_H
 #define BOUNDEDNORMAL_H
 
 #include <math.h>
 
-#include "DgLib_defines.h"
 #include "utility.h"
 
 #include "dgmath.h"
 #include "SimpleRNG.h"
 
-BEGIN_NAMESPACE_DGLIB
+namespace Dg
+{
 
-   //! @ingroup classes
+   //! @ingroup Math_classes
    //!
    //! @class BoundedSND
    //!
@@ -184,6 +184,6 @@ BEGIN_NAMESPACE_DGLIB
     return m_values[index];
   }
 
-END_NAMESPACE
+}
 
 #endif

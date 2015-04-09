@@ -4,9 +4,9 @@
 //! @defgroup DgMath Math 
 //! @{
 
-  //! @defgroup constants Constants 
-  //! @defgroup functions Functions 
-  //! @defgroup classes Classes
+  //! @defgroup Math_constants Constants 
+  //! @defgroup Math_functions Functions 
+  //! @defgroup Math_classes Classes
 
 //! @}
 

@@ -10,16 +10,18 @@
 
 namespace Dg
 {
-  //! @ingroup utility
-  //! @{
+  //! @ingroup utility_constants
   enum Dg_Result
   {
     DgR_Success = 0,
     DgR_Failure,
     DgR_Undefined,
-    DgR_OutOfBounds
+    DgR_OutOfBounds,
+    DgR_Duplicate
   };
 
+  //! @ingroup utility_functions
+  //!
   //! @brief Converts a string to a number.
   //!
   //! @param[out] t Output number.
@@ -37,7 +39,6 @@ namespace Dg
 
   }	//End: StringToNumber()
 
-  //! @}
 }
 
 #endif

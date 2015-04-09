@@ -122,7 +122,7 @@
     </ClInclude>
     <ClInclude Include="dg_map_sl.h" />
     <ClInclude Include="dg_pod_map.h" />
-    <ClInclude Include="dg_set.h" />
+    <ClInclude Include="dg_pod_set.h" />
     <ClInclude Include="dg_shared_ptr.h" />
     <ClInclude Include="dg_vector_s.h" />
   </ItemGroup>

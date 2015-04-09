@@ -7,7 +7,8 @@
 
 #include "SimpleRNG.h"
 
-BEGIN_NAMESPACE_DGLIB
+namespace Dg
+{
 
   //--------------------------------------------------------------------------------
   //	@	Statics
@@ -70,4 +71,4 @@ BEGIN_NAMESPACE_DGLIB
 
   }	//End: SimpleRNG::GetUint()
 
-  END_NAMESPACE
+  }

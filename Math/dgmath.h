@@ -10,14 +10,11 @@
 #include <math.h>
 #include <stdint.h>
 
-#include "config.h"
 #include "utility.h"
 
-#include "DgLib_defines.h"
-
-BEGIN_NAMESPACE_DGLIB
-
-  //! @ingroup constants
+namespace Dg
+{
+  //! @ingroup Math_constants
   //! @{
 
   const float PI_f            = 3.141592653589793238462643383279f;
@@ -30,24 +27,9 @@ BEGIN_NAMESPACE_DGLIB
   const double EPSILON_d      = 1.0e-4;
   const double SQRT2_d        = 1.4142135623730950488016887242097;
 
-#if defined PRECISION_FLOAT
-
-  const float PI            = 3.141592653589793238462643383279f;
-  const float INVPI         = 0.31830988618379067153776752674503f;
-  const float EPSILON       = 1.0e-4f;
-  const float SQRT2         = 1.4142135623730950488016887242097f;
-
-#elif defined PRECISION_DOUBLE
-
-  const double PI           = 3.141592653589793238462643383279;
-  const double INVPI        = 0.31830988618379067153776752674503;
-  const double EPSILON      = 1.0e-4;
-  const double SQRT2        = 1.4142135623730950488016887242097;
-
-#endif
   //! @}
   
-  //! @ingroup functions
+  //! @ingroup Math_functions
   //! @{
 
   //! Finds log base 2 of a 32-bit integer.
@@ -77,7 +59,7 @@ BEGIN_NAMESPACE_DGLIB
   template<typename Real>
   void WrapAngle(Real& val)
   {
-    val = val - static_cast<Real>(TWOPI_d)*floor(val / static_cast<Real>(TWOPI_d)) + static_cast<Real>(PI_d);
+    val = val - static_cast<Real>(PI_d * 2.0)*floor(val / static_cast<Real>(PI_d * 2)) + static_cast<Real>(PI_d);
   }	//End: WrapAngle()
 
 
@@ -112,6 +94,6 @@ BEGIN_NAMESPACE_DGLIB
 
   //! @}
 
-END_NAMESPACE
+}
 
 #endif

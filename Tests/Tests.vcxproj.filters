@@ -42,9 +42,6 @@
     <ClCompile Include="TEST_BoundedSND.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_Poisson.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="results.txt">

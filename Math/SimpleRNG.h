@@ -8,13 +8,10 @@
 #ifndef RANDOMBASE_H
 #define RANDOMBASE_H
 
-#include <random>
+namespace Dg
+{
 
-#include "DgLib_defines.h"
-
-BEGIN_NAMESPACE_DGLIB
-
-   //! @ingroup classes
+   //! @ingroup Math_classes
    //!
    //! @class SimpleRNG
    //!
@@ -64,7 +61,6 @@ BEGIN_NAMESPACE_DGLIB
     //! Get a Gamma random sample with specified shape and scale.
     template<class Real>
     Real GetGamma(Real shape, Real scale);
-
 
   private:
 
@@ -185,7 +181,7 @@ BEGIN_NAMESPACE_DGLIB
     }
   }	//End: SimpleRNG::GetGamma()
 
-END_NAMESPACE
+}
 
 
 #endif

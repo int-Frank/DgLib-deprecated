@@ -28,13 +28,11 @@
 #include "Vector4.h"
 #include "Quaternion.h"
 
-#include "DgLib_defines.h"
-
 //--------------------------------------------------------------------------------
 //	@	Matrix44
 //--------------------------------------------------------------------------------
-BEGIN_NAMESPACE_DGLIB
-
+namespace Dg
+{
   template<typename Real>
   class Matrix44;
 
@@ -1524,7 +1522,7 @@ BEGIN_NAMESPACE_DGLIB
 
   }  // End: Matrix44::operator*()
 
-END_NAMESPACE
+}
 
 
 #endif

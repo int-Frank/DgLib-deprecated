@@ -32,16 +32,10 @@
     <ClInclude Include="Vector4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix44.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BasisR3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FastPoisson.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Quaternion.h">

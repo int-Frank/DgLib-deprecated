@@ -1,14 +1,11 @@
 //================================================================================
-// @ map.h
+// @ set.h
 // 
-// Class: map
+// Class: set
 //
-// Ordered mapped list. Objects are inserted (in order) with some key. 
-// Similar to a DgMap however m_data is stored with the key. Best used for
-// small objects and/or objects with cheap assignment operators. Else
-// use a DgMap<U,T>. Only unique keys are allowed.
-//
-// Assumed types are POD, so no construction / assignment operators called
+// An ordered array. Elements are inserted in order. Uses contiguous memory to 
+// store m_data, therefore is best used for very small m_data types (ie literals) 
+// and types with cheap assignment operators.
 //
 // -------------------------------------------------------------------------------
 //
@@ -17,157 +14,144 @@
 //
 //================================================================================
 
-#ifndef DG_POD_MAP_S_H
-#define DG_POD_MAP_S_H
-
-#define DG_MAP_DEFAULT_SIZE 1024
+#ifndef DG_SET_H
+#define DG_SET_H
 
 namespace Dg
 {
   namespace POD
   {
     //--------------------------------------------------------------------------------
-    //	@	map<U, T>:	U: key
-    //						T: m_data
+    //	@	set<T>:	T: m_data type
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    class map
+    template<class T>
+    class set
     {
-      //Internal container which stores the m_data
-      struct Container
-      {
-        U key;
-        T item;
-      };
-
     public:
       //Constructor / destructor
-      map();
-      map(unsigned int);
-      ~map();
+      set();
+      set(unsigned);
+      ~set();
 
       //Copy operations
-      map(const map&);
-      map& operator= (const map&);
+      set(const set&);
+      set& operator= (const set&);
 
       //Accessors
 
-      T&       operator[](unsigned int i)				{ return m_data[i].item; }
-      const T& operator[](unsigned int i) const { return m_data[i].item; }
-      int      size()			                const	{ return m_currentSize; }
-      bool     empty()		                const	{ return m_currentSize == 0; }
-      int      max_size()		              const	{ return m_arraySize; }
-      U        ID(int i)			            const { return m_data[i].key; }
+      //Get item at position
+      const T& operator[](unsigned i) const { return m_data[i]; }
+      int size()			const			{ return m_currentSize; }
+      bool empty()		const			{ return m_currentSize == 0; }
+      int max_size()		const			{ return m_arraySize; }
 
       //Returns false if not found, however, index will be set to
       //the lower index just before where input key would be.
-      bool find(U key, int& index, int lower = 0) const;			//Use binary search
-      bool find(U key, int& index, int lower, int upper) const;	//Use binary search
+      bool find(const T&, int& index, int lower = 0) const;			//Use binary search
+      bool find(const T&, int& index, int lower, int upper) const;	//Use binary search
 
       //Manipulators
-      bool insert(const T&, U key);
-      bool set(U key, const T&);
-      bool erase(U key);
+      bool insert(const T&);
+      bool insert_unique(const T&);
+      void erase(const T&);
+      void erase_all(const T&);
       void clear();
-      void resize(unsigned int);
+      void resize(unsigned);
       void extend();
-      void reset();
+      void reset();				//Reset m_data array to size 1.
 
     private:
-      //Data members
-      Container* m_data;
+      //m_data members
+      T* m_data;
 
       int m_arraySize;
       int m_currentSize;
 
     private:
-      void init(const map&);
+      void init(const set&);
     };
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::map()
+    //	@	DgOrgeredArray<T>::DgOrgeredArray()
     //--------------------------------------------------------------------------------
     //		Constructor
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    map<U, T>::map()
+    template<class T>
+    set<T>::set()
       : m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
-      resize(DG_MAP_DEFAULT_SIZE);
-
-    }	//End: map::map()
+    }	//End: set::set()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::map()
+    //	@	DgOrgeredArray<T>::DgOrgeredArray()
     //--------------------------------------------------------------------------------
-    //		Copy Constructor
+    //		Constructor
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    map<U, T>::map(unsigned int new_size)
+    template<class T>
+    set<T>::set(unsigned new_size)
       : m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
       resize(new_size);
 
-    }	//End: map::map()
+    }	//End: set::set()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::~map()
+    //	@	DgOrgeredArray<T>::~DgOrgeredArray()
     //--------------------------------------------------------------------------------
     //		Destructor
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    map<U, T>::~map()
+    template<class T>
+    set<T>::~set()
     {
       //Free memory
-      clear();
-      free(m_data);
+      free( m_data );
 
-    }	//End: map::~map()
+    }	//End: set::~set()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::init()
+    //	@	DgOrgeredArray<T>::DgOrgeredArray()
     //--------------------------------------------------------------------------------
-    //		Initialise map to another.
+    //		Initialise set to another.
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    void map<U, T>::init(const map& other)
+    template<class T>
+    void set<T>::init(const set& other)
     {
       //Resize lists
       int sze = (other.m_arraySize>0) ? other.m_arraySize : 1;
       resize(sze);
 
-      memcpy(m_data, other.m_data, other.m_currentSize * sizeof(Container));
+      memcpy(m_data, other.m_data, other.m_currentSize * sizeof(T));
 
       m_currentSize = other.m_currentSize;
 
-    }	//End: map::init()
+    }	//End: set::init()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::map()
+    //	@	DgOrgeredArray<T>::DgOrgeredArray()
     //--------------------------------------------------------------------------------
     //		Copy constructor
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    map<U, T>::map(const map& other) :
+    template<class T>
+    set<T>::set(const set& other) :
       m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
       init(other);
 
-    }	//End: map::map()
+    }	//End: set::set()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::operator=()
+    //	@	DgOrgeredArray<T>::operator=()
     //--------------------------------------------------------------------------------
     //		Assignment
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    map<U, T>& map<U, T>::operator=(const map& other)
+    template<class T>
+    set<T>& set<T>::operator=(const set& other)
     {
       if (this == &other)
         return *this;
@@ -176,48 +160,47 @@ namespace Dg
 
       return *this;
 
-    }	//End: map::operator=()
+    }	//End: set::operator=()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::resize()
+    //	@	DgOrgeredArray<T>::resize()
     //--------------------------------------------------------------------------------
     //		Resize map, erases all m_data before resize.
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    void map<U, T>::resize(unsigned int val)
+    template<class T>
+    void set<T>::resize(unsigned val)
     {
       //Delete old m_data
-      clear();
-      free(m_data);
-      m_data = (Container *)malloc(sizeof(Container) * val);
+      free( m_data );
+      m_data = (T *)malloc(sizeof(T) * val);
 
       m_arraySize = val;
       m_currentSize = 0;
 
-    }	//End: map::resize()
+    }	//End: set::resize()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::find()
+    //	@	DgOrgeredArray<T>::find()
     //--------------------------------------------------------------------------------
-    //		Find a value in the map, uses a binary search algorithm
+    //		Find a value in the list, uses a binary search algorithm
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    bool map<U, T>::find(U key, int& index, int lower) const
+    template<class T>
+    bool set<T>::find(const T& item, int& index, int lower) const
     {
-      return find(key, index, lower, (m_currentSize - 1));
+      return find(item, index, lower, (m_currentSize - 1));
 
-    }	//End: map::find()
+    }	//End: set::find()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::find()
+    //	@	DgOrgeredArray<T>::find()
     //--------------------------------------------------------------------------------
-    //		Find a value in the map within a range, uses a binary search algorithm
+    //		Find a value in the list within a range, uses a binary search algorithm
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    bool map<U, T>::find(U key, int& index, int lower, int upper) const
+    template<class T>
+    bool set<T>::find(const T& item, int& index, int lower, int upper) const
     {
       //Check bounds
       lower = (lower>0) ? lower : 0;
@@ -229,10 +212,10 @@ namespace Dg
         index = ((upper + lower) >> 1);
 
         // determine which subarray to search
-        if (m_data[index].key < key)
+        if (m_data[index] < item)
           // change min index to search upper subarray
           lower = index + 1;
-        else if (m_data[index].key > key)
+        else if (m_data[index] > item)
           // change max index to search lower subarray
           upper = index - 1;
         else
@@ -244,130 +227,185 @@ namespace Dg
       index = lower - 1;
       return false;
 
-    }	//End: map::find()
+    }	//End: set::find()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::extend()
+    //	@	DgOrgeredArray<T>::extend()
     //--------------------------------------------------------------------------------
-    //		Extend the map by a factor of 2, keeps all m_data.
+    //		Extend the array by a factor of 1.5, keeps all m_data.
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    void map<U, T>::extend()
+    template<class T>
+    void set<T>::extend()
     {
-      //Calculate new size
+      //Calculate new size (1.5 * m_arraySize + 1)
       int new_size = (m_arraySize << 1);
 
       //Create new arrays
-      Container * new_data = (Container *)malloc(sizeof(Container) * new_size);
+      T * new_data = (T *)malloc(sizeof(T) * new_size);
 
-      memcpy(new_data, m_data, (sizeof(Container) * m_currentSize));
+      memcpy(new_data, m_data, (sizeof(T) * m_currentSize));
 
       free(m_data);
       m_data = new_data;
       m_arraySize = new_size;
 
-    }	//End: map::extend()
+    }	//End: set::extend()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::insert()
+    //	@	DgOrgeredArray<T>::insert()
     //--------------------------------------------------------------------------------
-    //		Insert an element into the map
+    //		Insert an element into the list
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    bool map<U, T>::insert(const T& val, U key)
+    template<class T>
+    bool set<T>::insert(const T& item)
     {
       //Find the index to insert to
       int index;
-      if (find(key, index))
-        return false;	//element already exists
+      find(item, index);
 
       //Range check
       if (m_currentSize == m_arraySize)
         extend();
 
       //shift all RHS objects to the right by one.
-      memmove(&m_data[index + 2], &m_data[index + 1], (m_currentSize - index - 1) * sizeof(Container));
+      memmove(&m_data[index + 2], &m_data[index + 1], (m_currentSize - index - 1) * sizeof(T));
 
       index++;
 
-      memcpy(&m_data[index].key, &key, sizeof(key));
-      memcpy(&m_data[index].item, &val, sizeof(val));
+      memcpy(&m_data[index], &item, sizeof(T));
 
       m_currentSize++;
 
       return true;
 
-    }	//End: map::insert()
+    }	//End: set::insert()
 
 
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::erase()
+    //	@	DgOrgeredArray<T>::insert_unique()
     //--------------------------------------------------------------------------------
-    //		Remove an element from the map
+    //		Insert an element into the list, only if it does not yet exist
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    bool map<U, T>::erase(U key)
+    template<class T>
+    bool set<T>::insert_unique(const T& item)
+    {
+      //Find the index to insert to
+      int index;
+      if (find(item, index))
+        return false;
+
+      //Range check
+      if (m_currentSize == m_arraySize)
+        extend();
+
+      //shift all RHS objects to the right by one.
+      memmove(&m_data[index + 2], &m_data[index + 1], (m_currentSize - index - 1) * sizeof(T));
+
+      index++;
+
+      memcpy(&m_data[index], &item, sizeof(T));
+
+      m_currentSize++;
+
+      return true;
+
+    }	//End: set::insert_unique()
+
+
+    //--------------------------------------------------------------------------------
+    //	@	DgOrgeredArray<T>::erase()
+    //--------------------------------------------------------------------------------
+    //		Find and removes one of this element from the list.
+    //--------------------------------------------------------------------------------
+    template<class T>
+    void set<T>::erase(const T& item)
     {
       //Find the index
       int index;
-      if (!find(key, index))
-        return false;	//element not found
+      if (!find(item, index))
+        return;	//element not found
 
-      memmove(&m_data[index], &m_data[index + 1], (m_currentSize - index - 1) * sizeof(Container));
+      //Remove elements
+      memmove(&m_data[index], &m_data[index + 1], (m_currentSize - index - 1) * sizeof(T));
 
+      //Adjust m_currentSize
       m_currentSize--;
 
       return true;
 
-    }	//End: map::erase()
+    }	//End: set::erase()
+    
 
-
     //--------------------------------------------------------------------------------
-    //	@	map<U,T>::set()
+    //	@	DgOrgeredArray<T>::erase_all()
     //--------------------------------------------------------------------------------
-    //		Sets an element to a new value
+    //		Find and removes all of this element from the list.
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    bool map<U, T>::set(U key, const T& val)
+    template<class T>
+    bool set<T>::erase_all(const T& item)
     {
-      //Find the index to insert to
-      int index;
-      if (!find(key, index))
-        return false;	//element does not exist
+      //Find the index
+      int lower, upper;
+      if (!find(item, lower))
+        return false;	//element not found
 
-      memcpy(&m_data[index].item, &val, sizeof(val));
+      //Initial upper bounds
+      upper = lower + 1;
+
+      //Find lower bounds
+      while (lower >= 0 && m_data[lower] == item)
+        --lower;
+
+      //Find upper bounds
+      while (upper <= m_currentSize && m_data[upper] == item)
+        ++upper;
+
+      //Number of elements to remove
+      lower++;
+      int num = upper - lower;
+
+      //Remove elements
+      memmove(&m_data[lower], &m_data[lower + num], (m_currentSize - index - 1 - num) * sizeof(T));
+
+      //Adjust m_currentSize
+      m_currentSize -= num;
 
       return true;
 
-    }	//End: map::set()
+    }	//End: set::erase_all()
 
 
     //--------------------------------------------------------------------------------
-    //	@	DgMap<U,T>::reset()
+    //	@	DgOrgeredArray<T>::reset()
     //--------------------------------------------------------------------------------
     //		Reset size to 1
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    void map<U, T>::reset()
+    template<class T>
+    void set<T>::reset()
     {
-      resize(DG_MAP_DEFAULT_SIZE);
+      //Delete old m_data
+      free(m_data);
+      m_data = nullptr;
 
-    }	//End: map::reset()
+      m_arraySize = 0;
+      m_currentSize = 0;
+
+    }	//End: set::reset()
 
 
     //--------------------------------------------------------------------------------
-    //	@	DgMap<U,T>::clear()
+    //	@	DgOrgeredArray<T>::clear()
     //--------------------------------------------------------------------------------
     //		Set the number of elements to zero
     //--------------------------------------------------------------------------------
-    template<typename U, typename T>
-    void map<U, T>::clear()
+    template<class T>
+    void set<T>::clear()
     {
       m_currentSize = 0;
 
-    }	//End: map::clear()
+    }	//End: set::clear()
   }
 };
 

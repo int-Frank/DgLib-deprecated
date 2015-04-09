@@ -147,7 +147,6 @@
     <ClCompile Include="TEST_dg_map_s.cpp" />
     <ClCompile Include="TEST_math.cpp" />
     <ClCompile Include="TEST_Matrix44.cpp" />
-    <ClCompile Include="TEST_Poisson.cpp" />
     <ClCompile Include="TEST_Quaternion.cpp" />
     <ClCompile Include="TEST_Vector3.cpp" />
     <ClCompile Include="TEST_Vector4.cpp" />
