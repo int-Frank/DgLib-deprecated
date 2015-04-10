@@ -11,15 +11,15 @@
 namespace Dg
 {
 
-   //! @ingroup Math_classes
-   //!
-   //! @class SimpleRNG
-   //!
-   //! @brief A simple random number generator.
-   //! Original code by John D. Cook
-   //!
-   //! @author Frank Hart
-   //! @date 4/8/2015
+  //! @ingroup Math_classes
+  //!
+  //! @class SimpleRNG
+  //!
+  //! @brief A simple random number generator.
+  //! Original code by John D. Cook
+  //!
+  //! @author Frank Hart
+  //! @date 4/8/2015
   class SimpleRNG
   {
   public:

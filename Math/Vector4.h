@@ -1,20 +1,9 @@
-//================================================================================
-// @ Vector4.h
-// 
-// Class: Vector4
-//
-// 3 dimensional homogeneous vector class.
-//
-// -------------------------------------------------------------------------------
-//
-// Original Authors: James M. Van Verth, Lars M. Bishop
-// Retrieved From: Essential Mathematics for Games and Interactive Applications SE
-// On Date: 2013
-//
-// Modified by: Frank Hart
-// Date last modified: 2013
-//
-//================================================================================
+//! @file Vector4.h
+//!
+//! @author: James M. Van Verth, Lars M. Bishop, Frank B. Hart
+//! @date 4/10/2015
+//!
+//! Class declaration: Vector4
 
 #ifndef VECTOR4_H
 #define VECTOR4_H
@@ -38,9 +27,26 @@ namespace Dg
   template<typename Real>
   Vector4<Real> Cross(const Vector4<Real>&, const Vector4<Real>&);
 
-  //--------------------------------------------------------------------------------
-  //	@	Vector4
-  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> GetRandomVector();
+
+  template<typename Real>
+  Vector4<Real> Perpendicular(const Vector4<Real>&);
+
+  template<typename Real>
+  Vector4<Real> GetRandomOrthonormalVector(const Vector4<Real>&);
+
+  template<typename Real>
+  Vector4<Real> GetRandomVector(const Vector4<Real>& axis, Real angle);
+
+  //! @ingroup Math_classes
+  //!
+  //! @class Vector4
+  //!
+  //! @brief Three dimensional homogeneous vector class [x, y, z, w].
+  //!
+  //! @author Frank Hart
+  //! @date 4/10/2015
   template<typename Real>
   class Vector4
   {
@@ -50,8 +56,9 @@ namespace Dg
     //friend class VQS<Real>;
   public:
 
-    // constructor/destructor
+    //! Default constructor. Members not initialized.
     Vector4() {}
+
     Vector4(Real a_x, Real a_y, Real a_z, Real a_w) :
       m_x(a_x), m_y(a_y), m_z(a_z), m_w(a_w) {}
     ~Vector4() {}
@@ -60,17 +67,21 @@ namespace Dg
     Vector4(const Vector4&);
     Vector4& operator=(const Vector4&);
 
-    // accessors
+    //! Accessor member by index
     Real& operator[](unsigned int i)         { return (&m_x)[i]; }
+
+    //! Accessor member by index
     Real operator[](unsigned int i) const    { return (&m_x)[i]; }
 
-    // Comparison.
     bool operator== (const Vector4&) const;
     bool operator!= (const Vector4&) const;
+
+    //! Determines if the vector is the zero vector within some tolerance.
     bool IsZero() const;
+
+    //! Determines if the vector is the unit vector within some tolerance.
     bool IsUnit() const;
 
-    // Coordinate access.
     Real x() const { return m_x; }
     Real y() const { return m_y; }
     Real z() const { return m_z; }
@@ -80,11 +91,15 @@ namespace Dg
     Real& z()	   { return m_z; }
     Real& w()	   { return m_w; }
 
-    // manipulators
     inline void Set(Real a_x, Real a_y, Real a_z, Real a_w);
-    void Clean();       // sets near-zero elements to 0
-    inline void Zero(); // sets all elements to 0
-    void Normalize();   // sets to unit vector
+
+    //! Sets near-zero elements to 0
+    void Clean();      
+
+    //! sets all elements to 0
+    inline void Zero(); 
+
+    void Normalize();  
 
     // Arithmetic operations
     Vector4 operator+(const Vector4&) const;
@@ -103,32 +118,45 @@ namespace Dg
     Vector4& operator*=(Real);
     Vector4& operator/=(Real);
 
-    // dot, cross product
     template<typename T>
     friend T Dot(const Vector4<T>&, const Vector4<T>&);
 
+    //! Assumes w = 0.
     template<typename T>
     friend Vector4<T> Cross(const Vector4<T>&, const Vector4<T>&);
 
-    //other 
     Real Length() const;
     Real LengthSquared() const;
 
     //Friend functions
-    friend Vector4<Real> operator* (const Vector4<Real>&, const Matrix44<Real>&);
+    template<typename T>
+    friend Vector4<T> operator* (const Vector4<T>&, const Matrix44<T>&);
+
+    //! Returns a random unit vector.
+    template<typename T>
+    friend Vector4<T> GetRandomVector();
+
+    //! Returns a perpendicular vector.
+    template<typename T>
+    friend Vector4<T> Perpendicular(const Vector4<T>& axis);
+
+    //! Returns a random orthonormal vector to an axis.
+    //! @pre Input must be a unit vector.
+    template<typename T>
+    friend Vector4<T> GetRandomOrthonormalVector(const Vector4<T>& axis);
+
+    //! Returns a random vector at an angle to an axis.
+    //! @pre Input axis must be a unit vector.
+    template<typename T>
+    friend Vector4<T> GetRandomVector(const Vector4<T>& axis, T angle);
 
   private:
     Real m_x, m_y, m_z, m_w;
   };
 
-  //-------------------------------------------------------------------------------
-  //-- Inlines --------------------------------------------------------------------
-  //-------------------------------------------------------------------------------
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::Vector4()
-  //-------------------------------------------------------------------------------
-  //		Copy constructor
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real>::Vector4(const Vector4<Real>& a_other) :
@@ -140,8 +168,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator=()
-  //-------------------------------------------------------------------------------
-  //		Assignment operator
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real>& Vector4<Real>::operator=(const Vector4<Real>& a_other)
@@ -158,8 +184,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::Set()
   //-------------------------------------------------------------------------------
-  // Set vector elements
-  //-------------------------------------------------------------------------------
   template<typename Real>
   void Vector4<Real>::Set(Real a_x, Real a_y, Real a_z, Real a_w)
   {
@@ -174,8 +198,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::Zero()
   //-------------------------------------------------------------------------------
-  // Zero all elements
-  //-------------------------------------------------------------------------------
   template<typename Real>
   inline void Vector4<Real>::Zero()
   {
@@ -185,8 +207,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::Length()
-  //-------------------------------------------------------------------------------
-  //		Vector length
   //-------------------------------------------------------------------------------
   template<typename Real>
   Real Vector4<Real>::Length() const
@@ -199,8 +219,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::LengthSquared()
   //-------------------------------------------------------------------------------
-  //		Vector length squared (avoids square root)
-  //-------------------------------------------------------------------------------
   template<typename Real>
   Real Vector4<Real>::LengthSquared() const
   {
@@ -211,8 +229,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator==()
-  //-------------------------------------------------------------------------------
-  //		Comparison operator
   //-------------------------------------------------------------------------------
   template<typename Real>
   bool Vector4<Real>::operator==(const Vector4<Real>& a_other) const
@@ -228,8 +244,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator!=()
   //-------------------------------------------------------------------------------
-  //		Comparison operator
-  //-------------------------------------------------------------------------------
   template<typename Real>
   bool Vector4<Real>::operator!=(const Vector4<Real>& a_other) const
   {
@@ -244,8 +258,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::IsZero()
   //-------------------------------------------------------------------------------
-  //		Check for zero vector
-  //-------------------------------------------------------------------------------
   template<typename Real>
   bool Vector4<Real>::IsZero() const
   {
@@ -257,8 +269,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::IsUnit()
   //-------------------------------------------------------------------------------
-  //		Check for unit vector
-  //-------------------------------------------------------------------------------
   template<typename Real>
   bool Vector4<Real>::IsUnit() const
   {
@@ -269,8 +279,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::Clean()
-  //-------------------------------------------------------------------------------
-  //		Set elements close to zero equal to zero
   //-------------------------------------------------------------------------------
   template<typename Real>
   void Vector4<Real>::Clean()
@@ -289,8 +297,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::Normalize()
-  //-------------------------------------------------------------------------------
-  //		Set to unit vector
   //-------------------------------------------------------------------------------
   template<typename Real>
   void Vector4<Real>::Normalize()
@@ -319,8 +325,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator+()
   //-------------------------------------------------------------------------------
-  //		Add vector to self and return
-  //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Vector4<Real>::operator+(const Vector4<Real>& a_other) const
   {
@@ -334,8 +338,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator+=()
-  //-------------------------------------------------------------------------------
-  //		Add vector to self, store in self
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real>& Vector4<Real>::operator+=(const Vector4<Real>& a_other)
@@ -353,8 +355,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator-()
   //-------------------------------------------------------------------------------
-  //		Subtract vector from self and return
-  //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Vector4<Real>::operator-(const Vector4<Real>& a_other) const
   {
@@ -368,8 +368,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator-=()
-  //-------------------------------------------------------------------------------
-  //		Subtract vector from self, store in self
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real>& Vector4<Real>::operator-=(const Vector4<Real>& a_other)
@@ -387,8 +385,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator-()
   //--------------------------------------------------------------------------------
-  //		Negate self and return; w is unchanged
-  //--------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Vector4<Real>::operator- () const
   {
@@ -400,8 +396,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator*()
   //-------------------------------------------------------------------------------
-  //		Scalar multiplication
-  //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Vector4<Real>::operator*(Real a_scalar) const
   {
@@ -412,8 +406,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator*()
-  //-------------------------------------------------------------------------------
-  //		Scalar multiplication
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> operator*(Real a_scalar, const Vector4<Real>& a_vector)
@@ -428,8 +420,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator*=()
-  //-------------------------------------------------------------------------------
-  //		Scalar multiplication by self
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real>& Vector4<Real>::operator*=(Real a_scalar)
@@ -447,8 +437,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator/=()
   //-------------------------------------------------------------------------------
-  //		Scalar division
-  //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Vector4<Real>::operator/(Real a_scalar) const
   {
@@ -462,8 +450,6 @@ namespace Dg
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator/=()
-  //-------------------------------------------------------------------------------
-  //		Scalar division by self
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real>& Vector4<Real>::operator/=(Real a_scalar)
@@ -481,8 +467,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Dot()
   //-------------------------------------------------------------------------------
-  //		Dot product friend operator
-  //-------------------------------------------------------------------------------
   template<typename Real>
   Real Dot(const Vector4<Real>& a_v0, const Vector4<Real>& a_v1)
   {
@@ -497,8 +481,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Cross()
   //--------------------------------------------------------------------------------
-  //		Cross product: treats input as vectors, returns vector (w=0)
-  //--------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Cross(const Vector4<Real>& v1, const Vector4<Real>& v2)
   {
@@ -511,33 +493,31 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	Vector4::Perpendicular()
-  //--------------------------------------------------------------------------------
-  //		Returns a perpendicular vector
+  //	@	Perpendicular()
   //--------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Perpendicular(const Vector4<Real>& a_vector)
   {
-    if (Dg::IsZero(a_vector.x()))
+    if (Dg::IsZero(a_vector.m_x))
     {
       return Vector4<Real>(static_cast<Real>(0.0), 
-                          -a_vector.z(), 
-                           a_vector.y(), 
+                          -a_vector.m_z, 
+                           a_vector.m_y, 
                            static_cast<Real>(0.0));
     }
     else
     {
-      return Vector4<Real>(-a_vector.y(), 
-                            a_vector.x(), 
+      return Vector4<Real>(-a_vector.m_y, 
+                            a_vector.m_x, 
                             static_cast<Real>(0.0), 
                             static_cast<Real>(0.0));
     }
 
-  }	//End: Vector4::Perpendicular()
+  }	//End: Perpendicular()
 
 
   //-------------------------------------------------------------------------------
-  //		Returns a random unit vector
+  //		@	GetRandomVector()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> GetRandomVector()
@@ -554,12 +534,11 @@ namespace Dg
     Real z = cos(theta);
 
     return Vector4<Real>(x, y, z, static_cast<Real>(0.0));
-  }
+  }	//End: GetRandomVector()
 
 
   //-------------------------------------------------------------------------------
-  //		Returns a random orthonormal vector.
-  //		axis must be a unit vector.
+  //		@ GetRandomOrthonormalVector()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> GetRandomOrthonormalVector(const Vector4<Real>& a_axis)
@@ -578,15 +557,14 @@ namespace Dg
     o.Normalize();
 
     return o;
-  }
+  }	//End: GetRandomOrthonormalVector()
 
 
   //-------------------------------------------------------------------------------
-  //		Returns a random unit vector at angle theta from the axis.
-  //		axis must be a unit vector.
+  //		@ GetRandomVector()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> GetRandomConeVector(const Vector4<Real>& a_axis, Real theta)
+  Vector4<Real> GetRandomVector(const Vector4<Real>& a_axis, Real theta)
   {
     SimpleRNG generator;
 
@@ -594,7 +572,7 @@ namespace Dg
     Real phi = generator.GetUniform<Real>(static_cast<Real>(0.0), theta);
 
     return (cos(phi) * a_axis + sin(phi) * GetRandomOrthonormalVector(a_axis));
-  }
+  }	//End: GetRandomVector()
 
 }
 

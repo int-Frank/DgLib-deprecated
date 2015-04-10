@@ -1,7 +1,9 @@
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
 
-#include "priority_mutex.h"
+#include <mutex>
+#include <atomic>
+
 #include "utility.h"
 
 #define RESOURCEMANAGER_DEFAULT_ARRAY_SIZE 64
@@ -23,7 +25,7 @@ namespace Dg
   {
   public:
 
-    ResourceBase() : m_inUse(true) {}
+    ResourceBase() { m_inUse = true; }
     virtual ~ResourceBase() {}
 
     virtual Dg_Result Init(const void * a_data) {}
@@ -32,17 +34,12 @@ namespace Dg
 
     bool IsInUse()
     {
-      bool result;
-      m_mutex.lock();
-      result = m_inUse;
-      m_mutex.unlock();
+      return m_inUse;
     }
 
     void SetUse(bool a_bool)
     {
-      m_mutex.lock();
       m_inUse = a_bool;
-      m_mutex.unlock();
     }
 
     template<typename InstanceType>
@@ -59,9 +56,7 @@ namespace Dg
 
   private:
 
-    std::mutex m_mutex;
-    bool m_inUse;
-
+    std::atomic_bool m_inUse;
   };
 
 

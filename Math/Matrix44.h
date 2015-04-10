@@ -1,25 +1,9 @@
-//================================================================================
-// @ Matrix44.h
-// 
-// Class: Matrix44
-//
-// 4 by 4 matrix calss.
-//
-// -------------------------------------------------------------------------------
-//
-// Original Authors: James M. Van Verth, Lars M. Bishop
-// Retrieved From: Essential Mathematics for Games and Interactive Applications SE
-// On Date: 2013
-//
-// Modified by: Frank Hart
-// Date last modified: 2013
-//
-// Memory layout: { x.x x.y x.z 0 y.x y.y y.z 0 z.x z.y z.z 0 p.x p.y p.z 1 }
-// Row major: [x.x x.y x.z 0]
-//            [y.x y.y y.z 0]
-//            [z.x z.y z.z 0]
-//            [p.x p.y p.z 1]
-//================================================================================
+//! @file Matrix44.h
+//!
+//! @author: James M. Van Verth, Lars M. Bishop, Frank B. Hart
+//! @date 4/10/2015
+//!
+//! Class declaration: Matrix44
 
 #ifndef MATRIX44_H
 #define MATRIX44_H
@@ -48,96 +32,142 @@ namespace Dg
   template<typename Real>
   Matrix44<Real> operator*(Real, const Matrix44<Real>&);
 
+  //! @ingroup Math_classes
+  //!
+  //! @class Matrix44
+  //!
+  //! @brief 4 by 4 matrix calss.
+  //!
+  //! Retrieved From: Essential Mathematics for Games and Interactive Applications SE
+  //! On Date: 2013
+  //!
+  //!     Memory layout: { x.x, x.y, x.z, 0, y.x, y.y, y.z, 0, z.x, z.y, z.z, 0, p.x, p.y, p.z, 1 }
+  //!     Row major: [x.x x.y x.z 0]
+  //!                [y.x y.y y.z 0]
+  //!                [z.x z.y z.z 0]
+  //!                [p.x p.y p.z 1]
+  //!
+  //! @author James M. Van Verth, Lars M. Bishop, modified by Frank B. Hart
+  //! @date 4/10/2015
   template<typename Real>
   class Matrix44
   {
     friend class Quaternion<Real>;
   public:
-    //constructor/destructor
+    //! Default constructor, initialized to identity matrix.
     Matrix44() { Identity(); }
     ~Matrix44() {}
 
-    //Copy operations
     Matrix44(const Matrix44&);
     Matrix44& operator=(const Matrix44&);
 
-    //Accessors
-    Real& operator()(unsigned int a_i, unsigned int a_j);
-    Real operator()(unsigned int a_i, unsigned int a_j) const;
+    //! Accessor i: row, j:column.
+    Real& operator()(unsigned int i, unsigned int j);
+    Real operator()(unsigned int i, unsigned int j) const;
 
-    //Comparison
     bool operator== (const Matrix44&) const;
     bool operator!= (const Matrix44&) const;
+
+    //! Checks if all elements are below the tolerance.
     bool IsZero() const;
+
+    //! Checks if matrix is equal to the identity, within some tolerance.
     bool IsIdentity() const;
 
+    //! Directly set the elements.
     void Set(const Real[16]);
 
     //Manipulators
-    void SetRows(const Vector4<Real>& a_row1, const Vector4<Real>& a_row2,
-                 const Vector4<Real>& a_row3, const Vector4<Real>& a_row4);
-    void GetRows(Vector4<Real>& a_row1, Vector4<Real>& a_row2,
-                 Vector4<Real>& a_row3, Vector4<Real>& a_row4);
-    void SetColumns(const Vector4<Real>& a_col1, const Vector4<Real>& a_col2,
-                    const Vector4<Real>& a_col3, const Vector4<Real>& a_col4);
-    void GetColumns(Vector4<Real>& a_col1, Vector4<Real>& a_col2,
-                    Vector4<Real>& a_col3, Vector4<Real>& a_col4);
-    void SetRow(unsigned int a_i, const Vector4<Real>& a_row);
-    void SetColumn(unsigned int a_i, const Vector4<Real>& a_col);
+    void SetRows(const Vector4<Real>& row0, const Vector4<Real>& row1,
+                 const Vector4<Real>& row2, const Vector4<Real>& row3);
+    void GetRows(Vector4<Real>& row0, Vector4<Real>& row1,
+                 Vector4<Real>& row2, Vector4<Real>& row3);
+    void SetColumns(const Vector4<Real>& col0, const Vector4<Real>& col1,
+                    const Vector4<Real>& col2, const Vector4<Real>& col3);
+    void GetColumns(Vector4<Real>& col0, Vector4<Real>& col1,
+                    Vector4<Real>& col2, Vector4<Real>& col3);
+    void SetRow(unsigned int i, const Vector4<Real>& row);
+    void SetColumn(unsigned int i, const Vector4<Real>& col);
 
     //void Set(const BasisR3&);
 
+    //! Sets near-zero elements to 0.
     void Clean();
+
+    //! Set to identity matrix.
     void Identity();
 
+    //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
     Matrix44& AffineInverse();
 
+    //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
     template<typename T>
     friend Matrix44<T> AffineInverse(const Matrix44<T>&);
 
+    //! Set self to the transpose.
     Matrix44& Transpose();
 
+    //! Compute the transpose matrix.
     template<typename T>
     friend Matrix44<T> Transpose(const Matrix44<T>&);
 
-    //transformations
+    //! Set as translation matrix based on vector
     Matrix44& Translation(const Vector4<Real>&);
-    Matrix44& Rotation(Real a_zRotation, Real a_yRotation, Real a_xRotation);
-    Matrix44& Rotation(const Vector4<Real>& a_axis, Real a_angle);
+
+    //! Sets the matrix to a rotation matrix (by Euler angles).
+    Matrix44& Rotation(Real zRotation, Real yRotation, Real xRotation);
+
+    //! Sets the matrix to a rotation matrix (by axis and angle).
+    Matrix44& Rotation(const Vector4<Real>& axis, Real angle);
+
+    //! Set as rotation matrix based on quaternion.
     Matrix44& Rotation(const Quaternion<Real>&);
 
+    //! Set as scaling matrix based on vector.
     Matrix44& Scaling(const Vector4<Real>&);
+
+    //! Uniform scaling.
     Matrix44& Scaling(Real);
 
+    //! Set as rotation matrix, rotating by 'angle' radians around x-axis.
     Matrix44& RotationX(Real);
+
+    //! Set as rotation matrix, rotating by 'angle' radians around y-axis.
     Matrix44& RotationY(Real);
+
+    //! Set as rotation matrix, rotating by 'angle' radians around z-axis.
     Matrix44& RotationZ(Real);
 
+    //! Gets one set of possible z - y - x fixed angles that will generate this matrix. 
+    //! #pre The upper 3x3 is a rotation matrix.
     void GetFixedAngles(Real& a_zRotation, Real& a_yRotation, Real& a_xRotation) const;
+    
+    //! Gets one possible axis-angle pair that will generate this matrix. 
+    //! #pre The upper 3x3 is a rotation matrix.
     void GetAxisAngle(Vector4<Real>& a_axis, Real& a_angle) const;
-    void GetQuaternion(Quaternion<Real>&) const;
 
-    //operators
+    //! Get quaternion from the upper 3x3 rotation matrix.
+    //! @pre The upper 3x3 is a rotation matrix.
+    void GetQuaternion(Quaternion<Real>&) const;
 
     Matrix44 operator+ (const Matrix44&) const;
     Matrix44& operator+= (const Matrix44&);
     Matrix44 operator- (const Matrix44&) const;
     Matrix44& operator-= (const Matrix44&);
 
+    //! Negate matrix.
     Matrix44 operator-() const;
 
-    //Multiplication
     Matrix44& operator*= (const Matrix44&);
     Matrix44 operator* (const Matrix44&) const;
 
-    //Column vector multiplier
+    //! Column vector multiplier
     Vector4<Real> operator* (const Vector4<Real>&) const;
 
-    //Row vector multiplier
+    //! Row vector multiplier
     template<typename T>
     friend Vector4<T> operator* (const Vector4<T>&, const Matrix44<T>&);
 
-    //Scalar multipication
     Matrix44& operator*= (Real);
 
     template<typename T>
@@ -145,7 +175,6 @@ namespace Dg
 
     Matrix44 operator* (Real) const;
 
-    //Low-level data accessors - implementation-dependant
     operator Real*() { return m_V; }
     operator const Real*() const { return m_V; }
 
@@ -153,13 +182,10 @@ namespace Dg
     //Data Members
     Real m_V[16];
 
-  private:
   };
 
   //--------------------------------------------------------------------------------
   //	@	Matrix44::operator()
-  //--------------------------------------------------------------------------------
-  //		2D array accessor
   //--------------------------------------------------------------------------------
   template<typename Real>
   Real& Matrix44<Real>::operator()(unsigned int a_i, unsigned int a_j)
@@ -172,8 +198,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::operator()
   //--------------------------------------------------------------------------------
-  //		2D array accessor
-  //--------------------------------------------------------------------------------
   template<typename Real>
   Real Matrix44<Real>::operator()(unsigned int a_i, unsigned int a_j) const
   {
@@ -184,8 +208,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	Matrix44::operator=()
-  //--------------------------------------------------------------------------------
-  //		Assignment operator
   //--------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::operator= (const Matrix44<Real>& a_other)
@@ -265,8 +287,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::Matrix44()
   //--------------------------------------------------------------------------------
-  //		Copy constructor
-  //--------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>::Matrix44(const Matrix44<Real>& a_other)
   {
@@ -293,8 +313,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::operator==()
   //--------------------------------------------------------------------------------
-  //		Comparison operator
-  //--------------------------------------------------------------------------------
   template<typename Real>
   bool Matrix44<Real>::operator== (const Matrix44<Real>& a_other) const
   {
@@ -311,8 +329,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	Matrix44::operator!=()
-  //--------------------------------------------------------------------------------
-  //		Comparison operator
   //--------------------------------------------------------------------------------
   template<typename Real>
   bool Matrix44<Real>::operator!= (const Matrix44<Real>& a_other) const
@@ -331,8 +347,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44Dg::IsZero()
   //--------------------------------------------------------------------------------
-  //		Check for static_cast<Real>(0.0) matrix
-  //--------------------------------------------------------------------------------
   template<typename Real>
   bool Matrix44<Real>::IsZero() const
   {
@@ -349,8 +363,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	Matrix44::IsIdentity()
-  //--------------------------------------------------------------------------------
-  //		Check for identity
   //--------------------------------------------------------------------------------
   template<typename Real>
   bool Matrix44<Real>::IsIdentity() const
@@ -378,8 +390,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::Set()
   //--------------------------------------------------------------------------------
-  //		Set Matrix elements
-  //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::Set(const Real a_data[16])
   {
@@ -391,8 +401,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	Matrix44::SetRows()
-  //--------------------------------------------------------------------------------
-  //		Set Matrix, Row by row
   //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::SetRows(const Vector4<Real>& a_row1, const Vector4<Real>& a_row2,
@@ -424,8 +432,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::GetRows()
   //--------------------------------------------------------------------------------
-  //		Get Matrix, row by row
-  //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::GetRows(Vector4<Real>& a_row1, Vector4<Real>& a_row2,
                                Vector4<Real>& a_row3, Vector4<Real>& a_row4)
@@ -455,8 +461,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	Matrix44::SetColumns()
-  //--------------------------------------------------------------------------------
-  //		Set Matrix, Column by column
   //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::SetColumns(const Vector4<Real>& a_col1, const Vector4<Real>& a_col2,
@@ -488,8 +492,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::GetColumns()
   //--------------------------------------------------------------------------------
-  //		Get Matrix, Column by column
-  //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::GetColumns(Vector4<Real>& a_col1, Vector4<Real>& a_col2,
                                   Vector4<Real>& a_col3, Vector4<Real>& a_col4)
@@ -520,8 +522,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::SetRow()
   //--------------------------------------------------------------------------------
-  //		Set a single Row
-  //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::SetRow(unsigned int a_i, const Vector4<Real>& a_row)
   {
@@ -537,8 +537,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::SetColumn()
   //--------------------------------------------------------------------------------
-  //		Set a single column
-  //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::SetColumn(unsigned int a_i, const Vector4<Real>& a_col)
   {
@@ -552,8 +550,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	Matrix44::Clean()
-  //--------------------------------------------------------------------------------
-  //		Set elements close to static_cast<Real>(0.0) equal to static_cast<Real>(0.0)
   //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::Clean()
@@ -569,8 +565,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	Matrix44::Indentity()
-  //--------------------------------------------------------------------------------
-  //		Set to identity matrix
   //--------------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::Identity()
@@ -598,9 +592,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::AffineInverse()
   //--------------------------------------------------------------------------------
-  //		Set self to matrix inverse, assuming a standard affine matrix
-  //		(bottom row is 0 0 0 1)
-  //--------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::AffineInverse()
   {
@@ -613,9 +604,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	AffineInverse()
-  //--------------------------------------------------------------------------------
-  //		Compute matrix inverse, assuming a standard affine matrix
-  //		(bottom row is 0 0 0 1)
   //--------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real> AffineInverse(const Matrix44<Real>& a_mat)
@@ -661,8 +649,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Matrix44::Transpose()
   //-------------------------------------------------------------------------------
-  //		Set self to transpose
-  //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Transpose()
   {
@@ -698,8 +684,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Transpose()
   //-------------------------------------------------------------------------------
-  //		Compute matrix transpose
-  //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real> Transpose(const Matrix44<Real>& a_mat)
   {
@@ -727,10 +711,8 @@ namespace Dg
   }   // End: Transpose()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::Translation()
   //-------------------------------------------------------------------------------
-  //		Set as translation matrix based on vector
+  //	@	Matrix44::Translation()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Translation(const Vector4<Real>& a_xlate)
@@ -759,8 +741,6 @@ namespace Dg
 
   //----------------------------------------------------------------------------
   //	@	Matrix44::Rotation()
-  //----------------------------------------------------------------------------
-  //		Sets the matrix to a rotation matrix (by Euler angles).
   //----------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Rotation(Real a_zRotation, Real a_yRotation, Real a_xRotation)
@@ -800,10 +780,8 @@ namespace Dg
   }  // End: Matrix44::Rotation()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::Rotation()
   //----------------------------------------------------------------------------
-  //		Sets the matrix to a rotation matrix (by axis and angle).
+  //	@	Matrix44::Rotation()
   //----------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Rotation(const Vector4<Real>& a_axis, Real a_angle)
@@ -847,10 +825,8 @@ namespace Dg
   }  // End: Matrix44::Rotation()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::Rotation()
   //-------------------------------------------------------------------------------
-  //		Set as rotation matrix based on quaternion
+  //	@	Matrix44::Rotation()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Rotation(const Quaternion<Real>& a_rotate)
@@ -897,10 +873,8 @@ namespace Dg
   }   // End of Matrix44::Rotation()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::Scaling()
   //-------------------------------------------------------------------------------
-  //		Set as scaling matrix based on vector
+  //	@	Matrix44::Scaling()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Scaling(const Vector4<Real>& a_scaleFactors)
@@ -927,10 +901,8 @@ namespace Dg
   }   // End: Matrix44::Scaling()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::Scaling()
   //-------------------------------------------------------------------------------
-  //		Uniform scaling
+  //	@	Matrix44::Scaling()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Scaling(Real a_val)
@@ -957,10 +929,8 @@ namespace Dg
   }   // End: Matrix44::Scaling()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::RotationX()
   //-------------------------------------------------------------------------------
-  //		Set as rotation matrix, rotating by 'angle' radians around x-axis
+  //	@	Matrix44::RotationX()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::RotationX(Real a_angle)
@@ -990,10 +960,8 @@ namespace Dg
   }   // End: Matrix44::RotationX()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::RotationY()
   //-------------------------------------------------------------------------------
-  //		Set as rotation matrix, rotating by 'angle' radians around y-axis
+  //	@	Matrix44::RotationY()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::RotationY(Real a_angle)
@@ -1023,10 +991,8 @@ namespace Dg
   }   // End: Matrix44::RotationY()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::RotationZ()
   //-------------------------------------------------------------------------------
-  //		Set as rotation matrix, rotating by 'angle' radians around z-axis
+  //	@	Matrix44::RotationZ()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::RotationZ(Real a_angle)
@@ -1056,12 +1022,9 @@ namespace Dg
   }   // End: Matrix44::RotationZ()
 
 
-  //--------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   //	@	Matrix44::GetFixedAngles()
   // ---------------------------------------------------------------------------
-  //		Gets static_cast<Real>(1.0) set of possible z-y-x fixed angles that will generate this 
-  //		matrix. Assumes that upper 3x3 is a rotation matrix
-  //----------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::GetFixedAngles(Real& a_zRotation, Real& a_yRotation, Real& a_xRotation) const
   {
@@ -1096,12 +1059,9 @@ namespace Dg
   }  // End: Matrix44::GetFixedAngles()
 
 
-  //--------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   //	@	Matrix44::GetAxisAngle()
   // ---------------------------------------------------------------------------
-  //		Gets static_cast<Real>(1.0) possible axis-angle pair that will generate this matrix
-  //		Assumes that upper 3x3 is a rotation matrix
-  //----------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::GetAxisAngle(Vector4<Real>& a_axis, Real& a_angle) const
   {
@@ -1141,11 +1101,9 @@ namespace Dg
   }  // End: Matrix44::GetAxisAngle()
 
 
-  //--------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   //	@	Matrix44::GetQuaternion()
   // ---------------------------------------------------------------------------
-  //		Assumes rotation matrix
-  //----------------------------------------------------------------------------
   template<typename Real>
   void Matrix44<Real>::GetQuaternion(Quaternion<Real>& a_out) const
   {
@@ -1184,10 +1142,8 @@ namespace Dg
     }
   } // End: Matrix44::GetQuaternion()
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator+()
   //-------------------------------------------------------------------------------
-  //		Matrix addition 
+  //	@	Matrix44::operator+()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real> Matrix44<Real>::operator+(const Matrix44<Real>& a_other) const
@@ -1204,10 +1160,8 @@ namespace Dg
   }   // End: Matrix44::operator+()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator+=()
   //-------------------------------------------------------------------------------
-  //		Matrix addition by self
+  //	@	Matrix44::operator+=()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::operator+=(const Matrix44<Real>& a_other)
@@ -1222,10 +1176,8 @@ namespace Dg
   }   // End: Matrix44::operator+=()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator-()
   //-------------------------------------------------------------------------------
-  //		Matrix subtraction 
+  //	@	Matrix44::operator-()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real> Matrix44<Real>::operator-(const Matrix44<Real>& other) const
@@ -1242,10 +1194,8 @@ namespace Dg
   }   // End: Matrix44::operator-()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator-=()
   //-------------------------------------------------------------------------------
-  //		Matrix subtraction by self
+  //	@	Matrix44::operator-=()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::operator-=(const Matrix44<Real>& a_other)
@@ -1260,10 +1210,8 @@ namespace Dg
   }   // End: Matrix44::operator-=()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator-()
   //-------------------------------------------------------------------------------
-  //		Negate self and return
+  //	@	Matrix44::operator-()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real> Matrix44<Real>::operator-() const
@@ -1280,10 +1228,8 @@ namespace Dg
   }    // End: Matrix44::operator-()
 
   
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
-  //		Matrix multiplication
+  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real> Matrix44<Real>::operator*(const Matrix44<Real>& a_other) const
@@ -1331,10 +1277,8 @@ namespace Dg
   }   // End: Matrix44::operator*()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator*=()
   //-------------------------------------------------------------------------------
-  //		Matrix multiplication by self
+  //	@	Matrix44::operator*=()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::operator*=(const Matrix44<Real>& a_other)
@@ -1387,10 +1331,8 @@ namespace Dg
   }   // End: Matrix44::operator*=()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
-  //		Matrix-row vector multiplication
+  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Matrix44<Real>::operator*(const Vector4<Real>& a_vector) const
@@ -1407,10 +1349,8 @@ namespace Dg
   }   // End: Matrix44::operator*()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
-  //		Matrix-column vector multiplication
+  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> operator*(const Vector4<Real>& a_vector, const Matrix44<Real>& a_matrix)
@@ -1431,10 +1371,8 @@ namespace Dg
   }   // End: a_matrix44::operator*()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator*=()
   //-------------------------------------------------------------------------------
-  //		Matrix-scalar multiplication
+  //	@	Matrix44::operator*=()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::operator*=(Real a_scalar)
@@ -1461,10 +1399,8 @@ namespace Dg
   }  // End: Matrix44::operator*=()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
-  //		Matrix-scalar multiplication
+  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real> operator*(Real a_scalar, const Matrix44<Real>& matrix)
@@ -1492,10 +1428,8 @@ namespace Dg
   }  // End: operator*()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
-  //		Matrix-scalar multiplication
+  //	@	Matrix44::operator*()
   //-------------------------------------------------------------------------------
   template<typename Real>
   Matrix44<Real> Matrix44<Real>::operator*(Real a_scalar) const

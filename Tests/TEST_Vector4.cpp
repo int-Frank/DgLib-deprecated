@@ -110,5 +110,5 @@ TEST(Stack_Vector4_Other, creation_Vector4_Other)
 
   CHECK(Dg::IsZero(Dot(v, vs)));
 
-  v = Dg::GetRandomConeVector<float>(v, 10.3f);
+  v = Dg::GetRandomVector<float>(v, 10.3f);
 }
