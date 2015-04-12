@@ -5,36 +5,6 @@
 //!
 //! Class declaration: Quaternion
 
-//================================================================================
-// @ Quaternion.h
-// 
-// Class: Quaternion
-//
-// Quaternion class with methods tailored for rotating points and vectors. The
-// quaternion 4-tuple can theoretically take on any values, however for 
-// orientation representation in 3D space, it is required the quaternion is 
-// normalised. It is up to the user to ensure the 
-// quaternion is normalised if setting each element itself, for eg
-//
-//		Quaternion q(1.0, 2.3, -2.9, 4.6);	//Not a valid rotational quaternion
-//		q.Normalize();						//Valid rotational quaternion
-//
-// Quaternions constructed or set by any other means will be valid for eg
-//
-//		//Valid quaternion set
-//		void Set( Real zRotation, Real yRotation, Real xRotation ); 
-//
-// -------------------------------------------------------------------------------
-//
-// Original Authors: James M. Van Verth, Lars M. Bishop
-// Retrieved From: Essential Mathematics for Games and Interactive Applications SE
-// On Date: 2013
-//
-// Modified by: Frank Hart
-// Date last modified: 2013
-//
-//================================================================================
-
 #ifndef QUATERNION_H
 #define QUATERNION_H
 
@@ -153,8 +123,17 @@ namespace Dg
     //! Set quaternion elements.
     void Set(Real a_w, Real a_x, Real a_y, Real a_z);
 
-    //! Set quaternion based on fixed angles.
-    void Set(Real a_zRotation, Real a_yRotation, Real a_xRotation);
+    //! Set quaternion based on rotation about the x axis.
+    void SetRotationX(Real);
+
+    //! Set quaternion based on rotation about the y axis.
+    void SetRotationY(Real);
+
+    //! Set quaternion based on rotation about the z axis.
+    void SetRotationZ(Real);
+
+    //! Set rotation quaternion.
+    void SetRotation(Real rx, Real ry, Real rz, EulerOrder);
 
     //! Set based on an origin, a target to orientate to, and a final up vector.
     //void Set(const Vector4& a_origin, const Vector4& a_target, const Vector4& a_up);
@@ -211,7 +190,7 @@ namespace Dg
     template<typename T>
     friend Quaternion<T> operator*(T scalar, const Quaternion<T>& vector);
 
-    Quaternion&          operator*=(Real);
+    Quaternion& operator*=(Real);
 
     //! Quaternion concatenation.
     Quaternion operator*(const Quaternion&) const;
@@ -433,36 +412,177 @@ namespace Dg
 
 
   //-------------------------------------------------------------------------------
-  //	@	Quaternion::Set()
+  //	@	Quaternion::SetRotationX()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  void Quaternion<Real>::Set(Real a_zRotation, Real a_yRotation, Real a_xRotation)
+  void Quaternion<Real>::SetRotationX(Real a_rx)
   {
-    Real half = static_cast<Real>(0.5);
-    a_zRotation *= half;
-    a_yRotation *= half;
-    a_xRotation *= half;
+    a_rx *= static_cast<Real>(0.5);
+
+    m_w = static_cast<Real>(cos(a_rx));
+    m_x = static_cast<Real>(sin(a_rx));
+    m_y = static_cast<Real>(0.0);
+    m_z = m_y;
+
+  }   // End of Quaternion::SetRotationX()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Quaternion::SetRotationZ()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  void Quaternion<Real>::SetRotationY(Real a_ry)
+  {
+    a_ry *= static_cast<Real>(0.5);
+
+    m_w = static_cast<Real>(cos(a_ry));
+    m_x = static_cast<Real>(0.0);
+    m_y = static_cast<Real>(sin(a_ry));
+    m_z = m_x;
+
+  }   // End of Quaternion::SetRotationZ()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Quaternion::SetRotation()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  void Quaternion<Real>::SetRotationZ(Real a_rz)
+  {
+    a_rz *= static_cast<Real>(0.5);
+
+    m_w = static_cast<Real>(cos(a_rz));
+    m_x = static_cast<Real>(0.0);
+    m_y = m_x;
+    m_z = static_cast<Real>(sin(a_rz));
+
+  }   // End of Quaternion::SetRotationZ()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Quaternion::SetRotation()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  void Quaternion<Real>::SetRotation(Real a_rx, 
+                                     Real a_ry, 
+                                     Real a_rz, 
+                                     EulerOrder a_order)
+  {
+    a_rx *= static_cast<Real>(0.5);
+    a_ry *= static_cast<Real>(0.5);
+    a_rz *= static_cast<Real>(0.5);
 
     // get sines and cosines of half angles
-    Real Cx = Real(cos(a_xRotation));
-    Real Sx = Real(sin(a_xRotation));
+    Real Cx = Real(cos(a_rx));
+    Real Sx = Real(sin(a_rx));
 
-    Real Cy = Real(cos(a_yRotation));
-    Real Sy = Real(sin(a_yRotation));
+    Real Cy = Real(cos(a_ry));
+    Real Sy = Real(sin(a_ry));
 
-    Real Cz = Real(cos(a_zRotation));
-    Real Sz = Real(sin(a_zRotation));
+    Real Cz = Real(cos(a_rz));
+    Real Sz = Real(sin(a_rz));
 
-    // multiply it out
-    m_w = Cx*Cy*Cz - Sx*Sy*Sz;
-    m_x = Sx*Cy*Cz + Cx*Sy*Sz;
-    m_y = Cx*Sy*Cz - Sx*Cy*Sz;
-    m_z = Cx*Cy*Sz + Sx*Sy*Cx;
+    switch (a_order)
+    {
+    case XYZ:
+    {
+      m_w = Cx*Cy*Cz - Sx*Sy*Sz;
+      m_x = Sx*Cy*Cz + Cx*Sy*Sz;
+      m_y = Cx*Sy*Cz - Sx*Cy*Sz;
+      m_z = Cx*Cy*Sz + Sx*Sy*Cz;
+      break;
+    }
+    case XZY:
+    {
+      m_w = Cx*Cy*Cz + Sx*Sy*Sz;
+      m_x = Sx*Cy*Cz - Cx*Sy*Sz;
+      m_y = Cx*Sy*Cz - Sx*Cy*Sz;
+      m_z = Cx*Cy*Sz + Sx*Sy*Cz;
+      break;
+    }
+    case YXZ:
+    {
+      m_w = Cx*Cy*Cz + Sx*Sy*Sz;
+      m_x = Sx*Cy*Cz + Cx*Sy*Sz;
+      m_y = Cx*Sy*Cz - Sx*Cy*Sz;
+      m_z = Cx*Cy*Sz - Sx*Sy*Cz;
+      break;
+    }
+    case YZX:
+    {
+      m_w = Cx*Cy*Cz - Sx*Sy*Sz;
+      m_x = Sx*Cy*Cz + Cx*Sy*Sz;
+      m_y = Cx*Sy*Cz + Sx*Cy*Sz;
+      m_z = Cx*Cy*Sz - Sx*Sy*Cz;
+      break;
+    }
+    case ZYX:
+    {
+      m_w = Cx*Cy*Cz + Sx*Sy*Sz;
+      m_x = Sx*Cy*Cz - Cx*Sy*Sz;
+      m_y = Cx*Sy*Cz + Sx*Cy*Sz;
+      m_z = Cx*Cy*Sz - Sx*Sy*Cz;
+      break;
+    }
+    case ZXY:
+    {
+      m_w = Cx*Cy*Cz - Sx*Sy*Sz;
+      m_x = Sx*Cy*Cz - Cx*Sy*Sz;
+      m_y = Cx*Sy*Cz + Sx*Cy*Sz;
+      m_z = Cx*Cy*Sz + Sx*Sy*Cz;
+      break;
+    }
+    case XYX:
+    {
+      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
+      m_x = Cx*Cy*Sz + Sx*Cy*Cz;
+      m_y = Cx*Sy*Cz + Sx*Sy*Sz;
+      m_z = Sx*Sy*Cz - Cx*Sy*Sz;
+      break;
+    }
+    case XZX:
+    {
+      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
+      m_x = Cx*Cy*Sz + Sx*Cy*Cz;
+      m_y = Cx*Sy*Sz - Sx*Sy*Cz;
+      m_z = Cx*Sy*Cz + Sx*Sy*Sz;
+      break;
+    }
+    case YXY:
+    {
+      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
+      m_x = Sx*Sy*Sz + Cx*Sy*Cz;
+      m_y = Cx*Cy*Sz + Sx*Cy*Cz;
+      m_z = Cx*Sy*Sz - Sx*Sy*Cz;
+      break;
+    }
+    case YZY:
+    {
+      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
+      m_x = Sx*Sy*Cz - Cx*Sy*Sz;
+      m_y = Cx*Cy*Sz + Sx*Cy*Cz;
+      m_z = Cx*Sy*Cz + Sx*Sy*Sz;
+      break;
+    }
+    case ZXZ:
+    {
+      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
+      m_x = Cx*Sy*Cz + Sx*Sy*Sz;
+      m_y = Sx*Sy*Cz - Cx*Sy*Sz;
+      m_z = Cx*Cy*Sz + Sx*Cy*Cz;
+      break;
+    }
+    case ZYZ:
+    {
+      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
+      m_x = Cx*Sy*Sz - Sx*Sy*Cz;
+      m_y = Cx*Sy*Cz + Sx*Sy*Sz;
+      m_z = Cx*Cy*Sz + Sx*Cy*Cz;
+      break;
+    }
+    }
 
-    //Ensure valid orientation quaternion
-    MakeValid();
-
-  }   // End of Quaternion::Set()
+  }   // End of Quaternion::SetRotation()
 
 
   //-------------------------------------------------------------------------------
@@ -757,22 +877,9 @@ namespace Dg
   template<typename Real>
   Quaternion<Real> Inverse(const Quaternion<Real>& a_quat)
   {
-    Real norm = a_quat.m_w * a_quat.m_w 
-              + a_quat.m_x * a_quat.m_x
-              + a_quat.m_y * a_quat.m_y
-              + a_quat.m_z * a_quat.m_z;
-
-    // if we're the zero quaternion, just return identity
-    if (Dg::IsZero(norm))
-    {
-      return Quaternion<Real>();
-    }
-
-    Real normRecip = static_cast<Real>(1.0) / norm;
-    return Quaternion<Real>(normRecip * a_quat.m_w,
-                           -normRecip * a_quat.m_x, 
-                           -normRecip * a_quat.m_y,
-                           -normRecip * a_quat.m_z);
+    Quaternion<Real> q(a_quat);
+    q.Inverse();
+    return q;
 
   }   // End of Inverse()
 
@@ -783,7 +890,8 @@ namespace Dg
   template<typename Real>
   const Quaternion<Real>& Quaternion<Real>::Inverse()
   {
-    Real norm = m_w * m_w + m_x * m_x + m_y * m_y + m_z * m_z;
+    Real norm = (m_w * m_w) + (m_x * m_x) + (m_y * m_y) + (m_z * m_z);
+
     // if we're the zero quaternion, just return
     if (Dg::IsZero(norm))
       return *this;

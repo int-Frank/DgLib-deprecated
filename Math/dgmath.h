@@ -17,6 +17,22 @@ namespace Dg
   //! @ingroup Math_constants
   //! @{
 
+  enum EulerOrder
+  {
+    XYZ,
+    XZY,
+    YXZ,
+    YZX,
+    ZYX,
+    ZXY,
+    XYX,
+    XZX,
+    YXY,
+    YZY,
+    ZYZ,
+    ZXZ
+  };
+
   const float PI_f            = 3.141592653589793238462643383279f;
   const float INVPI_f         = 0.31830988618379067153776752674503f;
   const float EPSILON_f       = 1.0e-4f;

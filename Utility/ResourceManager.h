@@ -42,6 +42,7 @@ namespace Dg
       m_inUse = a_bool;
     }
 
+    //! Hands ownership of this object to the Resource manager.
     template<typename InstanceType>
     Dg_Result Register()
     {
