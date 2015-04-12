@@ -108,6 +108,47 @@ TEST(Stack_Quaternion_Rotation, creation_Quaternion_Rotation)
   CHECK(q3.IsUnit());
   CHECK(q3 == qz * qy * qx);
 
+  qx.SetRotationX(xr);
+  qy.SetRotationY(yr);
+  qz.SetRotationX(zr);
+  q3.SetRotation(xr, yr, zr, Dg::XYX);
+  CHECK(q3.IsUnit());
+  CHECK(q3 == qx * qy * qz);
+
+  qx.SetRotationX(xr);
+  qy.SetRotationZ(yr);
+  qz.SetRotationX(zr);
+  q3.SetRotation(xr, yr, zr, Dg::XZX);
+  CHECK(q3.IsUnit());
+  CHECK(q3 == qx * qy * qz);
+
+  qx.SetRotationY(xr);
+  qy.SetRotationX(yr);
+  qz.SetRotationY(zr);
+  q3.SetRotation(xr, yr, zr, Dg::YXY);
+  CHECK(q3.IsUnit());
+  CHECK(q3 == qx * qy * qz);
+
+  qx.SetRotationY(xr);
+  qy.SetRotationZ(yr);
+  qz.SetRotationY(zr);
+  q3.SetRotation(xr, yr, zr, Dg::YZY);
+  CHECK(q3.IsUnit());
+  CHECK(q3 == qx * qy * qz);
+
+  qx.SetRotationZ(xr);
+  qy.SetRotationX(yr);
+  qz.SetRotationZ(zr);
+  q3.SetRotation(xr, yr, zr, Dg::ZXZ);
+  CHECK(q3.IsUnit());
+  CHECK(q3 == qx * qy * qz);
+
+  qx.SetRotationZ(xr);
+  qy.SetRotationY(yr);
+  qz.SetRotationZ(zr);
+  q3.SetRotation(xr, yr, zr, Dg::ZYZ);
+  CHECK(q3.IsUnit());
+  CHECK(q3 == qx * qy * qz);
 }
 
 

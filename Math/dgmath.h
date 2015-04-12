@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include "utility.h"
+#include "config.h"
 
 namespace Dg
 {
@@ -42,6 +43,22 @@ namespace Dg
   const double INVPI_d        = 0.31830988618379067153776752674503;
   const double EPSILON_d      = 1.0e-4;
   const double SQRT2_d        = 1.4142135623730950488016887242097;
+
+#ifdef PRECISION_F32
+
+  const float PI              = 3.141592653589793238462643383279f;
+  const float INVPI           = 0.31830988618379067153776752674503f;
+  const float EPSILON         = 1.0e-4f;
+  const float SQRT2           = 1.4142135623730950488016887242097f;
+
+#elif defined PRECISION_F64
+
+  const double PI             = 3.141592653589793238462643383279;
+  const double INVPI          = 0.31830988618379067153776752674503;
+  const double EPSILON        = 1.0e-4;
+  const double SQRT2          = 1.4142135623730950488016887242097;
+
+#endif
 
   //! @}
   
@@ -95,7 +112,7 @@ namespace Dg
   template<typename Real>
   bool IsZero(Real a)
   {
-    return (abs(a) < static_cast<Real>(EPSILON_d));
+    return (abs(a) < static_cast<Real>(EPSILON));
 
   }	//End: IsZero()
 
