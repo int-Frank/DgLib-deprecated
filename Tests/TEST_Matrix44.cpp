@@ -17,27 +17,78 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
 
 TEST(Stack4, creation4)
 {
-  ////-------------------------------------------------------------------------------
-  ////		Element manipulation
-  ////-------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------
+  //		Element manipulation
+  //-------------------------------------------------------------------------------
 
-  //mat44 m0;
-  //CHECK(m0(0, 0) == 1.0f);
-  //CHECK(m0(1, 0) == 0.0f);
-  //CHECK(m0(2, 0) == 0.0f);
-  //CHECK(m0(3, 0) == 0.0f);
-  //CHECK(m0(0, 1) == 0.0f);
-  //CHECK(m0(1, 1) == 1.0f);
-  //CHECK(m0(2, 1) == 0.0f);
-  //CHECK(m0(3, 1) == 0.0f);
-  //CHECK(m0(0, 2) == 0.0f);
-  //CHECK(m0(1, 2) == 0.0f);
-  //CHECK(m0(2, 2) == 1.0f);
-  //CHECK(m0(3, 2) == 0.0f);
-  //CHECK(m0(0, 3) == 0.0f);
-  //CHECK(m0(1, 3) == 0.0f);
-  //CHECK(m0(2, 3) == 0.0f);
-  //CHECK(m0(3, 3) == 1.0f);
+  mat44 m0;
+  CHECK(m0(0, 0) == 1.0f);
+  CHECK(m0(1, 0) == 0.0f);
+  CHECK(m0(2, 0) == 0.0f);
+  CHECK(m0(3, 0) == 0.0f);
+  CHECK(m0(0, 1) == 0.0f);
+  CHECK(m0(1, 1) == 1.0f);
+  CHECK(m0(2, 1) == 0.0f);
+  CHECK(m0(3, 1) == 0.0f);
+  CHECK(m0(0, 2) == 0.0f);
+  CHECK(m0(1, 2) == 0.0f);
+  CHECK(m0(2, 2) == 1.0f);
+  CHECK(m0(3, 2) == 0.0f);
+  CHECK(m0(0, 3) == 0.0f);
+  CHECK(m0(1, 3) == 0.0f);
+  CHECK(m0(2, 3) == 0.0f);
+  CHECK(m0(3, 3) == 1.0f);
+
+  mat44 mx, my, mz, ms, mt;
+  mx.RotationX(Dg::PI_f * 0.5f);
+  my.RotationY(Dg::PI_f * 0.5f);
+  mz.RotationZ(Dg::PI_f * 0.5f);
+  ms.Scaling(2.0f);
+  mt.Translation(vec4(-10.0f, 0.0f, 0.0f, 0.0f));
+  vec4 v(1.0f, 0.0f, 0.0f, 0.0f);
+
+  v = v * my;
+  CHECK(v == vec4(0.0f, 0.0f, -1.0f, 0.0f));
+
+  v = v * mx;
+  CHECK(v == vec4(0.0f, 1.0f, 0.0f, 0.0f));
+
+  v = v * mz;
+  CHECK(v == vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+
+  v.Set(1.0f, 0.0f, 0.0f, 1.0f);
+  v = v * my * mx * mz * ms * mt;
+  CHECK(v == vec4(-12.0f, 0.0f, 0.0f, 1.0f));
+
+  float rx = 1.43f;
+  float ry = 0.2901f;
+  float rz = -0.934f;
+
+  mx.RotationX(rx);
+  my.RotationY(ry);
+  mz.RotationZ(rz);
+
+  m0.Rotation(rx, ry, rz, Dg::XYZ);
+  CHECK(m0 == mx * my * mz);
+
+  m0.Rotation(rx, ry, rz, Dg::XZY);
+  CHECK(m0 == mx * mz * my);
+
+  m0.Rotation(rx, ry, rz, Dg::YXZ);
+  CHECK(m0 == my * mx * mz);
+
+  m0.Rotation(rx, ry, rz, Dg::YZX);
+  CHECK(m0 == my * mz * mx);
+
+  m0.Rotation(rx, ry, rz, Dg::ZYX);
+  CHECK(m0 == mz * my * mx);
+
+  m0.Rotation(rx, ry, rz, Dg::ZXY);
+  CHECK(m0 == mz * mx * my);
+
+  m0.Rotation(rx, ry, rx, Dg::XYX);
+  CHECK(m0 == mx * my * mx);
+
 
   //m0.Rotation(1.0f, -0.23f, 0.34f);
   //

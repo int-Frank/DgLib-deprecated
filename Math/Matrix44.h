@@ -115,7 +115,7 @@ namespace Dg
     Matrix44& Translation(const Vector4<Real>&);
 
     //! Sets the matrix to a rotation matrix (by Euler angles).
-    Matrix44& Rotation(Real zRotation, Real yRotation, Real xRotation);
+    Matrix44& Rotation(Real zRotation, Real yRotation, Real xRotation, EulerOrder);
 
     //! Sets the matrix to a rotation matrix (by axis and angle).
     Matrix44& Rotation(const Vector4<Real>& axis, Real angle);
@@ -140,7 +140,7 @@ namespace Dg
 
     //! Gets one set of possible z - y - x fixed angles that will generate this matrix. 
     //! #pre The upper 3x3 is a rotation matrix.
-    void GetFixedAngles(Real& a_zRotation, Real& a_yRotation, Real& a_xRotation) const;
+    void GetFixedAngles(Real& a_xRotation, Real& a_yRotation, Real& a_zRotation) const;
     
     //! Gets one possible axis-angle pair that will generate this matrix. 
     //! #pre The upper 3x3 is a rotation matrix.
@@ -743,7 +743,10 @@ namespace Dg
   //	@	Matrix44::Rotation()
   //----------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::Rotation(Real a_zRotation, Real a_yRotation, Real a_xRotation)
+  Matrix44<Real>& Matrix44<Real>::Rotation(Real a_xRotation, 
+                                           Real a_yRotation, 
+                                           Real a_zRotation, 
+                                           EulerOrder a_order)
   {
     // This is an "unrolled" contatenation of rotation matrices X Y & Z
     Real Cx = static_cast<Real>(cos(a_xRotation));
@@ -755,25 +758,138 @@ namespace Dg
     Real Cz = static_cast<Real>(cos(a_zRotation));
     Real Sz = static_cast<Real>(sin(a_zRotation));
 
-    m_V[0] = (Cy * Cz);
-    m_V[4] = -(Cy * Sz);
-    m_V[8] = Sy;
-    m_V[12] = static_cast<Real>(0.0);
 
-    m_V[1] = (Sx * Sy * Cz) + (Cx * Sz);
-    m_V[5] = -(Sx * Sy * Sz) + (Cx * Cz);
-    m_V[9] = -(Sx * Cy);
-    m_V[13] = static_cast<Real>(0.0);
-
-    m_V[2] = -(Cx * Sy * Cz) + (Sx * Sz);
-    m_V[6] = (Cx * Sy * Sz) + (Sx * Cz);
-    m_V[10] = (Cx * Cy);
-    m_V[14] = static_cast<Real>(0.0);
-
-    m_V[3] = static_cast<Real>(0.0);
-    m_V[7] = static_cast<Real>(0.0);
-    m_V[11] = static_cast<Real>(0.0);
+    m_V[12] = m_V[13] =  m_V[14] = m_V[3] = m_V[7] = m_V[11] = static_cast<Real>(0.0);
     m_V[15] = static_cast<Real>(1.0);
+
+    switch (a_order)
+    {
+    case XYZ:
+    {
+      m_V[0] = Cy * Cz;
+      m_V[1] = Cy * Sz;
+      m_V[2] = -Sy;
+
+      m_V[4] = (Sx * Sy * Cz) - (Cx * Sz);
+      m_V[5] = (Sx * Sy * Sz) + (Cx * Cz);
+      m_V[6] = Sx * Cy;
+
+      m_V[8] = (Cx * Sy * Cz) + (Sx * Sz);
+      m_V[9] = (Cx * Sy * Sz) - (Sx * Cz);
+      m_V[10] = (Cx * Cy);
+      break;
+    }
+    case XZY:
+    {
+      m_V[0] = Cy * Cz;
+      m_V[1] = Sz;
+      m_V[2] = -(Sy * Cz);
+
+      m_V[4] = (Sy * Sx) - (Sz * Cx * Cy);
+      m_V[5] = Cx * Cz;
+      m_V[6] = (Sz * Sy * Cx) + (Sx * Cy);
+
+      m_V[8] = (Sy * Cx) + (Sz * Sx * Cy);
+      m_V[9] = -(Sx * Cz);
+      m_V[10] = (Cx * Cy) - (Sz * Sy * Sx);
+      break;
+    }
+    case YXZ:
+    {
+      m_V[0] = (Cy * Cz) - (Sx * Sy * Sz);
+      m_V[1] = (Sz * Cy) + (Sx * Sy * Cz);
+      m_V[2] = -(Sy * Cx);
+
+      m_V[4] = -(Sz * Cx);
+      m_V[5] = Cx * Cz;
+      m_V[6] = Sx;
+
+      m_V[8] = (Sz * Sx * Cy) + (Sy * Cz);
+      m_V[9] = (Sz * Sy) - (Sx * Cy * Cz);
+      m_V[10] = Cx * Cy;
+      break;
+    }
+    case YZX:
+    {
+      m_V[0] = Cy * Cz;
+      m_V[1] = (Sy * Sx) + (Sz * Cx * Cy);
+      m_V[2] = (Sz * Sx * Cy) - (Sy * Cx);
+
+      m_V[4] = -Sz;
+      m_V[5] = Cx * Cz;
+      m_V[6] = Sx * Cz;
+
+      m_V[8] = Sy * Cz;
+      m_V[9] = (Sz * Sy * Cx) - (Sx * Cy);
+      m_V[10] = (Sz * Sy * Sx) + (Cx * Cy);
+      break;
+    }
+    case ZYX:
+    {
+      m_V[0] = Cy * Cz;
+      m_V[1] = (Sz * Cx) + (Sy * Sx * Cz);
+      m_V[2] = (Sz * Sx) - (Sy * Cx * Cz);
+
+      m_V[4] = -(Sz * Cy);
+      m_V[5] = (Cx * Cz) - (Sz * Sy * Sx);
+      m_V[6] = (Sz * Sy * Cx) + (Sx * Cz);
+
+      m_V[8] = Sy;
+      m_V[9] = -(Sx * Cy);
+      m_V[10] = Cx * Cy;
+      break;
+    }
+    case ZXY:
+    {
+      m_V[0] = (Sz * Sy * Sx) + (Cy * Cz);
+      m_V[1] = Sz * Cx;
+      m_V[2] = (Sz * Sx * Cy) - (Sy * Cz);
+
+      m_V[4] = (Sy * Sx * Cz) - (Sz * Cy);
+      m_V[5] = Cx * Cz;
+      m_V[6] = (Sz * Sy) + (Sx * Cy * Cz);
+
+      m_V[8] = Sy * Cx;
+      m_V[9] = -Sx;
+      m_V[10] = Cx * Cy;
+      break;
+    }
+    case XYX:
+    {
+      m_V[0] = Cy;
+      m_V[1] = Sy * Sx;
+      m_V[2] = -Sy * Cx;
+
+      m_V[4] = Sy * Sx;
+      m_V[5] = (Cx * Cx) - (Sx * Sx * Cy);
+      m_V[6] = (Sx * Cx) + (Sx * Cy * Cx);
+
+      m_V[8] = Sy * Cx;
+      m_V[9] = -(Sx * Cx) - (Sx * Cy * Cx);
+      m_V[10] = (Cx * Cx * Cy) - (Sx * Sx);
+      break;
+    }
+    case XZX:
+    {
+      break;
+    }
+    case YXY:
+    {
+      break;
+    }
+    case YZY:
+    {
+      break;
+    }
+    case ZXZ:
+    {
+      break;
+    }
+    case ZYZ:
+    {
+      break;
+    }
+    }
 
     return *this;
 

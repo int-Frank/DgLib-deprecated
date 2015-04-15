@@ -41,22 +41,22 @@ namespace Dg
 
   const double PI_d           = 3.141592653589793238462643383279;
   const double INVPI_d        = 0.31830988618379067153776752674503;
-  const double EPSILON_d      = 1.0e-4;
+  const double EPSILON_d      = 1.0e-8;
   const double SQRT2_d        = 1.4142135623730950488016887242097;
 
 #ifdef PRECISION_F32
 
-  const float PI              = 3.141592653589793238462643383279f;
-  const float INVPI           = 0.31830988618379067153776752674503f;
-  const float EPSILON         = 1.0e-4f;
-  const float SQRT2           = 1.4142135623730950488016887242097f;
+  const float PI              = PI_f;
+  const float INVPI           = INVPI_f;
+  const float EPSILON         = EPSILON_f;
+  const float SQRT2           = SQRT2_f;
 
 #elif defined PRECISION_F64
 
-  const double PI             = 3.141592653589793238462643383279;
-  const double INVPI          = 0.31830988618379067153776752674503;
-  const double EPSILON        = 1.0e-4;
-  const double SQRT2          = 1.4142135623730950488016887242097;
+  const double PI             = PI_d;
+  const double INVPI          = INVPI_d;
+  const double EPSILON        = EPSILON_d;
+  const double SQRT2          = SQRT2_d;
 
 #endif
 
