@@ -17,29 +17,7 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
 
 TEST(Stack4, creation4)
 {
-  //-------------------------------------------------------------------------------
-  //		Element manipulation
-  //-------------------------------------------------------------------------------
-
-  mat44 m0;
-  CHECK(m0(0, 0) == 1.0f);
-  CHECK(m0(1, 0) == 0.0f);
-  CHECK(m0(2, 0) == 0.0f);
-  CHECK(m0(3, 0) == 0.0f);
-  CHECK(m0(0, 1) == 0.0f);
-  CHECK(m0(1, 1) == 1.0f);
-  CHECK(m0(2, 1) == 0.0f);
-  CHECK(m0(3, 1) == 0.0f);
-  CHECK(m0(0, 2) == 0.0f);
-  CHECK(m0(1, 2) == 0.0f);
-  CHECK(m0(2, 2) == 1.0f);
-  CHECK(m0(3, 2) == 0.0f);
-  CHECK(m0(0, 3) == 0.0f);
-  CHECK(m0(1, 3) == 0.0f);
-  CHECK(m0(2, 3) == 0.0f);
-  CHECK(m0(3, 3) == 1.0f);
-
-  mat44 mx, my, mz, ms, mt;
+  mat44 m0, mx, my, mz, ms, mt;
   mx.RotationX(Dg::PI_f * 0.5f);
   my.RotationY(Dg::PI_f * 0.5f);
   mz.RotationZ(Dg::PI_f * 0.5f);
@@ -88,6 +66,21 @@ TEST(Stack4, creation4)
 
   m0.Rotation(rx, ry, rx, Dg::XYX);
   CHECK(m0 == mx * my * mx);
+
+  m0.Rotation(rx, rz, rx, Dg::XZX);
+  CHECK(m0 == mx * mz * mx);
+
+  m0.Rotation(ry, rx, ry, Dg::YXY);
+  CHECK(m0 == my * mx * my);
+
+  m0.Rotation(ry, rz, ry, Dg::YZY);
+  CHECK(m0 == my * mz * my);
+
+  m0.Rotation(rz, rx, rz, Dg::ZXZ);
+  CHECK(m0 == mz * mx * mz);
+
+  m0.Rotation(rz, ry, rz, Dg::ZYZ);
+  CHECK(m0 == mz * my * mz);
 
 
   //m0.Rotation(1.0f, -0.23f, 0.34f);

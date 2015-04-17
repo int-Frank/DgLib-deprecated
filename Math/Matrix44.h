@@ -89,8 +89,6 @@ namespace Dg
     void SetRow(unsigned int i, const Vector4<Real>& row);
     void SetColumn(unsigned int i, const Vector4<Real>& col);
 
-    //void Set(const BasisR3&);
-
     //! Sets near-zero elements to 0.
     void Clean();
 
@@ -748,7 +746,6 @@ namespace Dg
                                            Real a_zRotation, 
                                            EulerOrder a_order)
   {
-    // This is an "unrolled" contatenation of rotation matrices X Y & Z
     Real Cx = static_cast<Real>(cos(a_xRotation));
     Real Sx = static_cast<Real>(sin(a_xRotation));
 
@@ -871,22 +868,77 @@ namespace Dg
     }
     case XZX:
     {
+      m_V[0] = Cy;
+      m_V[1] = Sy * Cz;
+      m_V[2] = Sz * Sy;
+
+      m_V[4] = -(Sy * Cx);
+      m_V[5] = (Cx * Cy * Cz) - (Sz * Sx);
+      m_V[6] = (Sx * Cz) + (Sz * Cy * Cx);
+
+      m_V[8] = (Sy * Sx);
+      m_V[9] = -(Sz * Cx) - (Sx * Cz * Cy);
+      m_V[10] = (Cx * Cz) - (Sz * Sx * Cy);
       break;
     }
     case YXY:
     {
+      m_V[0] = (Cx * Cz) - (Sz * Sx * Cy);
+      m_V[1] = Sy * Sx;
+      m_V[2] = -(Sz * Cx) - (Sx * Cy * Cz);
+
+      m_V[4] = Sz * Sy;
+      m_V[5] = Cy;
+      m_V[6] = Sy * Cz;
+
+      m_V[8] = (Sz * Cx * Cy) + (Sx * Cz);
+      m_V[9] = -(Sy * Cx);
+      m_V[10] = (Cx * Cy * Cz) - (Sz * Sx);
       break;
     }
     case YZY:
     {
+      m_V[0] = (Cx * Cy * Cz) - (Sz * Sx);
+      m_V[1] = Sy * Cx;
+      m_V[2] = -(Sz * Cx * Cy) - (Sx * Cz);
+
+      m_V[4] = -(Sy * Cz);
+      m_V[5] = Cy;
+      m_V[6] = Sz * Sy;
+
+      m_V[8] = (Sz * Cx) + (Sx * Cy * Cz);
+      m_V[9] = Sy * Sx;
+      m_V[10] = (Cx * Cz) - (Sz * Sx * Cy);
       break;
     }
     case ZXZ:
     {
+      m_V[0] = (Cx * Cz) - (Sz * Sx * Cy);
+      m_V[1] = (Sz * Cx) + (Sx * Cy * Cz);
+      m_V[2] = Sy * Sx;
+
+      m_V[4] = -(Sz * Cx * Cy) - (Sx * Cz);
+      m_V[5] = (Cx * Cy * Cz) - (Sz * Sx);
+      m_V[6] = Sy * Cx;
+
+      m_V[8] = Sz * Sy;
+      m_V[9] = -(Sy * Cz);
+      m_V[10] = Cy;
       break;
     }
     case ZYZ:
     {
+      m_V[0] = (Cx * Cy * Cz) - (Sz * Sx);
+      m_V[1] = (Sz * Cx * Cy) + (Sx * Cz);
+      m_V[2] = -(Sy * Cx);
+
+      m_V[4] = -(Sz * Cx) - (Sx * Cy * Cz);
+      m_V[5] = (Cx * Cz) - (Sz * Sx * Cy);
+      m_V[6] = Sy * Sx;
+
+      m_V[8] = Sy * Cz;
+      m_V[9] = Sz * Sy;
+      m_V[10] = Cy;
       break;
     }
     }

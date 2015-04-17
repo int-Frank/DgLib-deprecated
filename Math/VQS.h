@@ -135,7 +135,6 @@ namespace Dg
   void VQS<Real>::SetQ(const Quaternion<Real>& a_q)
   {
     m_q = a_q;
-    m_q.MakeValid();
 
   }	//End: VQS<Real>::Set()
 
@@ -175,7 +174,6 @@ namespace Dg
   void VQS<Real>::UpdateQ(const Quaternion<Real>& a_q)
   {
     m_q *= a_q;
-    m_q.MakeValid();
 
   }	//End: VQS<Real>::UpdateQ()
 
@@ -505,10 +503,6 @@ namespace Dg
   {
     m_v = _v;
     m_q = _q;
-
-    //Ensure m_q is valid
-    m_q.MakeValid();
-
     m_s = _s;
 
   }	//End: VQS<Real>::Set()

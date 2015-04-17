@@ -612,9 +612,6 @@ namespace Dg
     m_y = scaleFactor * a_axis.m_y;
     m_z = scaleFactor * a_axis.m_z;
 
-    //Ensure valid orientation quaternion
-    MakeValid();
-
   }   // End of Quaternion::Set()
 
 

@@ -134,7 +134,6 @@
     <ClCompile Include="SimpleRNG.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasisR3.h" />
     <ClInclude Include="BoundedNormal.h" />
     <ClInclude Include="Circle4.h" />
     <ClInclude Include="Cone.h" />
