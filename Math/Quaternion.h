@@ -68,10 +68,10 @@ namespace Dg
   //!
   //!	    void Set( Real zRotation, Real yRotation, Real xRotation );
   //!
-  //! Quaternion concatenation uses left-to-right convention, i.e.
-  //! To concatenate q_0, q_1, ..., q_n use
+  //! Quaternion concatenation uses left-to-right convention. For example the follow lines are equivalent
   //!
-  //!     q_final = q_0 * q_1 * ... * q_n;
+  //!     q_final = q_0 * q_1 * q_2 ... * q_n;
+  //!     q_final = ( ... ((q_0 * q_1) * q_2) ... * q_n);
   //!
   //! @author James M. Van Verth, Lars M. Bishop, modified by Frank B. Hart
   //! @date 4/10/2015
@@ -692,62 +692,6 @@ namespace Dg
     Normalize();
 
   }   // End of Quaternion::Set()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Quaternion::Set()
-  //-------------------------------------------------------------------------------
-  //		Set based on Rotation matrix
-  //-------------------------------------------------------------------------------
-  //template<typename Real>
-  //void Quaternion<Real>::Set(const Matrix44& rotation)
-  //{
-  //  //Get trace
-  //  Real trace = rotation.mV[0] + rotation.mV[5] + rotation.mV[10];
-  //  if (trace > 0.0f)
-  //  {
-  //    Real s = ::DgSqrt(trace + 1.0f);
-  //    w = s*0.5f;
-  //    Real recip = 0.5f / s;
-  //    x = (rotation(2, 1) - rotation(1, 2))*recip;
-  //    y = (rotation(0, 2) - rotation(2, 0))*recip;
-  //    z = (rotation(1, 0) - rotation(0, 1))*recip;
-  //  }
-  //  else
-  //  {
-  //    uint32 i = 0;
-  //    if (rotation(1, 1) > rotation(0, 0))
-  //      i = 1;
-  //    if (rotation(2, 2) > rotation(i, i))
-  //      i = 2;
-  //    uint32 j = (i + 1) % 3;
-  //    uint32 k = (j + 1) % 3;
-  //    Real s = ::DgSqrt(rotation(i, i) - rotation(j, j) - rotation(k, k) + 1.0f);
-  //    (*this)[i] = 0.5f*s;
-  //    Real recip = 0.5f / s;
-  //    w = (rotation(k, j) - rotation(j, k))*recip;
-  //    (*this)[j] = (rotation(j, i) + rotation(i, j))*recip;
-  //    (*this)[k] = (rotation(k, i) + rotation(i, k))*recip;
-  //  }
-
-  //}   // End of Quaternion::Quaternion()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Quaternion::Set()
-  //-------------------------------------------------------------------------------
-  //		Set based on 3 basis vectors
-  //-------------------------------------------------------------------------------
-  //template<typename Real>
-  //void Quaternion<Real>::Set(const BasisR3& basis)
-  //{
-  //  //Convert basis to a matrix
-  //  Matrix44 rot(basis);
-
-  //  //Set quaternion from the basis
-  //  Set(rot);
-
-  //}   // End of Quaternion::Quaternion()
 
 
   //-------------------------------------------------------------------------------

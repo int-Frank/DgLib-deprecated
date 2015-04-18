@@ -47,6 +47,11 @@ namespace Dg
   //!                [z.x z.y z.z 0]
   //!                [p.x p.y p.z 1]
   //!
+  //! Matrix concatenation uses left-to-right convention. For example the follow lines are equivalent
+  //!
+  //!     m_final = m_0 * m_1 * m_2 ... * m_n;
+  //!     m_final = ( ... ((m_0 * m_1) * m_2) ... * m_n);
+  //!
   //! @author James M. Van Verth, Lars M. Bishop, modified by Frank B. Hart
   //! @date 4/10/2015
   template<typename Real>
@@ -88,6 +93,10 @@ namespace Dg
                     Vector4<Real>& col2, Vector4<Real>& col3);
     void SetRow(unsigned int i, const Vector4<Real>& row);
     void SetColumn(unsigned int i, const Vector4<Real>& col);
+
+    //! Builds a quaternion based off the rotation matrix.
+    //! @pre Assumes valid rotation matrix.
+    Quaternion<Real> GetQuaternion() const;
 
     //! Sets near-zero elements to 0.
     void Clean();
@@ -536,6 +545,49 @@ namespace Dg
     m_V[a_i + 12] = a_col.m_w;
 
   }	//End: Matrix44::SetColumn()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Matrix44<Real>::GetQuaternion()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Quaternion<Real> Matrix44<Real>::GetQuaternion() const
+  {
+    Quaternion<Real> q;
+
+    //Get trace
+    Real tr = m_V[0] + m_V[5] + m_V[10];
+    if (tr > static_cast<Real>(0.0)) {
+      Real S = sqrt(tr + static_cast<Real>(1.0)) * static_cast<Real>(2.0); // S=4*q.m_w 
+      q.m_w = static_cast<Real>(0.25) * S;
+      q.m_x = (m_V[6] - m_V[9]) / S;
+      q.m_y = (m_V[8] - m_V[2]) / S;
+      q.m_z = (m_V[1] - m_V[4]) / S;
+    }
+    else if ((m_V[0] > m_V[5])&(m_V[0] > m_V[10])) {
+      Real S = sqrt(static_cast<Real>(1.0) + m_V[0] - m_V[5] - m_V[10]) * static_cast<Real>(2.0); // S=4*q.m_x 
+      q.m_w = (m_V[6] - m_V[9]) / S;
+      q.m_x = static_cast<Real>(0.25) * S;
+      q.m_y = (m_V[4] + m_V[1]) / S;
+      q.m_z = (m_V[8] + m_V[2]) / S;
+    }
+    else if (m_V[5] > m_V[10]) {
+      Real S = sqrt(static_cast<Real>(1.0) + m_V[5] - m_V[0] - m_V[10]) * static_cast<Real>(2.0); // S=4*q.m_y
+      q.m_w = (m_V[8] - m_V[2]) / S;
+      q.m_x = (m_V[4] + m_V[1]) / S;
+      q.m_y = static_cast<Real>(0.25) * S;
+      q.m_z = (m_V[9] + m_V[6]) / S;
+    }
+    else {
+      Real S = sqrt(static_cast<Real>(1.0) + m_V[10] - m_V[0] - m_V[5]) * static_cast<Real>(2.0); // S=4*q.m_z
+      q.m_w = (m_V[1] - m_V[4]) / S;
+      q.m_x = (m_V[8] + m_V[2]) / S;
+      q.m_y = (m_V[9] + m_V[6]) / S;
+      q.m_z = static_cast<Real>(0.25) * S;
+    }
+
+    return q;
+  }   // End of Matrix44<Real>::GetQuaternion()
 
 
   //--------------------------------------------------------------------------------

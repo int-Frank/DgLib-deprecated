@@ -178,7 +178,7 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   mz.RotationZ(Dg::PI_f * 0.5f);
   ms.Scaling(2.0f);
   mt.Translation(vec4(-10.0f, 0.0f, 0.0f, 0.0f));
-  vec4 v(1.0f, 0.0f, 0.0f, 0.0f);
+  vec4 v(1.0f, 0.0f, 0.0f, 0.0f), vr;
 
   v = v * my;
   CHECK(v == vec4(0.0f, 0.0f, -1.0f, 0.0f));
@@ -201,93 +201,165 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   my.RotationY(ry);
   mz.RotationZ(rz);
 
-  v.Set(1.32f, -7.934, -18.3896f, 0.0f);
+  v.Set(1.32f, -7.934f, -18.3896f, 0.0f);
 
   //Euler angles
 
   m0.Rotation(rx, ry, rz, Dg::XYZ);
-  CHECK(m0 == mx * my * mz);
+  CHECK(m0 == mx * my * mz);            //Check: Matrix concatenation
   q0.SetRotation(rx, ry, rz, Dg::XYZ);
-  CHECK(q0.Rotate(v) == v * m0);
+  vr = v * m0;
+  CHECK(q0.Rotate(v) == v * m0);        //Check: Equivanent matrix/quaternion concatenation
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
-  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(q0.Rotate(v) == v * m0);        //Check: Set matrix fom quaternion
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);        //Check: Set quaternion from matrix
+  CHECK(vr == v * m0);
 
   m0.Rotation(rx, ry, rz, Dg::XZY);
   CHECK(m0 == mx * mz * my);
   q0.SetRotation(rx, ry, rz, Dg::XZY);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(rx, ry, rz, Dg::YXZ);
   CHECK(m0 == my * mx * mz);
   q0.SetRotation(rx, ry, rz, Dg::YXZ);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(rx, ry, rz, Dg::YZX);
   CHECK(m0 == my * mz * mx);
   q0.SetRotation(rx, ry, rz, Dg::YZX);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(rx, ry, rz, Dg::ZYX);
   CHECK(m0 == mz * my * mx);
   q0.SetRotation(rx, ry, rz, Dg::ZYX);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(rx, ry, rz, Dg::ZXY);
   CHECK(m0 == mz * mx * my);
   q0.SetRotation(rx, ry, rz, Dg::ZXY);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(rx, ry, rx, Dg::XYX);
   CHECK(m0 == mx * my * mx);
   q0.SetRotation(rx, ry, rx, Dg::XYX);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(rx, rz, rx, Dg::XZX);
   CHECK(m0 == mx * mz * mx);
   q0.SetRotation(rx, rz, rx, Dg::XZX);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   
   m0.Rotation(ry, rx, ry, Dg::YXY);
   CHECK(m0 == my * mx * my);
   q0.SetRotation(ry, rx, ry, Dg::YXY);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(ry, rz, ry, Dg::YZY);
   CHECK(m0 == my * mz * my);
   q0.SetRotation(ry, rz, ry, Dg::YZY);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(rz, rx, rz, Dg::ZXZ);
   CHECK(m0 == mz * mx * mz);
   q0.SetRotation(rz, rx, rz, Dg::ZXZ);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   m0.Rotation(rz, ry, rz, Dg::ZYZ);
   CHECK(m0 == mz * my * mz);
   q0.SetRotation(rz, ry, rz, Dg::ZYZ);
+  vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
   m0.Rotation(q0);
   CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
+  q0 = m0.GetQuaternion();
+  CHECK(q0.Rotate(v) == v * m0);
+  CHECK(vr == v * m0);
 
   //Axis-angle
 
@@ -309,9 +381,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   q0.Set(vec4(0.0f, 0.0f, 1.0f, 0.0f), rx);
   CHECK(q0.Rotate(v) == v * m0);
 
-  vec4 axis(1.25, 0.43, -0.9345, 0.0f);
+  vec4 axis(1.25f, 0.43f, -0.9345f, 0.0f);
   axis.Normalize();
-  float angle = 0.9435;
+  float angle = 0.9435f;
 
   m0.Rotation(axis, angle);
   q0.Set(axis, angle);
