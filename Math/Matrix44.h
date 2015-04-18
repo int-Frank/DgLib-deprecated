@@ -136,10 +136,6 @@ namespace Dg
     //! Set as rotation matrix, rotating by 'angle' radians around z-axis.
     Matrix44& RotationZ(Real);
 
-    //! Gets one possible axis-angle pair that will generate this matrix. 
-    //! @pre The upper 3x3 is a rotation matrix.
-    void GetAxisAngle(Vector4<Real>& a_axis, Real& a_angle) const;
-
     //! Get quaternion from the upper 3x3 rotation matrix.
     //! @pre The upper 3x3 is a rotation matrix.
     void GetQuaternion(Quaternion<Real>&) const;
@@ -949,39 +945,28 @@ namespace Dg
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Rotation(const Vector4<Real>& a_axis, Real a_angle)
   {
-    Real c = Real(cos(a_angle));
-    Real s = Real(sin(a_angle));
-    Real t = static_cast<Real>(1.0) - c;
+    Real cs = cos(a_angle);
+    Real sn = sin(a_angle);
+    Real oneMinusCos = ((Real)1) - cs;
+    Real x0sqr = a_axis.m_x * a_axis.m_x;
+    Real x1sqr = a_axis.m_y * a_axis.m_y;
+    Real x2sqr = a_axis.m_z * a_axis.m_z;
+    Real x0x1m = a_axis.m_x * a_axis.m_y * oneMinusCos;
+    Real x0x2m = a_axis.m_x * a_axis.m_z * oneMinusCos;
+    Real x1x2m = a_axis.m_y * a_axis.m_z * oneMinusCos;
+    Real x0Sin = a_axis.m_x * sn;
+    Real x1Sin = a_axis.m_y * sn;
+    Real x2Sin = a_axis.m_z * sn;
 
-    Vector4<Real> nAxis = a_axis;
-    nAxis.m_w = static_cast<Real>(0.0);
-    nAxis.Normalize();
-
-    // intermediate values
-    Real tx = t*nAxis.m_x;  Real ty = t*nAxis.m_y;  Real tz = t*nAxis.m_z;
-    Real sx = s*nAxis.m_x;  Real sy = s*nAxis.m_y;  Real sz = s*nAxis.m_z;
-    Real txy = tx*nAxis.m_y; Real tyz = tx*nAxis.m_z; Real txz = tx*nAxis.m_z;
-
-    // set matrix
-    m_V[0] = tx*nAxis.m_x + c;
-    m_V[4] = txy - sz;
-    m_V[8] = txz + sy;
-    m_V[12] = static_cast<Real>(0.0);
-
-    m_V[1] = txy + sz;
-    m_V[5] = ty*nAxis.m_y + c;
-    m_V[9] = tyz - sx;
-    m_V[13] = static_cast<Real>(0.0);
-
-    m_V[2] = txz - sy;
-    m_V[6] = tyz + sx;
-    m_V[10] = tz*nAxis.m_z + c;
-    m_V[14] = static_cast<Real>(0.0);
-
-    m_V[3] = static_cast<Real>(0.0);
-    m_V[7] = static_cast<Real>(0.0);
-    m_V[11] = static_cast<Real>(0.0);
-    m_V[15] = static_cast<Real>(1.0);
+    m_V[0] = x0sqr*oneMinusCos + cs;
+    m_V[4] = x0x1m - x2Sin;
+    m_V[8] = x0x2m + x1Sin;
+    m_V[1] = x0x1m + x2Sin;
+    m_V[5] = x1sqr*oneMinusCos + cs;
+    m_V[9] = x1x2m - x0Sin;
+    m_V[2] = x0x2m - x1Sin;
+    m_V[6] = x1x2m + x0Sin;
+    m_V[10] = x2sqr*oneMinusCos + cs;
 
     return *this;
 
@@ -1012,23 +997,23 @@ namespace Dg
     zz = a_rotate.m_z * zs;
 
     m_V[0] = static_cast<Real>(1.0) - (yy + zz);
-    m_V[1] = xy - wz;
-    m_V[2] = xz + wy;
-    m_V[3] = static_cast<Real>(0.0);
-
-    m_V[4] = xy + wz;
-    m_V[5] = static_cast<Real>(1.0) - (xx + zz);
-    m_V[6] = yz - wx;
-    m_V[7] = static_cast<Real>(0.0);
-
-    m_V[8] = xz - wy;
-    m_V[9] = yz + wx;
-    m_V[10] = static_cast<Real>(1.0) - (xx + yy);
-    m_V[11] = static_cast<Real>(0.0);
-
+    m_V[4] = xy - wz;
+    m_V[8] = xz + wy;
     m_V[12] = static_cast<Real>(0.0);
+
+    m_V[1] = xy + wz;
+    m_V[5] = static_cast<Real>(1.0) - (xx + zz);
+    m_V[9] = yz - wx;
     m_V[13] = static_cast<Real>(0.0);
+
+    m_V[2] = xz - wy;
+    m_V[6] = yz + wx;
+    m_V[10] = static_cast<Real>(1.0) - (xx + yy);
     m_V[14] = static_cast<Real>(0.0);
+
+    m_V[3] = static_cast<Real>(0.0);
+    m_V[7] = static_cast<Real>(0.0);
+    m_V[11] = static_cast<Real>(0.0);
     m_V[15] = static_cast<Real>(1.0);
 
     return *this;
@@ -1183,48 +1168,6 @@ namespace Dg
     return *this;
 
   }   // End: Matrix44::RotationZ()
-
-
-  //----------------------------------------------------------------------------
-  //	@	Matrix44::GetAxisAngle()
-  // ---------------------------------------------------------------------------
-  template<typename Real>
-  void Matrix44<Real>::GetAxisAngle(Vector4<Real>& a_axis, Real& a_angle) const
-  {
-    Real trace = m_V[0] + m_V[5] + m_V[10];
-    Real cosTheta = static_cast<Real>(0.5)*(trace - static_cast<Real>(1.0));
-    a_angle = Real(acos(cosTheta));
-
-    // a_angle is static_cast<Real>(0.0), a_axis can be anything
-    if (Dg::IsZero(a_angle))
-    {
-      a_axis.Set(static_cast<Real>(1.0), static_cast<Real>(0.0), static_cast<Real>(0.0), static_cast<Real>(0.0));
-    }
-    // standard case
-    else if (a_angle < static_cast<Real>(PI_d - EPSILON_d))
-    {
-      a_axis.Set(m_V[6] - m_V[9], m_V[8] - m_V[2], m_V[1] - m_V[4], static_cast<Real>(0.0));
-      a_axis.Normalize();
-    }
-    // a_angle is 180 degrees
-    else
-    {
-      unsigned int i = 0;
-      if (m_V[5] > m_V[0])
-        i = 1;
-      if (m_V[10] > m_V[i + 4 * i])
-        i = 2;
-      unsigned int j = (i + 1) % 3;
-      unsigned int k = (j + 1) % 3;
-      Real s = sqrt(m_V[i + 4 * i] - m_V[j + 4 * j] - m_V[k + 4 * k] + static_cast<Real>(1.0));
-      a_axis[i] = static_cast<Real>(0.5) * s;
-      Real recip = static_cast<Real>(1.0) / s;
-      a_axis[j] = (m_V[i + 4 * j])*recip;
-      a_axis[k] = (m_V[k + 4 * i])*recip;
-      a_axis.w() = static_cast<Real>(0.0);
-    }
-
-  }  // End: Matrix44::GetAxisAngle()
 
 
   //----------------------------------------------------------------------------

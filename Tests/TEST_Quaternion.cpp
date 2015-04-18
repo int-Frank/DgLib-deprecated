@@ -80,9 +80,22 @@ TEST(Stack_Quaternion_Rotation, creation_Quaternion_Rotation)
 
   CHECK(q3.IsUnit());
 
+  //Axis-angle
+
   q3.GetAxisAngle(axis, angle);
   q4.Set(axis, angle);
   CHECK(q4 == q3);
+
+  q4.Set(vec4(1.0f, 0.0f, 0.0f, 0.0f), xr);
+  CHECK(q4 == qx);
+
+  q4.Set(vec4(0.0f, 1.0f, 0.0f, 0.0f), yr);
+  CHECK(q4 == qy);
+
+  q4.Set(vec4(0.0f, 0.0f, 1.0f, 0.0f), zr);
+  CHECK(q4 == qz);
+
+  //Euler angles
 
   q3.SetRotation(xr, yr, zr, Dg::XYZ);
   CHECK(q3.IsUnit());
@@ -149,6 +162,7 @@ TEST(Stack_Quaternion_Rotation, creation_Quaternion_Rotation)
   q3.SetRotation(xr, yr, zr, Dg::ZYZ);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
+
 }
 
 
