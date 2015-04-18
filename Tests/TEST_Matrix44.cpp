@@ -12,10 +12,27 @@ typedef Dg::Vector4 < float >     vec4;
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
 {
+  mat44 m0;
+  CHECK(m0.IsIdentity());
 
+  float data[16] = {};
+  m0.Set(data);
+  CHECK(m0.IsZero());
+
+  mat44 ms, mr, mt;
+  ms.Scaling(vec4(1.34f, 0.39f, 14.3f, 0.0f));
+  mr.Rotation(0.234f, -1.49f, 2.457f, Dg::ZXY);
+  //mr.RotationX(0.234f);
+  mt.Translation(vec4(2.3f, 53.24f, -12.9f, 0.0f));
+
+  m0 = mt * mr * ms;
+  mat44 m1, m2;
+  m1 = AffineInverse(m0);
+  m2 = AffineInverse(m1);
+  CHECK(m2 == m0);
 }
 
-TEST(Stack4, creation4)
+TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
 {
   mat44 m0, mx, my, mz, ms, mt;
   mx.RotationX(Dg::PI_f * 0.5f);

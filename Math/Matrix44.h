@@ -609,35 +609,34 @@ namespace Dg
     Matrix44<Real> result;
 
     //compute upper left 3x3 matrix determinant
-    Real cofactor0 = a_mat.m_V[5] * a_mat.m_V[10] - a_mat.m_V[6] * a_mat.m_V[9];
-    Real cofactor4 = a_mat.m_V[2] * a_mat.m_V[9] - a_mat.m_V[1] * a_mat.m_V[10];
-    Real cofactor8 = a_mat.m_V[1] * a_mat.m_V[6] - a_mat.m_V[2] * a_mat.m_V[5];
-    Real det = a_mat.m_V[0] * cofactor0 + a_mat.m_V[4] * cofactor4 + a_mat.m_V[8] * cofactor8;
+    Real cofactor0 = a_mat.m_V[5] * a_mat.m_V[10] - a_mat.m_V[9] * a_mat.m_V[6];
+    Real cofactor1 = a_mat.m_V[4] * a_mat.m_V[10] - a_mat.m_V[6] * a_mat.m_V[8];
+    Real cofactor2 = a_mat.m_V[4] * a_mat.m_V[9] - a_mat.m_V[8] * a_mat.m_V[5];
+    Real det = a_mat.m_V[0] * cofactor0 - a_mat.m_V[1] * cofactor1 + a_mat.m_V[2] * cofactor2;
     if (Dg::IsZero(det))
     {
-      //std::cerr << "@Matrix44::AffintInverse() -> No Inverse exists." << std::endl;
       return result;
     }
 
     // create adjunct matrix and multiply by 1/det to get upper 3x3
     Real invDet = static_cast<Real>(1.0) / det;
     result.m_V[0] = invDet*cofactor0;
-    result.m_V[1] = invDet*cofactor4;
-    result.m_V[2] = invDet*cofactor8;
+    result.m_V[4] = invDet*(-cofactor1);
+    result.m_V[8] = invDet*cofactor2;
 
-    result.m_V[4] = invDet*(a_mat.m_V[6] * a_mat.m_V[8] - a_mat.m_V[4] * a_mat.m_V[10]);
+    result.m_V[1] = invDet*(a_mat.m_V[2] * a_mat.m_V[9] - a_mat.m_V[1] * a_mat.m_V[10]);
     result.m_V[5] = invDet*(a_mat.m_V[0] * a_mat.m_V[10] - a_mat.m_V[2] * a_mat.m_V[8]);
-    result.m_V[6] = invDet*(a_mat.m_V[2] * a_mat.m_V[4] - a_mat.m_V[0] * a_mat.m_V[6]);
-
-    result.m_V[8] = invDet*(a_mat.m_V[4] * a_mat.m_V[9] - a_mat.m_V[5] * a_mat.m_V[8]);
     result.m_V[9] = invDet*(a_mat.m_V[1] * a_mat.m_V[8] - a_mat.m_V[0] * a_mat.m_V[9]);
+
+    result.m_V[2] = invDet*(a_mat.m_V[1] * a_mat.m_V[6] - a_mat.m_V[2] * a_mat.m_V[5]);
+    result.m_V[6] = invDet*(a_mat.m_V[2] * a_mat.m_V[4] - a_mat.m_V[0] * a_mat.m_V[6]);
     result.m_V[10] = invDet*(a_mat.m_V[0] * a_mat.m_V[5] - a_mat.m_V[1] * a_mat.m_V[4]);
 
     // multiply -translation by inverted 3x3 to get its inverse
 
-    result.m_V[12] = -result.m_V[0] * a_mat.m_V[12] - result.m_V[4] * a_mat.m_V[13] - result.m_V[8] * a_mat.m_V[14];
-    result.m_V[13] = -result.m_V[1] * a_mat.m_V[12] - result.m_V[5] * a_mat.m_V[13] - result.m_V[9] * a_mat.m_V[14];
-    result.m_V[14] = -result.m_V[2] * a_mat.m_V[12] - result.m_V[6] * a_mat.m_V[13] - result.m_V[10] * a_mat.m_V[14];
+    result.m_V[12] = -result.m_V[0] * a_mat.m_V[12] - result.m_V[1] * a_mat.m_V[13] - result.m_V[2] * a_mat.m_V[14];
+    result.m_V[13] = -result.m_V[4] * a_mat.m_V[12] - result.m_V[5] * a_mat.m_V[13] - result.m_V[6] * a_mat.m_V[14];
+    result.m_V[14] = -result.m_V[8] * a_mat.m_V[12] - result.m_V[9] * a_mat.m_V[13] - result.m_V[10] * a_mat.m_V[14];
 
     return result;
 
