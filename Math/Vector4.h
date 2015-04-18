@@ -31,6 +31,13 @@ namespace Dg
   Vector4<Real> GetRandomVector();
 
   template<typename Real>
+  void GetBasis(const Vector4<Real>& a0,
+                const Vector4<Real>& a1,
+                Vector4<Real>& x0, 
+                Vector4<Real>& x1, 
+                Vector4<Real>& x2);
+
+  template<typename Real>
   Vector4<Real> Perpendicular(const Vector4<Real>&);
 
   template<typename Real>
@@ -135,6 +142,14 @@ namespace Dg
     //! Returns a random unit vector.
     template<typename T>
     friend Vector4<T> GetRandomVector();
+
+    //! Creates an orthogonal basis from two input vectors
+    template<typename T>
+    friend void GetBasis(const Vector4<T>& a0, 
+                         const Vector4<T>& a1,
+                         Vector4<T>& x0, 
+                         Vector4<T>& x1, 
+                         Vector4<T>& x2);
 
     //! Returns a perpendicular vector.
     template<typename T>
@@ -490,6 +505,90 @@ namespace Dg
                          static_cast<Real>(0.0));
 
   }	//End: Cross()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	GetBasis()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void GetBasis(const Vector4<Real>& a_a0,
+                const Vector4<Real>& a_a1,
+                Vector4<Real>& a_x0,
+                Vector4<Real>& a_x1,
+                Vector4<Real>& a_x2)
+  {
+    bool is_a1_zero = a_a1.IsZero();
+
+    //Check for zero vectors, handle separately
+    if (a_a0.IsZero())
+    {
+      //Both x0, x1 are zero vectors
+      if (is_a1_zero)
+      {
+        a_x0 = Vector4<Real>(static_cast<Real>(1.0), static_cast<Real>(0.0), static_cast<Real>(0.0), static_cast<Real>(0.0));
+        a_x1 = Vector4<Real>(static_cast<Real>(0.0), static_cast<Real>(1.0), static_cast<Real>(0.0), static_cast<Real>(0.0));
+        a_x2 = Vector4<Real>(static_cast<Real>(0.0), static_cast<Real>(0.0), static_cast<Real>(1.0), static_cast<Real>(0.0));
+
+        return;
+      }
+      //x0 only is zero vector
+      else
+      {
+        //Build the basis off a_a1
+        a_x0 = a_a1;
+        a_x0.Normalize();
+
+        //Set x1
+        a_x1 = Perpendicular(a_x0);
+
+        //Find perpendicular vector to x0, x1.
+        a_x2 = Cross(a_x0, a_x1);
+
+        return;
+      }
+    }
+    //x1 only is zero vector
+    else if (is_a1_zero)
+    {
+      //Build the basis off a_a0
+      a_x0 = a_a0;
+      a_x0.Normalize();
+
+      //Set x1
+      a_x1 = Perpendicular(a_x0);
+
+      //Find perpendicular vector to x0, x1.
+      a_x2 = Cross(a_x0, a_x1);
+
+      return;
+    }
+
+    //Assign x0
+    a_x0 = a_a0;
+    a_x0.Normalize();
+
+    //Calculate x2
+    a_x2 = Cross(a_x0, a_a1);
+
+    //Test to see if a_a0 and a_a1 are parallel
+    if (IsZero(a_x2.LengthSquared()))
+    {
+      //Find a perpendicular vector
+      a_x1 = Perpendicular(a_x0);
+
+      //Calculate x2
+      a_x2 = Cross(a_x0, a_x1);
+
+      return;
+    }
+
+    //Normalize x2
+    a_x2.Normalize();
+
+    //Calculate x1
+    a_x1 = Cross(a_x2, a_x0);
+
+  } //End: GetBasis()
 
 
   //--------------------------------------------------------------------------------

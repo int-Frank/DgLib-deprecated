@@ -111,4 +111,22 @@ TEST(Stack_Vector4_Other, creation_Vector4_Other)
   CHECK(Dg::IsZero(Dot(v, vs)));
 
   v = Dg::GetRandomVector<float>(v, 10.3f);
+
+  // Basis ///////////////////////////////////////////////
+
+  vec4 v0, v1, v2;
+
+  Dg::GetBasis(vec4(0.0f, 12.0f, 0.0f, 0.0f),
+    vec4(0.0f, 0.0f, 12.3f, 0.0f),
+    v0, v1, v2);
+  CHECK(v0 == vec4(0.0f, 1.0f, 0.0f, 0.0f));
+  CHECK(v1 == vec4(0.0f, 0.0f, 1.0f, 0.0f));
+  CHECK(v2 == vec4(1.0f, 0.0f, 0.0f, 0.0f));
+
+  Dg::GetBasis(vec4(0.0f, 0.0f, 0.0f, 0.0f), 
+               vec4(0.0f, 0.0f, 0.0f, 0.0f),
+               v0, v1, v2);
+  CHECK(v0 == vec4(1.0f, 0.0f, 0.0f, 0.0f));
+  CHECK(v1 == vec4(0.0f, 1.0f, 0.0f, 0.0f));
+  CHECK(v2 == vec4(0.0f, 0.0f, 1.0f, 0.0f));
 }

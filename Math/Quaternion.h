@@ -140,9 +140,6 @@ namespace Dg
     //! Set rotation quaternion.
     void SetRotation(Real rx, Real ry, Real rz, EulerOrder);
 
-    //! Set based on an origin, a target to orientate to, and a final up vector.
-    //void Set(const Vector4& a_origin, const Vector4& a_target, const Vector4& a_up);
-
     //! Set quaternion based on axis-angle.
     void Set(const Vector4<Real>& axis, Real angle);
 
@@ -154,6 +151,11 @@ namespace Dg
 
     //! Get axis-angle based on quaternion.
     void GetAxisAngle(Vector4<Real>& axis, Real& angle);
+
+    //! Get the set of basis vectors associated with the quaternion
+    void GetBasis(Vector4<Real>& a_x0,
+                  Vector4<Real>& a_x1,
+                  Vector4<Real>& a_x2) const;
 
     //! Sets near-zero elements to 0.
     void Clean();
@@ -623,31 +625,6 @@ namespace Dg
   //-------------------------------------------------------------------------------
   //	@	Quaternion::()
   //-------------------------------------------------------------------------------
-  //		Set based on an origin, a target to orientate to, and a final up vector.
-  //-------------------------------------------------------------------------------
-  //template<typename Real>
-  //void Quaternion<Real>::Set(const Vector4<Real>& a_origin, 
-  //                           const Vector4<Real>& a_target, 
-  //                           const Vector4<Real>& a_up)
-  //{
-  //  //Find the direction to the target
-  //  Vector4<Real> direction = a_target - a_origin;
-
-  //  //Find the basis vectors of the orientation
-  //  BasisR3 basis(direction, up);
-
-  //  //Convert basis to a matrix
-  //  Matrix44 rot(basis);
-
-  //  //Set quaternion from the basis
-  //  Set(rot);
-
-  //}	//End: Quaternion::Set()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Quaternion::()
-  //-------------------------------------------------------------------------------
   template<typename Real>
   void Quaternion<Real>::Set(const Vector4<Real>& a_from, const Vector4<Real>& a_to)
   {
@@ -747,6 +724,47 @@ namespace Dg
     }
 
   }   // End of Quaternion::GetAxisAngle()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Quaternion::GetBasis()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  void Quaternion<Real>::GetBasis(Vector4<Real>& a_x0,
+                                  Vector4<Real>& a_x1,
+                                  Vector4<Real>& a_x2) const
+  {
+    Real xs, ys, zs, wx, wy, wz, xx, xy, xz, yy, yz, zz;
+
+    xs = m_x + m_x;
+    ys = m_y + m_y;
+    zs = m_z + m_z;
+    wx = m_w * xs;
+    wy = m_w * ys;
+    wz = m_w * zs;
+    xx = m_x * xs;
+    xy = m_x * ys;
+    xz = m_x * zs;
+    yy = m_y * ys;
+    yz = m_y * zs;
+    zz = m_z * zs;
+
+    a_x0.m_x = static_cast<Real>(1.0) - (yy + zz);
+    a_x0.m_y= xy + wz;
+    a_x0.m_z = xz - wy;
+    a_x0.m_w = static_cast<Real>(0.0);
+
+    a_x1.m_x = xy - wz;
+    a_x1.m_y = static_cast<Real>(1.0) - (xx + zz);
+    a_x1.m_z = yz + wx;
+    a_x1.m_w = static_cast<Real>(0.0);
+
+    a_x2.m_x = xz + wy;
+    a_x2.m_y = yz - wx;
+    a_x2.m_z = static_cast<Real>(1.0) - (xx + yy);
+    a_x2.m_w = static_cast<Real>(0.0);
+
+  }   // End of Quaternion::GetGetBasis()
 
 
   //-------------------------------------------------------------------------------

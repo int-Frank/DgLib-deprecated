@@ -25,6 +25,7 @@
 
 #include "Vector4.h"
 #include "Quaternion.h"
+#include "Matrix44.h"
 #include "dgmath.h"
 
 namespace Dg
@@ -60,18 +61,15 @@ namespace Dg
     VQS(const VQS& a_other) : m_v(a_other.m_v), m_q(a_other.m_q), m_s(a_other.m_s) {}
     VQS& operator=(const VQS&);
 
+    //Ensure valid VQS.
+    void MakeValid();
+
     //Set data
+    void Set(Matrix44<Real> const &);
     void Set(const Vector4<Real>&, const Quaternion<Real>&, Real);
-    void Set(const Vector4<Real>& a_origin,
-             const Vector4<Real>& a_target,
-             const Vector4<Real>& a_up,
-             Real a_scale = static_cast<Real>(1.0));
     void SetV(const Vector4<Real>&);
     void SetQ(const Quaternion<Real>&);
     void SetS(Real);
-
-    //Ensure valid VQS.
-    void MakeValid();
 
     //Update data
     void UpdateV(const Vector4<Real>&);
@@ -102,6 +100,7 @@ namespace Dg
 
     //Returns
     void Get(Vector4<Real>& a_v, Quaternion<Real>& a_q, Real& a_s) const;
+    void GetMatrix(Matrix44<Real>&);
     const Vector4<Real>& V()	  const	{ return m_v; }
     const Quaternion<Real>& Q() const	{ return m_q; }
     Real S()	                  const	{ return m_s; }

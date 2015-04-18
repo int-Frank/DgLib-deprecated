@@ -56,6 +56,21 @@ TEST(Stack_Quaternion_Construction, creation_Quaternion_Construction)
 
   CHECK((q0[0] == 0.707106769f) && (q0[1] == 0.408248305f) && (q0[2] == -0.408248305f) && (q0[3] == 0.408248305f));
   CHECK((q1[0] == 0.707106769f) && (q1[1] == 0.408248305f) && (q1[2] == -0.408248305f) && (q1[3] == 0.408248305f));
+
+  // From-To ///////////////////////////
+
+  v1.Set(1.0f, 0.0f, 0.0f, 0.0f);
+  v2.Set(0.0f, 0.0f, 1.0f, 0.0f);
+  q0.Set(v1, v2);
+  q1.SetRotationY(-Dg::PI_f * 0.5f);
+  CHECK(q0 == q1);
+
+  v1.Set(1.0f, 0.0f, 0.0f, 0.0f);
+  v2.Set(1.0f, 0.0f, 1.0f, 0.0f);
+  v2.Normalize();
+  q0.Set(v1, v2);
+  q1.SetRotationY(-Dg::PI_f * 0.25f);
+  CHECK(q0 == q1);
 }
 
 //-------------------------------------------------------------------------------
@@ -163,6 +178,52 @@ TEST(Stack_Quaternion_Rotation, creation_Quaternion_Rotation)
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
 
+}
+
+
+//-------------------------------------------------------------------------------
+//		Conversion
+//-------------------------------------------------------------------------------
+TEST(Stack_Quaternion_Conversion, creation_Quaternion_Conversion)
+{
+  quat q;
+  vec4 v0, v1, v2;
+
+  q.SetRotationX(Dg::PI_f / 2.0f);
+  q.GetBasis(v0, v1, v2);
+  CHECK(v0 == vec4(1.0f, 0.0f, 0.0f, 0.0f));
+  CHECK(v1 == vec4(0.0f, 0.0f, 1.0f, 0.0f));
+  CHECK(v2 == vec4(0.0f, -1.0f, 0.0f, 0.0f));
+
+  q.SetRotationY(Dg::PI_f / 2.0f);
+  q.GetBasis(v0, v1, v2);
+  CHECK(v0 == vec4(0.0f, 0.0f, -1.0f, 0.0f));
+  CHECK(v1 == vec4(0.0f, 1.0f, 0.0f, 0.0f));
+  CHECK(v2 == vec4(1.0f, 0.0f, 0.0f, 0.0f));
+
+  q.SetRotationZ(Dg::PI_f / 2.0f);
+  q.GetBasis(v0, v1, v2);
+  CHECK(v0 == vec4(0.0f, 1.0f, 0.0f, 0.0f));
+  CHECK(v1 == vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+  CHECK(v2 == vec4(0.0f, 0.0f, 1.0f, 0.0f));
+
+  q.SetRotationX(-Dg::PI_f / 2.0f);
+  q.GetBasis(v0, v1, v2);
+  CHECK(v0 == vec4(1.0f, 0.0f, 0.0f, 0.0f));
+  CHECK(v1 == vec4(0.0f, 0.0f, -1.0f, 0.0f));
+  CHECK(v2 == vec4(0.0f, 1.0f, 0.0f, 0.0f));
+
+  q.SetRotationY(-Dg::PI_f / 2.0f);
+  q.GetBasis(v0, v1, v2);
+  CHECK(v0 == vec4(0.0f, 0.0f, 1.0f, 0.0f));
+  CHECK(v1 == vec4(0.0f, 1.0f, 0.0f, 0.0f));
+  CHECK(v2 == vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+
+  q.SetRotationZ(-Dg::PI_f / 2.0f);
+  q.GetBasis(v0, v1, v2);
+  CHECK(v0 == vec4(0.0f, -1.0f, 0.0f, 0.0f));
+  CHECK(v1 == vec4(1.0f, 0.0f, 0.0f, 0.0f));
+  CHECK(v2 == vec4(0.0f, 0.0f, 1.0f, 0.0f));
 }
 
 
