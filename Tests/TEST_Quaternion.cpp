@@ -190,6 +190,7 @@ TEST(Stack_Quaternion_Operations, creation_Quaternion_Operations)
   float r_dot = Dg::Dot(q1, q0);
 
   vec4 v(1.0f, 0.0f, 0.0f, 0.0f);
+  vec4 v0 = v;
 
   q0.SetRotationX(Dg::PI_f * 0.5f);
   q1.SetRotationY(Dg::PI_f * 0.5f);
@@ -203,6 +204,8 @@ TEST(Stack_Quaternion_Operations, creation_Quaternion_Operations)
 
   q2.RotateSelf(v);
   CHECK(v == vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+
+  CHECK((q1 * q0 * q2).Rotate(v0) == vec4(-1.0f, 0.0f, 0.0f, 0.0f));
 }
 
 

@@ -1,1 +1,2 @@
-There were no test failures
+Failure: "m1 == m0" line 278 in TEST_Matrix44.cpp
+There were 1 failures

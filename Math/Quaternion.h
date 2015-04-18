@@ -68,6 +68,11 @@ namespace Dg
   //!
   //!	    void Set( Real zRotation, Real yRotation, Real xRotation );
   //!
+  //! Quaternion concatenation uses left-to-right convention, i.e.
+  //! To concatenate q_0, q_1, ..., q_n use
+  //!
+  //!     q_final = q_0 * q_1 * ... * q_n;
+  //!
   //! @author James M. Van Verth, Lars M. Bishop, modified by Frank B. Hart
   //! @date 4/10/2015
   template<typename Real>
@@ -484,39 +489,39 @@ namespace Dg
 
     switch (a_order)
     {
-    case XYZ:
+    case ZYX:
     {
       m_w = Cx*Cy*Cz - Sx*Sy*Sz;
       m_x = Sx*Cy*Cz + Cx*Sy*Sz;
       m_y = Cx*Sy*Cz - Sx*Cy*Sz;
       m_z = Cx*Cy*Sz + Sx*Sy*Cz;
-      break;
-    }
-    case XZY:
-    {
-      m_w = Cx*Cy*Cz + Sx*Sy*Sz;
-      m_x = Sx*Cy*Cz - Cx*Sy*Sz;
-      m_y = Cx*Sy*Cz - Sx*Cy*Sz;
-      m_z = Cx*Cy*Sz + Sx*Sy*Cz;
-      break;
-    }
-    case YXZ:
-    {
-      m_w = Cx*Cy*Cz + Sx*Sy*Sz;
-      m_x = Sx*Cy*Cz + Cx*Sy*Sz;
-      m_y = Cx*Sy*Cz - Sx*Cy*Sz;
-      m_z = Cx*Cy*Sz - Sx*Sy*Cz;
       break;
     }
     case YZX:
     {
+      m_w = Cx*Cy*Cz + Sx*Sy*Sz;
+      m_x = Sx*Cy*Cz - Cx*Sy*Sz;
+      m_y = Cx*Sy*Cz - Sx*Cy*Sz;
+      m_z = Cx*Cy*Sz + Sx*Sy*Cz;
+      break;
+    }
+    case ZXY:
+    {
+      m_w = Cx*Cy*Cz + Sx*Sy*Sz;
+      m_x = Sx*Cy*Cz + Cx*Sy*Sz;
+      m_y = Cx*Sy*Cz - Sx*Cy*Sz;
+      m_z = Cx*Cy*Sz - Sx*Sy*Cz;
+      break;
+    }
+    case XZY:
+    {
       m_w = Cx*Cy*Cz - Sx*Sy*Sz;
       m_x = Sx*Cy*Cz + Cx*Sy*Sz;
       m_y = Cx*Sy*Cz + Sx*Cy*Sz;
       m_z = Cx*Cy*Sz - Sx*Sy*Cz;
       break;
     }
-    case ZYX:
+    case XYZ:
     {
       m_w = Cx*Cy*Cz + Sx*Sy*Sz;
       m_x = Sx*Cy*Cz - Cx*Sy*Sz;
@@ -524,7 +529,7 @@ namespace Dg
       m_z = Cx*Cy*Sz - Sx*Sy*Cz;
       break;
     }
-    case ZXY:
+    case YXZ:
     {
       m_w = Cx*Cy*Cz - Sx*Sy*Sz;
       m_x = Sx*Cy*Cz - Cx*Sy*Sz;
@@ -534,50 +539,50 @@ namespace Dg
     }
     case XYX:
     {
-      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
-      m_x = Cx*Cy*Sz + Sx*Cy*Cz;
-      m_y = Cx*Sy*Cz + Sx*Sy*Sz;
-      m_z = Sx*Sy*Cz - Cx*Sy*Sz;
+      m_w = Cz*Cy*Cx - Sz*Cy*Sx;
+      m_x = Cz*Cy*Sx + Sz*Cy*Cx;
+      m_y = Cz*Sy*Cx + Sz*Sy*Sx;
+      m_z = Sz*Sy*Cx - Cz*Sy*Sx;
       break;
     }
     case XZX:
     {
-      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
-      m_x = Cx*Cy*Sz + Sx*Cy*Cz;
-      m_y = Cx*Sy*Sz - Sx*Sy*Cz;
-      m_z = Cx*Sy*Cz + Sx*Sy*Sz;
+      m_w = Cz*Cy*Cx - Sz*Cy*Sx;
+      m_x = Cz*Cy*Sx + Sz*Cy*Cx;
+      m_y = Cz*Sy*Sx - Sz*Sy*Cx;
+      m_z = Cz*Sy*Cx + Sz*Sy*Sx;
       break;
     }
     case YXY:
     {
-      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
-      m_x = Sx*Sy*Sz + Cx*Sy*Cz;
-      m_y = Cx*Cy*Sz + Sx*Cy*Cz;
-      m_z = Cx*Sy*Sz - Sx*Sy*Cz;
+      m_w = Cz*Cy*Cx - Sz*Cy*Sx;
+      m_x = Sz*Sy*Sx + Cz*Sy*Cx;
+      m_y = Cz*Cy*Sx + Sz*Cy*Cx;
+      m_z = Cz*Sy*Sx - Sz*Sy*Cx;
       break;
     }
     case YZY:
     {
-      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
-      m_x = Sx*Sy*Cz - Cx*Sy*Sz;
-      m_y = Cx*Cy*Sz + Sx*Cy*Cz;
-      m_z = Cx*Sy*Cz + Sx*Sy*Sz;
+      m_w = Cz*Cy*Cx - Sz*Cy*Sx;
+      m_x = Sz*Sy*Cx - Cz*Sy*Sx;
+      m_y = Cz*Cy*Sx + Sz*Cy*Cx;
+      m_z = Cz*Sy*Cx + Sz*Sy*Sx;
       break;
     }
     case ZXZ:
     {
-      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
-      m_x = Cx*Sy*Cz + Sx*Sy*Sz;
-      m_y = Sx*Sy*Cz - Cx*Sy*Sz;
-      m_z = Cx*Cy*Sz + Sx*Cy*Cz;
+      m_w = Cz*Cy*Cx - Sz*Cy*Sx;
+      m_x = Cz*Sy*Cx + Sz*Sy*Sx;
+      m_y = Sz*Sy*Cx - Cz*Sy*Sx;
+      m_z = Cz*Cy*Sx + Sz*Cy*Cx;
       break;
     }
     case ZYZ:
     {
-      m_w = Cx*Cy*Cz - Sx*Cy*Sz;
-      m_x = Cx*Sy*Sz - Sx*Sy*Cz;
-      m_y = Cx*Sy*Cz + Sx*Sy*Sz;
-      m_z = Cx*Cy*Sz + Sx*Cy*Cz;
+      m_w = Cz*Cy*Cx - Sz*Cy*Sx;
+      m_x = Cz*Sy*Sx - Sz*Sy*Cx;
+      m_y = Cz*Sy*Cx + Sz*Sy*Sx;
+      m_z = Cz*Cy*Sx + Sz*Cy*Cx;
       break;
     }
     }
@@ -1012,10 +1017,10 @@ namespace Dg
   Quaternion<Real> Quaternion<Real>::operator*(const Quaternion<Real>& a_other) const
   {
     return Quaternion<Real>(
-      m_w*a_other.m_w - m_x*a_other.m_x - m_y*a_other.m_y - m_z*a_other.m_z,
-      m_w*a_other.m_x + m_x*a_other.m_w + m_y*a_other.m_z - m_z*a_other.m_y,
-      m_w*a_other.m_y + m_y*a_other.m_w + m_z*a_other.m_x - m_x*a_other.m_z,
-      m_w*a_other.m_z + m_z*a_other.m_w + m_x*a_other.m_y - m_y*a_other.m_x);
+      a_other.m_w*m_w - a_other.m_x*m_x - a_other.m_y*m_y - a_other.m_z*m_z,
+      a_other.m_w*m_x + a_other.m_x*m_w + a_other.m_y*m_z - a_other.m_z*m_y,
+      a_other.m_w*m_y + a_other.m_y*m_w + a_other.m_z*m_x - a_other.m_x*m_z,
+      a_other.m_w*m_z + a_other.m_z*m_w + a_other.m_x*m_y - a_other.m_y*m_x);
 
   }   // End of Quaternion::operator*()
 
@@ -1026,10 +1031,10 @@ namespace Dg
   template<typename Real>
   Quaternion<Real>& Quaternion<Real>::operator*=(const Quaternion<Real>& a_other)
   {
-    Set(m_w*a_other.m_w - m_x*a_other.m_x - m_y*a_other.m_y - m_z*a_other.m_z,
-        m_w*a_other.m_x + m_x*a_other.m_w + m_y*a_other.m_z - m_z*a_other.m_y,
-        m_w*a_other.m_y + m_y*a_other.m_w + m_z*a_other.m_x - m_x*a_other.m_z,
-        m_w*a_other.m_z + m_z*a_other.m_w + m_x*a_other.m_y - m_y*a_other.m_x);
+    Set(a_other.m_w*m_w - a_other.m_x*m_x - a_other.m_y*m_y - a_other.m_z*m_z,
+        a_other.m_w*m_x + a_other.m_x*m_w + a_other.m_y*m_z - a_other.m_z*m_y,
+        a_other.m_w*m_y + a_other.m_y*m_w + a_other.m_z*m_x - a_other.m_x*m_z,
+        a_other.m_w*m_z + a_other.m_z*m_w + a_other.m_x*m_y - a_other.m_y*m_x);
 
     return *this;
 

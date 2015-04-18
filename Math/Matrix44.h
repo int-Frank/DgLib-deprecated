@@ -136,12 +136,8 @@ namespace Dg
     //! Set as rotation matrix, rotating by 'angle' radians around z-axis.
     Matrix44& RotationZ(Real);
 
-    //! Gets one set of possible z - y - x fixed angles that will generate this matrix. 
-    //! #pre The upper 3x3 is a rotation matrix.
-    void GetFixedAngles(Real& a_xRotation, Real& a_yRotation, Real& a_zRotation) const;
-    
     //! Gets one possible axis-angle pair that will generate this matrix. 
-    //! #pre The upper 3x3 is a rotation matrix.
+    //! @pre The upper 3x3 is a rotation matrix.
     void GetAxisAngle(Vector4<Real>& a_axis, Real& a_angle) const;
 
     //! Get quaternion from the upper 3x3 rotation matrix.
@@ -1187,43 +1183,6 @@ namespace Dg
     return *this;
 
   }   // End: Matrix44::RotationZ()
-
-
-  //----------------------------------------------------------------------------
-  //	@	Matrix44::GetFixedAngles()
-  // ---------------------------------------------------------------------------
-  template<typename Real>
-  void Matrix44<Real>::GetFixedAngles(Real& a_zRotation, Real& a_yRotation, Real& a_xRotation) const
-  {
-    Real Cx, Sx;
-    Real Cy, Sy;
-    Real Cz, Sz;
-
-    Sy = m_V[8];
-    Cy = Real(sqrt(static_cast<Real>(1.0) - Sy*Sy));
-    // normal case
-    if (!Dg::IsZero(Cy))
-    {
-      Real factor = static_cast<Real>(1.0) / Cy;
-      Sx = -m_V[9] * factor;
-      Cx = m_V[10] * factor;
-      Sz = -m_V[4] * factor;
-      Cz = m_V[0] * factor;
-    }
-    // x and z axes aligned
-    else
-    {
-      Sz = static_cast<Real>(0.0);
-      Cz = static_cast<Real>(1.0);
-      Sx = m_V[6];
-      Cx = m_V[5];
-    }
-
-    a_zRotation = Real(atan2(Sz, Cz));
-    a_yRotation = Real(atan2(Sy, Cy));
-    a_xRotation = Real(atan2(Sx, Cx));
-
-  }  // End: Matrix44::GetFixedAngles()
 
 
   //----------------------------------------------------------------------------
