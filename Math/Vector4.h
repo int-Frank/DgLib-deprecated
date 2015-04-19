@@ -17,9 +17,13 @@ namespace Dg
   template<typename Real> class Matrix44;
   template<typename Real> class Plane4;
   template<typename Real> class Quaternion;
+  template<typename Real> class VQS;
 
   template<typename Real>
   Vector4<Real> operator*(Real, const Vector4<Real>&);
+
+  template<typename Real>
+  Vector4<Real> operator*(Vector4<Real> const &, VQS<Real> const &);
 
   template<typename Real>
   Real Dot(const Vector4<Real>&, const Vector4<Real>&);
@@ -60,7 +64,8 @@ namespace Dg
     friend class Plane4<Real>;
     friend class Matrix44<Real>;
     friend class Quaternion<Real>;
-    //friend class VQS<Real>;
+    friend class VQS<Real>;
+
   public:
 
     //! Default constructor. Members not initialized.
@@ -138,6 +143,9 @@ namespace Dg
     //Friend functions
     template<typename T>
     friend Vector4<T> operator* (const Vector4<T>&, const Matrix44<T>&);
+
+    template<typename T>
+    friend Vector4<T> operator* (Vector4<T> const &, VQS<T> const &);
 
     //! Returns a random unit vector.
     template<typename T>

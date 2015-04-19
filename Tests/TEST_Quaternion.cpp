@@ -112,69 +112,69 @@ TEST(Stack_Quaternion_Rotation, creation_Quaternion_Rotation)
 
   //Euler angles
 
-  q3.SetRotation(xr, yr, zr, Dg::XYZ);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::XYZ);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
 
-  q3.SetRotation(xr, yr, zr, Dg::XZY);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::XZY);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qz * qy);
 
-  q3.SetRotation(xr, yr, zr, Dg::YZX);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::YZX);
   CHECK(q3.IsUnit());
   CHECK(q3 == qy * qz * qx);
 
-  q3.SetRotation(xr, yr, zr, Dg::YXZ);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::YXZ);
   CHECK(q3.IsUnit());
   CHECK(q3 == qy * qx * qz);
 
-  q3.SetRotation(xr, yr, zr, Dg::ZXY);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::ZXY);
   CHECK(q3.IsUnit());
   CHECK(q3 == qz * qx * qy);
 
-  q3.SetRotation(xr, yr, zr, Dg::ZYX);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::ZYX);
   CHECK(q3.IsUnit());
   CHECK(q3 == qz * qy * qx);
 
   qx.SetRotationX(xr);
   qy.SetRotationY(yr);
   qz.SetRotationX(zr);
-  q3.SetRotation(xr, yr, zr, Dg::XYX);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::XYX);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
 
   qx.SetRotationX(xr);
   qy.SetRotationZ(yr);
   qz.SetRotationX(zr);
-  q3.SetRotation(xr, yr, zr, Dg::XZX);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::XZX);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
 
   qx.SetRotationY(xr);
   qy.SetRotationX(yr);
   qz.SetRotationY(zr);
-  q3.SetRotation(xr, yr, zr, Dg::YXY);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::YXY);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
 
   qx.SetRotationY(xr);
   qy.SetRotationZ(yr);
   qz.SetRotationY(zr);
-  q3.SetRotation(xr, yr, zr, Dg::YZY);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::YZY);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
 
   qx.SetRotationZ(xr);
   qy.SetRotationX(yr);
   qz.SetRotationZ(zr);
-  q3.SetRotation(xr, yr, zr, Dg::ZXZ);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::ZXZ);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
 
   qx.SetRotationZ(xr);
   qy.SetRotationY(yr);
   qz.SetRotationZ(zr);
-  q3.SetRotation(xr, yr, zr, Dg::ZYZ);
+  q3.SetRotation(xr, yr, zr, Dg::EulerOrder::ZYZ);
   CHECK(q3.IsUnit());
   CHECK(q3 == qx * qy * qz);
 

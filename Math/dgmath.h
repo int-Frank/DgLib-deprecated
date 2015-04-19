@@ -18,7 +18,7 @@ namespace Dg
   //! @ingroup Math_constants
   //! @{
 
-  enum EulerOrder
+  enum class EulerOrder
   {
     XYZ,
     XZY,

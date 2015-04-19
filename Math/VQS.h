@@ -30,11 +30,13 @@
 
 namespace Dg
 {
-  template<typename Real>
-  class VQS < Real > ;
+  template<typename Real> class VQS;
 
   template<typename Real>
-  VQS<Real> Inverse(const VQS<Real>&);
+  Vector4<Real> operator* (Vector4<Real> const &, VQS<Real> const &);
+
+  template<typename Real>
+  VQS<Real> Inverse(VQS<Real> const &);
 
   //--------------------------------------------------------------------------------
   //	@	VQS
@@ -53,40 +55,47 @@ namespace Dg
                 static_cast<Real>(0.0), 
                 static_cast<Real>(0.0)), 
             m_s(static_cast<Real>(1.0)) {}
-    VQS(const Vector4<Real>& a_v, const Quaternion<Real>& a_q, Real a_s) :
+    VQS(Vector4<Real> const & a_v, Quaternion<Real> const & a_q, Real a_s) :
       m_v(a_v), m_q(a_q), m_s(a_s) {}
     ~VQS() {}
 
     //Copy operations
-    VQS(const VQS& a_other) : m_v(a_other.m_v), m_q(a_other.m_q), m_s(a_other.m_s) {}
-    VQS& operator=(const VQS&);
+    VQS(VQS<Real> const & a_other) : m_v(a_other.m_v), m_q(a_other.m_q), m_s(a_other.m_s) {}
+    VQS<Real>& operator=(VQS<Real> const &);
+
+    //Comparison
+    bool operator==(VQS<Real> const & a_other) const;
+    bool operator!=(VQS<Real> const & a_other) const;
 
     //Ensure valid VQS.
     void MakeValid();
 
+    void Identity();
+
     //Set data
     void Set(Matrix44<Real> const &);
-    void Set(const Vector4<Real>&, const Quaternion<Real>&, Real);
-    void SetV(const Vector4<Real>&);
-    void SetQ(const Quaternion<Real>&);
+    void Set(Vector4<Real> const &, Quaternion<Real> const &, Real);
+    void SetV(Vector4<Real> const &);
+    void SetQ(Quaternion<Real> const &);
     void SetS(Real);
 
     //Update data
-    void UpdateV(const Vector4<Real>&);
-    void UpdateQ(const Quaternion<Real>&);
+    void UpdateV(Vector4<Real> const &);
+    void UpdateQ(Quaternion<Real> const &);
     void UpdateS(Real);
 
     //Concatenation
-    VQS operator* (const VQS<Real>&) const;
-    VQS& operator*= (const VQS<Real>&);
+    VQS<Real> operator* (VQS<Real> const &) const;
+    VQS<Real>& operator*= (VQS<Real> const &);
 
     //Operators
-    Vector4 operator*(Vector4<Real>) const;
+    template<typename T>
+    friend Vector4<T> operator* (Vector4<T> const &, VQS<T> const &);
 
     //Transformations
-    Vector4<Real> Translate(Vector4<Real>) const;
-    Vector4<Real> Rotate(Vector4<Real>) const;
-    Vector4<Real> Scale(Vector4<Real>) const;
+    Vector4<Real> Translate(Vector4<Real> const &) const;
+    Vector4<Real> Rotate(Vector4<Real> const &) const;
+    Vector4<Real> Scale(Vector4<Real> const &) const;
 
     void TranslateSelf(Vector4<Real>&) const;
     void RotateSelf(Vector4<Real>&) const;
@@ -96,11 +105,11 @@ namespace Dg
     const VQS& Inverse();
 
     template<typename T>
-    friend VQS<T> Inverse(const VQS<T>&);
+    friend VQS<T> Inverse(VQS<T> const &);
 
     //Returns
     void Get(Vector4<Real>& a_v, Quaternion<Real>& a_q, Real& a_s) const;
-    void GetMatrix(Matrix44<Real>&);
+    void GetMatrix(Matrix44<Real>&) const;
     const Vector4<Real>& V()	  const	{ return m_v; }
     const Quaternion<Real>& Q() const	{ return m_q; }
     Real S()	                  const	{ return m_s; }
@@ -115,12 +124,29 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::Set()
   //--------------------------------------------------------------------------------
-  //		Set translation vector
+  template<typename Real>
+  void VQS<Real>::Set(Matrix44<Real> const & a_m)
+  {
+    m_v.m_x = a_m[12];
+    m_v.m_y = a_m[13];
+    m_v.m_z = a_m[14];
+
+    a_m.GetQuaternion(m_q);
+
+    //Just use matrix x-scaling
+    m_s = sqrt((a_m[0] * a_m[0]) + (a_m[4] * a_m[4]) + (a_m[8] * a_m[8]));
+
+  }	//End: VQS<Real>::Set()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	VQS<Real>::Set()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::SetV(const Vector4<Real>& a_v)
+  void VQS<Real>::SetV(Vector4<Real> const & a_v)
   {
     m_v = a_v;
+    m_v.m_w = static_cast<Real>(0.0);
 
   }	//End: VQS<Real>::Set()
 
@@ -128,12 +154,11 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::SetQ()
   //--------------------------------------------------------------------------------
-  //		Set quaternion
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::SetQ(const Quaternion<Real>& a_q)
+  void VQS<Real>::SetQ(Quaternion<Real> const & a_q)
   {
     m_q = a_q;
+    m_q.MakeValid();
 
   }	//End: VQS<Real>::Set()
 
@@ -141,12 +166,10 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::SetS()
   //--------------------------------------------------------------------------------
-  //		Set scale
-  //--------------------------------------------------------------------------------
   template<typename Real>
   void VQS<Real>::SetS(Real a_s)
   {
-    m_s = a_s;
+    m_s = (a_s < Dg::EPSILON) ? static_cast<Real>(0.0) : a_s;
 
   }	//End: VQS<Real>::Set()
 
@@ -157,9 +180,10 @@ namespace Dg
   //		Update translation vector
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::UpdateV(const Vector4<Real>& a_v)
+  void VQS<Real>::UpdateV(Vector4<Real> const & a_v)
   {
     m_v += a_v;
+    m_v.m_w = static_cast<Real>(0.0);
 
   }	//End: VQS<Real>::UpdateV()
 
@@ -170,7 +194,7 @@ namespace Dg
   //		Update quaternion
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::UpdateQ(const Quaternion<Real>& a_q)
+  void VQS<Real>::UpdateQ(Quaternion<Real> const & a_q)
   {
     m_q *= a_q;
 
@@ -179,8 +203,6 @@ namespace Dg
 
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::UpdateS()
-  //--------------------------------------------------------------------------------
-  //		Update scale
   //--------------------------------------------------------------------------------
   template<typename Real>
   void VQS<Real>::UpdateS(Real a_s)
@@ -191,12 +213,36 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::operator=()
-  //--------------------------------------------------------------------------------
-  //		Assignment
+  //	@	VQS<Real>::operator==()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  VQS<Real>& VQS<Real>::operator=(const VQS<Real>& a_other)
+  bool VQS<Real>::operator==(VQS<Real> const & a_other) const
+  {
+    return !((a_other.m_v != m_v)
+      || (a_other.m_q != m_q)
+      || (a_other.m_s != m_s));
+
+  }	//End: VQS<Real>::operator==();
+
+
+  //--------------------------------------------------------------------------------
+  //	@	VQS<Real>::operator!=()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  bool VQS<Real>::operator!=(VQS<Real> const & a_other) const
+  {
+    return ((a_other.m_v != m_v)
+      || (a_other.m_q != m_q)
+      || (a_other.m_s != m_s));
+
+  }	//End: VQS<Real>::operator!=();
+
+
+  //--------------------------------------------------------------------------------
+  //	@	VQS<Real>::operator=()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  VQS<Real>& VQS<Real>::operator=(VQS<Real> const & a_other)
   {
     m_v = a_other.m_v;
     m_q = a_other.m_q;
@@ -207,147 +253,79 @@ namespace Dg
   }	//End: VQS<Real>::operator=();
 
 
-
-
-
   //--------------------------------------------------------------------------------
-  //	@	Read_LookAt()
-  //--------------------------------------------------------------------------------
-  //		Read vqs from an origin, a point to look at and an up vector
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  void Set(const Vector4<Real>& a_origin,
-           const Vector4<Real>& a_target,
-           const Vector4<Real>& a_up,
-           Real a_scale)
-  {
-    m_q.Set(a_origin, a_target, a_up);
-
-    m_v = a_origin;
-    m_v.w() = static_cast<Real>(0.0);
-
-    m_s = a_scale;
-
-  }	//End: Read_LookAt()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	operator>>()
-  //--------------------------------------------------------------------------------
-  //		Read from XML node
-  //--------------------------------------------------------------------------------
-  pugi::xml_node& operator>>(pugi::xml_node& node, VQS& dest)
-  {
-    //iterate through all nodes
-    for (pugi::xml_node_iterator it = node.begin(); it != node.end(); ++it)
-    {
-      //Get the name of the node
-      std::string tag = it->name();
-
-      if (tag == "vqs")
-      {
-        Read_VQS(*it, dest);
-      }
-      else if (tag == "lookat")
-      {
-        Read_LookAt(*it, dest);
-      }
-    }
-
-    return node;
-
-  }	//End: operator>>()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	operator<<()
-  //--------------------------------------------------------------------------------
-  //		Read from input
-  //--------------------------------------------------------------------------------
-  DgWriter& operator<<(DgWriter& out, const VQS& source)
-  {
-    out << source.m_v << '\n' << source.m_q << '\n' << source.m_s;
-
-    return out;
-  }	//End: operator>>()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::operator*()
-  //--------------------------------------------------------------------------------
-  //		Transform a 3D Point
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Point4 VQS<Real>::operator*(Point4 p) const
-  {
-    //Scale
-    p *= m_s;
-
-    //Rotate;
-    m_q.RotateSelf(p);
-
-    //Translate
-    p += m_v;
-
-    return p;
-
-  }	//End: VQS<Real>::operator()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::Clean
-  //--------------------------------------------------------------------------------
-  //		Ensure valid VQS, especially m_q
+  //	@	VQS<Real>::MakeValid
   //--------------------------------------------------------------------------------
   template<typename Real>
   void VQS<Real>::MakeValid()
   {
-    //No need to clean vector
+    //Clean vector
+    m_v.m_w = static_cast<Real>(0.0);
 
     //Clean quaternion
     m_q.MakeValid();
 
     //Clean scale;
-    if (m_s < EPSILON)
+    if (m_s < Dg::EPSILON)
       m_s = static_cast<Real>(0.0);
 
-  }	//End: VQS<Real>::Clean()
+  }	//End: VQS<Real>::MakeValid()
 
 
   //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::operator*()
-  //--------------------------------------------------------------------------------
-  //		Transform a 3D Vector
+  //	@	VQS<Real>::Identity()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4 VQS<Real>::operator*(Vector4 p) const
+  void VQS<Real>::Identity()
   {
+    m_v.m_x = m_v.m_y = m_v.m_z = m_v.m_w = static_cast<Real>(0.0);
+
+    m_q.Identity();
+
+    m_s = static_cast<Real>(1.0);
+
+  }	//End: VQS<Real>::Identity()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	operator*()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> operator*(Vector4<Real> const & a_v,
+                          VQS<Real> const & a_vqs)
+  {
+    Vector4<Real> result(a_v);
+
     //Scale
-    p *= m_s;
+    result.m_x *= a_vqs.m_s;
+    result.m_y *= a_vqs.m_s;
+    result.m_z *= a_vqs.m_s;
 
     //Rotate;
-    m_q.RotateSelf(p);
+    a_vqs.m_q.RotateSelf(result);
 
-    //Translate: DO NOT TRANSLATE VECTORS
-    //p += m_v;
+    //Translate if a point
+    if (IsZero(result.m_w - static_cast<Real>(1.0)))
+    {
+      result += a_vqs.m_v;
+    }
 
-    return p;
+    return result;
 
-  }	//End: VQS<Real>::operator*()
+  }	//End: operator*()
 
 
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::Translate()
   //--------------------------------------------------------------------------------
-  //		Translate a 3D Point
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  Point4 VQS<Real>::Translate(Point4 p) const
+  Vector4<Real> VQS<Real>::Translate(Vector4<Real> const & a_v) const
   {
-    //Translate
-    p += m_v;
+    Vector4<Real> result(a_v);
 
-    return p;
+    result += m_v;
+
+    return result;
 
   }	//End: VQS<Real>::Translate()
 
@@ -355,15 +333,14 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::Rotate()
   //--------------------------------------------------------------------------------
-  //		Rotate a 3D Point
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  Point4 VQS<Real>::Rotate(Point4 p) const
+  Vector4<Real> VQS<Real>::Rotate(Vector4<Real> const & a_v) const
   {
-    //Rotate;
-    m_q.RotateSelf(p);
+    Vector4<Real> result(a_v);
 
-    return p;
+    m_q.RotateSelf(result);
+
+    return result;
 
   }	//End: VQS<Real>::Rotate()
 
@@ -371,63 +348,16 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::Scale()
   //--------------------------------------------------------------------------------
-  //		Scale coordinates of a 3D Point
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  Point4 VQS<Real>::Scale(Point4 p) const
+  Vector4<Real> VQS<Real>::Scale(Vector4<Real> const & a_v) const
   {
-    //Scale
-    p *= m_s;
+    Vector4<Real> result(a_v);
 
-    return p;
+    result.m_x *= m_s;
+    result.m_y *= m_s;
+    result.m_z *= m_s;
 
-  }	//End: VQS<Real>::Scale()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::Translate()
-  //--------------------------------------------------------------------------------
-  //		Translate a 3D Vector
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4 VQS<Real>::Translate(Vector4 p) const
-  {
-    //Translate
-    p += m_v;
-
-    return p;
-
-  }	//End: VQS<Real>::Translate()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::Rotate()
-  //--------------------------------------------------------------------------------
-  //		Rotate a 3D Vector
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4 VQS<Real>::Rotate(Vector4 p) const
-  {
-    //Rotate;
-    m_q.RotateSelf(p);
-
-    return p;
-
-  }	//End: VQS<Real>::Rotate()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::Scale()
-  //--------------------------------------------------------------------------------
-  //		Scale coordinates of a 3D Vector
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4 VQS<Real>::Scale(Vector4 p) const
-  {
-    //Scale
-    p *= m_s;
-
-    return p;
+    return result;
 
   }	//End: VQS<Real>::Scale()
 
@@ -435,15 +365,12 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::TranslateSelf()
   //--------------------------------------------------------------------------------
-  //		Translate a HPoint, store in self
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::TranslateSelf(HPoint& p) const
+  void VQS<Real>::TranslateSelf(Vector4<Real>& a_v) const
   {
-    //Translate
-    p.x += m_v.x;
-    p.y += m_v.y;
-    p.z += m_v.z;
+    a_v.x += m_v.x;
+    a_v.y += m_v.y;
+    a_v.z += m_v.z;
 
   }	//End: VQS<Real>::TranslateSelf()
 
@@ -451,27 +378,11 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::RotateSelf()
   //--------------------------------------------------------------------------------
-  //		Rotate a Point4, store in self
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::RotateSelf(Point4& p) const
+  void VQS<Real>::RotateSelf(Vector4<Real>& a_v) const
   {
     //Rotate;
-    m_q.RotateSelf(p);
-
-  }	//End: VQS<Real>::RotateSelf()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::RotateSelf()
-  //--------------------------------------------------------------------------------
-  //		Rotate a Vector4, store in self
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  void VQS<Real>::RotateSelf(Vector4& m_v) const
-  {
-    //Rotate;
-    m_q.RotateSelf(m_v);
+    m_q.RotateSelf(a_v);
 
   }	//End: VQS<Real>::RotateSelf()
 
@@ -479,15 +390,13 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::ScaleSelf()
   //--------------------------------------------------------------------------------
-  //		Scale coordinates of a HPoint (first 3 elements), store in self
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::ScaleSelf(HPoint& p) const
+  void VQS<Real>::ScaleSelf(Vector4<Real>& a_v) const
   {
     //Scale
-    p.x *= m_s;
-    p.y *= m_s;
-    p.z *= m_s;
+    a_v.x *= m_s;
+    a_v.y *= m_s;
+    pa_v.z *= m_s;
 
   }	//End: VQS<Real>::ScaleSelf()
 
@@ -495,51 +404,76 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::Set()
   //--------------------------------------------------------------------------------
-  //		Set all data
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::Set(const Vector4& _v, const Quaternion& _q, Real _s)
+  void VQS<Real>::Set(Vector4<Real>    const & a_v, 
+                      Quaternion<Real> const & a_q, 
+                      Real                     a_s)
   {
-    m_v = _v;
-    m_q = _q;
-    m_s = _s;
+    m_v = a_v;
+    m_q = a_q;
+    m_s = a_s;
+
+    MakeValid();
 
   }	//End: VQS<Real>::Set()
 
 
   //--------------------------------------------------------------------------------
-  //	@	VQS<Real>::Set()
-  //--------------------------------------------------------------------------------
-  //		Get all data
+  //	@	VQS<Real>::Get()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::Get(const Vector4& a_v, const Quaternion& a_q, Real a_s)
+  void VQS<Real>::Get(Vector4<Real>&    a_v, 
+                      Quaternion<Real>& a_q, 
+                      Real&             a_s) const
   {
     a_v = m_v;
     a_q = m_q;
     a_s = m_s;
 
-  }	//End: VQS<Real>::Set()
+  }	//End: VQS<Real>::Get()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	VQS<Real>::Get()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void VQS<Real>::GetMatrix(Matrix44<Real> & a_out) const
+  {
+    a_out.Rotation(m_q);
+
+    a_out.m_V[0] *= m_s;
+    a_out.m_V[1] *= m_s;
+    a_out.m_V[2] *= m_s;
+    a_out.m_V[4] *= m_s;
+    a_out.m_V[5] *= m_s;
+    a_out.m_V[6] *= m_s;
+    a_out.m_V[8] *= m_s;
+    a_out.m_V[9] *= m_s;
+    a_out.m_V[10] *= m_s;
+
+    a_out.m_V[12] = m_v.m_x *= m_s;
+    a_out.m_V[13] = m_v.m_y *= m_s;
+    a_out.m_V[14] = m_v.m_z *= m_s;
+
+  }	//End: VQS<Real>::Get()
 
 
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::operator*()
   //--------------------------------------------------------------------------------
-  //		Concatenation, return VQS
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  VQS VQS<Real>::operator*(const VQS& rhs) const
+  VQS<Real> VQS<Real>::operator*(VQS<Real> const & a_rhs) const
   {
-    VQS result;
+    VQS<Real> result(*this);
 
     //Combine translation vectors
-    result.m_v = m_q.Rotate(rhs.m_v)*m_s + m_v;
+    result.m_v += (m_q.Rotate(a_rhs.m_v)*m_s);
 
     //Combine quaternions
-    result.m_q = m_q * rhs.m_q;
+    result.m_q *= a_rhs.m_q;
 
     //Combine scales
-    result.m_s = m_s * rhs.m_s;
+    result.m_s *= a_rhs.m_s;
 
     //Return result
     return result;
@@ -550,19 +484,17 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::Operator*=()
   //--------------------------------------------------------------------------------
-  //		Concatenation, store in self
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  VQS& VQS<Real>::operator*=(const VQS& rhs)
+  VQS<Real>& VQS<Real>::operator*=(VQS<Real> const & a_rhs)
   {
     //Combine translation vectors
-    m_v = m_q.Rotate(rhs.m_v)*m_s + m_v;
+    m_v += (m_q.Rotate(a_rhs.m_v)*m_s);
 
     //Combine quaternions
-    m_q = m_q * rhs.m_q;
+    m_q *= a_rhs.m_q;
 
     //Combine scales
-    m_s = m_s * rhs.m_s;
+    m_s *= a_rhs.m_s;
 
     return *this;
 
@@ -572,10 +504,8 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	VQS<Real>::Inverse()
   //--------------------------------------------------------------------------------
-  //		Sets self to inverse
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  const VQS& VQS<Real>::Inverse()
+  const VQS<Real>& VQS<Real>::Inverse()
   {
     //The method to find a VQS inverse
     //[1/m_s*(m_q-1*(-m_v)*m_q), m_q-1, 1/m_s]
@@ -597,27 +527,23 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	Inverse()
   //--------------------------------------------------------------------------------
-  //		Returns inverse VQS
-  //--------------------------------------------------------------------------------
   template<typename Real>
-  VQS Inverse(const VQS& other)
+  VQS<Real> Inverse(VQS<Real> const & a_other)
   {
-    VQS temp;
+    VQS<Real> temp;
 
     //Inverse scale
-    temp.m_s = static_cast<Real>(1.0) / other.m_s;
+    temp.m_s = static_cast<Real>(1.0) / a_other.m_s;
 
     //Inverse quaternion
-    temp.m_q = Inverse(other.m_q);
+    temp.m_q = Inverse(a_other.m_q);
 
     //Inverse vector
-    temp.m_v = temp.m_q.Rotate(-other.m_v) * temp.m_s;
+    temp.m_v = temp.m_q.Rotate(-a_other.m_v) * temp.m_s;
 
     return temp;
 
   }	//End: Inverse()
 }
-
-
 
 #endif

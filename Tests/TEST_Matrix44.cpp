@@ -19,7 +19,7 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
   m0.Set(data);
   CHECK(m0.IsZero());
 
-  m0.Rotation(1.0f, -0.23f, 0.34f, Dg::XZX);
+  m0.Rotation(1.0f, -0.23f, 0.34f, Dg::EulerOrder::XZX);
   
   mat44  m1(m0);
   CHECK(m1 == m0);
@@ -74,7 +74,7 @@ TEST(Stack_Matrix44_Inverse, creation_Matrix44_Inverse)
 {
   mat44 m0, m1, m2, ms, mr, mt;
   ms.Scaling(vec4(1.34f, 0.39f, 14.3f, 0.0f));
-  mr.Rotation(0.234f, -1.49f, 2.457f, Dg::ZXY);
+  mr.Rotation(0.234f, -1.49f, 2.457f, Dg::EulerOrder::ZXY);
   mt.Translation(vec4(2.3f, 53.24f, -12.9f, 0.0f));
 
   m0 = mt;
@@ -167,6 +167,38 @@ TEST(Stack_Matrix44_Operations, creation_Matrix44_Operations)
 }
 
 //--------------------------------------------------------------------------------
+//	Matrix44 VectorTransform
+//--------------------------------------------------------------------------------
+TEST(Stack_Matrix44_VectorTransform, creation_Matrix44_VectorTransform)
+{
+  mat44 m0, m1, m2, m3;
+
+  m0.Scaling(0.43f);
+  m1 *= m0;
+  m0.Rotation(0.32f, -2.84f, 1.29f, Dg::EulerOrder::ZXY);
+  m1 *= m0;
+  m0.Translation(vec4(12.4f, 9.3f, -6.39f, 0.0f));
+  m1 *= m0;
+
+  m0.Scaling(1.43f);
+  m2 *= m0;
+  m0.Rotation(1.32f, 1.84f, -1.83f, Dg::EulerOrder::ZXY);
+  m2 *= m0;
+  m0.Translation(vec4(9.04f, -3.3f, 2.39f, 0.0f));
+  m2 *= m0;
+
+  m0.Scaling(2.354f);
+  m3 *= m0;
+  m0.Rotation(0.034f, -1.23f, -1.89f, Dg::EulerOrder::ZXY);
+  m3 *= m0;
+  m0.Translation(vec4(-1.3f, -5.3f, 1.39f, 0.0f));
+  m3 *= m0;
+
+  vec4 v(1.34f, -18.834f, -9.38f, 1.0f);
+  CHECK(v * m1 * m2 * m3 == v * (m1 * m2 * m3));
+}
+
+//--------------------------------------------------------------------------------
 //	Matrix44 Rotation
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
@@ -205,9 +237,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
 
   //Euler angles
 
-  m0.Rotation(rx, ry, rz, Dg::XYZ);
+  m0.Rotation(rx, ry, rz, Dg::EulerOrder::XYZ);
   CHECK(m0 == mx * my * mz);            //Check: Matrix concatenation
-  q0.SetRotation(rx, ry, rz, Dg::XYZ);
+  q0.SetRotation(rx, ry, rz, Dg::EulerOrder::XYZ);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);        //Check: Equivanent matrix/quaternion concatenation
   CHECK(vr == v * m0);
@@ -218,9 +250,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);        //Check: Set quaternion from matrix
   CHECK(vr == v * m0);
 
-  m0.Rotation(rx, ry, rz, Dg::XZY);
+  m0.Rotation(rx, ry, rz, Dg::EulerOrder::XZY);
   CHECK(m0 == mx * mz * my);
-  q0.SetRotation(rx, ry, rz, Dg::XZY);
+  q0.SetRotation(rx, ry, rz, Dg::EulerOrder::XZY);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -231,9 +263,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(rx, ry, rz, Dg::YXZ);
+  m0.Rotation(rx, ry, rz, Dg::EulerOrder::YXZ);
   CHECK(m0 == my * mx * mz);
-  q0.SetRotation(rx, ry, rz, Dg::YXZ);
+  q0.SetRotation(rx, ry, rz, Dg::EulerOrder::YXZ);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -244,9 +276,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(rx, ry, rz, Dg::YZX);
+  m0.Rotation(rx, ry, rz, Dg::EulerOrder::YZX);
   CHECK(m0 == my * mz * mx);
-  q0.SetRotation(rx, ry, rz, Dg::YZX);
+  q0.SetRotation(rx, ry, rz, Dg::EulerOrder::YZX);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -257,9 +289,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(rx, ry, rz, Dg::ZYX);
+  m0.Rotation(rx, ry, rz, Dg::EulerOrder::ZYX);
   CHECK(m0 == mz * my * mx);
-  q0.SetRotation(rx, ry, rz, Dg::ZYX);
+  q0.SetRotation(rx, ry, rz, Dg::EulerOrder::ZYX);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -270,9 +302,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(rx, ry, rz, Dg::ZXY);
+  m0.Rotation(rx, ry, rz, Dg::EulerOrder::ZXY);
   CHECK(m0 == mz * mx * my);
-  q0.SetRotation(rx, ry, rz, Dg::ZXY);
+  q0.SetRotation(rx, ry, rz, Dg::EulerOrder::ZXY);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -283,9 +315,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(rx, ry, rx, Dg::XYX);
+  m0.Rotation(rx, ry, rx, Dg::EulerOrder::XYX);
   CHECK(m0 == mx * my * mx);
-  q0.SetRotation(rx, ry, rx, Dg::XYX);
+  q0.SetRotation(rx, ry, rx, Dg::EulerOrder::XYX);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -296,9 +328,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(rx, rz, rx, Dg::XZX);
+  m0.Rotation(rx, rz, rx, Dg::EulerOrder::XZX);
   CHECK(m0 == mx * mz * mx);
-  q0.SetRotation(rx, rz, rx, Dg::XZX);
+  q0.SetRotation(rx, rz, rx, Dg::EulerOrder::XZX);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -309,9 +341,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   
-  m0.Rotation(ry, rx, ry, Dg::YXY);
+  m0.Rotation(ry, rx, ry, Dg::EulerOrder::YXY);
   CHECK(m0 == my * mx * my);
-  q0.SetRotation(ry, rx, ry, Dg::YXY);
+  q0.SetRotation(ry, rx, ry, Dg::EulerOrder::YXY);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -322,9 +354,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(ry, rz, ry, Dg::YZY);
+  m0.Rotation(ry, rz, ry, Dg::EulerOrder::YZY);
   CHECK(m0 == my * mz * my);
-  q0.SetRotation(ry, rz, ry, Dg::YZY);
+  q0.SetRotation(ry, rz, ry, Dg::EulerOrder::YZY);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -335,9 +367,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(rz, rx, rz, Dg::ZXZ);
+  m0.Rotation(rz, rx, rz, Dg::EulerOrder::ZXZ);
   CHECK(m0 == mz * mx * mz);
-  q0.SetRotation(rz, rx, rz, Dg::ZXZ);
+  q0.SetRotation(rz, rx, rz, Dg::EulerOrder::ZXZ);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
@@ -348,9 +380,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
-  m0.Rotation(rz, ry, rz, Dg::ZYZ);
+  m0.Rotation(rz, ry, rz, Dg::EulerOrder::ZYZ);
   CHECK(m0 == mz * my * mz);
-  q0.SetRotation(rz, ry, rz, Dg::ZYZ);
+  q0.SetRotation(rz, ry, rz, Dg::EulerOrder::ZYZ);
   vr = v * m0;
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);

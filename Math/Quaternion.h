@@ -15,6 +15,7 @@ namespace Dg
 {
   template<typename Real> class Vector4;
   template<typename Real> class Quaternion;
+  template<typename Real> class VQS;
 
   template<typename Real>
   Quaternion<Real> operator*(Real, const Quaternion<Real>&);
@@ -79,7 +80,8 @@ namespace Dg
   class Quaternion
   {
     friend class Matrix44<Real>;
-    //friend class VQS<Real>;
+    friend class VQS<Real>;
+
   public:
     
     //! Default constructed to the identity quaternion (w(1), x(0), y(0), z(0)).
@@ -491,7 +493,7 @@ namespace Dg
 
     switch (a_order)
     {
-    case ZYX:
+    case EulerOrder::ZYX:
     {
       m_w = Cx*Cy*Cz - Sx*Sy*Sz;
       m_x = Sx*Cy*Cz + Cx*Sy*Sz;
@@ -499,7 +501,7 @@ namespace Dg
       m_z = Cx*Cy*Sz + Sx*Sy*Cz;
       break;
     }
-    case YZX:
+    case EulerOrder::YZX:
     {
       m_w = Cx*Cy*Cz + Sx*Sy*Sz;
       m_x = Sx*Cy*Cz - Cx*Sy*Sz;
@@ -507,7 +509,7 @@ namespace Dg
       m_z = Cx*Cy*Sz + Sx*Sy*Cz;
       break;
     }
-    case ZXY:
+    case EulerOrder::ZXY:
     {
       m_w = Cx*Cy*Cz + Sx*Sy*Sz;
       m_x = Sx*Cy*Cz + Cx*Sy*Sz;
@@ -515,7 +517,7 @@ namespace Dg
       m_z = Cx*Cy*Sz - Sx*Sy*Cz;
       break;
     }
-    case XZY:
+    case EulerOrder::XZY:
     {
       m_w = Cx*Cy*Cz - Sx*Sy*Sz;
       m_x = Sx*Cy*Cz + Cx*Sy*Sz;
@@ -523,7 +525,7 @@ namespace Dg
       m_z = Cx*Cy*Sz - Sx*Sy*Cz;
       break;
     }
-    case XYZ:
+    case EulerOrder::XYZ:
     {
       m_w = Cx*Cy*Cz + Sx*Sy*Sz;
       m_x = Sx*Cy*Cz - Cx*Sy*Sz;
@@ -531,7 +533,7 @@ namespace Dg
       m_z = Cx*Cy*Sz - Sx*Sy*Cz;
       break;
     }
-    case YXZ:
+    case EulerOrder::YXZ:
     {
       m_w = Cx*Cy*Cz - Sx*Sy*Sz;
       m_x = Sx*Cy*Cz - Cx*Sy*Sz;
@@ -539,7 +541,7 @@ namespace Dg
       m_z = Cx*Cy*Sz + Sx*Sy*Cz;
       break;
     }
-    case XYX:
+    case EulerOrder::XYX:
     {
       m_w = Cz*Cy*Cx - Sz*Cy*Sx;
       m_x = Cz*Cy*Sx + Sz*Cy*Cx;
@@ -547,7 +549,7 @@ namespace Dg
       m_z = Sz*Sy*Cx - Cz*Sy*Sx;
       break;
     }
-    case XZX:
+    case EulerOrder::XZX:
     {
       m_w = Cz*Cy*Cx - Sz*Cy*Sx;
       m_x = Cz*Cy*Sx + Sz*Cy*Cx;
@@ -555,7 +557,7 @@ namespace Dg
       m_z = Cz*Sy*Cx + Sz*Sy*Sx;
       break;
     }
-    case YXY:
+    case EulerOrder::YXY:
     {
       m_w = Cz*Cy*Cx - Sz*Cy*Sx;
       m_x = Sz*Sy*Sx + Cz*Sy*Cx;
@@ -563,7 +565,7 @@ namespace Dg
       m_z = Cz*Sy*Sx - Sz*Sy*Cx;
       break;
     }
-    case YZY:
+    case EulerOrder::YZY:
     {
       m_w = Cz*Cy*Cx - Sz*Cy*Sx;
       m_x = Sz*Sy*Cx - Cz*Sy*Sx;
@@ -571,7 +573,7 @@ namespace Dg
       m_z = Cz*Sy*Cx + Sz*Sy*Sx;
       break;
     }
-    case ZXZ:
+    case EulerOrder::ZXZ:
     {
       m_w = Cz*Cy*Cx - Sz*Cy*Sx;
       m_x = Cz*Sy*Cx + Sz*Sy*Sx;
@@ -579,7 +581,7 @@ namespace Dg
       m_z = Cz*Cy*Sx + Sz*Cy*Cx;
       break;
     }
-    case ZYZ:
+    case EulerOrder::ZYZ:
     {
       m_w = Cz*Cy*Cx - Sz*Cy*Sx;
       m_x = Cz*Sy*Sx - Sz*Sy*Cx;
@@ -1030,7 +1032,7 @@ namespace Dg
     return Vector4<Real>(pMult*a_vector.m_x + vMult*m_x + crossMult*(m_y*a_vector.m_z - m_z*a_vector.m_y),
                          pMult*a_vector.m_y + vMult*m_y + crossMult*(m_z*a_vector.m_x - m_x*a_vector.m_z),
                          pMult*a_vector.m_z + vMult*m_z + crossMult*(m_x*a_vector.m_y - m_y*a_vector.m_x),
-                         static_cast<Real>(0.0));
+                         a_vector.m_w);
 
   }   // End of Quaternion::Rotate()
 
@@ -1048,7 +1050,7 @@ namespace Dg
     a_vector.Set(pMult*a_vector.m_x + vMult*m_x + crossMult*(m_y*a_vector.m_z - m_z*a_vector.m_y),
                  pMult*a_vector.m_y + vMult*m_y + crossMult*(m_z*a_vector.m_x - m_x*a_vector.m_z),
                  pMult*a_vector.m_z + vMult*m_z + crossMult*(m_x*a_vector.m_y - m_y*a_vector.m_x),
-                 static_cast<Real>(0.0));
+                 a_vector.m_w);
 
   }   // End of Quaternion::RotateSelf()
 

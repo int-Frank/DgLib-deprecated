@@ -17,8 +17,7 @@
 //--------------------------------------------------------------------------------
 namespace Dg
 {
-  template<typename Real>
-  class Matrix44;
+  template<typename Real> class Matrix44;
 
   template<typename Real>
   Matrix44<Real> AffineInverse(const Matrix44<Real>&);
@@ -92,7 +91,9 @@ namespace Dg
     void GetColumns(Vector4<Real>& col0, Vector4<Real>& col1,
                     Vector4<Real>& col2, Vector4<Real>& col3);
     void SetRow(unsigned int i, const Vector4<Real>& row);
+    void GetRow(unsigned int i, Vector4<Real>&);
     void SetColumn(unsigned int i, const Vector4<Real>& col);
+    void GetColumn(unsigned int i, Vector4<Real>&);
 
     //! Builds a quaternion based off the rotation matrix.
     //! @pre Assumes valid rotation matrix.
@@ -534,6 +535,21 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
+  //	@	Matrix44::GetRow()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void Matrix44<Real>::GetRow(unsigned int a_i, Vector4<Real>& a_out)
+  {
+    a_i *= 4;
+    a_out.m_x = m_V[a_i];
+    a_out.m_y = m_V[a_i + 1];
+    a_out.m_z = m_V[a_i + 2];
+    a_out.m_w = m_V[a_i + 2];
+
+  }	//End: Matrix44::GetRow()
+
+
+  //--------------------------------------------------------------------------------
   //	@	Matrix44::SetColumn()
   //--------------------------------------------------------------------------------
   template<typename Real>
@@ -545,6 +561,20 @@ namespace Dg
     m_V[a_i + 12] = a_col.m_w;
 
   }	//End: Matrix44::SetColumn()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Matrix44::GetColumn()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void Matrix44<Real>::GetColumn(unsigned int a_i, Vector4<Real>& a_out)
+  {
+    a_out.m_x = m_V[a_i];
+    a_out.m_y = m_V[a_i + 4];
+    a_out.m_z = m_V[a_i + 8];
+    a_out.m_w = m_V[a_i + 12];
+
+  }	//End: Matrix44::GetColumn()
 
 
   //-------------------------------------------------------------------------------
@@ -804,7 +834,7 @@ namespace Dg
 
     switch (a_order)
     {
-    case XYZ:
+    case EulerOrder::XYZ:
     {
       m_V[0] = Cy * Cz;
       m_V[1] = Cy * Sz;
@@ -819,7 +849,7 @@ namespace Dg
       m_V[10] = (Cx * Cy);
       break;
     }
-    case XZY:
+    case EulerOrder::XZY:
     {
       m_V[0] = Cy * Cz;
       m_V[1] = Sz;
@@ -834,7 +864,7 @@ namespace Dg
       m_V[10] = (Cx * Cy) - (Sz * Sy * Sx);
       break;
     }
-    case YXZ:
+    case EulerOrder::YXZ:
     {
       m_V[0] = (Cy * Cz) - (Sx * Sy * Sz);
       m_V[1] = (Sz * Cy) + (Sx * Sy * Cz);
@@ -849,7 +879,7 @@ namespace Dg
       m_V[10] = Cx * Cy;
       break;
     }
-    case YZX:
+    case EulerOrder::YZX:
     {
       m_V[0] = Cy * Cz;
       m_V[1] = (Sy * Sx) + (Sz * Cx * Cy);
@@ -864,7 +894,7 @@ namespace Dg
       m_V[10] = (Sz * Sy * Sx) + (Cx * Cy);
       break;
     }
-    case ZYX:
+    case EulerOrder::ZYX:
     {
       m_V[0] = Cy * Cz;
       m_V[1] = (Sz * Cx) + (Sy * Sx * Cz);
@@ -879,7 +909,7 @@ namespace Dg
       m_V[10] = Cx * Cy;
       break;
     }
-    case ZXY:
+    case EulerOrder::ZXY:
     {
       m_V[0] = (Sz * Sy * Sx) + (Cy * Cz);
       m_V[1] = Sz * Cx;
@@ -894,7 +924,7 @@ namespace Dg
       m_V[10] = Cx * Cy;
       break;
     }
-    case XYX:
+    case EulerOrder::XYX:
     {
       m_V[0] = Cy;
       m_V[1] = Sy * Sx;
@@ -909,7 +939,7 @@ namespace Dg
       m_V[10] = (Cx * Cx * Cy) - (Sx * Sx);
       break;
     }
-    case XZX:
+    case EulerOrder::XZX:
     {
       m_V[0] = Cy;
       m_V[1] = Sy * Cz;
@@ -924,7 +954,7 @@ namespace Dg
       m_V[10] = (Cx * Cz) - (Sz * Sx * Cy);
       break;
     }
-    case YXY:
+    case EulerOrder::YXY:
     {
       m_V[0] = (Cx * Cz) - (Sz * Sx * Cy);
       m_V[1] = Sy * Sx;
@@ -939,7 +969,7 @@ namespace Dg
       m_V[10] = (Cx * Cy * Cz) - (Sz * Sx);
       break;
     }
-    case YZY:
+    case EulerOrder::YZY:
     {
       m_V[0] = (Cx * Cy * Cz) - (Sz * Sx);
       m_V[1] = Sy * Cx;
@@ -954,7 +984,7 @@ namespace Dg
       m_V[10] = (Cx * Cz) - (Sz * Sx * Cy);
       break;
     }
-    case ZXZ:
+    case EulerOrder::ZXZ:
     {
       m_V[0] = (Cx * Cz) - (Sz * Sx * Cy);
       m_V[1] = (Sz * Cx) + (Sx * Cy * Cz);
@@ -969,7 +999,7 @@ namespace Dg
       m_V[10] = Cy;
       break;
     }
-    case ZYZ:
+    case EulerOrder::ZYZ:
     {
       m_V[0] = (Cx * Cy * Cz) - (Sz * Sx);
       m_V[1] = (Sz * Cx * Cy) + (Sx * Cz);
@@ -1049,23 +1079,20 @@ namespace Dg
     zz = a_rotate.m_z * zs;
 
     m_V[0] = static_cast<Real>(1.0) - (yy + zz);
-    m_V[4] = xy - wz;
-    m_V[8] = xz + wy;
-    m_V[12] = static_cast<Real>(0.0);
-
     m_V[1] = xy + wz;
-    m_V[5] = static_cast<Real>(1.0) - (xx + zz);
-    m_V[9] = yz - wx;
-    m_V[13] = static_cast<Real>(0.0);
-
     m_V[2] = xz - wy;
-    m_V[6] = yz + wx;
-    m_V[10] = static_cast<Real>(1.0) - (xx + yy);
-    m_V[14] = static_cast<Real>(0.0);
-
     m_V[3] = static_cast<Real>(0.0);
+    m_V[4] = xy - wz;
+    m_V[5] = static_cast<Real>(1.0) - (xx + zz);
+    m_V[6] = yz + wx;
     m_V[7] = static_cast<Real>(0.0);
+    m_V[8] = xz + wy;
+    m_V[9] = yz - wx;
+    m_V[10] = static_cast<Real>(1.0) - (xx + yy);
     m_V[11] = static_cast<Real>(0.0);
+    m_V[12] = static_cast<Real>(0.0);
+    m_V[13] = static_cast<Real>(0.0);
+    m_V[14] = static_cast<Real>(0.0);
     m_V[15] = static_cast<Real>(1.0);
 
     return *this;
