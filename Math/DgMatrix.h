@@ -17,10 +17,10 @@ namespace Dg
   template<sizeType M, sizeType N, typename Real> class Matrix;
 
   template<sizeType M, sizeType N, typename Real>
-  Matrix<N, M, Real> Transpose(const Matrix<M, N, Real>&);
+  Matrix<N, M, Real> Transpose(Matrix<M, N, Real> const &);
 
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real> operator*(Real, const Matrix<M, N, Real>&);
+  Matrix<M, N, Real> operator*(Real, Matrix<M, N, Real> const &);
 
   //! @ingroup Math_classes
   //!
@@ -68,7 +68,7 @@ namespace Dg
     bool IsIdentity() const;
 
     //! Directly set the elements.
-    void Set(const Real[M * N]);
+    void Set(Real const [M * N]);
 
     void SetRow(sizeType m, Matrix<1, N, Real> const &);
     void GetRow(sizeType m, Matrix<1, N, Real>&) const;
@@ -151,7 +151,7 @@ namespace Dg
   //	@	Matrix::operator=()
   //--------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real>& Matrix<M, N, Real>::operator= (const Matrix<M, N, Real>& a_other)
+  Matrix<M, N, Real>& Matrix<M, N, Real>::operator= (Matrix<M, N, Real>const & a_other)
   {
     for (size_t i = 0; i < M * N; ++i)
     {
@@ -167,7 +167,7 @@ namespace Dg
   //	@	Matrix::Matrix()
   //--------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real>::Matrix(const Matrix<M, N, Real>& a_other)
+  Matrix<M, N, Real>::Matrix(Matrix<M, N, Real> const & a_other)
   {
     for (size_t i = 0; i < M * N; ++i)
     {
@@ -181,7 +181,7 @@ namespace Dg
   //	@	Matrix::operator==()
   //--------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  bool Matrix<M, N, Real>::operator== (const Matrix<M, N, Real>& a_other) const
+  bool Matrix<M, N, Real>::operator== (Matrix<M, N, Real> const & a_other) const
   {
     for (sizeType i = 0; i < M * N; i++)
     {
@@ -198,7 +198,7 @@ namespace Dg
   //	@	Matrix::operator!=()
   //--------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  bool Matrix<M, N, Real>::operator!= (const Matrix<M, N, Real>& a_other) const
+  bool Matrix<M, N, Real>::operator!= (Matrix<M, N, Real> const & a_other) const
   {
     for (sizeType i = 0; i < M * N; i++)
     {
@@ -278,7 +278,7 @@ namespace Dg
   //	@	Matrix::Set()
   //--------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  void Matrix<M, N, Real>::Set(const Real a_data[M * N])
+  void Matrix<M, N, Real>::Set(Real const a_data[M * N])
   {
     for (size_t i = 0; i < M * N; ++i)
     {
@@ -291,7 +291,7 @@ namespace Dg
   //	@	Matrix::SetRow()
   //--------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  void Matrix<M, N, Real>::SetRow(sizeType a_m, const Matrix<1, N, Real>& a_row)
+  void Matrix<M, N, Real>::SetRow(sizeType a_m, Matrix<1, N, Real> const & a_row)
   {
     a_m *= N;
 
@@ -323,7 +323,7 @@ namespace Dg
   //	@	Matrix::SetColumn()
   //--------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  void Matrix<M, N, Real>::SetColumn(sizeType a_n, const Matrix<M, 1, Real>& a_col)
+  void Matrix<M, N, Real>::SetColumn(sizeType a_n, Matrix<M, 1, Real> const & a_col)
   {
     for (sizeType i = 0; i < M; ++i)
     {
@@ -390,7 +390,7 @@ namespace Dg
   //	@	Transpose()
   //-------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<N, M, Real> Transpose(const Matrix<M, N, Real>& a_mat)
+  Matrix<N, M, Real> Transpose(Matrix<M, N, Real> const & a_mat)
   {
     Matrix<N, M, Real> result;
 
@@ -435,7 +435,7 @@ namespace Dg
   //	@	Matrix::operator+()
   //-------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real> Matrix<M, N, Real>::operator+(const Matrix<M, N, Real>& a_other) const
+  Matrix<M, N, Real> Matrix<M, N, Real>::operator+(Matrix<M, N, Real> const & a_other) const
   {
     Matrix<M, N, Real> result;
 
@@ -453,7 +453,7 @@ namespace Dg
   //	@	Matrix::operator+=()
   //-------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real>& Matrix<M, N, Real>::operator+=(const Matrix<M, N, Real>& a_other)
+  Matrix<M, N, Real>& Matrix<M, N, Real>::operator+=(Matrix<M, N, Real> const & a_other)
   {
     for (sizeType i = 0; i < M * N; ++i)
     {
@@ -469,7 +469,7 @@ namespace Dg
   //	@	Matrix::operator-()
   //-------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real> Matrix<M, N, Real>::operator-(const Matrix<M, N, Real>& other) const
+  Matrix<M, N, Real> Matrix<M, N, Real>::operator-(Matrix<M, N, Real> const & other) const
   {
     Matrix<M, N, Real> result;
 
@@ -487,7 +487,7 @@ namespace Dg
   //	@	Matrix::operator-=()
   //-------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real>& Matrix<M, N, Real>::operator-=(const Matrix<M, N, Real>& a_other)
+  Matrix<M, N, Real>& Matrix<M, N, Real>::operator-=(Matrix<M, N, Real> const & a_other)
   {
     for (sizeType i = 0; i < M * N; ++i)
     {
@@ -522,7 +522,7 @@ namespace Dg
   //-------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
   template<sizeType _M>
-  Matrix<M, _M, Real> Matrix<M, N, Real>::operator*(const Matrix<N, _M, Real>& a_other) const
+  Matrix<M, _M, Real> Matrix<M, N, Real>::operator*(Matrix<N, _M, Real> const & a_other) const
   {
     Matrix<M, _M, Real> result;
     result.Zero();
@@ -546,7 +546,7 @@ namespace Dg
   //	@	Matrix::operator*()
   //-------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real>& Matrix<M, N, Real>::operator*=(const Matrix<M, N, Real>& a_other)
+  Matrix<M, N, Real>& Matrix<M, N, Real>::operator*=(Matrix<M, N, Real> const & a_other)
   {
     static_assert(M == N, "Can only assign to self if a square matrix");
 
@@ -591,7 +591,7 @@ namespace Dg
   //	@	Matrix::operator*()
   //-------------------------------------------------------------------------------
   template<sizeType M, sizeType N, typename Real>
-  Matrix<M, N, Real> operator*(Real a_scalar, const Matrix<M, N, Real>& matrix)
+  Matrix<M, N, Real> operator*(Real a_scalar, Matrix<M, N, Real> const & matrix)
   {
     Matrix<M, N, Real> result;
 

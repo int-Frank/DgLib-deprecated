@@ -1,24 +1,9 @@
-//================================================================================
-// @ VQS.h
-// 
-// Class: VQS
-//
-// Vector, Quaternion, Scalar. This is an alternate to matrices to represent
-// transformations in 3D space. In this class we have a translation component
-// (Vector), orientation (Quaternion) and scaling component (Scalar). The main
-// advantage over a 4x4 matrix is using a quaternion for orientation, arguably
-// a more complete and robust method for orientation representation. 
-//
-// Some disatvantages include: we are restricted to the types of transformations
-// we can do. We cannot shear or reflect for example. Also We must use uniform
-// scaling.
-//
-// -------------------------------------------------------------------------------
-//
-// Author: Frank Hart
-// Date last modified: 2013
-//
-//================================================================================
+//! @file VQS.h
+//!
+//! @author: Frank B. Hart
+//! @date 4/10/2015
+//!
+//! Class declaration: VQS
 
 #ifndef VQS_H
 #define VQS_H
@@ -35,14 +20,29 @@ namespace Dg
   template<typename Real>
   VQS<Real> Inverse(VQS<Real> const &);
 
-  //--------------------------------------------------------------------------------
-  //	@	VQS
-  //--------------------------------------------------------------------------------
+  //! @ingroup Math_classes
+  //!
+  //! @class VQS
+  //!
+  //! @brief Vector, quaternion, scalar structure
+  //!
+  //! This is an alternate to matrices to represent
+  //! transformations in 3D space. In this class we have a translation component
+  //! (Vector), orientation (Quaternion) and scaling component (Scalar). The main
+  //! advantage over a 4x4 matrix is using a quaternion for orientation, arguably
+  //! a more complete and robust method for orientation representation. 
+  //!
+  //! Some disatvantages include: we are restricted to the types of transformations
+  //! we can do. We cannot shear or reflect for example. Also We must use uniform
+  //! scaling.
+  //!
+  //! @author Frank B. Hart
+  //! @date 4/10/2015
   template<typename Real>
   class VQS
   {
   public:
-    //Constructor/Destructor
+    //! Default constructor set to identity
     VQS() : m_v(static_cast<Real>(0.0), 
                 static_cast<Real>(0.0), 
                 static_cast<Real>(0.0),
@@ -64,53 +64,76 @@ namespace Dg
     bool operator==(VQS<Real> const & a_other) const;
     bool operator!=(VQS<Real> const & a_other) const;
 
-    //Ensure valid VQS.
+    //! Ensure a valid VQS.
     void MakeValid();
 
+    //! Make identity.
     void Identity();
 
-    //Set data
+    //! Set VQS based on an affine matrix
     void Set(Matrix44<Real> const &);
     void Set(Vector4<Real> const &, Quaternion<Real> const &, Real);
     void SetV(Vector4<Real> const &);
     void SetQ(Quaternion<Real> const &);
     void SetS(Real);
 
-    //Update data
+    //! Translation update data
     void UpdateV(Vector4<Real> const &);
+
+    //! Quaternion update data
     void UpdateQ(Quaternion<Real> const &);
+
+    //! Scalar update data
     void UpdateS(Real);
 
-    //Concatenation
+    //! VQS structures concatenate left to right.
     VQS<Real> operator* (VQS<Real> const &) const;
     VQS<Real>& operator*= (VQS<Real> const &);
 
-    //Operators
+    //! Point transformations also apply translation.
     Vector4<Real> TransformPoint(Vector4<Real> const &);
+
+    //! Vector transformations do not apply translation.
     Vector4<Real> TransformVector(Vector4<Real> const &);
+
+    //! Point transformations also apply translation.
     Vector4<Real>& TransformPointSelf(Vector4<Real>&);
+
+    //! Vector transformations do not apply translation.
     Vector4<Real>& TransformVectorSelf(Vector4<Real>&);
 
-    //Transformations
+    //! Apply translation to Vector4.
     Vector4<Real> Translate(Vector4<Real> const &) const;
+
+    //! Apply rotation to Vector4.
     Vector4<Real> Rotate(Vector4<Real> const &) const;
+
+    //! Apply scale to Vector4.
     Vector4<Real> Scale(Vector4<Real> const &) const;
 
+    //! Apply translation to Vector4.
     void TranslateSelf(Vector4<Real>&) const;
+
+    //! Apply rotation to Vector4.
     void RotateSelf(Vector4<Real>&) const;
+
+    //! Apply scale to Vector4.
     void ScaleSelf(Vector4<Real>&) const;
 
-    //Inverse 
+    //! Inverse.
     const VQS& Inverse();
 
+    //! Inverse.
     template<typename T>
     friend VQS<T> Inverse(VQS<T> const &);
 
     //Returns
     void Get(Vector4<Real>& a_v, Quaternion<Real>& a_q, Real& a_s) const;
+
+    //! Conversion to Matrix.
     void GetMatrix(Matrix44<Real>&) const;
-    const Vector4<Real>& V()	  const	{ return m_v; }
-    const Quaternion<Real>& Q() const	{ return m_q; }
+    Vector4<Real> const & V()	  const	{ return m_v; }
+    Quaternion<Real> const & Q() const	{ return m_q; }
     Real S()	                  const	{ return m_s; }
 
   private:
@@ -562,7 +585,7 @@ namespace Dg
   //	@	VQS<Real>::Inverse()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  const VQS<Real>& VQS<Real>::Inverse()
+  VQS<Real> const & VQS<Real>::Inverse()
   {
     //The method to find a VQS inverse
     //[1/m_s*(m_q-1*(-m_v)*m_q), m_q-1, 1/m_s]

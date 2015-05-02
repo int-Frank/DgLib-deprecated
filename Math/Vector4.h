@@ -24,10 +24,10 @@ namespace Dg
   Vector4<Real> operator*(Vector4<Real> const &, VQS<Real> const &);
 
   template<typename Real>
-  Real Dot(const Vector4<Real>&, const Vector4<Real>&);
+  Real Dot(Vector4<Real> const &, Vector4<Real> const &);
 
   template<typename Real>
-  Vector4<Real> Cross(const Vector4<Real>&, const Vector4<Real>&);
+  Vector4<Real> Cross(Vector4<Real> const &, Vector4<Real> const &);
 
   //! Returns a random unit vector.
   template<typename Real>
@@ -35,25 +35,25 @@ namespace Dg
 
   //! Creates an orthogonal basis from two input vectors
   template<typename Real>
-  void GetBasis(const Vector4<Real>& a0,
-               const Vector4<Real>& a1,
+  void GetBasis(Vector4<Real> const & a0,
+               Vector4<Real> const & a1,
                Vector4<Real>& x0,
                Vector4<Real>& x1,
                Vector4<Real>& x2);
 
   //! Returns a perpendicular vector.
   template<typename Real>
-  Vector4<Real> Perpendicular(const Vector4<Real>& axis);
+  Vector4<Real> Perpendicular(Vector4<Real> const & axis);
 
   //! Returns a random orthonormal vector to an axis.
   //! @pre Input must be a unit vector.
   template<typename Real>
- Vector4<Real> GetRandomOrthonormalVector(const Vector4<Real>& axis);
+  Vector4<Real> GetRandomOrthonormalVector(Vector4<Real> const & axis);
 
   //! Returns a random vector at an angle to an axis.
   //! @pre Input axis must be a unit vector.
   template<typename Real>
- Vector4<Real> GetRandomVector(const Vector4<Real>& axis, Real angle);
+  Vector4<Real> GetRandomVector(Vector4<Real> const & axis, Real angle);
 
   //! @ingroup Math_classes
   //!
@@ -80,8 +80,8 @@ namespace Dg
     ~Vector4() {}
 
     // copy operations
-    Vector4(const Matrix<1, 4, Real>& a_other) : Matrix<1, 4, Real>(a_other) {}
-    Vector4& operator=(const Matrix<1, 4, Real>&);
+    Vector4(Matrix<1, 4, Real> const & a_other) : Matrix<1, 4, Real>(a_other) {}
+    Vector4& operator=(Matrix<1, 4, Real> const &);
 
     //! Determines if the vector is the unit vector within some tolerance.
     bool IsUnit() const;
@@ -101,12 +101,13 @@ namespace Dg
     //! Make unit vector
     void Normalize();  
 
+    //! Dot product.
     template<typename T>
-    friend T Dot(const Vector4<T>&, const Vector4<T>&);
+    friend T Dot(Vector4<T> const &, Vector4<T> const &);
 
     //! Cross procudt, assumes w = 0.
     template<typename T>
-    friend Vector4<T> Cross(const Vector4<T>&, const Vector4<T>&);
+    friend Vector4<T> Cross(Vector4<T> const &, Vector4<T> const &);
 
     Real Length() const;
     Real LengthSquared() const;
@@ -117,7 +118,7 @@ namespace Dg
   //	@	Vector4::operator=()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real>& Vector4<Real>::operator=(const Matrix<1, 4, Real>& a_other)
+  Vector4<Real>& Vector4<Real>::operator=(Matrix<1, 4, Real> const & a_other)
   {
     Matrix<1, 4, Real>::operator=(a_other);
     return *this;
@@ -213,7 +214,7 @@ namespace Dg
   //	@	Dot()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Real Dot(const Vector4<Real>& a_v0, const Vector4<Real>& a_v1)
+  Real Dot(Vector4<Real> const & a_v0, Vector4<Real> const & a_v1)
   {
     return (a_v0.m_V[0] * a_v1.m_V[0] +
             a_v0.m_V[1] * a_v1.m_V[1] +
@@ -227,7 +228,7 @@ namespace Dg
   //	@	Cross()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Cross(const Vector4<Real>& v1, const Vector4<Real>& v2)
+  Vector4<Real> Cross(Vector4<Real> const & v1, Vector4<Real> const & v2)
   {
     return Vector4<Real>(v1.m_V[1]*v2.m_V[2] - v1.m_V[2]*v2.m_V[1],
                          v1.m_V[2]*v2.m_V[0] - v1.m_V[0]*v2.m_V[2],
@@ -241,8 +242,8 @@ namespace Dg
   //	@	GetBasis()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void GetBasis(const Vector4<Real>& a_a0,
-                const Vector4<Real>& a_a1,
+  void GetBasis(Vector4<Real> const & a_a0,
+                Vector4<Real> const & a_a1,
                 Vector4<Real>& a_x0,
                 Vector4<Real>& a_x1,
                 Vector4<Real>& a_x2)
@@ -325,7 +326,7 @@ namespace Dg
   //	@	Perpendicular()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Perpendicular(const Vector4<Real>& a_vector)
+  Vector4<Real> Perpendicular(Vector4<Real> const & a_vector)
   {
     if (Dg::IsZero(a_vector.x()))
     {
@@ -370,7 +371,7 @@ namespace Dg
   //		@ GetRandomOrthonormalVector()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> GetRandomOrthonormalVector(const Vector4<Real>& a_axis)
+  Vector4<Real> GetRandomOrthonormalVector(Vector4<Real> const & a_axis)
   {
     SimpleRNG generator;
 
@@ -393,7 +394,7 @@ namespace Dg
   //		@ GetRandomVector()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> GetRandomVector(const Vector4<Real>& a_axis, Real theta)
+  Vector4<Real> GetRandomVector(Vector4<Real> const & a_axis, Real theta)
   {
     SimpleRNG generator;
 
