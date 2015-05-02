@@ -1,6 +1,6 @@
 //! @file Vector4.h
 //!
-//! @author: James M. Van Verth, Lars M. Bishop, Frank B. Hart
+//! @author: Frank B. Hart
 //! @date 4/10/2015
 //!
 //! Class declaration: Vector4
@@ -9,6 +9,7 @@
 #define VECTOR4_H
  
 #include "SimpleRNG.h"
+#include "DgMatrix.h"
 #include "dgmath.h"
 
 namespace Dg
@@ -20,9 +21,6 @@ namespace Dg
   template<typename Real> class VQS;
 
   template<typename Real>
-  Vector4<Real> operator*(Real, const Vector4<Real>&);
-
-  template<typename Real>
   Vector4<Real> operator*(Vector4<Real> const &, VQS<Real> const &);
 
   template<typename Real>
@@ -31,24 +29,31 @@ namespace Dg
   template<typename Real>
   Vector4<Real> Cross(const Vector4<Real>&, const Vector4<Real>&);
 
+  //! Returns a random unit vector.
   template<typename Real>
-  Vector4<Real> GetRandomVector();
+ Vector4<Real> GetRandomVector();
 
+  //! Creates an orthogonal basis from two input vectors
   template<typename Real>
   void GetBasis(const Vector4<Real>& a0,
-                const Vector4<Real>& a1,
-                Vector4<Real>& x0, 
-                Vector4<Real>& x1, 
-                Vector4<Real>& x2);
+               const Vector4<Real>& a1,
+               Vector4<Real>& x0,
+               Vector4<Real>& x1,
+               Vector4<Real>& x2);
 
+  //! Returns a perpendicular vector.
   template<typename Real>
-  Vector4<Real> Perpendicular(const Vector4<Real>&);
+  Vector4<Real> Perpendicular(const Vector4<Real>& axis);
 
+  //! Returns a random orthonormal vector to an axis.
+  //! @pre Input must be a unit vector.
   template<typename Real>
-  Vector4<Real> GetRandomOrthonormalVector(const Vector4<Real>&);
+ Vector4<Real> GetRandomOrthonormalVector(const Vector4<Real>& axis);
 
+  //! Returns a random vector at an angle to an axis.
+  //! @pre Input axis must be a unit vector.
   template<typename Real>
-  Vector4<Real> GetRandomVector(const Vector4<Real>& axis, Real angle);
+ Vector4<Real> GetRandomVector(const Vector4<Real>& axis, Real angle);
 
   //! @ingroup Math_classes
   //!
@@ -59,7 +64,7 @@ namespace Dg
   //! @author Frank Hart
   //! @date 4/10/2015
   template<typename Real>
-  class Vector4
+  class Vector4 : public Matrix<1, 4, Real>
   {
     friend class Plane4<Real>;
     friend class Matrix44<Real>;
@@ -71,138 +76,65 @@ namespace Dg
     //! Default constructor. Members not initialized.
     Vector4() {}
 
-    Vector4(Real a_x, Real a_y, Real a_z, Real a_w) :
-      m_x(a_x), m_y(a_y), m_z(a_z), m_w(a_w) {}
+    Vector4(Real a_x, Real a_y, Real a_z, Real a_w);
     ~Vector4() {}
 
     // copy operations
-    Vector4(const Vector4&);
-    Vector4& operator=(const Vector4&);
-
-    //! Accessor member by index
-    Real& operator[](unsigned int i)         { return (&m_x)[i]; }
-
-    //! Accessor member by index
-    Real operator[](unsigned int i) const    { return (&m_x)[i]; }
-
-    bool operator== (const Vector4&) const;
-    bool operator!= (const Vector4&) const;
-
-    //! Determines if the vector is the zero vector within some tolerance.
-    bool IsZero() const;
+    Vector4(const Matrix<1, 4, Real>& a_other) : Matrix<1, 4, Real>(a_other) {}
+    Vector4& operator=(const Matrix<1, 4, Real>&);
 
     //! Determines if the vector is the unit vector within some tolerance.
     bool IsUnit() const;
 
-    Real x() const { return m_x; }
-    Real y() const { return m_y; }
-    Real z() const { return m_z; }
-    Real w() const { return m_w; }
-    Real& x()	   { return m_x; }
-    Real& y()	   { return m_y; }
-    Real& z()	   { return m_z; }
-    Real& w()	   { return m_w; }
+    Real x() const { return m_V[0]; }
+    Real y() const { return m_V[1]; }
+    Real z() const { return m_V[2]; }
+    Real w() const { return m_V[3]; }
+    Real& x()	   { return m_V[0]; }
+    Real& y()	   { return m_V[1]; }
+    Real& z()	   { return m_V[2]; }
+    Real& w()	   { return m_V[3]; }
 
-    inline void Set(Real a_x, Real a_y, Real a_z, Real a_w);
+    //! Set elements
+    void Set(Real a_x, Real a_y, Real a_z, Real a_w);
 
-    //! Sets near-zero elements to 0
-    void Clean();      
-
-    //! sets all elements to 0
-    inline void Zero(); 
-
+    //! Make unit vector
     void Normalize();  
-
-    // Arithmetic operations
-    Vector4 operator+(const Vector4&) const;
-    Vector4 operator-(const Vector4&) const;
-    Vector4	operator*(Real) const;
-
-    template<typename T>
-    friend Vector4<T> operator*(T, const Vector4<T>&);
-
-    Vector4	operator/(Real) const;
-    Vector4 operator- () const;
-
-    // Arithmetic updates
-    Vector4& operator+=(const Vector4&);
-    Vector4& operator-=(const Vector4&);
-    Vector4& operator*=(Real);
-    Vector4& operator/=(Real);
 
     template<typename T>
     friend T Dot(const Vector4<T>&, const Vector4<T>&);
 
-    //! Assumes w = 0.
+    //! Cross procudt, assumes w = 0.
     template<typename T>
     friend Vector4<T> Cross(const Vector4<T>&, const Vector4<T>&);
 
     Real Length() const;
     Real LengthSquared() const;
 
-    //Friend functions
-    template<typename T>
-    friend Vector4<T> operator* (const Vector4<T>&, const Matrix44<T>&);
-
-    template<typename T>
-    friend Vector4<T> operator* (Vector4<T> const &, VQS<T> const &);
-
-    //! Returns a random unit vector.
-    template<typename T>
-    friend Vector4<T> GetRandomVector();
-
-    //! Creates an orthogonal basis from two input vectors
-    template<typename T>
-    friend void GetBasis(const Vector4<T>& a0, 
-                         const Vector4<T>& a1,
-                         Vector4<T>& x0, 
-                         Vector4<T>& x1, 
-                         Vector4<T>& x2);
-
-    //! Returns a perpendicular vector.
-    template<typename T>
-    friend Vector4<T> Perpendicular(const Vector4<T>& axis);
-
-    //! Returns a random orthonormal vector to an axis.
-    //! @pre Input must be a unit vector.
-    template<typename T>
-    friend Vector4<T> GetRandomOrthonormalVector(const Vector4<T>& axis);
-
-    //! Returns a random vector at an angle to an axis.
-    //! @pre Input axis must be a unit vector.
-    template<typename T>
-    friend Vector4<T> GetRandomVector(const Vector4<T>& axis, T angle);
-
-  private:
-    Real m_x, m_y, m_z, m_w;
   };
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector4::operator=()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real>& Vector4<Real>::operator=(const Matrix<1, 4, Real>& a_other)
+  {
+    Matrix<1, 4, Real>::operator=(a_other);
+    return *this;
+  }   // End:  Vector4::operator=()
 
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::Vector4()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real>::Vector4(const Vector4<Real>& a_other) :
-    m_x(a_other.m_x), m_y(a_other.m_y), m_z(a_other.m_z), m_w(a_other.m_w)
+  Vector4<Real>::Vector4(Real a_x, Real a_y, Real a_z, Real a_w)
   {
-
+    m_V[0] = a_x;
+    m_V[1] = a_y;
+    m_V[2] = a_z;
+    m_V[3] = a_w;
   }   // End:  Vector4::Vector4()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator=()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real>& Vector4<Real>::operator=(const Vector4<Real>& a_other)
-  {
-    m_x = a_other.m_x;
-    m_y = a_other.m_y;
-    m_z = a_other.m_z;
-    m_w = a_other.m_w;
-
-    return *this;
-
-  }   // End:  Vector4::operator=()
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::Set()
@@ -210,23 +142,12 @@ namespace Dg
   template<typename Real>
   void Vector4<Real>::Set(Real a_x, Real a_y, Real a_z, Real a_w)
   {
-    m_x = a_x;
-    m_y = a_y;
-    m_z = a_z;
-    m_w = a_w;
+    m_V[0] = a_x;
+    m_V[1] = a_y;
+    m_V[2] = a_z;
+    m_V[3] = a_w;
 
   }   // End: Vector4::Set()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::Zero()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  inline void Vector4<Real>::Zero()
-  {
-    m_x = m_y = m_z = m_w = static_cast<Real>(0.0);
-
-  }   // End: Vector4::Zero()
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::Length()
@@ -234,7 +155,7 @@ namespace Dg
   template<typename Real>
   Real Vector4<Real>::Length() const
   {
-    return sqrt(m_x*m_x + m_y*m_y + m_z*m_z + m_w*m_w);
+    return sqrt(m_V[0]*m_V[0] + m_V[1]*m_V[1] + m_V[2]*m_V[2] + m_V[3]*m_V[3]);
 
   }   // End:  Vector4::Length()
 
@@ -245,48 +166,9 @@ namespace Dg
   template<typename Real>
   Real Vector4<Real>::LengthSquared() const
   {
-    return (m_x*m_x + m_y*m_y + m_z*m_z + m_w*m_w);
+    return (m_V[0]*m_V[0] + m_V[1]*m_V[1] + m_V[2]*m_V[2] + m_V[3]*m_V[3]);
 
   }   // End:  Vector4::LengthSquared()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator==()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  bool Vector4<Real>::operator==(const Vector4<Real>& a_other) const
-  {
-    return (Dg::AreEqual(a_other.m_x, m_x)
-            && Dg::AreEqual(a_other.m_y, m_y)
-            && Dg::AreEqual(a_other.m_z, m_z)
-            && Dg::AreEqual(a_other.m_w, m_w));
-
-  }   // End:  Vector4::operator==()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator!=()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  bool Vector4<Real>::operator!=(const Vector4<Real>& a_other) const
-  {
-    return !(Dg::AreEqual(a_other.m_x, m_x)
-      && Dg::AreEqual(a_other.m_y, m_y)
-      && Dg::AreEqual(a_other.m_z, m_z)
-      && Dg::AreEqual(a_other.m_w, m_w));
-
-  }   // End:  Vector4::operator!=()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::IsZero()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  bool Vector4<Real>::IsZero() const
-  {
-    return Dg::IsZero(m_x*m_x + m_y*m_y + m_z*m_z + m_w*m_w);
-
-  }   // End:  Vector4::IsZero()
 
 
   //-------------------------------------------------------------------------------
@@ -295,27 +177,9 @@ namespace Dg
   template<typename Real>
   bool Vector4<Real>::IsUnit() const
   {
-    return Dg::IsZero(static_cast<Real>(1.0) - (m_x*m_x + m_y*m_y + m_z*m_z + m_w*m_w));
+    return Dg::IsZero(static_cast<Real>(1.0) - (m_V[0]*m_V[0] + m_V[1]*m_V[1] + m_V[2]*m_V[2] + m_V[3]*m_V[3]));
 
   }   // End:  Vector4::IsUnit()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::Clean()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  void Vector4<Real>::Clean()
-  {
-    if (Dg::IsZero(m_x))
-      m_x = static_cast<Real>(0.0);
-    if (Dg::IsZero(m_y))
-      m_y = static_cast<Real>(0.0);
-    if (Dg::IsZero(m_z))
-      m_z = static_cast<Real>(0.0);
-    if (Dg::IsZero(m_w))
-      m_w = static_cast<Real>(0.0);
-
-  }   // End:  Vector4::Clean()
 
 
   //-------------------------------------------------------------------------------
@@ -324,167 +188,25 @@ namespace Dg
   template<typename Real>
   void Vector4<Real>::Normalize()
   {
-    Real lengthsq = m_x*m_x + m_y*m_y + m_z*m_z + m_w*m_w;
+    Real lengthsq = m_V[0]*m_V[0] + m_V[1]*m_V[1] + m_V[2]*m_V[2] + m_V[3]*m_V[3];
 
     if (Dg::IsZero(lengthsq))
     {
-      m_x = static_cast<Real>(1.0);
-      m_y = static_cast<Real>(0.0);
-      m_z = static_cast<Real>(0.0);
-      m_w = static_cast<Real>(0.0);
+      m_V[0] = static_cast<Real>(1.0);
+      m_V[1] = static_cast<Real>(0.0);
+      m_V[2] = static_cast<Real>(0.0);
+      m_V[3] = static_cast<Real>(0.0);
     }
     else
     {
       Real factor = static_cast<Real>(1.0) / sqrt(lengthsq);
-      m_x *= factor;
-      m_y *= factor;
-      m_z *= factor;
-      m_w *= factor;
+      m_V[0] *= factor;
+      m_V[1] *= factor;
+      m_V[2] *= factor;
+      m_V[3] *= factor;
     }
 
   }   // End:  Vector4::Normalize()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator+()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> Vector4<Real>::operator+(const Vector4<Real>& a_other) const
-  {
-    return Vector4<Real>(m_x + a_other.m_x,
-                         m_y + a_other.m_y, 
-                         m_z + a_other.m_z,
-                         m_w + a_other.m_w);
-
-  }   // End:  Vector4::operator+()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator+=()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real>& Vector4<Real>::operator+=(const Vector4<Real>& a_other)
-  {
-    m_x += a_other.m_x;
-    m_y += a_other.m_y;
-    m_z += a_other.m_z;
-    m_w += a_other.m_w;
-
-    return *this;
-
-  }   // End:  Vector4::operator+=()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator-()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> Vector4<Real>::operator-(const Vector4<Real>& a_other) const
-  {
-    return Vector4<Real>(m_x - a_other.m_x,
-                         m_y - a_other.m_y, 
-                         m_z - a_other.m_z,
-                         m_w - a_other.m_w);
-
-  }   // End:  Vector4::operator-()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator-=()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real>& Vector4<Real>::operator-=(const Vector4<Real>& a_other)
-  {
-    m_x -= a_other.m_x;
-    m_y -= a_other.m_y;
-    m_z -= a_other.m_z;
-    m_w -= a_other.m_w;
-
-    return *this;
-
-  }   // End:  Vector4::operator-=()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator-()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> Vector4<Real>::operator- () const
-  {
-    return Vector4<Real>(-m_x, -m_y, -m_z, -m_w);
-
-  }	//End: Vector3::operator-()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator*()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> Vector4<Real>::operator*(Real a_scalar) const
-  {
-    return Vector4<Real>(a_scalar*m_x, a_scalar*m_y, a_scalar*m_z, a_scalar*m_w);
-
-  }   // End:  operator*()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator*()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> operator*(Real a_scalar, const Vector4<Real>& a_vector)
-  {
-    return Vector4<Real>(a_scalar * a_vector.m_x,
-                         a_scalar * a_vector.m_y,
-                         a_scalar * a_vector.m_z,
-                         a_scalar * a_vector.m_w);
-
-  }   // End:  operator*()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator*=()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real>& Vector4<Real>::operator*=(Real a_scalar)
-  {
-    m_x *= a_scalar;
-    m_y *= a_scalar;
-    m_z *= a_scalar;
-    m_w *= a_scalar;
-
-    return *this;
-
-  }   // End:  Vector4::operator*=()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator/=()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> Vector4<Real>::operator/(Real a_scalar) const
-  {
-    return Vector4<Real>(m_x / a_scalar,
-                         m_y / a_scalar,
-                         m_z / a_scalar,
-                         m_w / a_scalar);
-
-  }   // End:  operator/=()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector4::operator/=()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real>& Vector4<Real>::operator/=(Real a_scalar)
-  {
-    m_x /= a_scalar;
-    m_y /= a_scalar;
-    m_z /= a_scalar;
-    m_w /= a_scalar;
-
-    return *this;
-
-  }   // End:  Vector4::operator/=()
 
 
   //-------------------------------------------------------------------------------
@@ -493,10 +215,10 @@ namespace Dg
   template<typename Real>
   Real Dot(const Vector4<Real>& a_v0, const Vector4<Real>& a_v1)
   {
-    return (a_v0.m_x * a_v1.m_x +
-            a_v0.m_y * a_v1.m_y +
-            a_v0.m_z * a_v1.m_z + 
-            a_v0.m_w * a_v1.m_w);
+    return (a_v0.m_V[0] * a_v1.m_V[0] +
+            a_v0.m_V[1] * a_v1.m_V[1] +
+            a_v0.m_V[2] * a_v1.m_V[2] + 
+            a_v0.m_V[3] * a_v1.m_V[3]);
 
   }   // End:  Dot()
 
@@ -507,9 +229,9 @@ namespace Dg
   template<typename Real>
   Vector4<Real> Cross(const Vector4<Real>& v1, const Vector4<Real>& v2)
   {
-    return Vector4<Real>(v1.m_y*v2.m_z - v1.m_z*v2.m_y,
-                         v1.m_z*v2.m_x - v1.m_x*v2.m_z,
-                         v1.m_x*v2.m_y - v1.m_y*v2.m_x,
+    return Vector4<Real>(v1.m_V[1]*v2.m_V[2] - v1.m_V[2]*v2.m_V[1],
+                         v1.m_V[2]*v2.m_V[0] - v1.m_V[0]*v2.m_V[2],
+                         v1.m_V[0]*v2.m_V[1] - v1.m_V[1]*v2.m_V[0],
                          static_cast<Real>(0.0));
 
   }	//End: Cross()
@@ -605,17 +327,17 @@ namespace Dg
   template<typename Real>
   Vector4<Real> Perpendicular(const Vector4<Real>& a_vector)
   {
-    if (Dg::IsZero(a_vector.m_x))
+    if (Dg::IsZero(a_vector.x()))
     {
       return Vector4<Real>(static_cast<Real>(0.0), 
-                          -a_vector.m_z, 
-                           a_vector.m_y, 
+                          -a_vector.z(), 
+                           a_vector.y(), 
                            static_cast<Real>(0.0));
     }
     else
     {
-      return Vector4<Real>(-a_vector.m_y, 
-                            a_vector.m_x, 
+      return Vector4<Real>(-a_vector.y(), 
+                            a_vector.x(), 
                             static_cast<Real>(0.0), 
                             static_cast<Real>(0.0));
     }

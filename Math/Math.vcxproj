@@ -138,6 +138,7 @@
     <ClInclude Include="Circle4.h" />
     <ClInclude Include="Cone.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="DgMatrix.h" />
     <ClInclude Include="DgRect.h" />
     <ClInclude Include="doxygen.h" />
     <ClInclude Include="Frustum.h" />
@@ -157,7 +158,6 @@
     <ClInclude Include="SimpleRNG.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Vector2.h" />
-    <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="VQS.h" />
   </ItemGroup>

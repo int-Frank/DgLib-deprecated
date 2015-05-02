@@ -50,17 +50,16 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
 
   CHECK(m0 == m1);
 
-  m0.SetColumn(0, v0);
-  m0.SetColumn(1, v1);
-  m0.SetColumn(2, v2);
-  m0.SetColumn(3, v3);
+  m0.SetColumn(0, Transpose(v0));
+  m0.SetColumn(1, Transpose(v1));
+  m0.SetColumn(2, Transpose(v2));
+  m0.SetColumn(3, Transpose(v3));
 
-  m1.SetColumns(v0, v1, v2, v3);
+  m1.SetColumns(Transpose(v0), Transpose(v1), Transpose(v2), Transpose(v3));
 
   CHECK(m0 == m1);
 
   m0.GetRows(v0, v1, v2, v3);
-  m0.GetColumns(v0, v1, v2, v3);
 
   m0.Clean();
   m0.Identity();
@@ -172,6 +171,9 @@ TEST(Stack_Matrix44_Operations, creation_Matrix44_Operations)
 TEST(Stack_Matrix44_VectorTransform, creation_Matrix44_VectorTransform)
 {
   mat44 m0, m1, m2, m3;
+  m1.Identity();
+  m2.Identity();
+  m3.Identity();
 
   m0.Scaling(0.43f);
   m1 *= m0;
@@ -204,7 +206,7 @@ TEST(Stack_Matrix44_VectorTransform, creation_Matrix44_VectorTransform)
 TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
 {
   mat44 m0, m1, mx, my, mz, ms, mt;
-  quat q0;
+  quat q0, q1;
   mx.RotationX(Dg::PI_f * 0.5f);
   my.RotationY(Dg::PI_f * 0.5f);
   mz.RotationZ(Dg::PI_f * 0.5f);
@@ -247,6 +249,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);        //Check: Set matrix fom quaternion
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);        //Check: Set quaternion from matrix
   CHECK(vr == v * m0);
 
@@ -260,6 +264,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -273,6 +279,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -286,6 +294,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -299,6 +309,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -312,6 +324,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -325,6 +339,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -338,6 +354,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   
@@ -351,6 +369,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -364,6 +384,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -377,6 +399,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -390,6 +414,8 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
+  m0.GetQuaternion(q1);
+  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 

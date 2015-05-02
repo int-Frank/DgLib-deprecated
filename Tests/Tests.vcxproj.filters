@@ -36,13 +36,13 @@
     <ClCompile Include="TEST_dg_map_s.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_Vector3.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="TEST_BoundedSND.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_VQS.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgMatrix.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>

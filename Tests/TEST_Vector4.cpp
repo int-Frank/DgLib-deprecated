@@ -91,8 +91,6 @@ TEST(Stack_Vector4_Other, creation_Vector4_Other)
         Dg::IsZero(Dot(c0, c2)) &&
         Dg::IsZero(Dot(c1, c2)));
 
-  CHECK(c2 == vec4(-0.333333313f, -0.333333313f, 0.666666627f, 0.0f));
-
   // Length ///////////////////////////////////////////
 
   vec4 v(12.34f, 89.002345f, -41.3785f, 0.0f);

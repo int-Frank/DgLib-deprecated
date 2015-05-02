@@ -33,9 +33,6 @@ namespace Dg
   template<typename Real> class VQS;
 
   template<typename Real>
-  Vector4<Real> operator* (Vector4<Real> const &, VQS<Real> const &);
-
-  template<typename Real>
   VQS<Real> Inverse(VQS<Real> const &);
 
   //--------------------------------------------------------------------------------
@@ -89,8 +86,10 @@ namespace Dg
     VQS<Real>& operator*= (VQS<Real> const &);
 
     //Operators
-    template<typename T>
-    friend Vector4<T> operator* (Vector4<T> const &, VQS<T> const &);
+    Vector4<Real> TransformPoint(Vector4<Real> const &);
+    Vector4<Real> TransformVector(Vector4<Real> const &);
+    Vector4<Real>& TransformPointSelf(Vector4<Real>&);
+    Vector4<Real>& TransformVectorSelf(Vector4<Real>&);
 
     //Transformations
     Vector4<Real> Translate(Vector4<Real> const &) const;
@@ -146,7 +145,7 @@ namespace Dg
   void VQS<Real>::SetV(Vector4<Real> const & a_v)
   {
     m_v = a_v;
-    m_v.m_w = static_cast<Real>(0.0);
+    m_v.m_V[3] = static_cast<Real>(0.0);
 
   }	//End: VQS<Real>::Set()
 
@@ -260,7 +259,7 @@ namespace Dg
   void VQS<Real>::MakeValid()
   {
     //Clean vector
-    m_v.m_w = static_cast<Real>(0.0);
+    m_v.m_V[3] = static_cast<Real>(0.0);
 
     //Clean quaternion
     m_q.MakeValid();
@@ -278,7 +277,7 @@ namespace Dg
   template<typename Real>
   void VQS<Real>::Identity()
   {
-    m_v.m_x = m_v.m_y = m_v.m_z = m_v.m_w = static_cast<Real>(0.0);
+    m_v.Zero();
 
     m_q.Identity();
 
@@ -288,31 +287,89 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	operator*()
+  //	@	TransformPoint()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> operator*(Vector4<Real> const & a_v,
-                          VQS<Real> const & a_vqs)
+  Vector4<Real> VQS<Real>::TransformPoint(Vector4<Real> const & a_v)
   {
     Vector4<Real> result(a_v);
 
     //Scale
-    result.m_x *= a_vqs.m_s;
-    result.m_y *= a_vqs.m_s;
-    result.m_z *= a_vqs.m_s;
+    result.m_x *= m_s;
+    result.m_y *= m_s;
+    result.m_z *= m_s;
 
     //Rotate;
-    a_vqs.m_q.RotateSelf(result);
+    m_q.RotateSelf(result);
 
-    //Translate if a point
-    if (IsZero(result.m_w - static_cast<Real>(1.0)))
-    {
-      result += a_vqs.m_v;
-    }
+    //Translate
+    result += m_v;
 
     return result;
 
-  }	//End: operator*()
+  }	//End: TransformPoint()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	TransformPointSelf()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real>& VQS<Real>::TransformPointSelf(Vector4<Real> & a_v)
+  {
+    //Scale
+    a_v.m_x *= m_s;
+    a_v.m_y *= m_s;
+    a_v.m_z *= m_s;
+
+    //Rotate;
+    m_q.RotateSelf(a_v);
+
+    //Translate
+    a_v += m_v;
+
+    return a_v;
+
+  }	//End: TransformPointSelf()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	TransformVector()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> VQS<Real>::TransformVector(Vector4<Real> const & a_v)
+  {
+    Vector4<Real> result(a_v);
+
+    //Scale
+    result.m_V[0] *= m_s;
+    result.m_V[1] *= m_s;
+    result.m_V[2] *= m_s;
+
+    //Rotate;
+    m_q.RotateSelf(result);
+
+    return result;
+
+  }	//End: TransformVector()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	TransformVectorSelf()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real>& VQS<Real>::TransformVectorSelf(Vector4<Real> & a_v)
+  {
+    //Scale
+    a_v.m_x *= m_s;
+    a_v.m_y *= m_s;
+    a_v.m_z *= m_s;
+
+    //Rotate;
+    m_q.RotateSelf(a_v);
+
+    return a_v;
+
+  }	//End: TransformVectorSelf()
 
 
   //--------------------------------------------------------------------------------

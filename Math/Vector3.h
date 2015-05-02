@@ -5,8 +5,8 @@
 //!
 //! Class declaration: Vector3
 
-#ifndef Vector3_H
-#define Vector3_H
+#ifndef VECTOR3_H
+#define VECTOR3_H
 
 #include "SimpleRNG.h"
 #include "dgmath.h"
@@ -29,6 +29,13 @@ namespace Dg
   Vector3<Real> GetRandomVector();
 
   template<typename Real>
+  void GetBasis(const Vector3<Real>& a0,
+    const Vector3<Real>& a1,
+    Vector3<Real>& x0,
+    Vector3<Real>& x1,
+    Vector3<Real>& x2);
+
+  template<typename Real>
   Vector3<Real> Perpendicular(const Vector3<Real>&);
 
   template<typename Real>
@@ -49,6 +56,7 @@ namespace Dg
   class Vector3
   {
     friend class Matrix33<Real>;
+
   public:
 
     //! Default constructor. Members not initialized.
@@ -114,19 +122,28 @@ namespace Dg
     template<typename T>
     friend T Dot(const Vector3<T>&, const Vector3<T>&);
 
+    //! Assumes w = 0.
     template<typename T>
     friend Vector3<T> Cross(const Vector3<T>&, const Vector3<T>&);
 
-    //other 
     Real Length() const;
     Real LengthSquared() const;
 
     //Friend functions
-    friend Vector3<Real> operator* (const Vector3<Real>&, const Matrix33<Real>&);
+    template<typename T>
+    friend Vector3<T> operator* (const Vector3<T>&, const Matrix33<T>&);
 
     //! Returns a random unit vector.
     template<typename T>
     friend Vector3<T> GetRandomVector();
+
+    //! Creates an orthogonal basis from two input vectors
+    template<typename T>
+    friend void GetBasis(const Vector3<T>& a0,
+      const Vector3<T>& a1,
+      Vector3<T>& x0,
+      Vector3<T>& x1,
+      Vector3<T>& x2);
 
     //! Returns a perpendicular vector.
     template<typename T>
@@ -143,8 +160,9 @@ namespace Dg
     friend Vector3<T> GetRandomVector(const Vector3<T>& axis, T angle);
 
   private:
-    Real m_x, m_y, m_z, m_w;
+    Real m_x, m_y, m_z;
   };
+
 
   //-------------------------------------------------------------------------------
   //	@	Vector3::Vector3()
@@ -466,22 +484,106 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
+  //	@	GetBasis()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void GetBasis(const Vector3<Real>& a_a0,
+    const Vector3<Real>& a_a1,
+    Vector3<Real>& a_x0,
+    Vector3<Real>& a_x1,
+    Vector3<Real>& a_x2)
+  {
+    bool is_a1_zero = a_a1.IsZero();
+
+    //Check for zero vectors, handle separately
+    if (a_a0.IsZero())
+    {
+      //Both x0, x1 are zero vectors
+      if (is_a1_zero)
+      {
+        a_x0 = Vector3<Real>(static_cast<Real>(1.0), static_cast<Real>(0.0), static_cast<Real>(0.0));
+        a_x1 = Vector3<Real>(static_cast<Real>(0.0), static_cast<Real>(1.0), static_cast<Real>(0.0));
+        a_x2 = Vector3<Real>(static_cast<Real>(0.0), static_cast<Real>(0.0), static_cast<Real>(1.0));
+
+        return;
+      }
+      //x0 only is zero vector
+      else
+      {
+        //Build the basis off a_a1
+        a_x0 = a_a1;
+        a_x0.Normalize();
+
+        //Set x1
+        a_x1 = Perpendicular(a_x0);
+
+        //Find perpendicular vector to x0, x1.
+        a_x2 = Cross(a_x0, a_x1);
+
+        return;
+      }
+    }
+    //x1 only is zero vector
+    else if (is_a1_zero)
+    {
+      //Build the basis off a_a0
+      a_x0 = a_a0;
+      a_x0.Normalize();
+
+      //Set x1
+      a_x1 = Perpendicular(a_x0);
+
+      //Find perpendicular vector to x0, x1.
+      a_x2 = Cross(a_x0, a_x1);
+
+      return;
+    }
+
+    //Assign x0
+    a_x0 = a_a0;
+    a_x0.Normalize();
+
+    //Calculate x2
+    a_x2 = Cross(a_x0, a_a1);
+
+    //Test to see if a_a0 and a_a1 are parallel
+    if (IsZero(a_x2.LengthSquared()))
+    {
+      //Find a perpendicular vector
+      a_x1 = Perpendicular(a_x0);
+
+      //Calculate x2
+      a_x2 = Cross(a_x0, a_x1);
+
+      return;
+    }
+
+    //Normalize x2
+    a_x2.Normalize();
+
+    //Calculate x1
+    a_x1 = Cross(a_x2, a_x0);
+
+  } //End: GetBasis()
+
+
+  //--------------------------------------------------------------------------------
   //	@	Perpendicular()
   //--------------------------------------------------------------------------------
   template<typename Real>
   Vector3<Real> Perpendicular(const Vector3<Real>& a_vector)
   {
-    if (Dg::IsZero(a_vector.m_z))
-    {
-      return Vector3<Real>(-a_vector.m_y,
-        a_vector.m_x,
-        static_cast<Real>(0.0));
-    }
-    else
+    if (Dg::IsZero(a_vector.m_x))
     {
       return Vector3<Real>(static_cast<Real>(0.0),
         -a_vector.m_z,
         a_vector.m_y);
+    }
+    else
+    {
+      return Vector3<Real>(-a_vector.m_y,
+        a_vector.m_x,
+        static_cast<Real>(0.0));
     }
 
   }	//End: Perpendicular()
@@ -535,7 +637,7 @@ namespace Dg
   //		@ GetRandomVector()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector3<Real> GetRandomConeVector(const Vector3<Real>& a_axis, Real theta)
+  Vector3<Real> GetRandomVector(const Vector3<Real>& a_axis, Real theta)
   {
     SimpleRNG generator;
 

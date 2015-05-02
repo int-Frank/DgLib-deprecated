@@ -258,13 +258,17 @@ namespace Dg
       //Calculate new size
       int new_size = (m_arraySize << 1);
 
-      //Create new arrays
-      Container * new_data = (Container *)malloc(sizeof(Container) * new_size);
+      //overflow, map full
+      if (new_size <= m_arraySize)
+      {
+        return false;
+      }
 
-      memcpy(new_data, m_data, (sizeof(Container) * m_currentSize));
+      if (realloc(m_data, sizeof(Container) * new_size) == nullptr)
+      {
+        return false;
+      }
 
-      free(m_data);
-      m_data = new_data;
       m_arraySize = new_size;
 
     }	//End: map::extend()

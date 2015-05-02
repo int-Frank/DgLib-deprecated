@@ -89,7 +89,7 @@ TEST(Stack_VQS_VectorTransform, creation_VQS_VectorTransform)
   M_B_A = ms * mr * mt;
 
   vec4 result_VQS, result_M;
-  result_VQS = vec4(2.0, 0.0, 0.0, 0.0) * (T_B_A * T_A_WLD);
+  result_VQS = (T_B_A * T_A_WLD).TransformVector(vec4(2.0, 0.0, 0.0, 0.0));
   result_M = vec4(2.0, 0.0, 0.0, 0.0) * (M_B_A * M_A_WLD);
 
   CHECK(result_VQS == result_M);
