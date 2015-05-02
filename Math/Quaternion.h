@@ -9,7 +9,7 @@
 #define QUATERNION_H
 
 #include "dgmath.h"
-#include "Vector4.h"
+#include "DgVector.h"
 
 namespace Dg
 {

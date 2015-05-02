@@ -20,6 +20,8 @@
 #ifndef DG_POD_MAP_S_H
 #define DG_POD_MAP_S_H
 
+#include <exception>
+
 #define DG_MAP_DEFAULT_SIZE 1024
 
 namespace Dg
@@ -41,36 +43,83 @@ namespace Dg
       };
 
     public:
-      //Constructor / destructor
+
+      //! Constructor 
+      //! If the constructor fails to allocate the map, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
       map();
+
+      //! Initialize map with to a capacity. 
+      //! If the constructor fails to allocate the map, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
       map(unsigned int);
       ~map();
 
-      //Copy operations
-      map(const map&);
-      map& operator= (const map&);
+      //! Copy constructor.
+      map(map const &);
 
-      //Accessors
+      //! Assigns new contents to the container, replacing its current content.
+      map& operator= (map const &);
 
+      //! Returns a reference to the \a i<SUP>th</SUP> element in the map. 
+      //! This function does not perform a range check.
       T&       operator[](unsigned int i)				{ return m_data[i].item; }
+
+      //! Returns a const reference to the \a i<SUP>th</SUP> element in the map. 
+      //! This function does not perform a range check.
       const T& operator[](unsigned int i) const { return m_data[i].item; }
+
+      //! Return number of elements in the map.
       int      size()			                const	{ return m_currentSize; }
+
+      //! Returns whether the map is empty.
       bool     empty()		                const	{ return m_currentSize == 0; }
+
+      //! Returns number of elements the map can hold before resizing.
       int      max_size()		              const	{ return m_arraySize; }
-      U        ID(int i)			            const { return m_data[i].key; }
 
-      //Returns false if not found, however, index will be set to
-      //the lower index just before where input key would be.
-      bool find(U key, int& index, int lower = 0) const;			//Use binary search
-      bool find(U key, int& index, int lower, int upper) const;	//Use binary search
+      //! Returns the key of the ith element in the map.
+      //! This function does not perform a range check.
+      U        QueryKey(int i)		          const { return m_data[i].key; }
 
-      //Manipulators
-      bool insert(const T&, U key);
-      bool set(U key, const T&);
-      bool erase(U key);
+      //! Searches the map for an element with a key equivalent to \a k.
+      //! \return True if the element was found with \a index being set to the 
+      //!         index of the element inthe map. False if not found with \a index
+      //!         set to one lower to where \a k would be.
+      //! \param lower Set a low bound to the search sublist.
+      bool find(U k, int& index, int lower = 0) const;			 //Use binary search
+
+      //! Searches the map for an element with a key equivalent to \a k.
+      //! \return True if the element was found with \a index being set to the 
+      //!         index of the element inthe map. False if not found with \a index
+      //!         set to one lower to where \a k would be.
+      //! \param lower Set a low bound to the search sublist.
+      //! \param upper Set an upper bound to the search sublist.
+      bool find(U k, int& index, int lower, int upper) const;	//Use binary search
+
+      //! Extends the container by inserting new elements, effectively increasing 
+      //! the container size by the number of elements inserted.
+      //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
+      //! \return False if key already exists in the map.
+      bool insert(U k, T t);
+
+      //! Set element with key \a k, with value \a t.
+      //! \return True if key found.
+      bool set(U k, T t);
+
+      //! Removes the item in the map with key \a k.
+      void erase(U k);
+
+      //! Clear all items from the map, retains allocated memory.
       void clear();
+
+      //! Resize the map. All data will be lost.
+      //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
       void resize(unsigned int);
+
+      //! Doubles the memory allocated to the map. Retains all data.
+      //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
       void extend();
+
+      //! Clears the map, reallocates memory to the map.
       void reset();
 
     private:
@@ -81,7 +130,7 @@ namespace Dg
       int m_currentSize;
 
     private:
-      void init(const map&);
+      void init(map const &);
     };
 
 
@@ -105,10 +154,18 @@ namespace Dg
     //		Copy Constructor
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    map<U, T>::map(unsigned int new_size)
+    map<U, T>::map(unsigned int a_size)
       : m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
-      resize(new_size);
+      m_data = static_cast<Container *>(malloc(sizeof(Container) * a_size));
+
+      if (m_data == nullptr)
+      {
+        throw std::bad_alloc;
+      }
+
+      m_arraySize = a_size;
+      m_currentSize = 0;
 
     }	//End: map::map()
 
@@ -121,8 +178,6 @@ namespace Dg
     template<typename U, typename T>
     map<U, T>::~map()
     {
-      //Free memory
-      clear();
       free(m_data);
 
     }	//End: map::~map()
@@ -134,15 +189,13 @@ namespace Dg
     //		Initialise map to another.
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    void map<U, T>::init(const map& other)
+    void map<U, T>::init(map const & a_other)
     {
-      //Resize lists
-      int sze = (other.m_arraySize>0) ? other.m_arraySize : 1;
-      resize(sze);
+      resize(a_other.m_arraySize);
 
-      memcpy(m_data, other.m_data, other.m_currentSize * sizeof(Container));
+      memcpy(m_data, a_other.m_data, a_other.m_currentSize * sizeof(Container));
 
-      m_currentSize = other.m_currentSize;
+      m_currentSize = a_other.m_currentSize;
 
     }	//End: map::init()
 
@@ -153,10 +206,10 @@ namespace Dg
     //		Copy constructor
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    map<U, T>::map(const map& other) :
+    map<U, T>::map(map const & a_other) :
       m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
-      init(other);
+      init(a_other);
 
     }	//End: map::map()
 
@@ -167,12 +220,12 @@ namespace Dg
     //		Assignment
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    map<U, T>& map<U, T>::operator=(const map& other)
+    map<U, T>& map<U, T>::operator=(map const & a_other)
     {
-      if (this == &other)
+      if (this == &a_other)
         return *this;
 
-      init(other);
+      init(a_other);
 
       return *this;
 
@@ -185,14 +238,17 @@ namespace Dg
     //		Resize map, erases all m_data before resize.
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    void map<U, T>::resize(unsigned int val)
+    void map<U, T>::resize(unsigned int a_newSize)
     {
-      //Delete old m_data
-      clear();
       free(m_data);
-      m_data = (Container *)malloc(sizeof(Container) * val);
+      m_data = static_cast<Container *>(malloc(sizeof(Container) * a_newSize));
 
-      m_arraySize = val;
+      if (m_data == nullptr)
+      {
+        throw std::bad_alloc;
+      }
+
+      m_arraySize = a_newSize;
       m_currentSize = 0;
 
     }	//End: map::resize()
@@ -204,9 +260,9 @@ namespace Dg
     //		Find a value in the map, uses a binary search algorithm
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    bool map<U, T>::find(U key, int& index, int lower) const
+    bool map<U, T>::find(U a_key, int& a_index, int a_lower) const
     {
-      return find(key, index, lower, (m_currentSize - 1));
+      return find(a_key, a_index, a_lower, (m_currentSize - 1));
 
     }	//End: map::find()
 
@@ -217,31 +273,31 @@ namespace Dg
     //		Find a value in the map within a range, uses a binary search algorithm
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    bool map<U, T>::find(U key, int& index, int lower, int upper) const
+    bool map<U, T>::find(U a_key, int& a_index, int a_lower, int a_upper) const
     {
       //Check bounds
-      lower = (lower>0) ? lower : 0;
-      upper = (upper<m_currentSize - 1) ? upper : m_currentSize - 1;
+      a_lower = (a_lower > 0) ? a_lower : 0;
+      a_upper = (a_upper < m_currentSize - 1) ? a_upper : m_currentSize - 1;
 
-      while (lower <= upper)
+      while (a_lower <= a_upper)
       {
         // calculate the midpoint for roughly equal partition
-        index = ((upper + lower) >> 1);
+        a_index = ((a_upper + a_lower) >> 1);
 
         // determine which subarray to search
-        if (m_data[index].key < key)
+        if (m_data[a_index].a_key < a_key)
           // change min index to search upper subarray
-          lower = index + 1;
-        else if (m_data[index].key > key)
+          a_lower = a_index + 1;
+        else if (m_data[a_index].a_key > a_key)
           // change max index to search lower subarray
-          upper = index - 1;
+          a_upper = a_index - 1;
         else
           // key found at index index
           return true;
       }
 
       //Set index closest (but lower) to key
-      index = lower - 1;
+      a_index = a_lower - 1;
       return false;
 
     }	//End: map::find()
@@ -261,12 +317,13 @@ namespace Dg
       //overflow, map full
       if (new_size <= m_arraySize)
       {
-        return false;
+        throw std::overflow_error;
       }
 
-      if (realloc(m_data, sizeof(Container) * new_size) == nullptr)
+      m_data = static_cast<Container*>(realloc(m_data, sizeof(Container) * new_size));
+      if (m_data == nullptr)
       {
-        return false;
+        throw std::bad_alloc;
       }
 
       m_arraySize = new_size;
@@ -280,11 +337,11 @@ namespace Dg
     //		Insert an element into the map
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    bool map<U, T>::insert(const T& val, U key)
+    bool map<U, T>::insert(U a_key, T a_item)
     {
       //Find the index to insert to
       int index;
-      if (find(key, index))
+      if (find(a_key, index))
         return false;	//element already exists
 
       //Range check
@@ -296,8 +353,8 @@ namespace Dg
 
       index++;
 
-      memcpy(&m_data[index].key, &key, sizeof(key));
-      memcpy(&m_data[index].item, &val, sizeof(val));
+      memcpy(&m_data[index].key, &a_key, sizeof(a_key));
+      memcpy(&m_data[index].item, &a_item, sizeof(a_item));
 
       m_currentSize++;
 
@@ -312,18 +369,18 @@ namespace Dg
     //		Remove an element from the map
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    bool map<U, T>::erase(U key)
+    void map<U, T>::erase(U a_key)
     {
       //Find the index
       int index;
-      if (!find(key, index))
-        return false;	//element not found
+      if (!find(a_key, index))
+      {
+        return;
+      }
 
       memmove(&m_data[index], &m_data[index + 1], (m_currentSize - index - 1) * sizeof(Container));
 
       m_currentSize--;
-
-      return true;
 
     }	//End: map::erase()
 
@@ -334,14 +391,17 @@ namespace Dg
     //		Sets an element to a new value
     //--------------------------------------------------------------------------------
     template<typename U, typename T>
-    bool map<U, T>::set(U key, const T& val)
+    bool map<U, T>::set(U a_key, T a_item)
     {
       //Find the index to insert to
       int index;
-      if (!find(key, index))
+      if (!find(a_key, index))
+      {
         return false;	//element does not exist
+      }
+        
 
-      memcpy(&m_data[index].item, &val, sizeof(val));
+      memcpy(&m_data[index].item, &a_item, sizeof(a_item));
 
       return true;
 

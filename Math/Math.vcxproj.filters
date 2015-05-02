@@ -50,16 +50,10 @@
     <ClInclude Include="Frustum.h">
       <Filter>Header Files\Old</Filter>
     </ClInclude>
-    <ClInclude Include="Line4.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
     <ClInclude Include="LineSegment4.h">
       <Filter>Header Files\Old</Filter>
     </ClInclude>
     <ClInclude Include="OBB.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Plane4.h">
       <Filter>Header Files\Old</Filter>
     </ClInclude>
     <ClInclude Include="Primitive.h">
@@ -83,9 +77,6 @@
     <ClInclude Include="Sphere.h">
       <Filter>Header Files\Old</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
     <ClInclude Include="BoundedNormal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -98,10 +89,16 @@
     <ClInclude Include="Matrix44.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector4.h">
+    <ClInclude Include="DgMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DgMatrix.h">
+    <ClInclude Include="DgVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Line4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

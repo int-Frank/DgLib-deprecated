@@ -157,8 +157,7 @@
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="SimpleRNG.h" />
     <ClInclude Include="Sphere.h" />
-    <ClInclude Include="Vector2.h" />
-    <ClInclude Include="Vector4.h" />
+    <ClInclude Include="DgVector.h" />
     <ClInclude Include="VQS.h" />
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@
 #ifndef VQS_H
 #define VQS_H
 
-#include "Vector4.h"
+#include "DgVector.h"
 #include "Quaternion.h"
 #include "Matrix44.h"
 #include "dgmath.h"

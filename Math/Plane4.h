@@ -21,196 +21,197 @@
 #ifndef PLANE4_H
 #define PLANE4_H
 
-#include "Vector4.h"
-#include "Dg_io.h"
-#include "Point4.h"
-#include "CommonMath.h"
-#include "DgTypes.h"
-#include "Primitive2D.h"
+#include "DgVector.h"
+#include "dgmath.h"
 
-class Line4;
-class Ray4;
-class LineSegment4;
-class OBB;
-
-//--------------------------------------------------------------------------------
-//	@	Plane4
-//--------------------------------------------------------------------------------
-class Plane4 : public Primitive2D
+namespace Dg
 {
-public:
-	//constructor/destructor
-	Plane4();
-	Plane4(float a, float b, float c, float d);
-	Plane4(const Point4& p0, const Point4& p1, const Point4& p2);
-	Plane4(const Vector4& n, float d);
-	inline ~Plane4() {}
 
-	//Output
-	friend DgWriter& operator<<(DgWriter& out, const Plane4& source);
+  class Line4;
+  class Ray4;
+  class LineSegment4;
+  class OBB;
 
-	//copy operations
-	Plane4(const Plane4& other);
-	Plane4& operator= (const Plane4& other);
+  //--------------------------------------------------------------------------------
+  //	@	Plane4
+  //--------------------------------------------------------------------------------
+  class Plane4 : public Primitive2D
+  {
+  public:
+    //constructor/destructor
+    Plane4();
+    Plane4(float a, float b, float c, float d);
+    Plane4(const Point4& p0, const Point4& p1, const Point4& p2);
+    Plane4(const Vector4& n, float d);
+    inline ~Plane4() {}
 
-	//accessors
-	inline const Vector4& Normal() const {return normal;}
-	inline float Offset() const {return offset;}
-	void Get(Vector4& normal, float& offset) const;
+    //Output
+    friend DgWriter& operator<<(DgWriter& out, const Plane4& source);
 
-	//comparison
-	bool operator== (const Plane4&) const;
-	bool operator!= (const Plane4&) const;
+    //copy operations
+    Plane4(const Plane4& other);
+    Plane4& operator= (const Plane4& other);
 
-	//manipulators
-	void Set(float a, float b, float c, float d);
-	void Set(const Vector4& n, float d);
-	void Set(const Vector4& n, const Point4& p); 
-	void Set(const Point4& p0, const Point4& p1, const Point4& p2);
+    //accessors
+    inline const Vector4& Normal() const { return normal; }
+    inline float Offset() const { return offset; }
+    void Get(Vector4& normal, float& offset) const;
 
-	//ests which side of the plane a point lies
-	inline float Test(const Point4&) const;
+    //comparison
+    bool operator== (const Plane4&) const;
+    bool operator!= (const Plane4&) const;
 
-	//! Test a vector against the plane normal
-	float NormalDot(const Vector4& v) const { return Dot(normal, v); }
+    //manipulators
+    void Set(float a, float b, float c, float d);
+    void Set(const Vector4& n, float d);
+    void Set(const Vector4& n, const Point4& p);
+    void Set(const Point4& p0, const Point4& p1, const Point4& p2);
 
-	//Distance to a point
-	inline float Distance(const Point4&) const;
-	
-	//--------------------------------------------------------------------------------
-	//		From Primitive2D
-	//--------------------------------------------------------------------------------
-public:
-	
-	//--------------------------------------------------------------------------------
-	//		From Primitive
-	//--------------------------------------------------------------------------------
-public:
+    //ests which side of the plane a point lies
+    inline float Test(const Point4&) const;
 
-	Point4 ClosestPoint (const Point4&) const;
-	
-	//General Interaction functions
-	uint8 Test(const Primitive*) const					{return 0;}
+    //! Test a vector against the plane normal
+    float NormalDot(const Vector4& v) const { return Dot(normal, v); }
 
-	//Intersections
-	uint8 TestSphere(const Sphere&) const				{return 0;}
-	uint8 TestCone(const Cone&) const					{return 0;}
-	uint8 TestOBB(const OBB&) const						{return 0;}
-	uint8 TestFrustum(const Frustum&) const				{return 0;}
-	uint8 TestPoint(const Point4&) const				{return 0;}
-	uint8 TestPlane(const Plane4&) const				{return 0;}
-	uint8 TestLine(const Line4&) const					{return 0;}
-	uint8 TestRay(const Ray4&) const					{return 0;}
-	uint8 TestLineSegment(const LineSegment4&) const	{return 0;}
-	uint8 TestCircle(const Circle4&) const				{return 0;}
+    //Distance to a point
+    inline float Distance(const Point4&) const;
 
-	//--------------------------------------------------------------------------------
-	//		From Object
-	//--------------------------------------------------------------------------------
-public:
-	
-	//Transformations do nothing by default
-	void Transform(const VQS&)		{}
-	void TransformQuick(const VQS&) {}
+    //--------------------------------------------------------------------------------
+    //		From Primitive2D
+    //--------------------------------------------------------------------------------
+  public:
 
-	//--------------------------------------------------------------------------------
-	//		From BaseClass
-	//--------------------------------------------------------------------------------
-public:
+    //--------------------------------------------------------------------------------
+    //		From Primitive
+    //--------------------------------------------------------------------------------
+  public:
 
-	//Create a deep copy of the object
-	Plane4* clone() const {return new Plane4(*this);}
+    Point4 ClosestPoint(const Point4&) const;
 
-private:
-	Vector4 normal;
-	float offset;
+    //General Interaction functions
+    uint8 Test(const Primitive*) const					{ return 0; }
 
-	
-public:
-	//OBB Plane intersecion
-	friend uint8 TestOBBPlane(const OBB& bb, const Plane4& p);
-	friend uint8 TestFrustumOBB(const Frustum&, const OBB&);
-};
+    //Intersections
+    uint8 TestSphere(const Sphere&) const				{ return 0; }
+    uint8 TestCone(const Cone&) const					{ return 0; }
+    uint8 TestOBB(const OBB&) const						{ return 0; }
+    uint8 TestFrustum(const Frustum&) const				{ return 0; }
+    uint8 TestPoint(const Point4&) const				{ return 0; }
+    uint8 TestPlane(const Plane4&) const				{ return 0; }
+    uint8 TestLine(const Line4&) const					{ return 0; }
+    uint8 TestRay(const Ray4&) const					{ return 0; }
+    uint8 TestLineSegment(const LineSegment4&) const	{ return 0; }
+    uint8 TestCircle(const Circle4&) const				{ return 0; }
 
+    //--------------------------------------------------------------------------------
+    //		From Object
+    //--------------------------------------------------------------------------------
+  public:
 
-//--------------------------------------------------------------------------------
-//		INLINES	
-//--------------------------------------------------------------------------------
+    //Transformations do nothing by default
+    void Transform(const VQS&)		{}
+    void TransformQuick(const VQS&) {}
 
+    //--------------------------------------------------------------------------------
+    //		From BaseClass
+    //--------------------------------------------------------------------------------
+  public:
 
-//--------------------------------------------------------------------------------
-//		Returns the distance from a point to the plane.
-//		Negative is behind the normal vector
-//		Positive is in front of normal vector
-//--------------------------------------------------------------------------------
-inline float Plane4::Test(const Point4& point) const
-{
-	return point.Dot(normal) + offset;
-}	//End: Plane4::Test()
+    //Create a deep copy of the object
+    Plane4* clone() const { return new Plane4(*this); }
+
+  private:
+    Vector4 normal;
+    float offset;
 
 
-//--------------------------------------------------------------------------------
-//		Returns distance to a point
-//--------------------------------------------------------------------------------
-inline float Plane4::Distance(const Point4& point) const
-{
-	return DgAbs(point.Dot(normal) + offset);
-
-}	//End: Plane4::Distance()
+  public:
+    //OBB Plane intersecion
+    friend uint8 TestOBBPlane(const OBB& bb, const Plane4& p);
+    friend uint8 TestFrustumOBB(const Frustum&, const OBB&);
+  };
 
 
-//--------------------------------------------------------------------------------
-//		Function Declarations
-//--------------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------------
-//	@	TestLinePlane()
-//--------------------------------------------------------------------------------
-/*		Summary: Does the line intersect the plane?
-			--------------------------------------
-		Post:	
-		Case - No intersection: returns 0. u set to 0.
-		Case - Intersection: returns 1. u set.
-			--------------------------------------
-		Param<line>:	input line
-		Param<plane>:	input plane
-		Param<u>:		distance along line to the intersection
-*/
-//--------------------------------------------------------------------------------
-uint8 TestLinePlane(const Line4& line, const Plane4& plane, float& u);
+  //--------------------------------------------------------------------------------
+  //		INLINES	
+  //--------------------------------------------------------------------------------
 
 
-//--------------------------------------------------------------------------------
-//	@	TestPlaneRay()
-//--------------------------------------------------------------------------------
-/*		Summary: Does the ray intersect the plane?
-			--------------------------------------
-		Post:	
-		Case - No intersection: returns 0. u set to 0.
-		Case - Intersection: returns 1. u set.
-			--------------------------------------
-		Param<plane>:	input plane
-		Param<ray>:		input ray
-		Param<u>:	 distance along ray to the intersection
-*/
-//--------------------------------------------------------------------------------
-uint8 TestPlaneRay(const Plane4& plane, const Ray4& ray, float& u);
+  //--------------------------------------------------------------------------------
+  //		Returns the distance from a point to the plane.
+  //		Negative is behind the normal vector
+  //		Positive is in front of normal vector
+  //--------------------------------------------------------------------------------
+  inline float Plane4::Test(const Point4& point) const
+  {
+    return point.Dot(normal) + offset;
+  }	//End: Plane4::Test()
 
 
-//--------------------------------------------------------------------------------
-//	@	TestLineSegmentPlane()
-//--------------------------------------------------------------------------------
-/*		Summary: Does the linesegment intersect the plane?
-			--------------------------------------
-		Post:	
-		Case - No intersection: returns 0. u set to 0.
-		Case - Intersection: returns 1. u set.
-			--------------------------------------
-		Param<segment>:	input linesegment
-		Param<plane>:	input plane
-		Param<u>:		distance along line to the intersection
-*/
-//--------------------------------------------------------------------------------
-uint8 TestLineSegmentPlane(const LineSegment4& segment, const Plane4& plane, float& u);
+  //--------------------------------------------------------------------------------
+  //		Returns distance to a point
+  //--------------------------------------------------------------------------------
+  inline float Plane4::Distance(const Point4& point) const
+  {
+    return DgAbs(point.Dot(normal) + offset);
+
+  }	//End: Plane4::Distance()
+
+
+  //--------------------------------------------------------------------------------
+  //		Function Declarations
+  //--------------------------------------------------------------------------------
+
+  //--------------------------------------------------------------------------------
+  //	@	TestLinePlane()
+  //--------------------------------------------------------------------------------
+  /*		Summary: Does the line intersect the plane?
+  --------------------------------------
+  Post:
+  Case - No intersection: returns 0. u set to 0.
+  Case - Intersection: returns 1. u set.
+  --------------------------------------
+  Param<line>:	input line
+  Param<plane>:	input plane
+  Param<u>:		distance along line to the intersection
+  */
+  //--------------------------------------------------------------------------------
+  uint8 TestLinePlane(const Line4& line, const Plane4& plane, float& u);
+
+
+  //--------------------------------------------------------------------------------
+  //	@	TestPlaneRay()
+  //--------------------------------------------------------------------------------
+  /*		Summary: Does the ray intersect the plane?
+  --------------------------------------
+  Post:
+  Case - No intersection: returns 0. u set to 0.
+  Case - Intersection: returns 1. u set.
+  --------------------------------------
+  Param<plane>:	input plane
+  Param<ray>:		input ray
+  Param<u>:	 distance along ray to the intersection
+  */
+  //--------------------------------------------------------------------------------
+  uint8 TestPlaneRay(const Plane4& plane, const Ray4& ray, float& u);
+
+
+  //--------------------------------------------------------------------------------
+  //	@	TestLineSegmentPlane()
+  //--------------------------------------------------------------------------------
+  /*		Summary: Does the linesegment intersect the plane?
+  --------------------------------------
+  Post:
+  Case - No intersection: returns 0. u set to 0.
+  Case - Intersection: returns 1. u set.
+  --------------------------------------
+  Param<segment>:	input linesegment
+  Param<plane>:	input plane
+  Param<u>:		distance along line to the intersection
+  */
+  //--------------------------------------------------------------------------------
+  uint8 TestLineSegmentPlane(const LineSegment4& segment, const Plane4& plane, float& u);
+
+}
 
 #endif

@@ -1,5 +1,5 @@
 #include "TestHarness.h"
-#include "Vector4.h"
+#include "DgVector.h"
 #include "Quaternion.h"
 
 typedef Dg::Quaternion < float >  quat;
