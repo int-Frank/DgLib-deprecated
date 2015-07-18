@@ -14,4 +14,27 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dg_list_p.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dg_map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dg_map_p.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dg_set_p.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dg_shared_ptr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dg_vector_p.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="impl_container_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

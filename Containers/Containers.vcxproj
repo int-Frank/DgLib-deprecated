@@ -18,6 +18,15 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dg_list_p.h" />
+    <ClInclude Include="dg_map.h" />
+    <ClInclude Include="dg_map_p.h" />
+    <ClInclude Include="dg_set_p.h" />
+    <ClInclude Include="dg_shared_ptr.h" />
+    <ClInclude Include="dg_vector_p.h" />
+    <ClInclude Include="impl_container_common.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8DB75AC3-EEC3-4235-BE94-CF62C035601D}</ProjectGuid>
     <RootNamespace>Containers</RootNamespace>
