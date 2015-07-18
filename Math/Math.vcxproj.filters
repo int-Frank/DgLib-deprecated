@@ -16,16 +16,13 @@
     <Filter Include="Header Files\Old">
       <UniqueIdentifier>{c610fed0-164b-440b-a45e-b78c0b574d5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Random numbers">
-      <UniqueIdentifier>{061aa36a-0dfd-46d2-9903-0eb2410d049e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dgmath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRNG.cpp">
-      <Filter>Random numbers</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,13 +39,25 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BoundedNormal.h">
-      <Filter>Random numbers</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRNG.h">
-      <Filter>Random numbers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DgRNG.h">
-      <Filter>Random numbers</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRNG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DgMatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix44.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quaternion.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

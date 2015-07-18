@@ -1,44 +1,11 @@
 #include "TestHarness.h"
-#include "dg_map.h"
+#include "dg_map_p.h"
 #include <vector>
 #include <algorithm>
 
-
-int g_constructorCounter = 0;
-int g_destructorCounter = 0;
-int g_copyCounter = 0;
-
-class testClass
-{
-public:
-
-  testClass() { g_constructorCounter++; m_value = g_constructorCounter; }
-  ~testClass(){ g_destructorCounter++; }
-
-  testClass(const testClass& a_other)
-  {
-    g_copyCounter++;
-    m_value = a_other.m_value;
-  }
-
-  testClass& operator=(const testClass& a_other)
-  {
-    m_value = a_other.m_value;
-    g_copyCounter++;
-    return *this;
-  }
-
-  bool operator==(testClass const & a_other) const { return m_value == a_other.m_value; }
-  bool operator!=(testClass const & a_other) const { return m_value != a_other.m_value; }
-
-private:
-
-  int m_value;
-};
-
-typedef std::pair<int, testClass>  mapPair;
-typedef std::vector<mapPair>       vec;
-typedef Dg::map<int, testClass>    DgMap;
+typedef std::pair<int, int>     mapPair;
+typedef std::vector<mapPair>    vec;
+typedef Dg::map_p<int, int>     DgMap;
 
 bool sortFcn(mapPair a, mapPair b)
 {
@@ -59,7 +26,7 @@ bool CheckState(vec v, DgMap m)
   {
     if (m.empty() == false
       || m.find(0, index)
-      || m.set(0, testClass()))
+      || m.set(0, 1))
     {
       return false;
     }
@@ -103,13 +70,13 @@ bool CheckState(vec v, DgMap m)
     }
 
     //Check we cannot insert duplicate data
-    if (m.insert(v[i].first, testClass()))
+    if (m.insert(v[i].first, 1))
     {
       return false;
     }
 
     //Check we can set data
-    if (!m.set(v[i].first, testClass()))
+    if (!m.set(v[i].first, -1))
     {
       return false;
     }
@@ -127,7 +94,7 @@ bool CheckState(vec v, DgMap m)
   while (v1.size() != 0)
   {
     int ind = eraseInd % v1.size();
-
+    
     m1.erase(v1[ind].first);
 
     auto it = v1.begin();
@@ -147,11 +114,10 @@ bool CheckState(vec v, DgMap m)
   return true;
 }
 
-bool InsertAndCheck(vec & v, DgMap & m, int newK)
+bool InsertAndCheck(vec & v, DgMap & m, int newK, int newT)
 {
-  testClass t;
-  v.push_back(mapPair(newK, t));
-  m.insert(newK, t);
+  v.push_back(mapPair(newK, newT));
+  m.insert(newK, newT);
 
   if (!CheckState(v, m))
   {
@@ -167,7 +133,7 @@ bool InsertAndCheck(vec & v, DgMap & m, int newK)
 //--------------------------------------------------------------------------------
 //	Dg::map_s
 //--------------------------------------------------------------------------------
-TEST(Stack_dg_pod_map, creation_dg_pod_map)
+TEST(Stack_dg_map_p, creation_dg_map_p)
 {
   DgMap m;
   m.resize(1);
@@ -178,16 +144,17 @@ TEST(Stack_dg_pod_map, creation_dg_pod_map)
   CHECK(m.empty() == true);
   CHECK(m.max_size() == 1);
   CHECK(m.find(0, index) == false);
+  CHECK(m.set(0, 1) == false);
 
-  CHECK(InsertAndCheck(v, m, 3));
-  CHECK(InsertAndCheck(v, m, 8));
-  CHECK(InsertAndCheck(v, m, 1));
-  CHECK(InsertAndCheck(v, m, 9));
-  CHECK(InsertAndCheck(v, m, 5));
-  CHECK(InsertAndCheck(v, m, 2));
-  CHECK(InsertAndCheck(v, m, 4));
-  CHECK(InsertAndCheck(v, m, 7));
-  CHECK(InsertAndCheck(v, m, 6));
-  CHECK(InsertAndCheck(v, m, 0));
+  CHECK(InsertAndCheck(v, m, 3, 5456));
+  CHECK(InsertAndCheck(v, m, 8, 5789));
+  CHECK(InsertAndCheck(v, m, 1, 485));
+  CHECK(InsertAndCheck(v, m, 9, 854890));
+  CHECK(InsertAndCheck(v, m, 5, 3458));
+  CHECK(InsertAndCheck(v, m, 2, 94567));
+  CHECK(InsertAndCheck(v, m, 4, 348));
+  CHECK(InsertAndCheck(v, m, 7, 757));
+  CHECK(InsertAndCheck(v, m, 6, 346587));
+  CHECK(InsertAndCheck(v, m, 0, 87));
 
 }

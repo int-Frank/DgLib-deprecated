@@ -20,6 +20,9 @@ namespace Dg
   Matrix<N, M, Real> Transpose(Matrix<M, N, Real> const &);
 
   template<sizeType M, sizeType N, typename Real>
+  Real Dot(Matrix<M, N, Real> const &, Matrix<M, N, Real> const &);
+
+  template<sizeType M, sizeType N, typename Real>
   Matrix<M, N, Real> operator*(Real, Matrix<M, N, Real> const &);
 
   //! @ingroup Math_classes
@@ -97,6 +100,7 @@ namespace Dg
     Matrix operator-() const;
 
     Matrix& operator*= (Matrix const &);
+    Real Dot(Matrix const &, Matrix const &);
 
     template<sizeType _M>
     Matrix<M, _M, Real> operator* (Matrix<N, _M, Real> const &) const;
@@ -567,6 +571,24 @@ namespace Dg
     Set(result.m_V);
 
     return *this;
+
+  }   // End: Matrix::operator*()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Matrix::Dot()
+  //-------------------------------------------------------------------------------
+  template<sizeType M, sizeType N, typename Real>
+  Real Dot(Matrix<M, N, Real> const & a_m0,
+           Matrix<M, N, Real> const & a_m1)
+  {
+    Real result = static_cast<Real>(0.0);
+    for (sizeType i = 0; i < N * M; ++i)
+    {
+      result += a_m0.m_V[i] * a_m1.m_V[i];
+    }
+
+    return result;
 
   }   // End: Matrix::operator*()
 
