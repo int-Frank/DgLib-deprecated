@@ -114,20 +114,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="common.h" />
-    <ClInclude Include="dg_list_s.h" />
-    <ClInclude Include="dg_map.h" />
-    <ClInclude Include="dg_map_s.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="dg_map_sl.h" />
-    <ClInclude Include="dg_pod_map.h" />
-    <ClInclude Include="dg_pod_map_l.h" />
-    <ClInclude Include="dg_pod_set.h" />
-    <ClInclude Include="dg_shared_ptr.h" />
-    <ClInclude Include="dg_vector_s.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
