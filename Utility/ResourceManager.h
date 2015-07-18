@@ -61,7 +61,7 @@ namespace Dg
   };
 
 
-  //A separate thread should be polling Update();
+  //A separate thread should be polling Update()
   template<typename>
   class ResourceManager
   {
