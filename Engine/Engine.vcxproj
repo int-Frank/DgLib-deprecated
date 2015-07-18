@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{06AE16D3-4C8F-43C8-A4E0-6E3D1089293F}</ProjectGuid>
-    <RootNamespace>Math</RootNamespace>
+    <ProjectGuid>{2E5996FD-C559-4AD1-9541-9F9CC4D485B4}</ProjectGuid>
+    <RootNamespace>Engine</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -82,7 +82,6 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Containers;..\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -93,7 +92,6 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Containers;..\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -106,7 +104,6 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Containers;..\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -121,7 +118,6 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Containers;..\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,29 +126,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="dgmath.cpp" />
-    <ClCompile Include="SimpleRNG.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BoundedNormal.h" />
-    <ClInclude Include="config.h" />
-    <ClInclude Include="DgMatrix.h" />
-    <ClInclude Include="DgRNG.h" />
-    <ClInclude Include="doxygen.h" />
-    <ClInclude Include="dgmath.h" />
-    <ClInclude Include="Matrix44.h" />
-    <ClInclude Include="Quaternion.h" />
-    <ClInclude Include="SimpleRNG.h" />
-    <ClInclude Include="Vector4.h" />
-    <ClInclude Include="VQS.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Containers\Containers.vcxproj">
-      <Project>{8db75ac3-eec3-4235-be94-cf62c035601d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Utility\Utility.vcxproj">
-      <Project>{79493342-78b1-4389-a2dd-2bcfacc31571}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

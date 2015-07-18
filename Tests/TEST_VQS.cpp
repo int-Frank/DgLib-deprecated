@@ -1,12 +1,12 @@
 #include "TestHarness.h"
-#include "DgVector.h"
+#include "Vector4.h"
 #include "Quaternion.h"
 #include "Matrix44.h"
 #include "VQS.h"
 
 typedef Dg::Matrix44< double >     mat44;
 typedef Dg::Quaternion < double >  quat;
-typedef Dg::Vector <4, double >     vec4;
+typedef Dg::Vector4 < double >     vec4;
 typedef Dg::VQS<double>            VQS;
 
 //--------------------------------------------------------------------------------
@@ -75,22 +75,22 @@ TEST(Stack_VQS_VectorTransform, creation_VQS_VectorTransform)
   mat44 M_A_WLD, M_B_A, mr, mt, ms;
 
   q.SetRotationY(-1.453);
-  T_A_WLD.Set(vec4({ 4.0, -2.56, 1.895, 0.0 }), q, 1.534);
+  T_A_WLD.Set(vec4( 4.0, -2.56, 1.895, 0.0 ), q, 1.534);
   mr.RotationY(-1.453);
   ms.Scaling(1.534);
-  mt.Translation(vec4({ 4.0, -2.56, 1.895, 0.0 }));
+  mt.Translation(vec4( 4.0, -2.56, 1.895, 0.0 ));
   M_A_WLD = ms * mr * mt;
 
   q.SetRotationX(0.7473);
-  T_B_A.Set(vec4({ 1.73, -2.8567, 9.347, 0.0 }), q, 2.747);
+  T_B_A.Set(vec4( 1.73, -2.8567, 9.347, 0.0 ), q, 2.747);
   mr.RotationX(0.7473);
   ms.Scaling(2.747);
-  mt.Translation(vec4({ 1.73, -2.8567, 9.347, 0.0 }));
+  mt.Translation(vec4( 1.73, -2.8567, 9.347, 0.0 ));
   M_B_A = ms * mr * mt;
 
   vec4 result_VQS, result_M;
-  result_VQS = (T_B_A * T_A_WLD).TransformVector(vec4({ 2.0, 0.0, 0.0, 0.0 }));
-  result_M = vec4({ 2.0, 0.0, 0.0, 0.0 }) * (M_B_A * M_A_WLD);
+  result_VQS = (T_B_A * T_A_WLD).TransformVector(vec4( 2.0, 0.0, 0.0, 0.0 ));
+  result_M = vec4( 2.0, 0.0, 0.0, 0.0 ) * (M_B_A * M_A_WLD);
 
   CHECK(result_VQS == result_M);
 

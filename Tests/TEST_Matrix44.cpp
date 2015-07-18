@@ -1,11 +1,11 @@
 #include "TestHarness.h"
-#include "DgVector.h"
 #include "Quaternion.h"
 #include "Matrix44.h"
+#include "Vector4.h"
 
 typedef Dg::Matrix44< float >     mat44;
 typedef Dg::Quaternion < float >  quat;
-typedef Dg::Vector < 4, float >     vec4;
+typedef Dg::Vector4<float>        vec4;
 
 //--------------------------------------------------------------------------------
 //	Matrix44 Construction
@@ -31,15 +31,15 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
   CHECK(!m1.IsZero());
   CHECK(!m1.IsIdentity());
 
-  vec4 v0({ 1.0f, 1.25f, 1.5f, 1.75f });
-  vec4 v1({ 2.0f, 2.25f, 2.5f, 2.75f });
-  vec4 v2({ 3.0f, 3.25f, 3.5f, 3.75f });
-  vec4 v3({ 4.0f, 4.25f, 4.5f, 4.75f });
+  vec4 v0( 1.0f, 1.25f, 1.5f, 1.75f );
+  vec4 v1( 2.0f, 2.25f, 2.5f, 2.75f );
+  vec4 v2( 3.0f, 3.25f, 3.5f, 3.75f );
+  vec4 v3( 4.0f, 4.25f, 4.5f, 4.75f );
 
-  vec4 v4({ 1.0f, 2.0f, 3.0f, 4.0f });
-  vec4 v5({ 1.25f, 2.25f, 3.25f, 4.25f });
-  vec4 v6({ 1.5f, 2.5f, 3.5f, 4.5f });
-  vec4 v7({ 1.75f, 2.75f, 3.75f, 4.75f });
+  vec4 v4( 1.0f, 2.0f, 3.0f, 4.0f );
+  vec4 v5( 1.25f, 2.25f, 3.25f, 4.25f );
+  vec4 v6( 1.5f, 2.5f, 3.5f, 4.5f );
+  vec4 v7( 1.75f, 2.75f, 3.75f, 4.75f );
 
   m0.SetRow(0, v0);
   m0.SetRow(1, v1);
@@ -211,21 +211,21 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   my.RotationY(Dg::PI_f * 0.5f);
   mz.RotationZ(Dg::PI_f * 0.5f);
   ms.Scaling(2.0f);
-  mt.Translation(vec4({ -10.0f, 0.0f, 0.0f, 0.0f }));
+  mt.Translation(vec4( -10.0f, 0.0f, 0.0f, 0.0f ));
   vec4 v({ 1.0f, 0.0f, 0.0f, 0.0f }), vr;
 
   v = v * my;
-  CHECK(v == vec4({ 0.0f, 0.0f, -1.0f, 0.0f }));
+  CHECK(v == vec4( 0.0f, 0.0f, -1.0f, 0.0f ));
 
   v = v * mx;
-  CHECK(v == vec4({ 0.0f, 1.0f, 0.0f, 0.0f }));
+  CHECK(v == vec4( 0.0f, 1.0f, 0.0f, 0.0f ));
 
   v = v * mz;
-  CHECK(v == vec4({ -1.0f, 0.0f, 0.0f, 0.0f }));
+  CHECK(v == vec4( -1.0f, 0.0f, 0.0f, 0.0f ));
 
-  v.Set({ 1.0f, 0.0f, 0.0f, 1.0f });
+  v.Set( 1.0f, 0.0f, 0.0f, 1.0f );
   v = v * my * mx * mz * ms * mt;
-  CHECK(v == vec4({ -12.0f, 0.0f, 0.0f, 1.0f }));
+  CHECK(v == vec4( -12.0f, 0.0f, 0.0f, 1.0f ));
 
   float rx = 1.43f;
   float ry = 0.2901f;
@@ -235,7 +235,7 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   my.RotationY(ry);
   mz.RotationZ(rz);
 
-  v.Set({ 1.32f, -7.934f, -18.3896f, 0.0f });
+  v.Set( 1.32f, -7.934f, -18.3896f, 0.0f );
 
   //Euler angles
 

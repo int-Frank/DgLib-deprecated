@@ -10,7 +10,6 @@
 
 #include "dgmath.h"
 #include "DgMatrix.h"
-#include "DgVector.h"
 #include "Quaternion.h"
 
 //--------------------------------------------------------------------------------

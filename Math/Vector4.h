@@ -27,6 +27,9 @@ namespace Dg
   template<typename Real>
   Vector4<Real> Cross(Vector4<Real> const &, Vector4<Real> const &);
 
+  template<typename Real>
+  Real Dot(Vector4<Real> const &, Vector4<Real> const &);
+
   //! Returns a random unit vector.
   template<typename Real>
   Vector4<Real> GetRandomVector();
@@ -77,7 +80,7 @@ namespace Dg
     ~Vector4() {}
 
     // copy operations
-    Vector4(Matrix<1, 4, Real> const & a_other) : Matrix<1, N, Real>(a_other) {}
+    Vector4(Matrix<1, 4, Real> const & a_other) : Matrix<1, 4, Real>(a_other) {}
     Vector4& operator=(Matrix<1, 4, Real> const &);
 
     //! Determines if the vector is the unit vector within some tolerance.
@@ -88,12 +91,6 @@ namespace Dg
 
     //! Make unit vector
     void Normalize();
-
-    template<typename T>
-    friend Vector4<T> Cross(Matrix<1, 4, Real> const &, Matrix<1, 4, Real> const &);
-
-    template<typename T>
-    friend Vector4<T> Cross(Matrix<1, 4, Real> const &, Matrix<1, 4, Real> const &);
 
     Real Length() const;
     Real LengthSquared() const;
@@ -209,12 +206,23 @@ namespace Dg
   Vector4<Real> Cross(Vector4<Real> const & v1, Vector4<Real> const & v2)
   {
     Vector4<Real> result;
-    result.m_V[0] = v1.m_V[1] * v2.m_V[2] - v1.m_V[2] * v2.m_V[1];
-    result.m_V[1] = v1.m_V[2] * v2.m_V[0] - v1.m_V[0] * v2.m_V[2];
-    result.m_V[2] = v1.m_V[0] * v2.m_V[1] - v1.m_V[1] * v2.m_V[0];
-    result.m_V[3] = static_cast<Real>(0.0);
+    result[0] = v1[1] * v2[2] - v1[2] * v2[1];
+    result[1] = v1[2] * v2[0] - v1[0] * v2[2];
+    result[2] = v1[0] * v2[1] - v1[1] * v2[0];
+    result[3] = static_cast<Real>(0.0);
 
     return result;
+
+  }	//End: Cross()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Dot()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Real Dot(Vector4<Real> const & v1, Vector4<Real> const & v2)
+  {
+    return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3];
 
   }	//End: Cross()
 
@@ -305,26 +313,21 @@ namespace Dg
   //	@	Perpendicular()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Perpendicular(Vector4<Real> const & a_vector, sizeType a_limit)
+  Vector4<Real> Perpendicular(Vector4<Real> const & a_vector)
   {
     Vector4<Real> result;
-    result.Zero();
 
-    if (!Dg::IsZero(a_vector[0]))
+    if (!Dg::IsZero(a_vector[0]) || !Dg::IsZero(a_vector[1]))
     {
       result[0] = -a_vector[1];
       result[1] = a_vector[0];
-      return result;
+    }
+    else
+    {
+      result[0] = -a_vector[2];
+      result[2] = a_vector[0];
     }
 
-    for (sizeType i = 1; i < ((a_limit > N) ? N : a_limit); ++i)
-    {
-      if (!Dg::IsZero(a_vector[i]))
-      {
-        result[i - 1] = -a_vector[i];
-        result[i] = a_vector[i - 1];
-      }
-    }
     return result;
   }	//End: Perpendicular()
 
