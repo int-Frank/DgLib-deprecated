@@ -321,11 +321,15 @@ namespace Dg
     {
       result[0] = -a_vector[1];
       result[1] = a_vector[0];
+      result[2] = static_cast<Real>(0.0);
+      result[3] = static_cast<Real>(0.0);
     }
     else
     {
       result[0] = -a_vector[2];
+      result[1] = static_cast<Real>(0.0);
       result[2] = a_vector[0];
+      result[3] = static_cast<Real>(0.0);
     }
 
     return result;
