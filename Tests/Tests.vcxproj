@@ -82,7 +82,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Utility;..\..\cppunitlite\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -96,7 +96,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Utility;..\..\cppunitlite\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -112,7 +112,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Utility;..\..\cppunitlite\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,7 +130,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Utility;..\..\cppunitlite\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -151,6 +151,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Containers\Containers.vcxproj">
       <Project>{8db75ac3-eec3-4235-be94-cf62c035601d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\cppunitlite\cppunitlite.vcxproj">
+      <Project>{ad2c7fc0-2feb-42ef-bc18-04f13c4d5a40}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Math\Math.vcxproj">
       <Project>{06ae16d3-4c8f-43c8-a4e0-6e3d1089293f}</Project>
