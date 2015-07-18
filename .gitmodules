@@ -1,0 +1,3 @@
+[submodule "cppunitlite"]
+	path = cppunitlite
+	url = ../cppunitlite.git
