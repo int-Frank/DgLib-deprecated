@@ -17,8 +17,6 @@
 #ifndef DG_MAP_SL_H
 #define DG_MAP_SL_H
 
-#include <assert.h>
-#include "DgTypes.h"
 
 namespace Dg
 {

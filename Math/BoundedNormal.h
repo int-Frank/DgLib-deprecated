@@ -139,7 +139,7 @@ namespace Dg
                                    Real a_sd,
                                    Real a_lower,
                                    Real a_upper,
-    unsigned int a_nValues)
+                                   unsigned int a_nValues)
   {
     Clean();
 

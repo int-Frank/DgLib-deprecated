@@ -16,68 +16,23 @@
     <Filter Include="Header Files\Old">
       <UniqueIdentifier>{c610fed0-164b-440b-a45e-b78c0b574d5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Random numbers">
+      <UniqueIdentifier>{061aa36a-0dfd-46d2-9903-0eb2410d049e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SimpleRNG.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dgmath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleRNG.cpp">
+      <Filter>Random numbers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SimpleRNG.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Quaternion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VQS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dgmath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Circle4.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Cone.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="DgRect.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Frustum.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="LineSegment4.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="OBB.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Primitive.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Primitive1D.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Primitive2D.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Primitive3D.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Ray4.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Rectangle.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.h">
-      <Filter>Header Files\Old</Filter>
-    </ClInclude>
-    <ClInclude Include="BoundedNormal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="doxygen.h">
@@ -86,20 +41,14 @@
     <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix44.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="BoundedNormal.h">
+      <Filter>Random numbers</Filter>
     </ClInclude>
-    <ClInclude Include="DgMatrix.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SimpleRNG.h">
+      <Filter>Random numbers</Filter>
     </ClInclude>
-    <ClInclude Include="DgVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Plane4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Line4.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="DgRNG.h">
+      <Filter>Random numbers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -39,5 +39,11 @@
     <ClInclude Include="dg_pod_set.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dg_pod_map_l.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

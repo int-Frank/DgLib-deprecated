@@ -144,13 +144,9 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
-    <ClCompile Include="TEST_DgMatrix.cpp" />
-    <ClCompile Include="TEST_dg_map_s.cpp" />
+    <ClCompile Include="TEST_dg_map.cpp" />
+    <ClCompile Include="TEST_dg_pod_map.cpp" />
     <ClCompile Include="TEST_math.cpp" />
-    <ClCompile Include="TEST_Matrix44.cpp" />
-    <ClCompile Include="TEST_Quaternion.cpp" />
-    <ClCompile Include="TEST_Vector4.cpp" />
-    <ClCompile Include="TEST_VQS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\cppunitlite\cppunitlite\cppunitlite.vcxproj">
