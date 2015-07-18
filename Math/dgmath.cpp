@@ -2,7 +2,7 @@
 //!
 //! @author Frank Hart
 //! @date 4/8/2015
-//!
+//! 
 //! Definitions from dgmath.cpp
 
 #include "dgmath.h"
