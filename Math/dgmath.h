@@ -73,7 +73,11 @@ namespace Dg
 
   //! Inverse error function. Uses Mclaurin series expansion approximation.
   //! @param a_nTerms Number of terms in the series expansion to use. 0 denotes maximum number.
-  double inverf(double a_x, unsigned a_nTerms = 16);
+  double inverf_d(double a_x, unsigned a_nTerms = 16);
+
+  //! Inverse error function. Uses Mclaurin series expansion approximation.
+  //! @param a_nTerms Number of terms in the series expansion to use. 0 denotes maximum number.
+  float inverf_f(float a_x, unsigned a_nTerms = 16);
 
   //! Wrap a number to a range.
   template<typename Real>

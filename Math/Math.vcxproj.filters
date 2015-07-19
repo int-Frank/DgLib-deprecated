@@ -59,17 +59,5 @@
     <ClInclude Include="Quaternion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cone.h">
-      <Filter>Geomety 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Frustum.h">
-      <Filter>Geomety 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="OBB.h">
-      <Filter>Geomety 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.h">
-      <Filter>Geomety 3D</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

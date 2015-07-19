@@ -10,6 +10,7 @@
 
 #include <math.h>
 
+#include "config.h"
 #include "utility.h"
 
 #include "dgmath.h"
@@ -151,18 +152,24 @@ namespace Dg
       return DgR_OutOfBounds;
     }
 
-    Real zLower = 0.5 * (1.0 + std::erf((a_lower - a_mean) / (a_sd * Dg::SQRT2_d)));
-    Real zUpper = 0.5 * (1.0 + std::erf((a_upper - a_mean) / (a_sd * Dg::SQRT2_d)));
+    Real zLower = 0.5 * (1.0 + std::erf((a_lower - a_mean) / (a_sd * Dg::SQRT2)));
+    Real zUpper = 0.5 * (1.0 + std::erf((a_upper - a_mean) / (a_sd * Dg::SQRT2)));
 
     m_nValues = a_nValues;
     m_values = new Real[m_nValues];
 
     for (unsigned i = 0; i < a_nValues; i++)
     {
-      double c = static_cast<double>(zLower + (zUpper - zLower) * static_cast<Real>(i) / static_cast<Real>(m_nValues - 1));
-      c = 2.0 * c - 1;
-      Real inverfResult = static_cast<Real>(inverf(c, 0));
-      m_values[i] = a_sd * static_cast<Real>(SQRT2_d) * inverfResult + a_mean;
+#ifdef PRECISION_F32
+      float c = static_cast<float>(zLower + (zUpper - zLower) * static_cast<float>(i) / static_cast<float>(m_nValues - 1));
+      c = 2.0f * c - 1.0f;
+      Real inverfResult = static_cast<Real>(inverf_f(c, 0));
+#else
+      double c = static_cast<double>(zLower + (zUpper - zLower) * static_cast<double>(i) / static_cast<double>(m_nValues - 1));
+      c = 2.0 * c - 1.0;
+      Real inverfResult = static_cast<Real>(inverf_d(c, 0));
+#endif
+      m_values[i] = a_sd * static_cast<Real>(SQRT2) * inverfResult + a_mean;
     }
 
     return DgR_Success;
