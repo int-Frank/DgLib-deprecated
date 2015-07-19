@@ -95,7 +95,67 @@ namespace Dg
     Real Length() const;
     Real LengthSquared() const;
 
+  public:
+
+    static Vector4 Origin();
+    static Vector4 xAxis();
+    static Vector4 yAxis();
+    static Vector4 zAxis();
+
   };
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector4::Origin()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> Vector4<Real>::Origin()
+  {
+    return Vector4(static_cast<Real>(0.0),
+                   static_cast<Real>(0.0), 
+                   static_cast<Real>(0.0), 
+                   static_cast<Real>(0.0));
+  }   // End:  Vector4::Origin()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector4::xAxis()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> Vector4<Real>::xAxis()
+  {
+    return Vector4(static_cast<Real>(1.0),
+                   static_cast<Real>(0.0),
+                   static_cast<Real>(0.0),
+                   static_cast<Real>(0.0));
+  }   // End:  Vector4::xAxis()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector4::yAxis()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> Vector4<Real>::yAxis()
+  {
+    return Vector4(static_cast<Real>(0.0),
+                   static_cast<Real>(1.0),
+                   static_cast<Real>(0.0),
+                   static_cast<Real>(0.0));
+  }   // End:  Vector4::yAxis()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector4::zAxis()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> Vector4<Real>::zAxis()
+  {
+    return Vector4(static_cast<Real>(0.0),
+                   static_cast<Real>(0.0),
+                   static_cast<Real>(1.0),
+                   static_cast<Real>(0.0));
+  }   // End:  Vector4::zAxis()
+
 
   //-------------------------------------------------------------------------------
   //	@	Vector4::operator=()

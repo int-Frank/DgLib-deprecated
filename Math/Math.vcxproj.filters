@@ -13,8 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Old">
-      <UniqueIdentifier>{c610fed0-164b-440b-a45e-b78c0b574d5b}</UniqueIdentifier>
+    <Filter Include="Geomety 3D">
+      <UniqueIdentifier>{99caceb7-2a4b-45d8-9969-6ec81e620cb8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +58,18 @@
     </ClInclude>
     <ClInclude Include="Quaternion.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cone.h">
+      <Filter>Geomety 3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Geomety 3D</Filter>
+    </ClInclude>
+    <ClInclude Include="OBB.h">
+      <Filter>Geomety 3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Geomety 3D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

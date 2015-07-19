@@ -135,14 +135,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundedNormal.h" />
+    <ClInclude Include="Cone.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="DgMatrix.h" />
     <ClInclude Include="DgRNG.h" />
     <ClInclude Include="doxygen.h" />
     <ClInclude Include="dgmath.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="Matrix44.h" />
+    <ClInclude Include="OBB.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="SimpleRNG.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="VQS.h" />
   </ItemGroup>

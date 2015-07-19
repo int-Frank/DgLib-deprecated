@@ -24,6 +24,32 @@ TEST(Stack_Vector4_Construction, creation_Vector4_Construction)
   v0.Normalize();
 
   CHECK(v0.IsUnit());
+
+  //Statics
+  vec4 vec = vec4::Origin();
+  CHECK(vec[0] == 0.0f);
+  CHECK(vec[1] == 0.0f);
+  CHECK(vec[2] == 0.0f);
+  CHECK(vec[3] == 0.0f);
+
+  vec = vec4::xAxis();
+  CHECK(vec[0] == 1.0f);
+  CHECK(vec[1] == 0.0f);
+  CHECK(vec[2] == 0.0f);
+  CHECK(vec[3] == 0.0f);
+
+  vec = vec4::yAxis();
+  CHECK(vec[0] == 0.0f);
+  CHECK(vec[1] == 1.0f);
+  CHECK(vec[2] == 0.0f);
+  CHECK(vec[3] == 0.0f);
+
+  vec = vec4::zAxis();
+  CHECK(vec[0] == 0.0f);
+  CHECK(vec[1] == 0.0f);
+  CHECK(vec[2] == 1.0f);
+  CHECK(vec[3] == 0.0f);
+
 }
 
 
