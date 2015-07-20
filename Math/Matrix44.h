@@ -764,10 +764,10 @@ namespace Dg
                                               Real a_near,
                                               Real a_far)
   {
-    float d = static_cast<Real>(1.0) / tan(0.5f * a_fov);
-    float A = d / a_ar;
-    float B = (a_near + a_far) / (a_near - a_far);
-    float C = (static_cast<Real>(2.0) * a_near * a_far) / (a_near - a_far);
+    Real d = static_cast<Real>(1.0) / tan(static_cast<Real>(0.5) * a_fov);
+    Real A = d / a_ar;
+    Real B = (a_near + a_far) / (a_near - a_far);
+    Real C = (static_cast<Real>(2.0) * a_near * a_far) / (a_near - a_far);
 
     m_V[0] = A;
     m_V[1] = static_cast<Real>(0.0);
