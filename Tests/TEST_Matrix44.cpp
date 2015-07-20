@@ -63,6 +63,8 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
 
   m0.Clean();
   m0.Identity();
+
+  m0.Perspective(1.5f, 0.5f, 0.01f, 1000.0f);
 }
 
 

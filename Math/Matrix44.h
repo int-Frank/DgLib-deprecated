@@ -110,6 +110,12 @@ namespace Dg
 
     //! Set as rotation matrix, rotating by 'angle' radians around z-axis.
     Matrix44& RotationZ(Real);
+
+    //! Set a perspective transformation matrix
+    Matrix44& Perspective(Real a_fov, 
+                          Real a_ar, 
+                          Real a_near, 
+                          Real a_far);
   };
 
   //--------------------------------------------------------------------------------
@@ -747,6 +753,41 @@ namespace Dg
     return *this;
 
   }   // End: Matrix44::RotationZ()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Matrix44::Perspective()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Matrix44<Real>& Matrix44<Real>::Perspective(Real a_fov,
+                                              Real a_ar,
+                                              Real a_near,
+                                              Real a_far)
+  {
+    float d = static_cast<Real>(1.0) / tan(0.5f * a_fov);
+    float A = d / a_ar;
+    float B = (a_near + a_far) / (a_near - a_far);
+    float C = (static_cast<Real>(2.0) * a_near * a_far) / (a_near - a_far);
+
+    m_V[0] = A;
+    m_V[1] = static_cast<Real>(0.0);
+    m_V[2] = static_cast<Real>(0.0);
+    m_V[3] = static_cast<Real>(0.0);
+    m_V[4] = static_cast<Real>(0.0);
+    m_V[5] = d;
+    m_V[6] = static_cast<Real>(0.0);
+    m_V[7] = static_cast<Real>(0.0);
+    m_V[8] = static_cast<Real>(0.0);
+    m_V[9] = static_cast<Real>(0.0);
+    m_V[10] = B;
+    m_V[11] = static_cast<Real>(-1.0);
+    m_V[12] = static_cast<Real>(0.0);
+    m_V[13] = static_cast<Real>(0.0);
+    m_V[14] = C;
+    m_V[15] = static_cast<Real>(0.0);
+
+    return *this;
+  }	//End: Matrix44::Perspective()
 
 
   //----------------------------------------------------------------------------
