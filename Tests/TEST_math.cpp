@@ -17,6 +17,11 @@ TEST(Stack_math, creation_math)
   double upper = 3.0;
   double val = 0.0;
 
+  CHECK(Dg::NextPower2(0) == 0);
+  CHECK(Dg::NextPower2(5) == 8);
+  CHECK(Dg::NextPower2(1000) == 1024);
+  CHECK(Dg::NextPower2(0xFFFFFFFF) == 0);
+
   WrapNumber<double>(lower, upper, val);
   CHECK(val == 0.0);
 
