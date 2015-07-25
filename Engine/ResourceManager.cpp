@@ -22,9 +22,49 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	ResourceManager::ClearResource()
+  //	@	ResourceManager::InitResource()
   //--------------------------------------------------------------------------------
-  void ResourceManager::ClearResource(DgRKey a_key, bool a_force)
+  Dg_Result ResourceManager::InitResource(DgRKey a_key)
+  {
+    int index(0);
+    if (!m_resourceList.find(a_key, index))
+    {
+      return DgR_Failure;;
+    }
+
+    if (!m_resourceList[index].m_resource->IsInitialised())
+    {
+      return m_resourceList[index].m_resource->Init();
+    }
+
+    return DgR_Success;
+  }// End: ResourceManager::InitResource()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	ResourceManager::InitAll()
+  //--------------------------------------------------------------------------------
+  Dg_Result ResourceManager::InitAll()
+  {
+    bool isGood = true;
+
+    for (size_t i = 0; i < m_resourceList.size(); ++i)
+    {
+      if (m_resourceList[i].m_resource->Init() != DgR_Success)
+      {
+        isGood = false;
+      }
+    }
+
+    return isGood ? DgR_Success : DgR_Failure;
+
+  }// End: ResourceManager::InitAll()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	ResourceManager::DeinitResource()
+  //--------------------------------------------------------------------------------
+  void ResourceManager::DeinitResource(DgRKey a_key, bool a_force)
   {
     int index(0);
     if (!m_resourceList.find(a_key, index))
@@ -36,7 +76,57 @@ namespace Dg
     {
       m_resourceList[index].m_resource->DeInit();
     }
-  }// End: ResourceManager::ClearResource()
+  }// End: ResourceManager::DeinitResource()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	ResourceManager::DeinitAll()
+  //--------------------------------------------------------------------------------
+  void ResourceManager::DeinitAll(bool a_force)
+  {
+    for (size_t i = 0; i < m_resourceList.size(); ++i)
+    {
+      if (a_force || m_resourceList[i].m_nUsers == 0)
+      {
+        m_resourceList[i].m_resource->DeInit();
+      }
+    }
+  }// End: ResourceManager::DeinitAll()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	ResourceManager::DeleteResource()
+  //--------------------------------------------------------------------------------
+  void ResourceManager::DeleteResource(DgRKey a_key, bool a_force)
+  {
+    int index(0);
+    if (!m_resourceList.find(a_key, index))
+    {
+      return;
+    }
+
+    if (m_resourceList[index].m_nUsers == 0 || a_force)
+    {
+      delete m_resourceList[index].m_resource;
+      m_resourceList.erase_at_position(index);
+    }
+  }// End: ResourceManager::DeleteResource()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	ResourceManager::DeleteAll()
+  //--------------------------------------------------------------------------------
+  void ResourceManager::DeleteAll(bool a_force)
+  {
+    for (size_t i = 0; i < m_resourceList.size(); ++i)
+    {
+      if (a_force || m_resourceList[i].m_nUsers == 0)
+      {
+        delete m_resourceList[i].m_resource;
+        m_resourceList.erase_at_position(i);
+      }
+    }
+  }// End: ResourceManager::DeleteAll()
 
 
   //--------------------------------------------------------------------------------

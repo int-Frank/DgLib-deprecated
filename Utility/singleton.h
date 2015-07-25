@@ -19,7 +19,7 @@ namespace Dg
     Singleton(); // Prevent construction
     Singleton(Singleton const &); // Prevent construction by copying
     Singleton & operator=(Singleton const &); // Prevent assignment
-    ~Singleton(); // Prevent unwanted destruction
+    virtual ~Singleton(); // Prevent unwanted destruction
 
   };
 

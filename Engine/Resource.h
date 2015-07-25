@@ -9,6 +9,7 @@
 #define RESOURCE_H
 
 #include "utility.h"
+#include "ResourceKey.h"
 
 namespace Dg
 {
@@ -17,14 +18,18 @@ namespace Dg
   {
   public:
 
+    Resource(DgRKey a_key): m_key(a_key) {}
+
     virtual ~Resource() = 0;
 
     virtual bool IsInitialised() = 0;
     virtual Dg_Result Init() = 0;
     virtual Dg_Result DeInit() = 0;
 
-    virtual Dg_Result SetFile(char const *) = 0;
+    DgRKey GetKey(DgRKey a_key) const { return m_key; }
 
+  private:
+    DgRKey m_key;
   };
 }
 

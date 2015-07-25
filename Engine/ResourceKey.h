@@ -24,6 +24,11 @@ namespace Dg
 
     DgRKey() : m_value(0) {}
     DgRKey(uint32_t a_value) : m_value(a_value) {}
+    DgRKey(uint32_t a_type, uint32_t a_tag) 
+    {
+      m_value = ((a_type << 24) | (a_tag & 0x00FFFFFF));
+    }
+
     ~DgRKey();
 
     DgRKey(DgRKey const & a_other) : m_value(a_other.m_value) {}

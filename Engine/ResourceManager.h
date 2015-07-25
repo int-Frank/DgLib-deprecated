@@ -43,24 +43,39 @@ namespace Dg
     //! Check an option.
     bool CheckOption(Option);
 
-    //! Register a new resource. Will automatically load the resource from file if the
-    //! AutomaticInit flag is set as an option.
+    //! Register a new resource.
+    //! @param a_key Associate a unique key with this resource
+    //! @param a_file Associate a file with this resource
+    //! @param a_init Initialise resource?
     template<typename ResourceType>
-    Dg_Result RegisterResource(DgRKey, char const * a_file, bool a_init = false);
+    Dg_Result RegisterResource(DgRKey a_key, bool a_init = false);
 
     //! Get a pointer to a resource. Will fail if the resouce has not been 
-    //! successfully registed first with RegisterResource.
+    //! successfully registed first with RegisterResource().
     Dg_Result GetResource(DgRKey, pResource &);
 
-    //! Clear a particular resource. 
-    void ClearResource(DgRKey, bool a_force = false);
+    //! Initialise a particular resource. 
+    Dg_Result InitResource(DgRKey);
 
-    //Clears all resources.
-    void ClearAll(bool a_force = false);
+    //! Initialises all resources.
+    Dg_Result InitAll();
+
+    //! Deinitialise a particular resource. 
+    void DeinitResource(DgRKey, bool a_force = false);
+
+    //! Deinitialises all resources.
+    void DeinitAll(bool a_force = false);
+
+    //! Deletes a particular resource from the database. 
+    void DeleteResource(DgRKey, bool a_force = false);
+
+    //! Deletes all resources.
+    void DeleteAll(bool a_force = false);
 
   private:
 
     ResourceManager() : m_options(DEFAULT){}
+    ~ResourceManager() { DeleteAll(true); }
 
     //! Only the pResource class should be calling this function.
     void DeregisterUser(DgRKey);
@@ -89,7 +104,6 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template <typename ResourceType>
   Dg_Result ResourceManager::RegisterResource(DgRKey a_key, 
-                                              char const * a_file,
                                               bool a_init)
   {
     int index(0);
@@ -100,12 +114,12 @@ namespace Dg
 
     ResourceContainer rc;
     rc.m_nUsers = 0;
-    rc.m_resource = new ResourceType();
+    rc.m_resource = new ResourceType(a_key);
     rc.m_resource.SetFile(a_file);
 
     if (a_init)
     {
-      if (!rc.m_resource->Init())
+      if (rc.m_resource->Init() != DgR_Success)
       {
         return DgR_Failure;
       }
