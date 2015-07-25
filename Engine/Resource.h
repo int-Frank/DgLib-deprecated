@@ -23,6 +23,8 @@ namespace Dg
     virtual ~Resource() = 0;
 
     virtual bool IsInitialised() = 0;
+
+    //! The key is used to init the object.
     virtual Dg_Result Init() = 0;
     virtual Dg_Result DeInit() = 0;
 

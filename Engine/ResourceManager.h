@@ -32,7 +32,7 @@ namespace Dg
     enum Option
     {
       DEFAULT         = 0,
-      AutomaticClear  = 1,  // DeInitialise a resource once number of registered users equals 0.
+      AutoDeinit      = 1,  // DeInitialise a resource once number of registered users equals 0.
     };
 
   public:

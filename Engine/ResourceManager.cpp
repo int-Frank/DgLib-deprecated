@@ -118,7 +118,7 @@ namespace Dg
     }
 
     m_resourceList[index].m_nUsers--;
-    if (m_resourceList[index].m_nUsers == 0 && CheckOption(AutomaticClear))
+    if (m_resourceList[index].m_nUsers == 0 && CheckOption(AutoDeinit))
     {
       m_resourceList[index].m_resource->DeInit();
     }
