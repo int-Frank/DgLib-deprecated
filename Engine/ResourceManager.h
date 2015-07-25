@@ -16,7 +16,7 @@
 
 namespace Dg
 {
-  class pResource;
+  class hResource;
 
   //! General resource manager.
   //! Use:
@@ -24,7 +24,7 @@ namespace Dg
   //!       2) Request Resources with GetResource()
   class ResourceManager : public Singleton<ResourceManager>
   {
-    friend class pResource;
+    friend class hResource;
     friend class Singleton < ResourceManager > ;
 
   public:
@@ -52,7 +52,7 @@ namespace Dg
 
     //! Get a pointer to a resource. Will fail if the resouce has not been 
     //! successfully registed first with RegisterResource().
-    Dg_Result GetResource(DgRKey, pResource &);
+    Dg_Result GetResource(DgRKey, hResource &);
 
     //! Initialise a particular resource. 
     Dg_Result InitResource(DgRKey);
@@ -77,11 +77,11 @@ namespace Dg
     ResourceManager() : m_options(DEFAULT){}
     ~ResourceManager() { DeleteAll(true); }
 
-    //! Only the pResource class should be calling this function.
+    //! Only the hResource class should be calling this function.
     void DeregisterUser(DgRKey);
 
     //! Will initialised resource if not initialised.
-    //! Only the pResource class should be calling this function.
+    //! Only the hResource class should be calling this function.
     Resource * RegisterUser(DgRKey);
 
   private:

@@ -175,7 +175,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	ResourceManager::GetResource()
   //--------------------------------------------------------------------------------
-  Dg_Result ResourceManager::GetResource(DgRKey a_key, pResource & a_out)
+  Dg_Result ResourceManager::GetResource(DgRKey a_key, hResource & a_out)
   {
     Resource * pR(nullptr);
     pR = RegisterUser(a_key);
