@@ -132,7 +132,8 @@
   <ItemGroup>
     <ClInclude Include="doxygen.h" />
     <ClInclude Include="priority_mutex.h" />
-    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="ResourceManager_old.h" />
+    <ClInclude Include="singleton.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>

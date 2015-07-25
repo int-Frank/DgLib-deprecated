@@ -24,7 +24,10 @@
     <ClInclude Include="priority_mutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
+    <ClInclude Include="singleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager_old.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
