@@ -20,8 +20,6 @@ namespace Dg
   {
   public:
 
-  public:
-
     DgRKey() : m_value(0) {}
     DgRKey(uint32_t a_value) : m_value(a_value) {}
     DgRKey(uint32_t a_type, uint32_t a_tag) 
