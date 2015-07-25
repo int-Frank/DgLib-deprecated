@@ -1,5 +1,5 @@
 #include "ResourceManager.h"
-#include "ResourcePointer.h"
+#include "ResourceHandle.h"
 
 namespace Dg
 {

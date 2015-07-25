@@ -24,8 +24,8 @@ namespace Dg
     ~hResource() { ResourceManager::Instance()->DeregisterUser(m_rKey); }
 
     hResource(hResource const & a_other) : m_rKey(a_other.m_rKey)
-                                         , m_resource(ResourceManager::Instance()->RegisterUser(a_other.m_rKey))
-                                         {}
+      , m_resource(ResourceManager::Instance()->RegisterUser(a_other.m_rKey))
+    {}
 
     hResource & operator=(hResource const & a_other)
     {

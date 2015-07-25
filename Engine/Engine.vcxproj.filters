@@ -24,7 +24,7 @@
     <ClInclude Include="ResourceKey.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResourcePointer.h">
+    <ClInclude Include="ResourceHandle.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
