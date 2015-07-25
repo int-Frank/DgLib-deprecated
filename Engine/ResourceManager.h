@@ -66,16 +66,10 @@ namespace Dg
     //! Deinitialises all resources.
     void DeinitAll(bool a_force = false);
 
-    //! Deletes a particular resource from the database. 
-    void DeleteResource(DgRKey, bool a_force = false);
-
-    //! Deletes all resources.
-    void DeleteAll(bool a_force = false);
-
   private:
 
     ResourceManager() : m_options(DEFAULT){}
-    ~ResourceManager() { DeleteAll(true); }
+    ~ResourceManager();
 
     //! Only the hResource class should be calling this function.
     void DeregisterUser(DgRKey);
@@ -92,8 +86,6 @@ namespace Dg
       unsigned m_nUsers;
     };
 
-  private:
-
     uint32_t m_options;
     Dg::map_p<DgRKey, ResourceContainer> m_resourceList;
   };
@@ -106,6 +98,11 @@ namespace Dg
   Dg_Result ResourceManager::RegisterResource(DgRKey a_key, 
                                               bool a_init)
   {
+    if (!a_key.IsValid())
+    {
+      return DgR_Failure;
+    }
+
     int index(0);
     if (m_resourceList.find(a_key, index))
     {

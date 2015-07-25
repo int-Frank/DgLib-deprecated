@@ -95,38 +95,15 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	ResourceManager::DeleteResource()
+  //	@	ResourceManager::~ResourceManager
   //--------------------------------------------------------------------------------
-  void ResourceManager::DeleteResource(DgRKey a_key, bool a_force)
-  {
-    int index(0);
-    if (!m_resourceList.find(a_key, index))
-    {
-      return;
-    }
-
-    if (m_resourceList[index].m_nUsers == 0 || a_force)
-    {
-      delete m_resourceList[index].m_resource;
-      m_resourceList.erase_at_position(index);
-    }
-  }// End: ResourceManager::DeleteResource()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::DeleteAll()
-  //--------------------------------------------------------------------------------
-  void ResourceManager::DeleteAll(bool a_force)
+  ResourceManager::~ResourceManager()
   {
     for (size_t i = 0; i < m_resourceList.size(); ++i)
     {
-      if (a_force || m_resourceList[i].m_nUsers == 0)
-      {
-        delete m_resourceList[i].m_resource;
-        m_resourceList.erase_at_position(i);
-      }
+      delete m_resourceList[i].m_resource;
     }
-  }// End: ResourceManager::DeleteAll()
+  }// End: ResourceManager::~ResourceManager
 
 
   //--------------------------------------------------------------------------------
@@ -184,7 +161,10 @@ namespace Dg
       return DgR_Failure;
     }
 
-    DeregisterUser(a_out.m_rKey);
+    if (a_out.m_rKey.IsValid())
+    {
+      DeregisterUser(a_out.m_rKey);
+    }
 
     a_out.m_resource = pR;
     a_out.m_rKey = a_key;
