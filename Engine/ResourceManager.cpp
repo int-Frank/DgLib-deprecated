@@ -24,7 +24,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	ResourceManager::InitResource()
   //--------------------------------------------------------------------------------
-  Dg_Result ResourceManager::InitResource(DgRKey a_key)
+  Dg_Result ResourceManager::InitResource(RKey a_key)
   {
     int index(0);
     if (!m_resourceList.find(a_key, index))
@@ -64,7 +64,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	ResourceManager::DeinitResource()
   //--------------------------------------------------------------------------------
-  void ResourceManager::DeinitResource(DgRKey a_key, bool a_force)
+  void ResourceManager::DeinitResource(RKey a_key, bool a_force)
   {
     int index(0);
     if (!m_resourceList.find(a_key, index))
@@ -109,7 +109,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	ResourceManager::DeregisterUser()
   //--------------------------------------------------------------------------------
-  void ResourceManager::DeregisterUser(DgRKey a_key)
+  void ResourceManager::DeregisterUser(RKey a_key)
   {
     int index(0);
     if (!m_resourceList.find(a_key, index))
@@ -128,7 +128,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	ResourceManager::RegisterUser()
   //--------------------------------------------------------------------------------
-  Resource * ResourceManager::RegisterUser(DgRKey a_key)
+  Resource * ResourceManager::RegisterUser(RKey a_key)
   {
     int index(0);
     if (!m_resourceList.find(a_key, index))
@@ -152,7 +152,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	ResourceManager::GetResource()
   //--------------------------------------------------------------------------------
-  Dg_Result ResourceManager::GetResource(DgRKey a_key, hResource & a_out)
+  Dg_Result ResourceManager::GetResource(RKey a_key, hResource & a_out)
   {
     Resource * pR(nullptr);
     pR = RegisterUser(a_key);

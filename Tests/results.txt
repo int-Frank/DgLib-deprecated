@@ -1,2 +1,1 @@
-Failure: "Dg::NextPower2(0xFFFFFFFF) == 1" line 23 in TEST_math.cpp
-There were 1 failures
+There were no test failures

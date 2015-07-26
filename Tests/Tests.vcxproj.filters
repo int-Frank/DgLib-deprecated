@@ -51,6 +51,9 @@
     <ClCompile Include="TEST_VQS.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="TEST_ResourceManager.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="results.txt">

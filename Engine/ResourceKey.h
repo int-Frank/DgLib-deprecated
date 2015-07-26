@@ -3,7 +3,7 @@
 //! @author: Frank B. Hart
 //! @date 25/7/2015
 //!
-//! Class declaration: DgRKey
+//! Class declaration: RKey
 
 #ifndef RESOURCEKEY_H
 #define RESOURCEKEY_H
@@ -13,39 +13,65 @@
 namespace Dg
 {
   //! A key associated with Resources.
-  //! A key is a uint32_t. The following information is encoded in the key:
-  //!        Type             Unique tag
-  //!     0000 0000 | 0000 0000 0000 0000 0000 0000
-  class DgRKey
+  //! A key is a uint32_t.
+  class RKey
   {
   public:
 
-    DgRKey() : m_value(0) {}
-    DgRKey(uint32_t a_value) : m_value(a_value) {}
-    DgRKey(uint32_t a_type, uint32_t a_tag) 
-    {
-      m_value = ((a_type << 24) | (a_tag & 0x00FFFFFF));
-    }
+    RKey() : m_value(0) {}
+    RKey(uint32_t a_value) : m_value(a_value) {}
 
-    ~DgRKey();
+    ~RKey() {}
 
-    DgRKey(DgRKey const & a_other) : m_value(a_other.m_value) {}
-    DgRKey & operator=(DgRKey const & a_other)
+    RKey(RKey const & a_other) : m_value(a_other.m_value) {}
+    RKey & operator=(RKey const & a_other)
     {
       m_value = a_other.m_value;
       return *this;
     }
 
-    bool operator==(DgRKey const & a_other) const { return m_value == a_other.m_value; }
-    bool operator!=(DgRKey const & a_other) const { return m_value != a_other.m_value; }
+    bool operator==(RKey const & a_other) const { return m_value == a_other.m_value; }
+    bool operator!=(RKey const & a_other) const { return m_value != a_other.m_value; }
 
     operator uint32_t() { return m_value; }
 
-    //! Get the type of resource the key is associated with.
-    uint32_t GetType() { return (m_value >> 24); }
+    //! Set a set of bits in the key
+    template<unsigned Position, unsigned Length>
+    void SetBitSet(uint32_t a_value)
+    {
+      static_assert((Position + Length) < 33, "Values out of bounds.");
 
-    //! Get the unique tag of the resource the key is associated with.
-    uint32_t GetTag() { return m_value & 0x00FFFFFF; }
+      unsigned mask = 0;
+      for (unsigned i = 0; i < Length; ++i)
+      {
+        mask <<= 1;
+        mask |= 1;
+      }
+      a_value &= mask;
+      mask <<= Position;
+      mask = ~mask;
+      m_value &= mask;
+      m_value |= (a_value << Position);
+    }
+
+    //! Get a set of bits within the mask
+    template<unsigned Position, unsigned Length>
+    uint32_t GetBitSet() 
+    { 
+      static_assert((Position + Length) < 33, "Values out of bounds.");
+
+      uint32_t result = m_value;
+      result >>= Position;
+
+      unsigned mask = 0;
+      for (unsigned i = 0; i < Length; ++i)
+      {
+        mask <<= 1;
+        mask |= 1;
+      }
+
+      return result & mask;
+    }
 
     //! Is this a valid key?
     bool IsValid() { return m_value != 0; }

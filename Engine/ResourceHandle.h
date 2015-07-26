@@ -12,7 +12,7 @@
 
 namespace Dg
 {
-  //! Reference counted pointer to a resource.
+  //! Reference counted pointer to a resource. It is used as a pointer type.
   class hResource
   {
     friend class ResourceManager;
@@ -49,7 +49,7 @@ namespace Dg
   private:
 
     Resource * m_resource;
-    DgRKey m_rKey;
+    RKey m_rKey;
 
   };
 }

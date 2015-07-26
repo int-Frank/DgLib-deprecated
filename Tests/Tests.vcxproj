@@ -82,7 +82,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Engine;..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -96,7 +96,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Engine;..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -112,7 +112,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Engine;..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,7 +130,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Engine;..\Utility;..\cppunitlite;..\Math;..\Containers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -151,6 +151,7 @@
     <ClCompile Include="TEST_math.cpp" />
     <ClCompile Include="TEST_Matrix44.cpp" />
     <ClCompile Include="TEST_Quaternion.cpp" />
+    <ClCompile Include="TEST_ResourceManager.cpp" />
     <ClCompile Include="TEST_Vector4.cpp" />
     <ClCompile Include="TEST_VQS.cpp" />
   </ItemGroup>
@@ -160,6 +161,9 @@
     </ProjectReference>
     <ProjectReference Include="..\cppunitlite\cppunitlite.vcxproj">
       <Project>{ad2c7fc0-2feb-42ef-bc18-04f13c4d5a40}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{2e5996fd-c559-4ad1-9541-9f9cc4d485b4}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Math\Math.vcxproj">
       <Project>{06ae16d3-4c8f-43c8-a4e0-6e3d1089293f}</Project>

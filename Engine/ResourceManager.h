@@ -48,20 +48,20 @@ namespace Dg
     //! @param a_file Associate a file with this resource
     //! @param a_init Initialise resource?
     template<typename ResourceType>
-    Dg_Result RegisterResource(DgRKey a_key, bool a_init = false);
+    Dg_Result RegisterResource(RKey a_key, bool a_init = false);
 
     //! Get a pointer to a resource. Will fail if the resouce has not been 
     //! successfully registed first with RegisterResource().
-    Dg_Result GetResource(DgRKey, hResource &);
+    Dg_Result GetResource(RKey, hResource &);
 
     //! Initialise a particular resource. 
-    Dg_Result InitResource(DgRKey);
+    Dg_Result InitResource(RKey);
 
     //! Initialises all resources.
     Dg_Result InitAll();
 
     //! Deinitialise a particular resource. 
-    void DeinitResource(DgRKey, bool a_force = false);
+    void DeinitResource(RKey, bool a_force = false);
 
     //! Deinitialises all resources.
     void DeinitAll(bool a_force = false);
@@ -72,11 +72,11 @@ namespace Dg
     ~ResourceManager();
 
     //! Only the hResource class should be calling this function.
-    void DeregisterUser(DgRKey);
+    void DeregisterUser(RKey);
 
     //! Will initialised resource if not initialised.
     //! Only the hResource class should be calling this function.
-    Resource * RegisterUser(DgRKey);
+    Resource * RegisterUser(RKey);
 
   private:
 
@@ -87,7 +87,7 @@ namespace Dg
     };
 
     uint32_t m_options;
-    Dg::map_p<DgRKey, ResourceContainer> m_resourceList;
+    Dg::map_p<RKey, ResourceContainer> m_resourceList;
   };
 
 
@@ -95,7 +95,7 @@ namespace Dg
   //	@	ResourceManager::RegisterResource()
   //--------------------------------------------------------------------------------
   template <typename ResourceType>
-  Dg_Result ResourceManager::RegisterResource(DgRKey a_key, 
+  Dg_Result ResourceManager::RegisterResource(RKey a_key, 
                                               bool a_init)
   {
     if (!a_key.IsValid())
