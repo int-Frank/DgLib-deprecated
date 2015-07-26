@@ -1,12 +1,12 @@
 #include "TestHarness.h"
 
-#include "ResourceKey.h"
+//#include "ResourceKey.h"
 
-using namespace Dg;
+//using namespace Dg;
 
 TEST(Stack_ResourceKey, creation_ResourceKey)
 {
-  Dg::RKey key(0x9AEB5C39);
+  /*Dg::RKey key(0x9AEB5C39);
   uint32_t result = key.GetBitSet<4, 4>();
   CHECK(result == 0x3);
 
@@ -30,6 +30,6 @@ TEST(Stack_ResourceKey, creation_ResourceKey)
   result = key2.GetBitSet<10, 4>();
   key2.SetBitSet<10, 4>(saved);
   CHECK(result = 0x69);
-  CHECK(key2 == key);
+  CHECK(key2 == key);*/
 
 }

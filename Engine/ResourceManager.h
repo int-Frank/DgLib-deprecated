@@ -8,6 +8,8 @@
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
 
+#include <stdint.h>
+
 #include "dg_map_p.h"
 #include "singleton.h"
 #include "Resource.h"
@@ -105,7 +107,7 @@ namespace Dg
   Dg_Result ResourceManager::RegisterResource(RKey a_key, 
                                               uint32_t a_options)
   {
-    if (!a_key.IsValid())
+    if (a_key != RKey_INVALID)
     {
       return DgR_Failure;
     }

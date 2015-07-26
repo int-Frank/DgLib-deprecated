@@ -162,7 +162,7 @@ namespace Dg
     }
 
     if (  a_out.m_resource != nullptr
-       && a_out.m_resource->GetKey().IsValid())
+      && a_out.m_resource->GetKey() != RKey_INVALID)
     {
       DeregisterUser(a_out.m_resource->GetKey());
     }

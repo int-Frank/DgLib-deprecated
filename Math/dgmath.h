@@ -82,6 +82,44 @@ namespace Dg
   //! @param a_nTerms Number of terms in the series expansion to use. 0 denotes maximum number.
   float inverf_f(float a_x, unsigned a_nTerms = 16);
 
+
+  //! Get bits from an integer type.
+  template<typename IntType, unsigned Position, unsigned Length>
+  IntType GetBitSet()
+  {
+    static_assert((Position + Length) < 33, "Values out of bounds.");
+
+    IntType result = m_value;
+    result >>= Position;
+
+    IntType mask = 0;
+    for (unsigned i = 0; i < Length; ++i)
+    {
+      mask <<= 1;
+      mask |= 1;
+    }
+
+    return result & mask;
+  }// End: GetBitSet()
+
+
+  //! Set bits within an integer type.
+  template<typename IntType, unsigned Position, unsigned Length>
+  void SetBitSet(IntType a_value)
+  {
+    IntType mask = 0;
+    for (unsigned i = 0; i < Length; ++i)
+    {
+      mask <<= 1;
+      mask |= 1;
+    }
+    a_value &= mask;
+    mask <<= Position;
+    mask = ~mask;
+    m_value &= mask;
+    m_value |= (a_value << Position);
+  }// End: SetBitSet()
+
   //! Wrap a number to a range.
   template<typename Real>
   void WrapNumber(Real lower, Real upper, Real& val)
