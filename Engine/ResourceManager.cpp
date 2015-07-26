@@ -15,9 +15,9 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	ResourceManager::CheckOption()
   //--------------------------------------------------------------------------------
-  bool ResourceManager::CheckOption(Option a_option)
+  bool ResourceManager::CheckOption(rmOption a_option)
   {
-    return ((m_options & a_option) != 0);
+    return ((m_options & static_cast<uint32_t>(a_option)) != 0);
   }// End: ResourceManager::CheckOption()
 
 
@@ -118,7 +118,7 @@ namespace Dg
     }
 
     m_resourceList[index].m_nUsers--;
-    if (m_resourceList[index].m_nUsers == 0 && CheckOption(AutoDeinit))
+    if (m_resourceList[index].m_nUsers == 0 && (m_resourceList[index].m_opts & static_cast<uint32_t>(rOption::AutoDeinit)) != 0)
     {
       m_resourceList[index].m_resource->DeInit();
     }
