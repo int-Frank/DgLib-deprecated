@@ -150,9 +150,9 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	ResourceManager::GetResource()
+  //	@	ResourceManager::GetResourceHandle()
   //--------------------------------------------------------------------------------
-  Dg_Result ResourceManager::GetResource(RKey a_key, hResource & a_out)
+  Dg_Result ResourceManager::GetResourceHandle(RKey a_key, hResource & a_out)
   {
     Resource * pR(nullptr);
     pR = RegisterUser(a_key);
@@ -161,15 +161,15 @@ namespace Dg
       return DgR_Failure;
     }
 
-    if (a_out.m_rKey.IsValid())
+    if (  a_out.m_resource != nullptr
+       && a_out.m_resource->GetKey().IsValid())
     {
-      DeregisterUser(a_out.m_rKey);
+      DeregisterUser(a_out.m_resource->GetKey());
     }
 
     a_out.m_resource = pR;
-    a_out.m_rKey = a_key;
     return DgR_Success;
 
-  }// End: ResourceManager::GetResource()
+  }// End: ResourceManager::GetResourceHandle()
 
 }

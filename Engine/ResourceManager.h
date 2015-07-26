@@ -52,7 +52,7 @@ namespace Dg
 
     //! Get a pointer to a resource. Will fail if the resouce has not been 
     //! successfully registed first with RegisterResource().
-    Dg_Result GetResource(RKey, hResource &);
+    Dg_Result GetResourceHandle(RKey, hResource &);
 
     //! Initialise a particular resource. 
     Dg_Result InitResource(RKey);
@@ -112,7 +112,6 @@ namespace Dg
     ResourceContainer rc;
     rc.m_nUsers = 0;
     rc.m_resource = new ResourceType(a_key);
-    rc.m_resource.SetFile(a_file);
 
     if (a_init)
     {
