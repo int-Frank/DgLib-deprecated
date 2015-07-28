@@ -83,29 +83,9 @@ namespace Dg
   float inverf_f(float a_x, unsigned a_nTerms = 16);
 
 
-  //! Get bits from an integer type.
-  template<typename IntType, unsigned Position, unsigned Length>
-  IntType GetBitSet()
-  {
-    static_assert((Position + Length) < 33, "Values out of bounds.");
-
-    IntType result = m_value;
-    result >>= Position;
-
-    IntType mask = 0;
-    for (unsigned i = 0; i < Length; ++i)
-    {
-      mask <<= 1;
-      mask |= 1;
-    }
-
-    return result & mask;
-  }// End: GetBitSet()
-
-
   //! Set bits within an integer type.
   template<typename IntType, unsigned Position, unsigned Length>
-  void SetBitSet(IntType a_value)
+  IntType SetBitSet(IntType a_input, IntType a_value)
   {
     IntType mask = 0;
     for (unsigned i = 0; i < Length; ++i)
@@ -116,9 +96,11 @@ namespace Dg
     a_value &= mask;
     mask <<= Position;
     mask = ~mask;
-    m_value &= mask;
-    m_value |= (a_value << Position);
+    a_input &= mask;
+    a_input |= (a_value << Position);
+    return a_input;
   }// End: SetBitSet()
+
 
   //! Wrap a number to a range.
   template<typename Real>
@@ -137,7 +119,11 @@ namespace Dg
   template<typename Real>
   void WrapAngle(Real& val)
   {
-    val = val - static_cast<Real>(PI_d * 2.0)*floor(val / static_cast<Real>(PI_d * 2)) + static_cast<Real>(PI_d);
+    val = val - static_cast<Real>(PI_d * 2.0)*floor(val / static_cast<Real>(PI_d * 2));
+    if (val > static_cast<Real>(PI_d))
+    {
+      val -= static_cast<Real>(PI_d* 2.0);
+    }
   }	//End: WrapAngle()
 
 

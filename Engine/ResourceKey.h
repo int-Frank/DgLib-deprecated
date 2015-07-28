@@ -14,7 +14,6 @@ namespace Dg
 {
   typedef uint32_t RKey;
   RKey const RKey_INVALID = 0;
-
 }
 
 #endif
