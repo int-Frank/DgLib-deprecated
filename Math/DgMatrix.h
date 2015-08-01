@@ -68,6 +68,14 @@ namespace Dg
     //! Directly set the elements.
     void Set(Real const [M * N]);
 
+    //! Get a submatrix
+    template<size_t _M, size_t _N>
+    Matrix<_M, _N, Real> GetSubMatrix(size_t m0, 
+                                      size_t n0) const;
+
+    //! Matrix determinant
+    Real Determinant() const;
+
     void SetRow(size_t m, Matrix<1, N, Real> const &);
     void GetRow(size_t m, Matrix<1, N, Real>&) const;
     void SetColumn(size_t n, Matrix<M, 1, Real> const &);
@@ -270,6 +278,87 @@ namespace Dg
     return true;
 
   }	//End: Matrix::IsIdentity()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Matrix::GetSubMatrix()
+  //--------------------------------------------------------------------------------
+  template<size_t M, size_t N, typename Real>
+  template<size_t _M, size_t _N>
+  Matrix<_M, _N, Real> Matrix<M, N, Real>::GetSubMatrix(size_t m0,
+                                                        size_t n0) const
+  {
+    Matrix<_M, _N, Real> result;
+    result.Zero();
+
+    size_t Mend = ((m0 + _M) < M) ? (m0 + _M) : M;
+    size_t Nend = ((n0 + _N) < N) ? (n0 + _N) : N;
+
+    size_t _m = 0;
+    for (size_t m = m0; m < Mend; ++m, ++_m)
+    {
+      size_t _n = 0;
+      for (size_t n = n0; n < Nend; ++n, ++_n)
+      {
+        result.m_V[_m * _N + _n] = m_V[m * N + n];
+      }
+    }
+
+    return result;
+  }	//End: Matrix::GetSubMatrix()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Matrix::Determinant()
+  //--------------------------------------------------------------------------------
+  template<size_t M, size_t N, typename Real>
+  Real Matrix<M, N, Real>::Determinant() const
+  {
+    return Real(1.0);
+
+    /*static_assert(M == N, "Can only find determinant of a square matrix");
+
+    if (M == 1)
+    {
+      return m_V[0];
+    }
+
+    if (M == 2)
+    {
+      return m_V[0] * m_V[3] - m_V[1] * m_V[2];
+    }
+
+    static_assert(M > 2, "WTF is going on??? How is the possible?");
+
+    Real result = 0;
+    Real sign = static_cast<Real>(1.0);
+
+    for (size_t i = 0; i < N; ++i)
+    {
+      Matrix<M - 1, N - 1, Real> subMatrix;
+
+      size_t n_out = 0;
+      for (size_t n_in = 0; n_in < N; ++n_in)
+      {
+        if (n_in == i)
+        {
+          continue;
+        }
+
+        for (size_t m_out = 0; m_out + 1 < M; ++m_out)
+        {
+          subMatrix.m_V[m_out * (N - 1) + n_out] = m_V[(m_out + 1) * N + n_in];
+        }
+        n_out++;
+      }
+
+      result += (subMatrix.Determinant() * sign * m_V[i]);
+
+      sign *= static_cast<Real>(-1.0);
+    }
+
+    return result;*/
+  }	//End: Matrix::Determinant()
 
 
   //--------------------------------------------------------------------------------
