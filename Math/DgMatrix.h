@@ -20,6 +20,18 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real> operator*(Real, Matrix<M, N, Real> const &);
 
+  namespace impl
+  {
+    template<size_t M, size_t N, typename Real>
+    Real Determinant(Matrix<M, N, Real> const &);
+
+    template<typename Real>
+    Real Determinant(Matrix<2, 2, Real> const &);
+
+    template<typename Real>
+    Real Determinant(Matrix<1, 1, Real> const &);
+  }
+
   //! @ingroup Math_classes
   //!
   //! @class Matrix
@@ -73,9 +85,6 @@ namespace Dg
     Matrix<_M, _N, Real> GetSubMatrix(size_t m0, 
                                       size_t n0) const;
 
-    //! Matrix determinant
-    Real Determinant() const;
-
     void SetRow(size_t m, Matrix<1, N, Real> const &);
     void GetRow(size_t m, Matrix<1, N, Real>&) const;
     void SetColumn(size_t n, Matrix<M, 1, Real> const &);
@@ -93,6 +102,8 @@ namespace Dg
 
     //! Set matrix to its transpose. For square matrices only.
     Matrix& Transpose();
+
+    Real Determinant() const;
 
     Matrix operator+ (Matrix const &) const;
     Matrix& operator+= (Matrix const &);
@@ -309,36 +320,32 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix::Determinant()
+  //	@	Determinant()
   //--------------------------------------------------------------------------------
   template<size_t M, size_t N, typename Real>
   Real Matrix<M, N, Real>::Determinant() const
   {
-    return Real(1.0);
+    return impl::Determinant(*this);
+  }	//End: Determinant()
 
-    /*static_assert(M == N, "Can only find determinant of a square matrix");
 
-    if (M == 1)
-    {
-      return m_V[0];
-    }
-
-    if (M == 2)
-    {
-      return m_V[0] * m_V[3] - m_V[1] * m_V[2];
-    }
-
-    static_assert(M > 2, "WTF is going on??? How is the possible?");
+  //--------------------------------------------------------------------------------
+  //	@	Determinant()
+  //--------------------------------------------------------------------------------
+  template<size_t M, size_t N, typename Real>
+  Real impl::Determinant(Matrix<M, N, Real> const & a_matrix)
+  {
+    static_assert(M == N, "Can only find determinant of a square matrix");
 
     Real result = 0;
     Real sign = static_cast<Real>(1.0);
 
-    for (size_t i = 0; i < N; ++i)
+    for (size_t i = 0; i < M; ++i)
     {
-      Matrix<M - 1, N - 1, Real> subMatrix;
+      Matrix<M - 1, M - 1, Real> subMatrix;
 
       size_t n_out = 0;
-      for (size_t n_in = 0; n_in < N; ++n_in)
+      for (size_t n_in = 0; n_in < M; ++n_in)
       {
         if (n_in == i)
         {
@@ -347,18 +354,38 @@ namespace Dg
 
         for (size_t m_out = 0; m_out + 1 < M; ++m_out)
         {
-          subMatrix.m_V[m_out * (N - 1) + n_out] = m_V[(m_out + 1) * N + n_in];
+          subMatrix[m_out * (M - 1) + n_out] = a_matrix[(m_out + 1) * M + n_in];
         }
         n_out++;
       }
 
-      result += (subMatrix.Determinant() * sign * m_V[i]);
+      result += (Determinant(subMatrix) * sign * a_matrix[i]);
 
       sign *= static_cast<Real>(-1.0);
     }
 
-    return result;*/
-  }	//End: Matrix::Determinant()
+    return result;
+  }	//End: Determinant()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Determinant()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Real impl::Determinant(Matrix<2, 2, Real> const & a_matrix)
+  {
+    return a_matrix[0] * a_matrix[3] - a_matrix[1] * a_matrix[2];
+  }	//End: Determinant()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Determinant()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Real impl::Determinant(Matrix<1, 1, Real> const & a_matrix)
+  {
+    return a_matrix[0];
+  }	//End: Determinant()
 
 
   //--------------------------------------------------------------------------------
