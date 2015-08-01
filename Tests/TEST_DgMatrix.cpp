@@ -125,3 +125,51 @@ TEST(Stack_DgMatrix_Construction, creation_DgMatrix_Construction)
   CHECK(m22_1(1, 1) == m22_1[3] && m22_1[3] == 9.0);
 
 }
+
+//--------------------------------------------------------------------------------
+//	Matrix44 Methods
+//--------------------------------------------------------------------------------
+TEST(Stack_DgMatrix_Methods, creation_DgMatrix_Methods)
+{
+  Dg::Matrix<6, 8, int> m;
+
+  for (int i = 0; i < 48; i++)
+  {
+    m[i] = i;
+  }
+
+  Dg::Matrix<2, 3, int> res0 = m.GetSubMatrix<2, 3>(1, 2);
+  CHECK(res0(0, 0) == 10);
+  CHECK(res0(0, 1) == 11);
+  CHECK(res0(0, 2) == 12);
+  CHECK(res0(1, 0) == 18);
+  CHECK(res0(1, 1) == 19);
+  CHECK(res0(1, 2) == 20);
+
+  res0 = m.GetSubMatrix<2, 3>(2, 3);
+  CHECK(res0(0, 0) == 19);
+  CHECK(res0(0, 1) == 20);
+  CHECK(res0(0, 2) == 21);
+  CHECK(res0(1, 0) == 27);
+  CHECK(res0(1, 1) == 28);
+  CHECK(res0(1, 2) == 29);
+
+  res0 = m.GetSubMatrix<2, 3>(4, 6);
+  CHECK(res0(0, 0) == 38);
+  CHECK(res0(0, 1) == 39);
+  CHECK(res0(0, 2) == 0);
+  CHECK(res0(1, 0) == 46);
+  CHECK(res0(1, 1) == 47);
+  CHECK(res0(1, 2) == 0);
+
+  unsigned const dim = 6;
+  Dg::Matrix<dim, dim, int> md;
+
+  for (int i = 1; i < dim * dim; ++i)
+  {
+    md[i] = i;
+  }
+
+  CHECK(md.Determinant() == 0);
+
+}
