@@ -162,14 +162,18 @@ TEST(Stack_DgMatrix_Methods, creation_DgMatrix_Methods)
   CHECK(res0(1, 1) == 47);
   CHECK(res0(1, 2) == 0);
 
-  unsigned const dim = 6;
-  Dg::Matrix<dim, dim, int> md;
+  Dg::Matrix<3, 3, double> md;
 
-  for (int i = 1; i < dim * dim; ++i)
-  {
-    md[i] = i;
-  }
+  md[0] = 1;
+  md[1] = 2;
+  md[2] = 7.4;
+  md[3] = 3;
+  md[4] = 4;
+  md[5] = 2.9;
+  md[6] = -3.4;
+  md[7] = 17.3;
+  md[8] = 0.5;
 
-  CHECK(md.Determinant() == 0);
+  CHECK(Dg::AreEqual(md.Determinant(), 413.81));
 
 }
