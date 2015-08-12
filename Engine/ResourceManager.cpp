@@ -1,175 +1,292 @@
 #include "ResourceManager.h"
-#include "ResourceHandle.h"
+#include "ResourceManager_private.h"
+#include "ResourceTypes.h"
 
 namespace Dg
 {
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::SetOptions()
-  //--------------------------------------------------------------------------------
-  void ResourceManager::SetOptions(uint32_t a_options)
+  namespace Rm
   {
-    m_options = a_options;
-  }// End: ResourceManager::SetOptions()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::CheckOption()
-  //--------------------------------------------------------------------------------
-  bool ResourceManager::CheckOption(rmOption a_option)
-  {
-    return ((m_options & static_cast<uint32_t>(a_option)) != 0);
-  }// End: ResourceManager::CheckOption()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::InitResource()
-  //--------------------------------------------------------------------------------
-  Dg_Result ResourceManager::InitResource(RKey a_key)
-  {
-    int index(0);
-    if (!m_resourceList.find(a_key, index))
+    //--------------------------------------------------------------------------------
+    //	@	SetOptions()
+    //--------------------------------------------------------------------------------
+    void SetOptions(uint32_t a_opts)
     {
-      return DgR_Failure;;
+      impl::ResourceManager::Instance()->SetOptions(a_opts);
     }
 
-    if (!m_resourceList[index].m_resource->IsInitialised())
+
+    //--------------------------------------------------------------------------------
+    //	@	CheckOption()
+    //--------------------------------------------------------------------------------
+    bool CheckOption(uint32_t a_option)
     {
-      return m_resourceList[index].m_resource->Init();
+      return impl::ResourceManager::Instance()->CheckOption(a_option);
     }
 
-    return DgR_Success;
-  }// End: ResourceManager::InitResource()
 
-
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::InitAll()
-  //--------------------------------------------------------------------------------
-  Dg_Result ResourceManager::InitAll()
-  {
-    bool isGood = true;
-
-    for (size_t i = 0; i < m_resourceList.size(); ++i)
+    //--------------------------------------------------------------------------------
+    //	@	RegisterResource()
+    //--------------------------------------------------------------------------------
+    Dg_Result RegisterResource(Resource * a_resource, uint32_t a_options)
     {
-      if (m_resourceList[i].m_resource->Init() != DgR_Success)
+      return impl::ResourceManager::Instance()->RegisterResource(a_resource, a_options);
+    }
+
+
+    //--------------------------------------------------------------------------------
+    //	@	GetResourceHandle()
+    //--------------------------------------------------------------------------------
+    Dg_Result GetResourceHandle(RKey a_key, hResource & a_out)
+    {
+      return impl::ResourceManager::Instance()->GetResourceHandle(a_key, a_out);
+    }
+
+
+    //--------------------------------------------------------------------------------
+    //	@	InitResource()
+    //--------------------------------------------------------------------------------
+    Dg_Result InitResource(RKey a_key)
+    {
+      return impl::ResourceManager::Instance()->InitResource(a_key);
+    }
+
+
+    //--------------------------------------------------------------------------------
+    //	@	InitAll()
+    //--------------------------------------------------------------------------------
+    Dg_Result InitAll()
+    {
+      return impl::ResourceManager::Instance()->InitAll();
+    }
+
+
+    //--------------------------------------------------------------------------------
+    //	@	DeinitResource()
+    //--------------------------------------------------------------------------------
+    void DeinitResource(RKey a_key, bool a_force)
+    {
+      impl::ResourceManager::Instance()->DeinitResource(a_key, a_force);
+    }
+
+
+    //--------------------------------------------------------------------------------
+    //	@	DeinitAll()
+    //--------------------------------------------------------------------------------
+    void DeinitAll(bool a_force)
+    {
+      impl::ResourceManager::Instance()->DeinitAll(a_force);
+    }
+
+
+    namespace impl
+    {
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::SetOptions()
+      //--------------------------------------------------------------------------------
+      void ResourceManager::SetOptions(uint32_t a_options)
       {
-        isGood = false;
-      }
-    }
-
-    return isGood ? DgR_Success : DgR_Failure;
-
-  }// End: ResourceManager::InitAll()
+        m_options = a_options;
+      }// End: ResourceManager::SetOptions()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::DeinitResource()
-  //--------------------------------------------------------------------------------
-  void ResourceManager::DeinitResource(RKey a_key, bool a_force)
-  {
-    int index(0);
-    if (!m_resourceList.find(a_key, index))
-    {
-      return;
-    }
-
-    if (m_resourceList[index].m_nUsers == 0 || a_force)
-    {
-      m_resourceList[index].m_resource->DeInit();
-    }
-  }// End: ResourceManager::DeinitResource()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::DeinitAll()
-  //--------------------------------------------------------------------------------
-  void ResourceManager::DeinitAll(bool a_force)
-  {
-    for (size_t i = 0; i < m_resourceList.size(); ++i)
-    {
-      if (a_force || m_resourceList[i].m_nUsers == 0)
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::CheckOption()
+      //--------------------------------------------------------------------------------
+      bool ResourceManager::CheckOption(uint32_t a_option)
       {
-        m_resourceList[i].m_resource->DeInit();
-      }
-    }
-  }// End: ResourceManager::DeinitAll()
+        return ((m_options & static_cast<uint32_t>(a_option)) != 0);
+      }// End: ResourceManager::CheckOption()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::~ResourceManager
-  //--------------------------------------------------------------------------------
-  ResourceManager::~ResourceManager()
-  {
-    for (size_t i = 0; i < m_resourceList.size(); ++i)
-    {
-      delete m_resourceList[i].m_resource;
-    }
-  }// End: ResourceManager::~ResourceManager
-
-
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::DeregisterUser()
-  //--------------------------------------------------------------------------------
-  void ResourceManager::DeregisterUser(RKey a_key)
-  {
-    int index(0);
-    if (!m_resourceList.find(a_key, index))
-    {
-      return;
-    }
-
-    m_resourceList[index].m_nUsers--;
-    if (m_resourceList[index].m_nUsers == 0 && (m_resourceList[index].m_opts & static_cast<uint32_t>(rOption::AutoDeinit)) != 0)
-    {
-      m_resourceList[index].m_resource->DeInit();
-    }
-  }// End: ResourceManager::DeregisterUser()
-
-  
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::RegisterUser()
-  //--------------------------------------------------------------------------------
-  Resource * ResourceManager::RegisterUser(RKey a_key)
-  {
-    int index(0);
-    if (!m_resourceList.find(a_key, index))
-    {
-      return nullptr;
-    }
-
-    if (!m_resourceList[index].m_resource->IsInitialised())
-    {
-      if (!m_resourceList[index].m_resource->Init())
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::InitResource()
+      //--------------------------------------------------------------------------------
+      Dg_Result ResourceManager::InitResource(RKey a_key)
       {
-        return nullptr;
-      }
+        int index(0);
+        if (!m_resourceList.find(a_key, index))
+        {
+          return DgR_Failure;;
+        }
+
+        if (!m_resourceList[index].m_resource->IsInitialised())
+        {
+          return m_resourceList[index].m_resource->Init();
+        }
+
+        return DgR_Success;
+      }// End: ResourceManager::InitResource()
+
+
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::InitAll()
+      //--------------------------------------------------------------------------------
+      Dg_Result ResourceManager::InitAll()
+      {
+        bool isGood = true;
+
+        for (size_t i = 0; i < m_resourceList.size(); ++i)
+        {
+          if (m_resourceList[i].m_resource->Init() != DgR_Success)
+          {
+            isGood = false;
+          }
+        }
+
+        return isGood ? DgR_Success : DgR_Failure;
+
+      }// End: ResourceManager::InitAll()
+
+
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::DeinitResource()
+      //--------------------------------------------------------------------------------
+      void ResourceManager::DeinitResource(RKey a_key, bool a_force)
+      {
+        int index(0);
+        if (!m_resourceList.find(a_key, index))
+        {
+          return;
+        }
+
+        if (m_resourceList[index].m_nUsers == 0 || a_force)
+        {
+          m_resourceList[index].m_resource->DeInit();
+        }
+      }// End: ResourceManager::DeinitResource()
+
+
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::DeinitAll()
+      //--------------------------------------------------------------------------------
+      void ResourceManager::DeinitAll(bool a_force)
+      {
+        for (size_t i = 0; i < m_resourceList.size(); ++i)
+        {
+          if (a_force || m_resourceList[i].m_nUsers == 0)
+          {
+            m_resourceList[i].m_resource->DeInit();
+          }
+        }
+      }// End: ResourceManager::DeinitAll()
+
+
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::~ResourceManager
+      //--------------------------------------------------------------------------------
+      ResourceManager::~ResourceManager()
+      {
+        for (size_t i = 0; i < m_resourceList.size(); ++i)
+        {
+          delete m_resourceList[i].m_resource;
+        }
+      }// End: ResourceManager::~ResourceManager
+
+
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::DeregisterUser()
+      //--------------------------------------------------------------------------------
+      void ResourceManager::DeregisterUser(RKey a_key)
+      {
+        int index(0);
+        if (!m_resourceList.find(a_key, index))
+        {
+          return;
+        }
+
+        m_resourceList[index].m_nUsers--;
+        if (m_resourceList[index].m_nUsers == 0 && (m_resourceList[index].m_opts & rAutoDeinit) != 0)
+        {
+          m_resourceList[index].m_resource->DeInit();
+        }
+      }// End: ResourceManager::DeregisterUser()
+
+
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::RegisterUser()
+      //--------------------------------------------------------------------------------
+      Resource * ResourceManager::RegisterUser(RKey a_key)
+      {
+        int index(0);
+        if (!m_resourceList.find(a_key, index))
+        {
+          return nullptr;
+        }
+
+        if (!m_resourceList[index].m_resource->IsInitialised())
+        {
+          if ((m_resourceList[index].m_opts & rInitWhenInUse)
+            && m_resourceList[index].m_resource->Init() != DgR_Success)
+          {
+            return nullptr;
+          }
+        }
+
+        m_resourceList[index].m_nUsers++;
+        return m_resourceList[index].m_resource;
+      }// End: ResourceManager::RegisterUser()
+
+
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::GetResourceHandle()
+      //--------------------------------------------------------------------------------
+      Dg_Result ResourceManager::GetResourceHandle(RKey a_key, hResource & a_out)
+      {
+        Resource * pR(nullptr);
+        pR = RegisterUser(a_key);
+        if (pR == nullptr)
+        {
+          return DgR_Failure;
+        }
+
+        if (a_out.m_resource != nullptr
+          && a_out.m_resource->GetKey() != RKey_INVALID)
+        {
+          DeregisterUser(a_out.m_resource->GetKey());
+        }
+
+        a_out.m_resource = pR;
+        return DgR_Success;
+
+      }// End: ResourceManager::GetResourceHandle()
+
+
+
+      //--------------------------------------------------------------------------------
+      //	@	ResourceManager::RegisterResource()
+      //--------------------------------------------------------------------------------
+      Dg_Result ResourceManager::RegisterResource(Resource * a_resource,
+                                                  uint32_t a_options)
+      {
+        if (a_resource == nullptr)
+        {
+          return DgR_Failure;
+        }
+
+        int index(0);
+        if (m_resourceList.find(a_resource->GetKey(), index))
+        {
+          delete a_resource;
+          return DgR_Duplicate;
+        }
+
+        ResourceContainer rc;
+        rc.m_nUsers = 0;
+        rc.m_opts = a_options;
+        rc.m_resource = a_resource;
+
+        if (a_options & rInitOnReg)
+        {
+          if (rc.m_resource->Init() != DgR_Success)
+          {
+            return DgR_Failure;
+          }
+        }
+
+        m_resourceList.insert(a_resource->GetKey(), rc);
+
+        return DgR_Success;
+      }// End: ResourceManager::RegisterResource()
     }
-
-    m_resourceList[index].m_nUsers++;
-    return m_resourceList[index].m_resource;
-  }// End: ResourceManager::RegisterUser()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	ResourceManager::GetResourceHandle()
-  //--------------------------------------------------------------------------------
-  Dg_Result ResourceManager::GetResourceHandle(RKey a_key, hResource & a_out)
-  {
-    Resource * pR(nullptr);
-    pR = RegisterUser(a_key);
-    if (pR == nullptr)
-    {
-      return DgR_Failure;
-    }
-
-    if (  a_out.m_resource != nullptr
-      && a_out.m_resource->GetKey() != RKey_INVALID)
-    {
-      DeregisterUser(a_out.m_resource->GetKey());
-    }
-
-    a_out.m_resource = pR;
-    return DgR_Success;
-
-  }// End: ResourceManager::GetResourceHandle()
-
+  }
 }

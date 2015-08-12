@@ -1,68 +1,72 @@
-#include "ResourceHandle.h"
+#include "ResourceTypes.h"
+#include "ResourceManager_private.h"
 
 namespace Dg
 {
-  //--------------------------------------------------------------------------------
-  //	@	hResource::~hResource()
-  //--------------------------------------------------------------------------------
-  hResource::~hResource()
+  namespace Rm
   {
-    if (m_resource != nullptr)
+    //--------------------------------------------------------------------------------
+    //	@	hResource::~hResource()
+    //--------------------------------------------------------------------------------
+    hResource::~hResource()
     {
-      ResourceManager::Instance()->DeregisterUser(m_resource->GetKey());
-    }
-  }// End: hResource::~hResource()
+      if (m_resource != nullptr)
+      {
+        impl::ResourceManager::Instance()->DeregisterUser(m_resource->GetKey());
+      }
+    }// End: hResource::~hResource()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	hResource::hResource()
-  //--------------------------------------------------------------------------------
-  hResource::hResource(hResource const & a_other) : m_resource(nullptr)
-  {
-    if (a_other.m_resource != nullptr)
+    //--------------------------------------------------------------------------------
+    //	@	hResource::hResource()
+    //--------------------------------------------------------------------------------
+    hResource::hResource(hResource const & a_other) : m_resource(nullptr)
     {
-      m_resource = ResourceManager::Instance()->RegisterUser(a_other.m_resource->GetKey());
-    }
-  }// End: hResource::hResource()
+      if (a_other.m_resource != nullptr)
+      {
+        m_resource = impl::ResourceManager::Instance()->RegisterUser(a_other.m_resource->GetKey());
+      }
+    }// End: hResource::hResource()
 
 
-  //--------------------------------------------------------------------------------
-  //	@	hResource::operator=()
-  //--------------------------------------------------------------------------------
-  hResource & hResource::operator=(hResource const & a_other)
-  {
-    if (m_resource != nullptr)
+    //--------------------------------------------------------------------------------
+    //	@	hResource::operator=()
+    //--------------------------------------------------------------------------------
+    hResource & hResource::operator=(hResource const & a_other)
     {
-      ResourceManager::Instance()->DeregisterUser(m_resource->GetKey());
-    }
+      if (m_resource != nullptr)
+      {
+        impl::ResourceManager::Instance()->DeregisterUser(m_resource->GetKey());
+      }
 
-    if (a_other.m_resource != nullptr)
+      if (a_other.m_resource != nullptr)
+      {
+        m_resource = impl::ResourceManager::Instance()->RegisterUser(a_other.m_resource->GetKey());
+      }
+      else
+      {
+        m_resource = nullptr;
+      }
+
+      return *this;
+    }// End: hResource::operator=()
+
+
+    //--------------------------------------------------------------------------------
+    //	@	hResource::operator->()
+    //--------------------------------------------------------------------------------
+    Resource * hResource::operator->()
     {
-      m_resource = ResourceManager::Instance()->RegisterUser(a_other.m_resource->GetKey());
-    }
-    else
+      return m_resource;
+    }// End: hResource::operator->()
+
+
+    //--------------------------------------------------------------------------------
+    //	@	hResource::operator*()
+    //--------------------------------------------------------------------------------
+    Resource & hResource::operator*()
     {
-      m_resource = nullptr;
-    }
-
-    return *this;
-  }// End: hResource::operator=()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	hResource::operator->()
-  //--------------------------------------------------------------------------------
-  Resource * hResource::operator->()
-  {
-    return m_resource;
-  }// End: hResource::operator->()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	hResource::operator*()
-  //--------------------------------------------------------------------------------
-  Resource & hResource::operator*()
-  {
-    return *m_resource;
-  }// End: hResource::operator*()
+      return *m_resource;
+    }// End: hResource::operator*()
+  }
 }

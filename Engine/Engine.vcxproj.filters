@@ -15,16 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ResourceManager_private.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceKey.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceHandle.h">
+    <ClInclude Include="ResourceTypes.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>

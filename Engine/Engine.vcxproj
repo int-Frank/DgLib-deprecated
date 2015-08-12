@@ -130,10 +130,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="ResourceHandle.h" />
-    <ClInclude Include="ResourceKey.h" />
+    <ClInclude Include="ResourceTypes.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="ResourceManager_private.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utility\Utility.vcxproj">

@@ -16,10 +16,10 @@ namespace Dg
    
   protected:
 
-    Singleton(); // Prevent construction
+    Singleton(){} // Prevent construction
     Singleton(Singleton const &); // Prevent construction by copying
     Singleton & operator=(Singleton const &); // Prevent assignment
-    virtual ~Singleton(); // Prevent unwanted destruction
+    virtual ~Singleton(){} // Prevent unwanted destruction
 
   };
 

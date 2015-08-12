@@ -8,10 +8,10 @@
 #ifndef RESOURCEHANDLE_H
 #define RESOURCEHANDLE_H
 
-#include "ResourceManager.h"
-
 namespace Dg
 {
+  class Resource;
+
   //! Reference counted pointer to a resource. It essentially wraps access to the
   //! ResourceManager. Avoid excessive copying as this Registers and Deregisters 
   //! Resources in the ResourceManger.

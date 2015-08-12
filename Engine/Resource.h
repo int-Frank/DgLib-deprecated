@@ -9,7 +9,7 @@
 #define RESOURCE_H
 
 #include "utility.h"
-#include "ResourceKey.h"
+#include "ResourceTypes.h"
 
 namespace Dg
 {
@@ -20,17 +20,21 @@ namespace Dg
 
     Resource(RKey a_key) : m_key(a_key) {}
 
-    virtual ~Resource() = 0;
+    virtual ~Resource() {};
 
     virtual bool IsInitialised() = 0;
 
-    //! The key is used to init the object.
     virtual Dg_Result Init() = 0;
     virtual Dg_Result DeInit() = 0;
 
     RKey GetKey() const { return m_key; }
 
   private:
+
+    Resource(){}
+
+  private:
+
     RKey m_key;
   };
 }
