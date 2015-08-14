@@ -239,8 +239,7 @@ namespace Dg
           return DgR_Failure;
         }
 
-        if (a_out.m_resource != nullptr
-          && a_out.m_resource->GetKey() != RKey_INVALID)
+        if (a_out.m_resource != nullptr)
         {
           DeregisterUser(a_out.m_resource->GetKey());
         }

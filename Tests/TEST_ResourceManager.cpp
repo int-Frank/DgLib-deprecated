@@ -39,6 +39,12 @@ TEST(Stack_ResourceKey, creation_ResourceKey)
   if (result == DgR_Success)
   {
     CHECK(handle->IsInitialised());
+
+    Dg::Rm::hResource handle2(handle);
+    CHECK(handle2->IsInitialised());
+
+    Dg::Rm::hResource handle3 = handle;
+    CHECK(handle3->IsInitialised());
   }
 
 }

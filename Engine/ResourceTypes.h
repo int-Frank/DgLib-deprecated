@@ -18,7 +18,6 @@ namespace Dg
   {
     //! Resource manager key
     typedef uint32_t RKey;
-    RKey const RKey_INVALID = 0;
 
 
     //! Options for individual resources
