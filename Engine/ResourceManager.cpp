@@ -94,7 +94,7 @@ namespace Dg
       //--------------------------------------------------------------------------------
       bool ResourceManager::CheckOption(uint32_t a_option)
       {
-        return ((m_options & static_cast<uint32_t>(a_option)) != 0);
+        return ((m_options & a_option) != 0);
       }// End: ResourceManager::CheckOption()
 
 
