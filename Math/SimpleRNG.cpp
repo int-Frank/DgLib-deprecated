@@ -55,11 +55,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   unsigned int SimpleRNG::GetUint(unsigned int a, unsigned int b)
   {
-    if (a > b)
-    {
-      return a;
-    }
-    else if (a == b)
+    if (a >= b)
     {
       return a;
     }

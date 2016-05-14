@@ -82,8 +82,7 @@ namespace Dg
 
     //! Get a submatrix
     template<size_t _M, size_t _N>
-    Matrix<_M, _N, Real> GetSubMatrix(size_t m0, 
-                                      size_t n0) const;
+    Matrix<_M, _N, Real> GetSubMatrix(size_t m0, size_t n0) const;
 
     void SetRow(size_t m, Matrix<1, N, Real> const &);
     void GetRow(size_t m, Matrix<1, N, Real>&) const;
@@ -104,6 +103,8 @@ namespace Dg
     Matrix& Transpose();
 
     Real Determinant() const;
+
+	Real Dot(Matrix const &) const;
 
     Matrix operator+ (Matrix const &) const;
     Matrix& operator+= (Matrix const &);
@@ -229,7 +230,7 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix44Dg::IsZero()
+  //	@	Matrix44Dg::Zero()
   //--------------------------------------------------------------------------------
   template<size_t M, size_t N, typename Real>
   void Matrix<M, N, Real>::Zero()
@@ -543,6 +544,21 @@ namespace Dg
     return *this;
 
   }   // End: Transpose()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Dot()
+  //-------------------------------------------------------------------------------
+  template<size_t M, size_t N, typename Real>
+  Real Matrix<M, N, Real>::Dot(Matrix<M, N, Real> const & a_mat) const
+  {
+	  Real result = static_cast<Real>(0.0);
+	  for (size_t i = 0; i < M * N; ++i)
+	  {
+		  result += (a_mat.m_V[i] * m_V[i]);
+	  }
+	  return result;
+  }	// End: Dot()
 
 
   //-------------------------------------------------------------------------------

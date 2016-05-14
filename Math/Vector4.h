@@ -27,9 +27,6 @@ namespace Dg
   template<typename Real>
   Vector4<Real> Cross(Vector4<Real> const &, Vector4<Real> const &);
 
-  template<typename Real>
-  Real Dot(Vector4<Real> const &, Vector4<Real> const &);
-
   //! Returns a random unit vector.
   template<typename Real>
   Vector4<Real> GetRandomVector();
@@ -272,17 +269,6 @@ namespace Dg
     result[3] = static_cast<Real>(0.0);
 
     return result;
-
-  }	//End: Cross()
-
-
-  //-------------------------------------------------------------------------------
-  //	@	Dot()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Real Dot(Vector4<Real> const & v1, Vector4<Real> const & v2)
-  {
-    return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3];
 
   }	//End: Cross()
 

@@ -102,7 +102,7 @@ TEST(Stack_Vector4_Other, creation_Vector4_Other)
 {
   // Dot ///////////////////////////////////////////////
 
-  float r_Dot = Dg::Dot(vec4( 2.0f, 0.0f, 3.0f, 0.0f ), vec4( 0.0f, 3.2f, 0.0f, -3.5f ));
+  float r_Dot = vec4( 2.0f, 0.0f, 3.0f, 0.0f ).Dot(vec4( 0.0f, 3.2f, 0.0f, -3.5f ));
   CHECK(r_Dot == 0.0f);
 
   // Cross /////////////////////////////////////////////
@@ -113,9 +113,9 @@ TEST(Stack_Vector4_Other, creation_Vector4_Other)
 
   vec4 c2 = Cross(c0, c1);
 
-  CHECK(Dg::IsZero(Dot(c0, c1)) &&
-    Dg::IsZero(Dot(c0, c2)) &&
-    Dg::IsZero(Dot(c1, c2)));
+  CHECK(Dg::IsZero(c0.Dot(c1)) &&
+    Dg::IsZero(c0.Dot(c2)) &&
+    Dg::IsZero(c1.Dot(c2)));
 
   // Length ///////////////////////////////////////////
 
@@ -132,7 +132,7 @@ TEST(Stack_Vector4_Other, creation_Vector4_Other)
   v = Dg::GetRandomVector<float>();
   vec4 vs = Dg::GetRandomOrthonormalVector<float>(v);
 
-  CHECK(Dg::IsZero(Dot(v, vs)));
+  CHECK(Dg::IsZero(v.Dot(vs)));
 
   v = Dg::GetRandomVector<float>(v, 10.3f);
 

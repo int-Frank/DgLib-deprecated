@@ -634,7 +634,7 @@ namespace Dg
     Vector4<Real> axis = Cross<Real>(a_from, a_to);
 
     // get scaled cos of angle between vectors and set initial quaternion
-    Set(Dot(a_from, a_to), axis.m_V[0], axis.m_V[1], axis.m_V[2]);
+    Set( a_from.Dot(a_to), axis.m_V[0], axis.m_V[1], axis.m_V[2]);
     // quaternion at this point is ||from||*||a_to||*( cos(theta), r*sin(theta) )
 
     // normalize a_to remove ||from||*||a_to|| factor
