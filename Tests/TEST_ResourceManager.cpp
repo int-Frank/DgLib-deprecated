@@ -10,8 +10,8 @@ public:
   TestResource(Dg::Rm::RKey a_key) : Resource(a_key), isInit(false) {}
   bool IsInitialised() { return isInit; }
 
-  Dg_Result Init() { isInit = true; return DgR_Success; }
-  Dg_Result DeInit() { isInit = false; return DgR_Success; }
+  Dg_Error Init() { isInit = true; return DgR_Success; }
+  Dg_Error DeInit() { isInit = false; return DgR_Success; }
 
 private:
   bool isInit;
@@ -25,7 +25,7 @@ TEST(Stack_ResourceKey, creation_ResourceKey)
   rKey key2 = 0xF2;
   rKey key3 = 0xF3;
 
-  Dg_Result result;
+  Dg_Error result;
   Dg::Rm::SetOptions(Dg::Rm::rmDEFAULT);
 
   CHECK(Dg::Rm::RegisterResource(new TestResource(key0)) == DgR_Success);

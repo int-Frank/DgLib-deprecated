@@ -8,7 +8,7 @@
 #include <algorithm>
 
 //! @ingroup utility_constants
-enum Dg_Result
+enum Dg_Error
 {
   DgR_Success = 0,
   DgR_Failure,

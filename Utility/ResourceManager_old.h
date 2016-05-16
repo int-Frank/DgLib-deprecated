@@ -28,7 +28,7 @@ namespace Dg
     ResourceBase() { m_inUse = true; }
     virtual ~ResourceBase() {}
 
-    virtual Dg_Result Init(const void * a_data) {}
+    virtual Dg_Error Init(const void * a_data) {}
 
     virtual void Update() {};
 
@@ -44,7 +44,7 @@ namespace Dg
 
     //! Hands ownership of this object to the Resource manager.
     template<typename InstanceType>
-    Dg_Result Register()
+    Dg_Error Register()
     {
       return ResourceManager<InstanceType>::Register(this, ResourceKey());
     }
@@ -86,7 +86,7 @@ namespace Dg
       m_mutex.unlock();
     }
 
-    static Dg_Result Register(ResourceBase* a_ptr, ResourceKey)
+    static Dg_Error Register(ResourceBase* a_ptr, ResourceKey)
     {
       m_mutex.lock();
 

@@ -10,11 +10,10 @@
 
 #include <math.h>
 
-#include "config.h"
 #include "utility.h"
 
 #include "dgmath.h"
-#include "SimpleRNG.h"
+#include "DgRNG.h"
 
 namespace Dg
 {
@@ -45,7 +44,7 @@ namespace Dg
     //! @param a_upper Upper bound on the normal distribution
     //! @param a_nValues Number of values in the table to generate.
     //! @return DgR_Success on success.
-    Dg_Result Init(Real a_mean,
+    Dg_Error Init(Real a_mean,
                    Real a_sd, 
                    Real a_lower,
                    Real a_upper,
@@ -136,7 +135,7 @@ namespace Dg
   //	@	BoundedSND<Real>::Init()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Dg_Result BoundedSND<Real>::Init(Real a_mean,
+  Dg_Error BoundedSND<Real>::Init(Real a_mean,
                                    Real a_sd,
                                    Real a_lower,
                                    Real a_upper,
@@ -160,16 +159,10 @@ namespace Dg
 
     for (unsigned i = 0; i < a_nValues; i++)
     {
-#ifdef PRECISION_F32
-      float c = static_cast<float>(zLower + (zUpper - zLower) * static_cast<float>(i) / static_cast<float>(m_nValues - 1));
-      c = 2.0f * c - 1.0f;
-      Real inverfResult = static_cast<Real>(inverf_f(c, 0));
-#else
       double c = static_cast<double>(zLower + (zUpper - zLower) * static_cast<double>(i) / static_cast<double>(m_nValues - 1));
       c = 2.0 * c - 1.0;
-      Real inverfResult = static_cast<Real>(inverf_d(c, 0));
-#endif
-      m_values[i] = a_sd * static_cast<Real>(SQRT2) * inverfResult + a_mean;
+      Real inverfResult = static_cast<Real>(inverf(c, 0));
+      m_values[i] = a_sd * static_cast<Real>(SQRT2_d) * inverfResult + a_mean;
     }
 
     return DgR_Success;
@@ -186,7 +179,7 @@ namespace Dg
       return static_cast<Real>(0.0);
     }
 
-    SimpleRNG rng;
+    RNG rng;
     unsigned int index = rng.GetUint(0, m_nValues - 1);
     return m_values[index];
   }

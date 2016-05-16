@@ -24,6 +24,9 @@
     <ClCompile Include="SimpleRNG.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DgRNG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VQS.h">
@@ -33,9 +36,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="doxygen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BoundedNormal.h">

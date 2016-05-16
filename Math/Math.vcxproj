@@ -131,11 +131,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dgmath.cpp" />
+    <ClCompile Include="DgRNG.cpp" />
     <ClCompile Include="SimpleRNG.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundedNormal.h" />
-    <ClInclude Include="config.h" />
     <ClInclude Include="DgMatrix.h" />
     <ClInclude Include="DgRNG.h" />
     <ClInclude Include="doxygen.h" />

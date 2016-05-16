@@ -49,8 +49,8 @@ namespace Dg
 
       virtual bool IsInitialised() = 0;
 
-      virtual Dg_Result Init() = 0;
-      virtual Dg_Result DeInit() = 0;
+      virtual Dg_Error Init() = 0;
+      virtual Dg_Error DeInit() = 0;
 
       RKey GetKey() const { return m_key; }
 

@@ -27,17 +27,17 @@ namespace Dg
     //!
     //! @param a_key Associate a unique key with this resource
     //! @param a_options Options for this resource
-    Dg_Result RegisterResource(Resource * a_resource, uint32_t a_options = rDEFAULT);
+    Dg_Error RegisterResource(Resource * a_resource, uint32_t a_options = rDEFAULT);
 
     //! Get a pointer to a resource. Will fail if the resouce has not been 
     //! successfully registed first with RegisterResource().
-    Dg_Result GetResourceHandle(RKey, hResource &);
+    Dg_Error GetResourceHandle(RKey, hResource &);
 
     //! Initialise a particular resource. 
-    Dg_Result InitResource(RKey);
+    Dg_Error InitResource(RKey);
 
     //! Initialises all resources.
-    Dg_Result InitAll();
+    Dg_Error InitAll();
 
     //! Deinitialise a particular resource. 
     void DeinitResource(RKey, bool a_force = false);
