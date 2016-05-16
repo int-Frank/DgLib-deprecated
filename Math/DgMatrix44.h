@@ -5,12 +5,12 @@
 //!
 //! Class declaration: Matrix44
 
-#ifndef MATRIX44_H
-#define MATRIX44_H
+#ifndef DGMATRIX44_H
+#define DGMATRIX44_H
 
-#include "dgmath.h"
+#include "DgMath.h"
 #include "DgMatrix.h"
-#include "Quaternion.h"
+#include "DgQuaternion.h"
 
 //--------------------------------------------------------------------------------
 //	@	Matrix44

@@ -5,8 +5,8 @@
 //!
 //! Class declaration: RNG
 
-#ifndef RNG_H
-#define RNG_H
+#ifndef DGRNG_H
+#define DGRNG_H
 
 namespace Dg
 {

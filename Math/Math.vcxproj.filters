@@ -18,45 +18,39 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dgmath.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRNG.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DgRNG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DgMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="VQS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dgmath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="doxygen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BoundedNormal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DgRNG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRNG.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DgMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector4.h">
+    <ClInclude Include="DgMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix44.h">
+    <ClInclude Include="DgMatrix44.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Quaternion.h">
+    <ClInclude Include="DgQuaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DgVector4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DgVQS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DgBoundedSND.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -130,21 +130,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="dgmath.cpp" />
+    <ClCompile Include="DgMath.cpp" />
     <ClCompile Include="DgRNG.cpp" />
-    <ClCompile Include="SimpleRNG.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoundedNormal.h" />
+    <ClInclude Include="DgBoundedSND.h" />
     <ClInclude Include="DgMatrix.h" />
     <ClInclude Include="DgRNG.h" />
     <ClInclude Include="doxygen.h" />
-    <ClInclude Include="dgmath.h" />
-    <ClInclude Include="Matrix44.h" />
-    <ClInclude Include="Quaternion.h" />
-    <ClInclude Include="SimpleRNG.h" />
-    <ClInclude Include="Vector4.h" />
-    <ClInclude Include="VQS.h" />
+    <ClInclude Include="DgMath.h" />
+    <ClInclude Include="DgMatrix44.h" />
+    <ClInclude Include="DgQuaternion.h" />
+    <ClInclude Include="DgVector4.h" />
+    <ClInclude Include="DgVQS.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Containers\Containers.vcxproj">

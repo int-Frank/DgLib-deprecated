@@ -5,11 +5,11 @@
 //!
 //! Class declaration: Quaternion
 
-#ifndef QUATERNION_H
-#define QUATERNION_H
+#ifndef DGQUATERNION_H
+#define DGQUATERNION_H
 
-#include "dgmath.h"
-#include "Vector4.h"
+#include "DgMath.h"
+#include "DgVector4.h"
 
 namespace Dg
 {

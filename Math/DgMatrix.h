@@ -8,7 +8,7 @@
 #ifndef DGMATRIX_H
 #define DGMATRIX_H
 
-#include "dgmath.h"
+#include "DgMath.h"
 
 namespace Dg
 {

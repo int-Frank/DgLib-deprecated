@@ -5,13 +5,13 @@
 //!
 //! Class declaration: VQS
 
-#ifndef VQS_H
-#define VQS_H
+#ifndef DGVQS_H
+#define DGVQS_H
 
-#include "Vector4.h"
-#include "Quaternion.h"
-#include "Matrix44.h"
-#include "dgmath.h"
+#include "DgVector4.h"
+#include "DgQuaternion.h"
+#include "DgMatrix44.h"
+#include "DgMath.h"
 
 namespace Dg
 {

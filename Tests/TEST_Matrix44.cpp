@@ -1,7 +1,7 @@
 #include "TestHarness.h"
-#include "Quaternion.h"
-#include "Matrix44.h"
-#include "Vector4.h"
+#include "DgQuaternion.h"
+#include "DgMatrix44.h"
+#include "DgVector4.h"
 
 typedef Dg::Matrix44< float >     mat44;
 typedef Dg::Quaternion < float >  quat;

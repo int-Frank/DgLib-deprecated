@@ -5,14 +5,14 @@
 //!
 //! Class declaration: BoundedNormal
 
-#ifndef BOUNDEDNORMAL_H
-#define BOUNDEDNORMAL_H
+#ifndef DGBOUNDEDSND_H
+#define DGBOUNDEDSND_H
 
 #include <math.h>
 
 #include "utility.h"
 
-#include "dgmath.h"
+#include "DgMath.h"
 #include "DgRNG.h"
 
 namespace Dg

@@ -5,10 +5,10 @@
 //!
 //! Class declaration: Vector4
 
-#ifndef VECTOR4_H
-#define VECTOR4_H
+#ifndef DGVECTOR4_H
+#define DGVECTOR4_H
 
-#include "SimpleRNG.h"
+#include "DgRNG.h"
 #include "DgMatrix.h"
 #include "dgmath.h"
 
@@ -388,7 +388,7 @@ namespace Dg
   template<typename Real>
   Vector4<Real> GetRandomVector()
   {
-    SimpleRNG generator;
+    RNG generator;
 
     Real theta = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(2.0) * static_cast<Real>(Dg::PI_d));
     Real phi = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(Dg::PI_d));
@@ -409,7 +409,7 @@ namespace Dg
   template<typename Real>
   Vector4<Real> GetRandomOrthonormalVector(Vector4<Real> const & a_axis)
   {
-    SimpleRNG generator;
+    RNG generator;
 
     //Get a random unit vector
     Vector4<Real> v(GetRandomVector<Real>());
@@ -432,7 +432,7 @@ namespace Dg
   template<typename Real>
   Vector4<Real> GetRandomVector(Vector4<Real> const & a_axis, Real theta)
   {
-    SimpleRNG generator;
+    RNG generator;
 
     //Find random angle [0, theta]
     Real phi = generator.GetUniform<Real>(static_cast<Real>(0.0), theta);

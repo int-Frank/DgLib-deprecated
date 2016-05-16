@@ -1,5 +1,5 @@
 #include "TestHarness.h"
-#include "BoundedNormal.h"
+#include "DgBoundedSND.h"
 
 TEST(Stack_BoundedSND, creation_BoundedSND)
 {

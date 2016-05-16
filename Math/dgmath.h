@@ -4,8 +4,8 @@
 //! @date 4/8/2015
 //!
 //! This files contains a variety of useful math functions and constants.
-#ifndef COMMONMATH_H
-#define COMMONMATH_H
+#ifndef DGMATH_H
+#define DGMATH_H
 
 #include <math.h>
 #include <stdint.h>
