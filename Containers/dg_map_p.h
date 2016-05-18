@@ -19,7 +19,7 @@ namespace Dg
   //!
   //! @class map_p
   //!
-  //! Ordered map_pped list. 
+  //! Ordered mapped list. 
   //!
   //! Assumed types are POD, so no construction / assignment operators called
   //!

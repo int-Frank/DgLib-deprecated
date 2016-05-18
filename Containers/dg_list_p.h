@@ -142,9 +142,9 @@ namespace Dg
 
 	  //Accessors
 	  iterator			  begin()		  const {return iterator(m_rootContainer.next);}
-    iterator			  end()		    const {return iterator(const_cast<DataContainer*>(&m_endContainer)); }
+      iterator			  end()		    const {return iterator(const_cast<DataContainer*>(&m_endContainer)); }
 	  const_iterator	cbegin()	  const {return const_iterator(m_rootContainer.next);}
-    const_iterator	cend()		  const {return const_iterator(const_cast<DataContainer*>(&m_endContainer)); }
+      const_iterator	cend()		  const {return const_iterator(const_cast<DataContainer*>(&m_endContainer)); }
 	  size_t			    size()		  const {return m_currentSize;}
 	  size_t 			    max_size()	const {return m_arraySize;}
 	  bool 			      empty()		  const {return m_currentSize == 0;}

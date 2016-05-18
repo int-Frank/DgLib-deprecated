@@ -104,7 +104,7 @@ namespace Dg
 
     Real Determinant() const;
 
-	Real Dot(Matrix const &) const;
+	  Real Dot(Matrix const &) const;
 
     Matrix operator+ (Matrix const &) const;
     Matrix& operator+= (Matrix const &);

@@ -43,7 +43,7 @@ namespace Dg
     {
     public:
 
-      Resource(RKey a_key) : m_key(a_key) {}
+      Resource(RKey a_key, void * a_data = nullptr) : m_key(a_key) {}
 
       virtual ~Resource() {};
 

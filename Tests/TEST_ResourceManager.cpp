@@ -7,7 +7,7 @@ class TestResource : public Dg::Rm::Resource
 {
 public:
 
-  TestResource(Dg::Rm::RKey a_key) : Resource(a_key), isInit(false) {}
+  TestResource(Dg::Rm::RKey a_key) : Resource(a_key, nullptr), isInit(false) {}
   bool IsInitialised() { return isInit; }
 
   Dg_Error Init() { isInit = true; return DgR_Success; }

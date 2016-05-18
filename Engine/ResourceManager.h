@@ -23,7 +23,7 @@ namespace Dg
 
     //! Register a new resource. The call will look like this:
     //!
-    //! ReqisterResource(new ResourceType(key), opts);
+    //! ReqisterResource(new ResourceType(key, pData), opts);
     //!
     //! @param a_key Associate a unique key with this resource
     //! @param a_options Options for this resource

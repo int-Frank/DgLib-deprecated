@@ -292,9 +292,9 @@ namespace Dg
       if (is_a1_zero)
       {
         a_x0[0] = a_x1[1] = a_x2[2] = static_cast<Real>(1.0);
-        a_x0[1] = a_x0[2] = a_x0[3] =
-          a_x1[0] = a_x1[2] = a_x1[3] =
-          a_x2[0] = a_x2[1] = a_x2[3] = static_cast<Real>(0.0);
+        a_x0[1] = a_x0[2] = a_x0[3] = static_cast<Real>(0.0);
+        a_x1[0] = a_x1[2] = a_x1[3] = static_cast<Real>(0.0);
+        a_x2[0] = a_x2[1] = a_x2[3] = static_cast<Real>(0.0);
 
         return;
       }
@@ -345,13 +345,12 @@ namespace Dg
 
       //Calculate x2
       a_x2 = Cross(a_x0, a_x1);
-
-      return;
     }
-
-    a_x2.Normalize();
-    a_x1 = Cross(a_x2, a_x0);
-
+    else
+    {
+      a_x2.Normalize();
+      a_x1 = Cross(a_x2, a_x0);
+    }
   } //End: GetBasis()
 
 

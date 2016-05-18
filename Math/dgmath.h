@@ -49,15 +49,15 @@ namespace Dg
   double const SQRT2_d        = 1.4142135623730950488016887242097;
 
 #ifdef USE_PRECISION_32
-  float const PI			  = PI_f;
-  float const INVPI			  = INVPI_f;
-  float const EPSILON		  = EPSILON_f;
-  float const SQRT2			  = SQRT2_f;
+  float const PI			        = PI_f;
+  float const INVPI			      = INVPI_f;
+  float const EPSILON		      = EPSILON_f;
+  float const SQRT2			      = SQRT2_f;
 #else
-  double const PI			  = PI_d;
-  double const INVPI		  = INVPI_d;
-  double const EPSILON		  = EPSILON_d;
-  double const SQRT2		  = SQRT2_d;
+  double const PI			        = PI_d;
+  double const INVPI		      = INVPI_d;
+  double const EPSILON		    = EPSILON_d;
+  double const SQRT2		      = SQRT2_d;
 #endif
 
   //! @}
@@ -133,11 +133,7 @@ namespace Dg
   template<typename Real>
   void WrapAngle(Real& val)
   {
-    val = val - static_cast<Real>(PI_d * 2.0)*floor(val / static_cast<Real>(PI_d * 2));
-    if (val > static_cast<Real>(PI_d))
-    {
-      val -= static_cast<Real>(PI_d* 2.0);
-    }
+    val = val - static_cast<Real>(PI_d * 2.0)*floor((val + PI) / static_cast<Real>(PI_d * 2.0));
   }	//End: WrapAngle()
 
 
