@@ -18,21 +18,21 @@
     <ClInclude Include="doxygen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utility.h">
+    <ClInclude Include="DgPriorityMutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="priority_mutex.h">
+    <ClInclude Include="DgSingleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="singleton.h">
+    <ClInclude Include="DgUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="utility.cpp">
+    <ClCompile Include="DgPriorityMutex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="priority_mutex.cpp">
+    <ClCompile Include="DgUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

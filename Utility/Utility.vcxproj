@@ -131,9 +131,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="doxygen.h" />
-    <ClInclude Include="priority_mutex.h" />
-    <ClInclude Include="singleton.h" />
-    <ClInclude Include="utility.h" />
+    <ClInclude Include="DgPriorityMutex.h" />
+    <ClInclude Include="DgSingleton.h" />
+    <ClInclude Include="DgUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Containers\Containers.vcxproj">
@@ -141,8 +141,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="priority_mutex.cpp" />
-    <ClCompile Include="utility.cpp" />
+    <ClCompile Include="DgPriorityMutex.cpp" />
+    <ClCompile Include="DgUtility.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

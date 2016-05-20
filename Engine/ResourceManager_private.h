@@ -11,9 +11,9 @@
 #include <stdint.h>
 
 #include "dg_map_p.h"
-#include "singleton.h"
+#include "DgSingleton.h"
 #include "ResourceTypes.h"
-#include "utility.h"
+#include "DgUtility.h"
 
 namespace Dg
 {

@@ -1,86 +1,70 @@
 #ifndef DG_SHARED_PTR
 #define DG_SHARED_PTR
 
-namespace impl
-{
-  class RefCounter
-  {
-  private:
-    unsigned int count;
-
-  public:
-    RefCounter() : count(0) {}
-    void AddRef() {count++;}
-    int Release() {return --count;}
-  };
-}
-
 namespace Dg
 {
   template < typename T > 
   class shared_ptr
   {
   public:
-    shared_ptr() : pData(0), reference()
+    shared_ptr() : m_pData(nullptr), m_pRefCount(nullptr)
     {
-      reference = new RefCounter();
-      reference->AddRef();
+      m_pRefCount = new size_t(1);
     }
 
-    shared_ptr(T* pValue) : pData(pValue), reference()
+    shared_ptr(T* pValue) : m_pData(pValue), m_pRefCount(nullptr)
     {
-      reference = new RefCounter();
-      reference->AddRef();
+      m_pRefCount = new size_t(1);
     }
 
-    shared_ptr(const shared_ptr<T>& sp) : pData(sp.pData), reference(sp.reference)
+    shared_ptr(shared_ptr<T> const & sp) : m_pData(sp.m_pData), m_pRefCount(sp.m_pRefCount)
     {
-      reference->AddRef();
+      ++(*m_pRefCount);
     }
 
     ~shared_ptr()
     {
-      if (reference->Release() == 0)
+      if (--(*m_pRefCount) == 0)
       {
-        delete pData;
-        delete reference;
+        delete m_pData;
+        delete m_pRefCount;
       }
     }
 
     T& operator* ()
     {
-      return *pData;
+      return *m_pData;
     }
 
     T* operator-> ()
     {
-      return pData;
+      return m_pData;
     }
 
-    shared_ptr<T>& operator = (const shared_ptr<T>& sp)
+    shared_ptr<T>& operator = (shared_ptr<T> const & sp)
     {
       if (this != &sp) // Avoid self assignment
       {
         // Decrement the old reference count
         // if reference become zero delete the old data
-        if (reference->Release() == 0)
+        if (--(*m_pRefCount) == 0)
         {
-          delete pData;
-          delete reference;
+          delete m_pData;
+          delete m_pRefCount;
         }
 
         // Copy the data and reference pointer
         // and increment the reference count
-        pData = sp.pData;
-        reference = sp.reference;
-        reference->AddRef();
+        m_pData = sp.m_pData;
+        m_pRefCount = sp.m_pRefCount;
+        ++(*m_pRefCount);
       }
       return *this;
     }
 
   private:
-    T*          pData;       // pointer
-    RefCounter* reference;   // Reference count
+    T *          m_pData;       // pointer
+    size_t *     m_pRefCount;
   };
 }
 #endif

@@ -5,7 +5,7 @@
 //!
 //! Class definitions: priority_mutex
 
-#include "priority_mutex.h"
+#include "DgPriorityMutex.h"
 
 namespace Dg
 {

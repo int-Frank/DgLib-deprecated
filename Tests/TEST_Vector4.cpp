@@ -113,7 +113,7 @@ TEST(Stack_Vector4_Other, creation_Vector4_Other)
 
   vec4 c2 = Cross(c0, c1);
 
-  CHECK(Dg::IsZero(c0.Dot(c1)) &&
+  CHECK(Dg::IsZero(Dot(c0, c1)) &&
     Dg::IsZero(c0.Dot(c2)) &&
     Dg::IsZero(c1.Dot(c2)));
 

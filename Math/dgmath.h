@@ -10,7 +10,7 @@
 #include <math.h>
 #include <stdint.h>
 
-#include "utility.h"
+#include "DgUtility.h"
 #include "DgMath.inl"
 
 #define USE_PRECISION_32
@@ -42,22 +42,28 @@ namespace Dg
   float const INVPI_f         = 0.31830988618379067153776752674503f;
   float const EPSILON_f       = 1.0e-4f;
   float const SQRT2_f         = 1.4142135623730950488016887242097f;
+  float const INVSQRT2_f      = 0.70710678118654752440084436210485f;
 
   double const PI_d           = 3.141592653589793238462643383279;
   double const INVPI_d        = 0.31830988618379067153776752674503;
   double const EPSILON_d      = 1.0e-8;
   double const SQRT2_d        = 1.4142135623730950488016887242097;
+  double const INVSQRT2_d     = 0.70710678118654752440084436210485;
+
+  unsigned const N_C_INVERF   = 512;
 
 #ifdef USE_PRECISION_32
-  float const PI			        = PI_f;
-  float const INVPI			      = INVPI_f;
-  float const EPSILON		      = EPSILON_f;
-  float const SQRT2			      = SQRT2_f;
+  float const PI			  = PI_f;
+  float const INVPI			  = INVPI_f;
+  float const EPSILON		  = EPSILON_f;
+  float const SQRT2			  = SQRT2_f;
+  float const INVSQRT2        = INVSQRT2_f;
 #else
-  double const PI			        = PI_d;
-  double const INVPI		      = INVPI_d;
-  double const EPSILON		    = EPSILON_d;
-  double const SQRT2		      = SQRT2_d;
+  double const PI			  = PI_d;
+  double const INVPI		  = INVPI_d;
+  double const EPSILON		  = EPSILON_d;
+  double const SQRT2		  = SQRT2_d;
+  double const INVSQRT2       = INVSQRT2_d;
 #endif
 
   //! @}
@@ -75,25 +81,22 @@ namespace Dg
   uint32_t NextPower2(uint32_t input);
 
   //! Inverse error function. Uses Mclaurin series expansion approximation.
-  //! @param a_nTerms Number of terms in the series expansion to use. 0 denotes maximum number.
-  template<typename Real>
-  Real inverf(Real a_x, unsigned a_nTerms = 16)
+  //! @param nTerms Number of terms in the series expansion to use. 0 denotes maximum number.
+  template<typename Real, unsigned nTerms = 16>
+  Real inverf(Real a_x)
   {
+	  static_assert(nTerms <= N_C_INVERF, "Max terms for the inverf is 512");
+
 	  if (a_x < static_cast<Real>(-1.0) || a_x > static_cast<Real>(1.0))
 	  {
 		  return static_cast<Real>(0.0);
 	  }
 
-	  if (a_nTerms > impl::N_C_INVERF || a_nTerms == 0)
-	  {
-		  a_nTerms = impl::N_C_INVERF;
-	  }
-
 	  Real x0Sq = a_x * a_x;
 	  Real x = a_x;
 	  Real result = static_cast<Real>(0.0);
-
-	  for (unsigned i = 0; i < a_nTerms; ++i)
+	  
+	  for (unsigned i = 0; i < nTerms; ++i)
 	  {
 		  result += x * static_cast<Real>(impl::C_INVERF[i]);
 		  x *= x0Sq;

@@ -10,7 +10,7 @@
 
 #include <math.h>
 
-#include "utility.h"
+#include "DgUtility.h"
 
 #include "DgMath.h"
 #include "DgRNG.h"
@@ -161,7 +161,7 @@ namespace Dg
     {
       double c = static_cast<double>(zLower + (zUpper - zLower) * static_cast<double>(i) / static_cast<double>(m_nValues - 1));
       c = 2.0 * c - 1.0;
-      Real inverfResult = static_cast<Real>(inverf(c, 0));
+      Real inverfResult = static_cast<Real>(inverf<double, N_C_INVERF>(c));
       m_values[i] = a_sd * static_cast<Real>(SQRT2_d) * inverfResult + a_mean;
     }
 

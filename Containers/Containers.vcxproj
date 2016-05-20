@@ -19,12 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dg_list_p.h" />
+    <ClInclude Include="DgList_pod.h" />
     <ClInclude Include="dg_map.h" />
     <ClInclude Include="dg_map_p.h" />
     <ClInclude Include="dg_set_p.h" />
     <ClInclude Include="dg_shared_ptr.h" />
     <ClInclude Include="dg_vector_p.h" />
+    <ClInclude Include="doxygen.h" />
     <ClInclude Include="impl_container_common.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

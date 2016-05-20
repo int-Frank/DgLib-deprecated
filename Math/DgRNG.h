@@ -13,7 +13,7 @@ namespace Dg
 
 	//! @ingroup Math_classes
 	//!
-	//! @class DgRNG
+	//! @class RNG
 	//!
 	//! @brief A simple random number generator.
 	//! Original code by John D. Cook

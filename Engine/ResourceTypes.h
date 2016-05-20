@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#include "utility.h"
+#include "DgUtility.h"
 
 namespace Dg
 {

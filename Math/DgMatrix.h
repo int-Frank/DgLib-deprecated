@@ -18,6 +18,9 @@ namespace Dg
   Matrix<N, M, Real> Transpose(Matrix<M, N, Real> const &);
 
   template<size_t M, size_t N, typename Real>
+  Real Dot(Matrix<M, N, Real> const &, Matrix<M, N, Real> const &);
+
+  template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real> operator*(Real, Matrix<M, N, Real> const &);
 
   namespace impl
@@ -36,7 +39,7 @@ namespace Dg
   //!
   //! @class Matrix
   //!
-  //! @brief Generic M * N matrix class.
+  //! @brief Generic two dimension matrix class.
   //!
   //! @author Frank B. Hart
   //! @date 4/10/2015
@@ -48,21 +51,23 @@ namespace Dg
     template<size_t _M, size_t _N, typename T> friend class Matrix;
 
   public:
-    //! Default constructor, initialized to identity matrix.
+    //! Default constructor. Elements ore not initialised.
     Matrix();
     ~Matrix() {}
 
     Matrix(Matrix const &);
     Matrix& operator=(Matrix const &);
 
-    //! Accessor i: row, j:column.
+    //! Accessor m: row, n:column.
     Real& operator()(size_t m, size_t n);
 
-    //! Accessor i: row, j:column.
+    //! Accessor m: row, n:column.
     Real operator()(size_t m, size_t n) const;
 
     //! Accessor element by index.
     Real& operator[](size_t i) { return m_V[i]; }
+
+    //! Accessor element by index.
     Real operator[](size_t i) const { return m_V[i]; }
 
     bool operator== (Matrix const &) const;
@@ -102,8 +107,10 @@ namespace Dg
     //! Set matrix to its transpose. For square matrices only.
     Matrix& Transpose();
 
+    //! Uses recursive algorithm.
     Real Determinant() const;
 
+    //! Element-wise dot product.
 	  Real Dot(Matrix const &) const;
 
     Matrix operator+ (Matrix const &) const;
@@ -558,6 +565,16 @@ namespace Dg
 		  result += (a_mat.m_V[i] * m_V[i]);
 	  }
 	  return result;
+  }	// End: Dot()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Dot()
+  //-------------------------------------------------------------------------------
+  template<size_t M, size_t N, typename Real>
+  Real Dot(Matrix<M, N, Real> const & a_mat0, Matrix<M, N, Real> const & a_mat1)
+  {
+	  return a_mat0.Dot(a_mat1);
   }	// End: Dot()
 
 
