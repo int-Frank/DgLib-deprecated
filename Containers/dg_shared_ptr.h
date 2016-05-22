@@ -83,18 +83,14 @@ namespace Dg
 
     shared_ptr& operator = (shared_ptr const & sp)
     {
-      if (this != &sp) // Avoid self assignment
+      if (this != &sp)
       {
-        // Decrement the old reference count
-        // if reference become zero delete the old data
         if (--(*m_pRefCount) == 0)
         {
           s_deleter(m_pData);
           delete m_pRefCount;
         }
 
-        // Copy the data and reference pointer
-        // and increment the reference count
         m_pData = sp.m_pData;
         m_pRefCount = sp.m_pRefCount;
         ++(*m_pRefCount);

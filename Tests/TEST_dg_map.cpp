@@ -93,7 +93,7 @@ bool CheckState(vec v, DgMap m)
     }
 
     //Check we can find data at the right index
-    if (!m.find(v[i].first, index, 0, 0xFFFFFFF))
+    if (!m.find(v[i].first, index))
     {
       return false;
     }

@@ -1,10 +1,10 @@
 #include "TestHarness.h"
-#include "dg_set_p.h"
+#include "dg_set_pod.h"
 #include <vector>
 #include <algorithm>
 
 typedef std::vector<int>   vec;
-typedef Dg::set_p<int>     DgSet;
+typedef Dg::set_pod<int>     DgSet;
 
 bool CheckState(vec v, DgSet m)
 {
@@ -52,7 +52,7 @@ bool CheckState(vec v, DgSet m)
     }
 
     //Check we can find data at the right index
-    if (!m.find(v[i], index, 0, 0xFFFFFFF))
+    if (!m.find(v[i], index))
     {
       return false;
     }

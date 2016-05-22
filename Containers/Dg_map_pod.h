@@ -1,9 +1,9 @@
-//! @file dg_pod_map_p.h
+//! @file Dg_map_pop.h
 //!
 //! @author: Frank B. Hart
 //! @date 2/5/2015
 //!
-//! Class declaration: map_p
+//! Class declaration: map_pod
 
 #ifndef DG_MAP_P_H
 #define DG_MAP_P_H
@@ -17,7 +17,7 @@ namespace Dg
 {
   //! @ingroup DgContainers
   //!
-  //! @class map_p
+  //! @class map_pod
   //!
   //! Ordered mapped list. 
   //!
@@ -26,7 +26,7 @@ namespace Dg
   //! @author Frank B. Hart
   //! @date 2/5/2015
   template<typename U, typename T>
-  class map_p
+  class map_pod
   {
     //Internal container which stores the m_data
     struct Container
@@ -38,51 +38,51 @@ namespace Dg
   public:
 
     //! Constructor 
-    //! If the constructor fails to allocate the map_p, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
-    map_p();
+    //! If the constructor fails to allocate the map_pod, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
+    map_pod();
 
-    //! Initialize map_p with to a capacity. 
-    //! If the constructor fails to allocate the map_p, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
-    map_p(unsigned int);
-    ~map_p();
+    //! Initialize map_pod with to a capacity. 
+    //! If the constructor fails to allocate the map_pod, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
+    map_pod(size_t);
+    ~map_pod();
 
     //! Copy constructor.
-    map_p(map_p const &);
+    map_pod(map_pod const &);
 
     //! Assigns new contents to the container, replacing its current content.
-    map_p& operator= (map_p const &);
+    map_pod& operator= (map_pod const &);
 
-    //! Returns a reference to the \a i<SUP>th</SUP> element in the map_p. 
+    //! Returns a reference to the \a i<SUP>th</SUP> element in the map_pod. 
     //! This function does not perform a range check.
-    T& operator[](unsigned int i)	{ return m_data[i].item; }
+    T& operator[](size_t i)	{ return m_data[i].item; }
 
-    //! Returns a const reference to the \a i<SUP>th</SUP> element in the map_p. 
+    //! Returns a const reference to the \a i<SUP>th</SUP> element in the map_pod. 
     //! This function does not perform a range check.
-    const T& operator[](unsigned int i) const { return m_data[i].item; }
+    const T& operator[](size_t i) const { return m_data[i].item; }
 
-    //! Return number of elements in the map_p.
+    //! Return number of elements in the map_pod.
     int size() const	{ return m_currentSize; }
 
-    //! Returns whether the map_p is empty.
+    //! Returns whether the map_pod is empty.
     bool empty() const	{ return m_currentSize == 0; }
 
-    //! Returns number of elements the map_p can hold before resizing.
+    //! Returns number of elements the map_pod can hold before resizing.
     int max_size() const	{ return m_arraySize; }
 
-    //! Returns the key of the ith element in the map_p.
+    //! Returns the key of the ith element in the map_pod.
     //! This function does not perform a range check.
     U query_key(int i)	const { return m_data[i].key; }
 
-    //! Searches the map_p for an element with a key equivalent to \a k.
+    //! Searches the map_pod for an element with a key equivalent to \a k.
     //! \return True if the element was found with \a index being set to the 
-    //!         index of the element inthe map_p. False if not found with \a index
+    //!         index of the element inthe map_pod. False if not found with \a index
     //!         set to one lower to where \a k would be.
     //! \param lower Set a low bound to the search sublist.
     bool find(U k, int& index, int lower = 0) const;			 //Use binary search
 
-    //! Searches the map_p for an element with a key equivalent to \a k.
+    //! Searches the map_pod for an element with a key equivalent to \a k.
     //! \return True if the element was found with \a index being set to the 
-    //!         index of the element inthe map_p. False if not found with \a index
+    //!         index of the element inthe map_pod. False if not found with \a index
     //!         set to one lower to where \a k would be.
     //! \param lower Set a low bound to the search sublist.
     //! \param upper Set an upper bound to the search sublist.
@@ -91,37 +91,37 @@ namespace Dg
     //! Extends the container by inserting new elements, effectively increasing 
     //! the container size by the number of elements inserted.
     //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
-    //! \return False if key already exists in the map_p.
+    //! \return False if key already exists in the map_pod.
     bool insert(U k, T const & t);
 
     //! Set element with key \a k, with value \a t.
     //! \return True if key found.
     bool set(U k, T t);
 
-    //! Removes the item in the map_p with key \a k.
+    //! Removes the item in the map_pod with key \a k.
     void erase(U k);
 
-    //! Removes the item in the map_p at position \a i.
+    //! Removes the item in the map_pod at position \a i.
     void erase_at_position(int);
 
-    //! Clear all items from the map_p, retains allocated memory.
+    //! Clear all items from the map_pod, retains allocated memory.
     void clear();
 
-    //! Resize the map_p. The content of the map_p is preserved up 
+    //! Resize the map_pod. The content of the map_pod is preserved up 
     //! to the lesser of the new and old sizes.
     //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
     void resize(int);
 
-    //! Clears the map_p, reallocates memory to the map_p.
+    //! Clears the map_pod, reallocates memory to the map_pod.
     void reset();
 
   private:
 
-    //! Doubles the memory allocated to the map_p. Retains all data.
+    //! Doubles the memory allocated to the map_pod. Retains all data.
     //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
     void extend();
 
-    void init(map_p const &);
+    void init(map_pod const &);
 
   private:
     //Data members
@@ -133,24 +133,24 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::map_p()
+  //	@	map_pod<U,T>::map_pod()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  map_p<U, T>::map_p()
+  map_pod<U, T>::map_pod()
     : m_data(nullptr)
     , m_arraySize(0)
     , m_currentSize(0)
   {
     resize(DG_CONTAINER_DEFAULT_SIZE);
 
-  }	//End: map_p::map_p()
+  }	//End: map_pod::map_pod()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::map_p()
+  //	@	map_pod<U,T>::map_pod()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  map_p<U, T>::map_p(unsigned int a_size)
+  map_pod<U, T>::map_pod(size_t a_size)
     : m_data(nullptr)
     , m_arraySize(0)
     , m_currentSize(0)
@@ -168,25 +168,25 @@ namespace Dg
     m_arraySize = a_size;
     m_currentSize = 0;
 
-  }	//End: map_p::map_p()
+  }	//End: map_pod::map_pod()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::~map_p()
+  //	@	map_pod<U,T>::~map_pod()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  map_p<U, T>::~map_p()
+  map_pod<U, T>::~map_pod()
   {
     free(m_data);
 
-  }	//End: map_p::~map_p()
+  }	//End: map_pod::~map_pod()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::init()
+  //	@	map_pod<U,T>::init()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  void map_p<U, T>::init(map_p const & a_other)
+  void map_pod<U, T>::init(map_pod const & a_other)
   {
     resize(a_other.m_arraySize);
 
@@ -194,26 +194,26 @@ namespace Dg
 
     m_currentSize = a_other.m_currentSize;
 
-  }	//End: map_p::init()
+  }	//End: map_pod::init()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::map_p()
+  //	@	map_pod<U,T>::map_pod()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  map_p<U, T>::map_p(map_p const & a_other) :
+  map_pod<U, T>::map_pod(map_pod const & a_other) :
     m_data(nullptr), m_arraySize(0), m_currentSize(0)
   {
     init(a_other);
 
-  }	//End: map_p::map_p()
+  }	//End: map_pod::map_pod()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::operator=()
+  //	@	map_pod<U,T>::operator=()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  map_p<U, T>& map_p<U, T>::operator=(map_p const & a_other)
+  map_pod<U, T>& map_pod<U, T>::operator=(map_pod const & a_other)
   {
     if (this == &a_other)
       return *this;
@@ -222,14 +222,14 @@ namespace Dg
 
     return *this;
 
-  }	//End: map_p::operator=()
+  }	//End: map_pod::operator=()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::resize()
+  //	@	map_pod<U,T>::resize()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  void map_p<U, T>::resize(int a_newSize)
+  void map_pod<U, T>::resize(int a_newSize)
   {
     assert(a_newSize > 0);
 
@@ -248,30 +248,26 @@ namespace Dg
       m_currentSize = a_newSize;
     }
 
-  }	//End: map_p::resize()
+  }	//End: map_pod::resize()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::find()
+  //	@	map_pod<U,T>::find()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  bool map_p<U, T>::find(U a_key, int& a_index, int a_lower) const
+  bool map_pod<U, T>::find(U a_key, int& a_index, int a_lower) const
   {
     return find(a_key, a_index, a_lower, (m_currentSize - 1));
 
-  }	//End: map_p::find()
+  }	//End: map_pod::find()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::find()
+  //	@	map_pod<U,T>::find()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  bool map_p<U, T>::find(U a_key, int& a_index, int a_lower, int a_upper) const
+  bool map_pod<U, T>::find(U a_key, int& a_index, int a_lower, int a_upper) const
   {
-    //Check bounds
-    a_lower = (a_lower > 0) ? a_lower : 0;
-    a_upper = (a_upper < m_currentSize - 1) ? a_upper : m_currentSize - 1;
-
     while (a_lower <= a_upper)
     {
       // calculate the midpoint for roughly equal partition
@@ -293,19 +289,19 @@ namespace Dg
     a_index = a_lower - 1;
     return false;
 
-  }	//End: map_p::find()
+  }	//End: map_pod::find()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::extend()
+  //	@	map_pod<U,T>::extend()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  void map_p<U, T>::extend()
+  void map_pod<U, T>::extend()
   {
     //Calculate new size
     int new_size = (m_arraySize << 1);
 
-    //overflow, map_p full
+    //overflow, map_pod full
     if (new_size <= m_arraySize)
     {
       throw std::overflow_error("m_arraySize");
@@ -320,14 +316,14 @@ namespace Dg
     m_data = tempPtr;
     m_arraySize = new_size;
 
-  }	//End: map_p::extend()
+  }	//End: map_pod::extend()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::insert()
+  //	@	map_pod<U,T>::insert()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  bool map_p<U, T>::insert(U a_key, T const & a_item)
+  bool map_pod<U, T>::insert(U a_key, T const & a_item)
   {
     //Find the index to insert to
     int index;
@@ -350,14 +346,14 @@ namespace Dg
 
     return true;
 
-  }	//End: map_p::insert()
+  }	//End: map_pod::insert()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::erase()
+  //	@	map_pod<U,T>::erase()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  void map_p<U, T>::erase(U a_key)
+  void map_pod<U, T>::erase(U a_key)
   {
     //Find the index
     int index;
@@ -370,14 +366,14 @@ namespace Dg
 
     m_currentSize--;
 
-  }	//End: map_p::erase()
+  }	//End: map_pod::erase()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::erase_at_position()
+  //	@	map_pod<U,T>::erase_at_position()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  void map_p<U, T>::erase_at_position(int a_i)
+  void map_pod<U, T>::erase_at_position(int a_i)
   {
     if (a_i > 0 && a_i < m_currentSize)
     {
@@ -387,14 +383,14 @@ namespace Dg
       m_currentSize--;
     }
 
-  }	//End: map_p::erase_at_position()
+  }	//End: map_pod::erase_at_position()
 
 
   //--------------------------------------------------------------------------------
-  //	@	map_p<U,T>::set()
+  //	@	map_pod<U,T>::set()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  bool map_p<U, T>::set(U a_key, T a_item)
+  bool map_pod<U, T>::set(U a_key, T a_item)
   {
     //Find the index to insert to
     int index;
@@ -407,30 +403,30 @@ namespace Dg
 
     return true;
 
-  }	//End: map_p::set()
+  }	//End: map_pod::set()
 
 
   //--------------------------------------------------------------------------------
   //	@	Dgmap_p<U,T>::reset()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  void map_p<U, T>::reset()
+  void map_pod<U, T>::reset()
   {
     clear();
     resize(DG_CONTAINER_DEFAULT_SIZE);
 
-  }	//End: map_p::reset()
+  }	//End: map_pod::reset()
 
 
   //--------------------------------------------------------------------------------
   //	@	Dgmap_p<U,T>::clear()
   //--------------------------------------------------------------------------------
   template<typename U, typename T>
-  void map_p<U, T>::clear()
+  void map_pod<U, T>::clear()
   {
     m_currentSize = 0;
 
-  }	//End: map_p::clear()
+  }	//End: map_pod::clear()
 };
 
 #endif

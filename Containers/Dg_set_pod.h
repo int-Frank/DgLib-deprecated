@@ -1,18 +1,9 @@
-//================================================================================
-// @ set_p.h
-// 
-// Class: set_p
-//
-// An ordered array. Elements are inserted in order. Uses contiguous memory to 
-// store m_data, therefore is best used for very small m_data types (ie literals) 
-// and types with cheap assignment operators.
-//
-// -------------------------------------------------------------------------------
-//
-// Author: Frank Hart
-// Date last modified: 2013
-//
-//================================================================================
+//! @file Dg_set_pop.h
+//!
+//! @author: Frank B. Hart
+//! @date 23/05/2016
+//!
+//! Class declaration: set_pod
 
 #ifndef DG_SET_H
 #define DG_SET_H
@@ -24,56 +15,65 @@
 
 namespace Dg
 {
-    //--------------------------------------------------------------------------------
-    //	@	set_p<T>:	T: m_data type
-    //--------------------------------------------------------------------------------
-    template<class T>
-    class set_p
+  //! @ingroup DgContainers
+  //!
+  //! @class set_pod
+  //!
+  //! An ordered array. Elements are inserted in order. Uses contiguous memory to 
+  //! store m_data, therefore is best used for very small m_data types (ie literals) 
+  //! and types with cheap assignment operators.
+  //!
+  //! Assumed types are POD, so no construction / assignment operators called
+  //!
+  //! @author Frank B. Hart
+  //! @date 23/05/2016
+  template<class T>
+    class set_pod
     {
     public:
       //! Constructor 
-      //! If the constructor fails to allocate the set_p, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
-      set_p();
+      //! If the constructor fails to allocate the set_pod, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
+      set_pod();
 
-      //! Initialize set_p with to a capacity. 
-      //! If the constructor fails to allocate the set_p, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
-      set_p(unsigned int);
-      ~set_p();
+      //! Initialize set_pod with to a capacity. 
+      //! If the constructor fails to allocate the set_pod, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
+      set_pod(size_t);
+      ~set_pod();
 
       //! Copy constructor.
-      set_p(set_p const &);
+      set_pod(set_pod const &);
 
       //! Assigns new contents to the container, replacing its current content.
-      set_p& operator= (set_p const &);
+      set_pod& operator= (set_pod const &);
 
-      //! Returns a reference to the \a i<SUP>th</SUP> element in the set_p. 
+      //! Returns a reference to the \a i<SUP>th</SUP> element in the set_pod. 
       //! This function does not perform a range check.
-      T& operator[](unsigned int i)	{ return m_data[i]; }
+      T& operator[](size_t i)	{ return m_data[i]; }
 
-      //! Returns a const reference to the \a i<SUP>th</SUP> element in the set_p. 
+      //! Returns a const reference to the \a i<SUP>th</SUP> element in the set_pod. 
       //! This function does not perform a range check.
-      const T& operator[](unsigned int i) const { return m_data[i]; }
+      const T& operator[](size_t i) const { return m_data[i]; }
 
-      //! Return number of elements in the set_p.
+      //! Return number of elements in the set_pod.
       int size() const	{ return m_currentSize; }
 
-      //! Returns whether the set_p is empty.
+      //! Returns whether the set_pod is empty.
       bool empty() const	{ return m_currentSize == 0; }
 
-      //! Returns number of elements the set_p can hold before resizing.
+      //! Returns number of elements the set_pod can hold before resizing.
       int max_size() const	{ return m_arraySize; }
 
       //! Searches the set for an element equivalent to \a t.
-      //! \return True if the element was found with \a index being set_p to the 
-      //!         index of the element in the set_p. False if not found with \a index
-      //!         set_p to one lower to where \a t would be.
+      //! \return True if the element was found with \a index being set_pod to the 
+      //!         index of the element in the set_pod. False if not found with \a index
+      //!         set_pod to one lower to where \a t would be.
       //! \param lower Set a low bound to the search sublist.
       bool find(T const & t, int& index, int lower = 0) const;
 
-      //! Searches the set_p for an element with a key equivalent to \a k.
-      //! \return True if the element was found with \a index being set_p to the 
-      //!         index of the element in the set_p. False if not found with \a index
-      //!         set_p to one lower to where \a t would be.
+      //! Searches the set_pod for an element with a key equivalent to \a k.
+      //! \return True if the element was found with \a index being set_pod to the 
+      //!         index of the element in the set_pod. False if not found with \a index
+      //!         set_pod to one lower to where \a t would be.
       //! \param lower Set a low bound to the search sublist.
       //! \param upper Set an upper bound to the search sublist.
       bool find(T const & t, int& index, int lower, int upper) const;
@@ -95,23 +95,23 @@ namespace Dg
       //! Removes all elements equal to t from the set.
       void erase_all(T const & t);
 
-      //! Clear all items from the set_p, retains allocated memory.
+      //! Clear all items from the set_pod, retains allocated memory.
       void clear();
 
-      //! Resize the set_p. The content of the set_p is preserved up 
+      //! Resize the set_pod. The content of the set_pod is preserved up 
       //! to the lesser of the new and old sizes.
       //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
       void resize(int);
 
-      //! Clears the set_p, reallocates memory to the set_p.
+      //! Clears the set_pod, reallocates memory to the set_pod.
       void reset();
 
     private:
-      //! Doubles the memory allocated to the set_p. Retains all data.
+      //! Doubles the memory allocated to the set_pod. Retains all data.
       //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
       void extend();
 
-      void init(const set_p&);
+      void init(const set_pod&);
 
     private:
       //m_data members
@@ -124,27 +124,23 @@ namespace Dg
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::set_p()
-    //--------------------------------------------------------------------------------
-    //		Constructor
+    //	@	set_pod<T>::set_pod()
     //--------------------------------------------------------------------------------
     template<class T>
-    set_p<T>::set_p()
+    set_pod<T>::set_pod()
       : m_data(nullptr)
       , m_arraySize(0)
       , m_currentSize(0)
     {
       resize(DG_CONTAINER_DEFAULT_SIZE);
-    }	//End: set_p::set_p()
+    }	//End: set_pod::set_pod()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::set_p()
-    //--------------------------------------------------------------------------------
-    //		Constructor
+    //	@	set_pod<T>::set_pod()
     //--------------------------------------------------------------------------------
     template<class T>
-    set_p<T>::set_p(unsigned a_newSize)
+    set_pod<T>::set_pod(size_t a_newSize)
       : m_data(nullptr)
       , m_arraySize(0)
       , m_currentSize(0)
@@ -153,30 +149,26 @@ namespace Dg
 
       resize(a_newSize);
 
-    }	//End: set_p::set_p()
+    }	//End: set_pod::set_pod()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::~set_p()
-    //--------------------------------------------------------------------------------
-    //		Destructor
+    //	@	set_pod<T>::~set_pod()
     //--------------------------------------------------------------------------------
     template<class T>
-    set_p<T>::~set_p()
+    set_pod<T>::~set_pod()
     {
       //Free memory
       free( m_data );
 
-    }	//End: set_p::~set_p()
+    }	//End: set_pod::~set_pod()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::set_p()
-    //--------------------------------------------------------------------------------
-    //		Initialise set_p to another.
+    //	@	set_pod<T>::set_pod()
     //--------------------------------------------------------------------------------
     template<class T>
-    void set_p<T>::init(const set_p& other)
+    void set_pod<T>::init(const set_pod& other)
     {
       //Resize lists
       int sze = (other.m_arraySize>0) ? other.m_arraySize : 1;
@@ -186,30 +178,26 @@ namespace Dg
 
       m_currentSize = other.m_currentSize;
 
-    }	//End: set_p::init()
+    }	//End: set_pod::init()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::set_p()
-    //--------------------------------------------------------------------------------
-    //		Copy constructor
+    //	@	set_pod<T>::set_pod()
     //--------------------------------------------------------------------------------
     template<class T>
-    set_p<T>::set_p(const set_p& other) :
+    set_pod<T>::set_pod(const set_pod& other) :
       m_data(nullptr), m_arraySize(0), m_currentSize(0)
     {
       init(other);
 
-    }	//End: set_p::set_p()
+    }	//End: set_pod::set_pod()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::operator=()
-    //--------------------------------------------------------------------------------
-    //		Assignment
+    //	@	set_pod<T>::operator=()
     //--------------------------------------------------------------------------------
     template<class T>
-    set_p<T>& set_p<T>::operator=(const set_p& other)
+    set_pod<T>& set_pod<T>::operator=(const set_pod& other)
     {
       if (this == &other)
         return *this;
@@ -218,16 +206,14 @@ namespace Dg
 
       return *this;
 
-    }	//End: set_p::operator=()
+    }	//End: set_pod::operator=()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::resize()
-    //--------------------------------------------------------------------------------
-    //		Resize map
+    //	@	set_pod<T>::resize()
     //--------------------------------------------------------------------------------
     template<class T>
-    void set_p<T>::resize(int a_newSize)
+    void set_pod<T>::resize(int a_newSize)
     {
       assert(a_newSize > 0);
 
@@ -246,34 +232,26 @@ namespace Dg
         m_currentSize = a_newSize;
       }
 
-    }	//End: set_p::resize()
+    }	//End: set_pod::resize()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::find()
-    //--------------------------------------------------------------------------------
-    //		Find a value in the list, uses a binary search algorithm
+    //	@	set_pod<T>::find()
     //--------------------------------------------------------------------------------
     template<class T>
-    bool set_p<T>::find(T const & a_item, int& a_index, int a_lower) const
+    bool set_pod<T>::find(T const & a_item, int& a_index, int a_lower) const
     {
       return find(a_item, a_index, a_lower, (m_currentSize - 1));
 
-    }	//End: set_p::find()
+    }	//End: set_pod::find()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::find()
-    //--------------------------------------------------------------------------------
-    //		Find a value in the list within a range, uses a binary search algorithm
+    //	@	set_pod<T>::find()
     //--------------------------------------------------------------------------------
     template<class T>
-    bool set_p<T>::find(T const & a_item, int& a_index, int a_lower, int a_upper) const
+    bool set_pod<T>::find(T const & a_item, int& a_index, int a_lower, int a_upper) const
     {
-      //Check bounds
-      a_lower = (a_lower > 0) ? a_lower : 0;
-      a_upper = (a_upper < m_currentSize - 1) ? a_upper : m_currentSize - 1;
-
       while (a_lower <= a_upper)
       {
         // calculate the midpoint for roughly equal partition
@@ -295,14 +273,14 @@ namespace Dg
       a_index = a_lower - 1;
       return false;
 
-    }	//End: set_p::find()
+    }	//End: set_pod::find()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::extend()
+    //	@	set_pod<T>::extend()
     //--------------------------------------------------------------------------------
     template<class T>
-    void set_p<T>::extend()
+    void set_pod<T>::extend()
     {
       //Calculate new size
       int new_size = (m_arraySize << 1);
@@ -322,16 +300,14 @@ namespace Dg
       m_data = tempPtr;
       m_arraySize = new_size;
 
-    }	//End: set_p::extend()
+    }	//End: set_pod::extend()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::insert()
-    //--------------------------------------------------------------------------------
-    //		Insert an element into the list
+    //	@	set_pod<T>::insert()
     //--------------------------------------------------------------------------------
     template<class T>
-    void set_p<T>::insert(T const & a_item)
+    void set_pod<T>::insert(T const & a_item)
     {
       //Find the index to insert to
       int index;
@@ -352,16 +328,14 @@ namespace Dg
 
       return true;
 
-    }	//End: set_p::insert()
+    }	//End: set_pod::insert()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::insert_unique()
-    //--------------------------------------------------------------------------------
-    //		Insert an element into the list, only if it does not yet exist
+    //	@	set_pod<T>::insert_unique()
     //--------------------------------------------------------------------------------
     template<class T>
-    bool set_p<T>::insert_unique(const T& item)
+    bool set_pod<T>::insert_unique(const T& item)
     {
       //Find the index to insert to
       int index;
@@ -383,16 +357,14 @@ namespace Dg
 
       return true;
 
-    }	//End: set_p::insert_unique()
+    }	//End: set_pod::insert_unique()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::erase()
-    //--------------------------------------------------------------------------------
-    //		Find and removes one of this element from the list.
+    //	@	set_pod<T>::erase()
     //--------------------------------------------------------------------------------
     template<class T>
-    void set_p<T>::erase(const T& a_item)
+    void set_pod<T>::erase(const T& a_item)
     {
       //Find the index
       int index;
@@ -405,16 +377,14 @@ namespace Dg
       //Adjust m_currentSize
       m_currentSize--;
 
-    }	//End: set_p::erase()
+    }	//End: set_pod::erase()
     
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::erase_all()
-    //--------------------------------------------------------------------------------
-    //		Find and removes all of this element from the list.
+    //	@	set_pod<T>::erase_all()
     //--------------------------------------------------------------------------------
     template<class T>
-    void set_p<T>::erase_all(const T& a_item)
+    void set_pod<T>::erase_all(const T& a_item)
     {
       //Find the index
       int lower, upper;
@@ -444,34 +414,30 @@ namespace Dg
 
       return true;
 
-    }	//End: set_p::erase_all()
+    }	//End: set_pod::erase_all()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::reset()
-    //--------------------------------------------------------------------------------
-    //		Reset size to 1
+    //	@	set_pod<T>::reset()
     //--------------------------------------------------------------------------------
     template<class T>
-    void set_p<T>::reset()
+    void set_pod<T>::reset()
     {
       clear();
       resize(DG_CONTAINER_DEFAULT_SIZE);
 
-    }	//End: set_p::reset()
+    }	//End: set_pod::reset()
 
 
     //--------------------------------------------------------------------------------
-    //	@	set_p<T>::clear()
-    //--------------------------------------------------------------------------------
-    //		Set the number of elements to zero
+    //	@	set_pod<T>::clear()
     //--------------------------------------------------------------------------------
     template<class T>
-    void set_p<T>::clear()
+    void set_pod<T>::clear()
     {
       m_currentSize = 0;
 
-    }	//End: set_p::clear()
+    }	//End: set_pod::clear()
 };
 
 #endif

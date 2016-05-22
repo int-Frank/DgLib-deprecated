@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#include "dg_map_p.h"
+#include "dg_map_pod.h"
 #include "DgSingleton.h"
 #include "ResourceTypes.h"
 #include "DgUtility.h"
@@ -83,7 +83,7 @@ namespace Dg
         };
 
         uint32_t m_options;
-        Dg::map_p<RKey, ResourceContainer> m_resourceList;
+        Dg::map_pod<RKey, ResourceContainer> m_resourceList;
       };
     }
   }

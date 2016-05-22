@@ -1,11 +1,11 @@
 #include "TestHarness.h"
-#include "dg_map_p.h"
+#include "dg_map_pod.h"
 #include <vector>
 #include <algorithm>
 
 typedef std::pair<int, int>     mapPair;
 typedef std::vector<mapPair>    vec;
-typedef Dg::map_p<int, int>     DgMap;
+typedef Dg::map_pod<int, int>     DgMap;
 
 bool sortFcn(mapPair a, mapPair b)
 {
@@ -60,7 +60,7 @@ bool CheckState(vec v, DgMap m)
     }
 
     //Check we can find data at the right index
-    if (!m.find(v[i].first, index, 0, 0xFFFFFFF))
+    if (!m.find(v[i].first, index))
     {
       return false;
     }

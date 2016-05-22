@@ -15,13 +15,11 @@
 
 namespace Dg
 {
-  //! @ingroup Containers
+  //! @ingroup DgContainers
   //!
   //! @class map
   //!
-  //! Ordered map_pped list. 
-  //!
-  //! Assumed types are POD, so no construction / assignment operators called
+  //! Ordered mapped list. 
   //!
   //! @author Frank B. Hart
   //! @date 2/5/2015
@@ -271,10 +269,6 @@ namespace Dg
   template<typename U, typename T>
   bool map<U, T>::find(U a_key, int& a_index, int a_lower, int a_upper) const
   {
-    //Check bounds
-    a_lower = (a_lower > 0) ? a_lower : 0;
-    a_upper = (a_upper < m_currentSize - 1) ? a_upper : m_currentSize - 1;
-
     while (a_lower <= a_upper)
     {
       // calculate the midpoint for roughly equal partition
