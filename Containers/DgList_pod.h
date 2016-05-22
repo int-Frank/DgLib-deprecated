@@ -6,8 +6,8 @@
 //! Class declaration: list_podod
 
 
-#ifndef DG_LIST_S_H
-#define DG_LIST_S_H
+#ifndef DG_LIST_POD_H
+#define DG_LIST_POD_H
 
 #include <exception>
 
@@ -45,9 +45,7 @@ namespace Dg
 
   public:
 
-    //! @ingroup Containers
-    //!
-    //! @class DgList_pod::const_iterator
+    //! @class Dg_list_pod::const_iterator
     //!
     //! Const iterator for the list.
     //!
@@ -92,9 +90,7 @@ namespace Dg
 	  };
 
 
-    //! @ingroup Containers
-    //!
-    //! @class DgList_pod::iterator
+    //! @class Dg_list_pod::iterator
     //!
     //! Iterator for the list.
     //!

@@ -15,7 +15,7 @@
 
 namespace Dg
 {
-  //! @ingroup Containers
+  //! @ingroup DgContainers
   //!
   //! @class map_p
   //!

@@ -1,12 +1,42 @@
-#ifndef DG_SHARED_PTR
-#define DG_SHARED_PTR
+//! @file dg_shared_ptr.h
+//!
+//! @author: Frank B. Hart
+//! @date 22/05/2016
+//!
+//! Class declaration: shared_ptr
+
+#ifndef DG_SHARED_PTR_H
+#define DG_SHARED_PTR_H
 
 namespace Dg
 {
-  template < typename T > 
+  //! @ingroup DgContainers
+  //!
+  //! @class DefaultDeleter
+  //!
+  //! Default deleter struct for the shared_ptr class.
+  //!
+  //! @author Frank B. Hart
+  //! @date 22/05/2016
+  template<typename T>
+  struct DefaultDeleter
+  {
+    void operator()(T * a_obj) const { delete a_obj; }
+  };
+
+  //! @ingroup DgContainers
+  //!
+  //! @class shared_ptr
+  //!
+  //! Reference counted pointer
+  //!
+  //! @author Frank B. Hart
+  //! @date 22/05/2016
+  template < typename T, typename Deleter = DefaultDeleter<T> > 
   class shared_ptr
   {
   public:
+
     shared_ptr() : m_pData(nullptr), m_pRefCount(nullptr)
     {
       m_pRefCount = new size_t(1);
@@ -26,7 +56,7 @@ namespace Dg
     {
       if (--(*m_pRefCount) == 0)
       {
-        delete m_pData;
+        s_deleter(m_pData);
         delete m_pRefCount;
       }
     }
@@ -41,7 +71,17 @@ namespace Dg
       return m_pData;
     }
 
-    shared_ptr<T>& operator = (shared_ptr<T> const & sp)
+    T const & operator* () const
+    {
+      return *m_pData;
+    }
+
+    T const * operator-> () const
+    {
+      return m_pData;
+    }
+
+    shared_ptr& operator = (shared_ptr const & sp)
     {
       if (this != &sp) // Avoid self assignment
       {
@@ -49,7 +89,7 @@ namespace Dg
         // if reference become zero delete the old data
         if (--(*m_pRefCount) == 0)
         {
-          delete m_pData;
+          s_deleter(m_pData);
           delete m_pRefCount;
         }
 
@@ -63,8 +103,17 @@ namespace Dg
     }
 
   private:
+
+    static Deleter const s_deleter;
+
+  private:
     T *          m_pData;       // pointer
     size_t *     m_pRefCount;
   };
+
+
+  template <typename T, typename Deleter>
+  Deleter const shared_ptr<T, Deleter>::s_deleter;
+
 }
 #endif
