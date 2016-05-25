@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 
-
+//globals
 int g_constructorCounter = 0;
 int g_destructorCounter = 0;
 int g_copyCounter = 0;
