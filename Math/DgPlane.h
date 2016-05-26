@@ -108,6 +108,64 @@ namespace Dg
     return m_normal.Dot(a_v);
 
   }	//End: Plane::NormalDot()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::Plane()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Real Plane<Real>::Plane<Real>(Real a, Real b, Real c, Real d)
+  {
+    Set(a, b, c, d);
+
+  }	//End: Plane::Plane()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::Plane()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Real Plane<Real>::Plane<Real>(Vector4<Real> const & n, Real d)
+  {
+    Set(n.x(), n.y(), n.z(), d);
+
+  }	//End: Plane::Plane()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::Plane()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Real Plane<Real>::Plane<Real>(Vector4<Real> const & p0, 
+                                Vector4<Real> const & p1, 
+                                Vector4<Real> const & p2)
+  {
+    Set(p0, p1, p2);
+
+  }	//End: Plane::Plane()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::Plane()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Real Plane<Real>::Plane<Real>(Plane<Real> const & a_other):
+    m_normal(a_other.m_normal), m_offset(a_other.m_offset)
+  {
+  }	//End: Plane::Plane()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::operator=()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Plane<Real>& Plane<Real>::operator=(Plane<Real> const & a_other)
+  {
+    m_normal = a_other.m_normal;
+    m_offset = a_other.m_offset;
+
+    return *this;
+  }	//End: Plane::operator=()
 }
 
 #endif

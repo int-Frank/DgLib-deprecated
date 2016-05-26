@@ -92,6 +92,16 @@ namespace Dg
     Real Length() const;
     Real LengthSquared() const;
 
+    Real x() const { return m_V[0]; }
+    Real y() const { return m_V[1]; }
+    Real z() const { return m_V[2]; }
+    Real w() const { return m_V[3]; }
+
+    Real & x() { return m_V[0]; }
+    Real & y() { return m_V[1]; }
+    Real & z() { return m_V[2]; }
+    Real & w() { return m_V[3]; }
+
   public:
 
     static Vector4 Origin();
