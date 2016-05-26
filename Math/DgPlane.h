@@ -72,6 +72,8 @@ namespace Dg
     //! Test a vector against the plane normal
     Real NormalDot(Vector4 const & a_v) const;
 
+    Vector4 ClosestPoint(Vector4 const &) const;
+
   private:
     Vector4 m_normal;
     Real m_offset;
@@ -166,6 +168,154 @@ namespace Dg
 
     return *this;
   }	//End: Plane::operator=()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::Get()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void Plane<Real>::Get(Vector4<Real> & normal, Real & offset )
+  {
+    normal = m_normal;
+    offset = m_offset;
+  }	//End: Plane::Get()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::operator==()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  bool Plane<Real>::operator==(Plane<Real> const & a_other)
+  {
+    return (m_normal == a_other.m_normal && m_offset == a_other.m_offset);
+  }	//End: Plane::operator==()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::operator!=()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  bool Plane<Real>::operator!=(Plane<Real> const & a_other)
+  {
+    return (m_normal != a_other.m_normal || m_offset != a_other.m_offset);
+  }	//End: Plane::operator!=()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Plane::Set()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void Plane<Real>::Set(Real a, Real b, Real c, Real d)
+  {
+	  //normalise for cheap distance checks
+	  Real lensq = a*a + b*b + c*c;
+
+	  //recover gracefully
+	  if (Dg::IsZero(lensq))
+	  {
+      m_normal = Vector4<Real>::xAxis();
+		  m_offset = static_cast<Real>(0.0);
+	  }
+	  else
+	  {
+		  Real recip = static_cast<Real>(1.0) / sqrt(lensq);
+		  m_normal.Set(a*recip, b*recip, c*recip, static_cast<Real>(0.0));
+		  m_offset = d*recip;
+	  }
+
+  }	//End: Plane4::Set()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Plane::Set()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void Plane<Real>::Set(Vector4<Real> const & n, Real d)
+  {
+	  //normalise for cheap distance checks
+	  Real lensq = n.x()*n.x() + n.y()*n.y() + n.z()*n.z();
+
+	  //recover gracefully
+	  if (Dg::IsZero(lensq))
+	  {
+      m_normal = Vector4<Real>::xAxis();
+		  m_offset = static_cast<Real>(0.0);
+	  }
+	  else
+	  {
+		  Real recip = static_cast<Real>(1.0) / sqrt(lensq);
+		  m_normal.Set(n.x()*recip, n.y()*recip, n.z()*recip, static_cast<Real>(0.0));
+		  m_offset = d*recip;
+	  }
+
+  }	//End: Plane4::Set()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Plane::Set()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void Plane<Real>::Set(Vector4<Real> const & n, Vector4<Real> const & p)
+  {
+	  //normalise for cheap distance checks
+	  Real lensq = n.x()*n.x() + n.y()*n.y() + n.z()*n.z();
+
+	  //recover gracefully
+	  if (Dg::IsZero(lensq))
+	  {
+      m_normal = Vector4<Real>::xAxis();
+		  m_offset = static_cast<Real>(0.0);
+	  }
+	  else
+	  {
+		  Real recip = static_cast<Real>(1.0) / sqrt(lensq);
+		  m_normal.Set(n.x()*recip, n.y()*recip, n.z()*recip, static_cast<Real>(0.0));
+		  m_offset = -(n.x()*p.x() + n.y()*p.y() + n.z()*p.z())*recip;
+	  }
+
+  }	//End: Plane4::Set()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Plane::Set()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  void Plane<Real>::Set(Vector4<Real> const & p0, 
+                        Vector4<Real> const & p1,
+                        Vector4<Real> const & p2)
+  {
+    //Get plane vector
+    Vector4<Real> u = p1 - p0;
+    Vector4<Real> v = p2 - p0;
+    Vector4<Real> w = Cross(u, v);
+
+	  //normalise for cheap distance checks
+	  Real lensq = w.x()*w.x() + w.y()*w.y() + w.z()*w.z();
+
+	  //recover gracefully
+	  if (Dg::IsZero(lensq))
+	  {
+      m_normal = Vector4<Real>::xAxis();
+		  m_offset = static_cast<Real>(0.0);
+	  }
+	  else
+	  {
+		  Real recip = static_cast<Real>(1.0) / sqrt(lensq);
+		  m_normal.Set(w.x()*recip, w.y()*recip, w.z()*recip, static_cast<Real>(0.0));
+      m_offset = -p0.Dot(m_normal);
+	  }
+
+  }	//End: Plane4::Set()
+
+
+  //--------------------------------------------------------------------------------
+  //		@ Plane::ClosestPoint()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> Plane<Real>::ClosestPoint(Vector4<Real> const & p)
+  {
+    return p - SignedDistance(p) * m_normal;
+  }	//End: Plane::ClosestPoint()
 }
 
 #endif
