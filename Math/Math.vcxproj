@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClInclude Include="DgBoundedSND.h" />
     <ClInclude Include="DgMatrix.h" />
+    <ClInclude Include="DgPlane.h" />
     <ClInclude Include="DgRNG.h" />
     <ClInclude Include="doxygen.h" />
     <ClInclude Include="DgMath.h" />

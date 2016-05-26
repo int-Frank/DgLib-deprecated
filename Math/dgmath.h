@@ -53,16 +53,16 @@ namespace Dg
   unsigned const N_C_INVERF   = 512;
 
 #ifdef USE_PRECISION_32
-  float const PI			  = PI_f;
-  float const INVPI			  = INVPI_f;
-  float const EPSILON		  = EPSILON_f;
-  float const SQRT2			  = SQRT2_f;
+  float const PI              = PI_f;
+  float const INVPI           = INVPI_f;
+  float const EPSILON         = EPSILON_f;
+  float const SQRT2           = SQRT2_f;
   float const INVSQRT2        = INVSQRT2_f;
 #else
-  double const PI			  = PI_d;
-  double const INVPI		  = INVPI_d;
-  double const EPSILON		  = EPSILON_d;
-  double const SQRT2		  = SQRT2_d;
+  double const PI             = PI_d;
+  double const INVPI          = INVPI_d;
+  double const EPSILON        = EPSILON_d;
+  double const SQRT2          = SQRT2_d;
   double const INVSQRT2       = INVSQRT2_d;
 #endif
 
