@@ -7,7 +7,7 @@ typedef Dg::Plane<Real>   plane;
 
 TEST(Stack_DgPlane, DgPlane)
 {
-  // COnstruction and Setting
+  // Construction and Setting
   vec normal(1.0, 0.0, 0.0, 0.0);
   Real offset = -1.0;
 
