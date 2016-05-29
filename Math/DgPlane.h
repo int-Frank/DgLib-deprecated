@@ -1,22 +1,9 @@
-//================================================================================
-// @ Plane.h
-// 
-// Class: Plane
-//
-// A Plane is infinite flat surface. It is implemented by using the generalized
-// plane equation: Ax + By + Cz + D = 0, or a vector m_normal to the plane
-// and an m_offset.
-//
-// -------------------------------------------------------------------------------
-//
-// Original Authors: James M. Van Verth, Lars M. Bishop
-// Retrieved From: Essential Mathematics for Games and Interactive Applications SE
-// On Date: 2013
-//
-// Modified by: Frank Hart
-// Date last modified: 2013
-//
-//================================================================================
+//! @file Plane.h
+//!
+//! @author: Frank B. Hart
+//! @date 29/05/2016
+//!
+//! Class declaration: Plane
 
 #ifndef DGPLANE_H
 #define DGPLANE_H
@@ -27,9 +14,18 @@
 namespace Dg
 {
 
-  //--------------------------------------------------------------------------------
-  //	@	Plane
-  //--------------------------------------------------------------------------------
+  //! @ingroup Math_classes
+  //!
+  //! @class Plane
+  //!
+  //! A Plane is infinite flat surface. It is implemented by using the generalized
+  //! plane equation: Ax + By + Cz + D = 0, or a vector normal to the plane
+  //! and an offset. The plane normal will always be normalised.
+  //!
+  //! Retrieved From: Essential Mathematics for Games and Interactive Applications SE
+  //!
+  //! @author: James M. Van Verth, Lars M. Bishop, Frank Hart
+  //! @date 29/05/2016
   template<typename Real>
   class Plane
   { 
@@ -37,42 +33,64 @@ namespace Dg
     //! Default constructor.
     Plane() : m_normal(Vector4<Real>::xAxis()),
               m_offset(static_cast<Real>(0.0)) {}
-    Plane(Real a, Real b, Real c, Real d);
+
+    //! Construct plane form coefficients of the equation:
+    //!     Ax + By + Cz + D = 0
+    Plane(Real A, Real B, Real C, Real D);
+
+    //! Construct plane from three points that lie on the plane.
     Plane(Vector4<Real> const & p0, Vector4<Real> const & p1, Vector4<Real> const & p2);
+    
+    //! Construct plane from normal vector and offset.
     Plane(Vector4<Real> const & n, Real d);
+
+    //! Construct plane from a normal vector and a point which lies on the plane.
     Plane(Vector4<Real> const & n, Vector4<Real> const & p);
     ~Plane() {}
 
-    //copy operations
     Plane(Plane const &);
     Plane& operator= (Plane const &);
 
-    //accessors
+    //! Get the plane normal.
     Vector4<Real> const & Normal() const { return m_normal; }
+    
+    //! Get the plane offset.
     Real Offset() const { return m_offset; }
+    
+    //! Get the plane normal and offset.
     void Get(Vector4<Real>& normal, Real& offset) const;
 
-    //comparison
+    //! Are two planes equal?
     bool operator== (Plane const &) const;
+
+    //! Are two planes not equal?
     bool operator!= (Plane const &) const;
 
-    //manipulators
-    void Set(Real a, Real b, Real c, Real d);
+    //! Set the plane form coefficients of the equation:
+    //!     Ax + By + Cz + D = 0
+    void Set(Real A, Real B, Real C, Real D);
+
+    //! Set the plane from normal vector and offset.
     void Set(Vector4<Real> const & n, Real d);
+    
+    //! Set the plane from a normal vector and a point which lies on the plane.
     void Set(Vector4<Real> const & n, Vector4<Real> const & p);
+    
+    //! Set the plane from three points that lie on the plane.
     void Set(Vector4<Real> const & p0, Vector4<Real> const & p1, Vector4<Real> const & p2);
 
-    //Signed distance from point to plane
-    //Negative is behind the m_normal vector
-    //Positive is in front of m_normal vector
+    //! Signed distance from point to plane.
+    //! Negative is behind the normal vector.
+    //! Positive is in front of normal vector.
     Real SignedDistance(Vector4<Real> const & a_point) const;
 
-    //Distance from point to plane
+    //! Distance from point to plane.
     Real Distance(Vector4<Real> const & a_point) const;
 
-    //! Test a vector against the plane normal
+    //! Dot procuct of a vector against the plane normal.
     Real NormalDot(Vector4<Real> const & a_v) const;
 
+    //! Closest point from a point to a plane.
     Vector4<Real> ClosestPoint(Vector4<Real> const &) const;
 
   private:
