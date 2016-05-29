@@ -52,8 +52,7 @@ namespace Dg
     void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
 
     //! Closest point on a line to a point.
-    template<typename Real>
-    Vector4<Real> Line<Real>::ClosestPoint(Vector4<Real> const & a_pIn) const;
+    Vector4<Real> ClosestPoint(Vector4<Real> const & a_pIn) const;
 
   private:
 
@@ -144,13 +143,13 @@ namespace Dg
   void Line<Real>::Set(Vector4<Real> const & a_origin, Vector4<Real> const & a_direction)
   {
     //Assign
-    origin = a_origin;
-    origin.w() = static_cast<Real>(1.0);
+    m_origin = a_origin;
+    m_origin.w() = static_cast<Real>(1.0);
 
-    direction = a_direction;
-    origin.w() = static_cast<Real>(0.0);
+    m_direction = a_direction;
+    m_direction.w() = static_cast<Real>(0.0);
 
-    direction.Normalize();
+    m_direction.Normalize();
 
   }	//End: Line::Set()
 
@@ -164,7 +163,7 @@ namespace Dg
     Vector4<Real> w = a_pIn - m_origin;
 
     Real vsq = m_direction.Dot(m_direction);
-    Real proj = w.Dot(direction);
+    Real proj = w.Dot(m_direction);
 
     return m_origin + (proj / vsq) * m_direction;
   }	//End: Line::ClosestPoint()

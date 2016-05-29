@@ -278,8 +278,8 @@ namespace Dg
   //	@	Distance()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Real SquaredDistance(Vector4<Real> const & a_p0,
-                       Vector4<Real> const & a_p1)
+  Real Distance(Vector4<Real> const & a_p0,
+                Vector4<Real> const & a_p1)
   {
     Real a = a_p0.m_V[0] * a_p1.m_V[0];
     Real b = a_p0.m_V[1] * a_p1.m_V[1];

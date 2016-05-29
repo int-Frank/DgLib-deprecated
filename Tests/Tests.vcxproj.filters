@@ -57,6 +57,12 @@
     <ClCompile Include="TEST_DgSharedPtr.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="TEST_DgPlane.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgLine.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="results.txt">

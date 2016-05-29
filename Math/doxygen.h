@@ -6,7 +6,8 @@
 
   //! @defgroup Math_constants Constants 
   //! @defgroup Math_functions Functions 
-  //! @defgroup Math_classes Classes
+  //! @defgroup Math_gTests Geometric Tests 
+  //! @defgroup Math_classes Types
 
 //! @}
 

@@ -30,6 +30,12 @@ TEST(Stack_Vector4_Construction, creation_Vector4_Construction)
   CHECK(vec[0] == 0.0f);
   CHECK(vec[1] == 0.0f);
   CHECK(vec[2] == 0.0f);
+  CHECK(vec[3] == 1.0f);
+
+  vec = vec4::ZeroVector();
+  CHECK(vec[0] == 0.0f);
+  CHECK(vec[1] == 0.0f);
+  CHECK(vec[2] == 0.0f);
   CHECK(vec[3] == 0.0f);
 
   vec = vec4::xAxis();
