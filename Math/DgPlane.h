@@ -38,8 +38,9 @@ namespace Dg
     Plane() : m_normal(Vector4<Real>::xAxis()),
               m_offset(static_cast<Real>(0.0)) {}
     Plane(Real a, Real b, Real c, Real d);
-    Plane(Vector4 const & p0, Vector4 const & p1, Vector4 const & p2);
-    Plane(Vector4 const & n, Real d);
+    Plane(Vector4<Real> const & p0, Vector4<Real> const & p1, Vector4<Real> const & p2);
+    Plane(Vector4<Real> const & n, Real d);
+    Plane(Vector4<Real> const & n, Vector4<Real> const & p);
     ~Plane() {}
 
     //copy operations
@@ -47,9 +48,9 @@ namespace Dg
     Plane& operator= (Plane const &);
 
     //accessors
-    Vector4 const & Normal() const { return m_normal; }
+    Vector4<Real> const & Normal() const { return m_normal; }
     Real Offset() const { return m_offset; }
-    void Get(Vector4& normal, Real& offset) const;
+    void Get(Vector4<Real>& normal, Real& offset) const;
 
     //comparison
     bool operator== (Plane const &) const;
@@ -57,26 +58,26 @@ namespace Dg
 
     //manipulators
     void Set(Real a, Real b, Real c, Real d);
-    void Set(Vector4 const & n, Real d);
-    void Set(Vector4 const & n, Vector4 const & p);
-    void Set(Vector4 const & p0, Vector4 const & p1, Vector4 const & p2);
+    void Set(Vector4<Real> const & n, Real d);
+    void Set(Vector4<Real> const & n, Vector4<Real> const & p);
+    void Set(Vector4<Real> const & p0, Vector4<Real> const & p1, Vector4<Real> const & p2);
 
     //Signed distance from point to plane
     //Negative is behind the m_normal vector
     //Positive is in front of m_normal vector
-    Real SignedDistance(Vector4 const & a_point) const;
+    Real SignedDistance(Vector4<Real> const & a_point) const;
 
     //Distance from point to plane
-    Real Distance(Vector4 const & a_point) const;
+    Real Distance(Vector4<Real> const & a_point) const;
 
     //! Test a vector against the plane normal
-    Real NormalDot(Vector4 const & a_v) const;
+    Real NormalDot(Vector4<Real> const & a_v) const;
 
-    Vector4 ClosestPoint(Vector4 const &) const;
+    Vector4<Real> ClosestPoint(Vector4<Real> const &) const;
 
   private:
-    Vector4 m_normal;
-    Real m_offset;
+    Vector4<Real>   m_normal;
+    Real            m_offset;
   };
 
   //--------------------------------------------------------------------------------
@@ -85,7 +86,7 @@ namespace Dg
   template<typename Real>
   Real Plane<Real>::SignedDistance(Vector4<Real> const & a_point) const
   {
-    return point.Dot(m_normal) + m_offset;
+    return a_point.Dot(m_normal) + m_offset;
 
   }	//End: Plane::SignedDistance()
   
@@ -96,7 +97,7 @@ namespace Dg
   template<typename Real>
   Real Plane<Real>::Distance(Vector4<Real> const & a_point) const
   {
-    return abs(point.Dot(m_normal) + m_offset);
+    return abs(a_point.Dot(m_normal) + m_offset);
 
   }	//End: Plane::Distance()
 
@@ -116,7 +117,7 @@ namespace Dg
   //		@ Plane::Plane()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Real Plane<Real>::Plane<Real>(Real a, Real b, Real c, Real d)
+  Plane<Real>::Plane(Real a, Real b, Real c, Real d)
   {
     Set(a, b, c, d);
 
@@ -127,7 +128,7 @@ namespace Dg
   //		@ Plane::Plane()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Real Plane<Real>::Plane<Real>(Vector4<Real> const & n, Real d)
+  Plane<Real>::Plane(Vector4<Real> const & n, Real d)
   {
     Set(n.x(), n.y(), n.z(), d);
 
@@ -138,9 +139,9 @@ namespace Dg
   //		@ Plane::Plane()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Real Plane<Real>::Plane<Real>(Vector4<Real> const & p0, 
-                                Vector4<Real> const & p1, 
-                                Vector4<Real> const & p2)
+  Plane<Real>::Plane(Vector4<Real> const & p0, 
+                     Vector4<Real> const & p1, 
+                     Vector4<Real> const & p2)
   {
     Set(p0, p1, p2);
 
@@ -148,10 +149,20 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
+  //	@	Plane::Plane<Real>()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Plane<Real>::Plane(Vector4<Real> const & n, Vector4<Real> const & p)
+  {
+    Set(n, p);
+  }	//End: Plane4::Plane<Real>()
+
+
+  //--------------------------------------------------------------------------------
   //		@ Plane::Plane()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Real Plane<Real>::Plane<Real>(Plane<Real> const & a_other):
+  Plane<Real>::Plane(Plane<Real> const & a_other):
     m_normal(a_other.m_normal), m_offset(a_other.m_offset)
   {
   }	//End: Plane::Plane()
@@ -174,7 +185,7 @@ namespace Dg
   //		@ Plane::Get()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void Plane<Real>::Get(Vector4<Real> & normal, Real & offset )
+  void Plane<Real>::Get(Vector4<Real> & normal, Real & offset ) const
   {
     normal = m_normal;
     offset = m_offset;
@@ -185,7 +196,7 @@ namespace Dg
   //		@ Plane::operator==()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  bool Plane<Real>::operator==(Plane<Real> const & a_other)
+  bool Plane<Real>::operator==(Plane<Real> const & a_other) const
   {
     return (m_normal == a_other.m_normal && m_offset == a_other.m_offset);
   }	//End: Plane::operator==()
@@ -195,7 +206,7 @@ namespace Dg
   //		@ Plane::operator!=()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  bool Plane<Real>::operator!=(Plane<Real> const & a_other)
+  bool Plane<Real>::operator!=(Plane<Real> const & a_other) const
   {
     return (m_normal != a_other.m_normal || m_offset != a_other.m_offset);
   }	//End: Plane::operator!=()
@@ -312,7 +323,7 @@ namespace Dg
   //		@ Plane::ClosestPoint()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Plane<Real>::ClosestPoint(Vector4<Real> const & p)
+  Vector4<Real> Plane<Real>::ClosestPoint(Vector4<Real> const & p) const
   {
     return p - SignedDistance(p) * m_normal;
   }	//End: Plane::ClosestPoint()

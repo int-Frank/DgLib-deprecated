@@ -145,6 +145,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
     <ClCompile Include="TEST_DgMatrix.cpp" />
+    <ClCompile Include="TEST_DgPlane.cpp" />
     <ClCompile Include="TEST_DgSharedPtr.cpp" />
     <ClCompile Include="TEST_dg_map.cpp" />
     <ClCompile Include="TEST_dg_map_p.cpp" />
