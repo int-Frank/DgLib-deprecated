@@ -53,6 +53,14 @@ namespace Dg
   template<typename Real>
   Vector4<Real> GetRandomVector(Vector4<Real> const & axis, Real angle);
 
+  //! Squared distance between two points.
+  template<typename Real>
+  Real SquaredDistance(Vector4<Real> const &, Vector4<Real> const &);
+
+  //! Distance between two points.
+  template<typename Real>
+  Real Distance(Vector4<Real> const &, Vector4<Real> const &);
+
   //! @ingroup Math_classes
   //!
   //! @class Vector4
@@ -92,6 +100,14 @@ namespace Dg
     Real Length() const;
     Real LengthSquared() const;
 
+    //! Squared distance between two points.
+    template<typename Real>
+    friend Real SquaredDistance(Vector4<Real> const &, Vector4<Real> const &);
+
+    //! Distance between two points.
+    template<typename Real>
+    friend Real Distance(Vector4<Real> const &, Vector4<Real> const &);
+
     Real x() const { return m_V[0]; }
     Real y() const { return m_V[1]; }
     Real z() const { return m_V[2]; }
@@ -105,6 +121,7 @@ namespace Dg
   public:
 
     static Vector4 Origin();
+    static Vector4 ZeroVector();
     static Vector4 xAxis();
     static Vector4 yAxis();
     static Vector4 zAxis();
@@ -119,10 +136,23 @@ namespace Dg
   Vector4<Real> Vector4<Real>::Origin()
   {
     return Vector4(static_cast<Real>(0.0),
+      static_cast<Real>(0.0),
+      static_cast<Real>(0.0),
+      static_cast<Real>(1.0));
+  }   // End:  Vector4::Origin()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector4::ZeroVector()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> Vector4<Real>::ZeroVector()
+  {
+    return Vector4(static_cast<Real>(0.0),
                    static_cast<Real>(0.0), 
                    static_cast<Real>(0.0), 
                    static_cast<Real>(0.0));
-  }   // End:  Vector4::Origin()
+  }   // End:  Vector4::ZeroVector()
 
 
   //-------------------------------------------------------------------------------
@@ -226,6 +256,38 @@ namespace Dg
             m_V[3] * m_V[3]);
 
   }   // End:  Vector4::LengthSquared()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	SquaredDistance()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Real SquaredDistance(Vector4<Real> const & a_p0,
+                       Vector4<Real> const & a_p1)
+  {
+    Real a = a_p0.m_V[0] * a_p1.m_V[0];
+    Real b = a_p0.m_V[1] * a_p1.m_V[1];
+    Real c = a_p0.m_V[2] * a_p1.m_V[2];
+
+    return a*a + b*b + c*c;
+
+  } // End: SquaredDistance()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Distance()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Real SquaredDistance(Vector4<Real> const & a_p0,
+                       Vector4<Real> const & a_p1)
+  {
+    Real a = a_p0.m_V[0] * a_p1.m_V[0];
+    Real b = a_p0.m_V[1] * a_p1.m_V[1];
+    Real c = a_p0.m_V[2] * a_p1.m_V[2];
+
+    return sqrt(a*a + b*b + c*c);
+
+  } // End: Distance()
 
 
   //-------------------------------------------------------------------------------

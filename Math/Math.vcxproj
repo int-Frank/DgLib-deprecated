@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DgBoundedSND.h" />
+    <ClInclude Include="DgLine.h" />
     <ClInclude Include="DgMatrix.h" />
     <ClInclude Include="DgPlane.h" />
     <ClInclude Include="DgRNG.h" />
