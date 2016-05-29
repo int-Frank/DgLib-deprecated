@@ -34,7 +34,7 @@ namespace Dg
   class Plane
   { 
   public:
-    //constructor/destructor
+    //! Default constructor.
     Plane() : m_normal(Vector4<Real>::xAxis()),
               m_offset(static_cast<Real>(0.0)) {}
     Plane(Real a, Real b, Real c, Real d);
