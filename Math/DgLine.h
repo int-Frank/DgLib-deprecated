@@ -1,22 +1,9 @@
-//================================================================================
-// @ Line.h
-// 
-// Class: Line
-//
-// A Line is defined by a point and direction extending infinitely in both
-// directions. It is represented by a Vector4<Real> and a normalized Vector4<Real>. This file
-// also declares methods to test Lines against other geometric entities.
-//
-// -------------------------------------------------------------------------------
-//
-// original Authors: James M. Van Verth, Lars M. Bishop
-// Retrieved From: Essential Mathematics for Games and Interactive Applications SE
-// On Date: 2013
-//
-// Modified by: Frank Hart
-// Date last modified: 2013
-//
-//================================================================================
+//! @file Line.h
+//!
+//! @author: Frank B. Hart
+//! @date 29/05/2016
+//!
+//! Class declaration: Line
 
 #ifndef DGLINE_H
 #define DGLINE_H
@@ -27,28 +14,40 @@
 
 namespace Dg
 {
+  //! @ingroup Math_classes
+  //!
+  //! @class Line
+  //!
+  //! A Line is defined by a point and direction extending infinitely in both
+  //! directions. It is represented by a point and a normalized vector. This file
+  //! also declares methods to test Lines against other geometric entities.
+  //!
+  //! Retrieved From: Essential Mathematics for Games and Interactive Applications SE
+  //!
+  //! @author: James M. Van Verth, Lars M. Bishop, Frank Hart
+  //! @date 29/05/2016
   template<typename Real>
   class Line
   {
   public:
+    //! Default constructor
     Line();
+
+    //! Construct from an origin and direction
     Line(Vector4<Real> const & origin, Vector4<Real> const & direction);
     ~Line() {}
 
-    //copy operations
     Line(Line const &);
     Line& operator=(Line const &);
 
-    //accessors
     Vector4<Real> const & Origin() const { return m_origin; }
     Vector4<Real> const & Direction() const { return m_direction; }
     void Get(Vector4<Real>& origin, Vector4<Real>& direction) const;
 
-    //comparison
     bool operator== (Line const &) const;
     bool operator!= (Line const &) const;
 
-    //manipulators
+    //! Set line from an origin and direction
     void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
 
     //! Closest point on a line to a point.
@@ -168,16 +167,17 @@ namespace Dg
     return m_origin + (proj / vsq) * m_direction;
   }	//End: Line::ClosestPoint()
 
-
+  //! @ingroup Math_gTests
+  //!
   //! Closest points between two lines.
   //!
-  //! @param a_line0[in] Input line
-  //! @param a_line1[in] Input line
-  //! @param a_p0[out] Point on a_line0 closest to a_line1 
-  //! @param a_p1[out] Point on a_line1 closest to a_line0
+  //! @param[in] a_line0 Input line
+  //! @param[in] a_line1 Input line
+  //! @param[out] a_p0 Point on a_line0 closest to a_line1 
+  //! @param[out] a_p1 Point on a_line1 closest to a_line0
   //!
-  //! @return 0 Success
-  //! @return 1 Lines are parallel. Closest points are based off a_line0 origin.
+  //! @return 0: Success
+  //! @return 1: Lines are parallel. Closest points are based off a_line0 origin.
   template<typename Real>
   int ClosestPointsLineLine(Line<Real> const & a_line0, Line<Real> const & a_line1,
                             Vector4<Real> & a_p0, Vector4<Real> & a_p1)
@@ -195,7 +195,6 @@ namespace Dg
     Real d = d0.Dot(w0);
     Real e = d1.Dot(w0);
     Real denom = a*c - b*b;
-    Real u0, u1;
     if (Dg::IsZero(denom))
     {
       a_p0 = o0;
@@ -210,16 +209,17 @@ namespace Dg
     }
   }	//End: Line::ClosestPointLineLine()
 
-
-  //! Intersection between a plane and a line
+  //! @ingroup Math_gTests
   //!
-  //! @param a_plane[in] Input plane
-  //! @param a_line[in] Input line
-  //! @param a_out[out] Point of intersection.
+  //! Intersection test between a plane and a line
   //!
-  //! @return 0 Success
-  //! @return 1 No Intersection. Line is orthogonal to the plane normal. Output point not set.
-  //! @return 2 Line lies on the plane. Output point not set.
+  //! @param[in] a_plane Input plane
+  //! @param[in] a_line Input line
+  //! @param[out] a_out Point of intersection.
+  //!
+  //! @return 0: Success
+  //! @return 1: No Intersection. Line is orthogonal to the plane normal. Output point not set.
+  //! @return 2: Line lies on the plane. Output point not set.
   template<typename Real>
   int TestPlaneLine(Plane<Real> const & a_plane, Line<Real> const & a_line,
                     Vector4<Real> & a_point)
@@ -232,7 +232,7 @@ namespace Dg
     Real denom = pn.Dot(ld);
 
     //check if line is parallel to plane
-    if (::IsZero(denom))
+    if (Dg::IsZero(denom))
     {
       //check if line is on the plane
       if (Dg::IsZero(a_plane.Distance(lo)))

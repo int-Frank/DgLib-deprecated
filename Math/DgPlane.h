@@ -20,7 +20,7 @@ namespace Dg
   //!
   //! A Plane is infinite flat surface. It is implemented by using the generalized
   //! plane equation: Ax + By + Cz + D = 0, or a vector normal to the plane
-  //! and an offset. The plane normal will always be normalised.
+  //! and an offset. The plane normal will always be a unit vector.
   //!
   //! Retrieved From: Essential Mathematics for Games and Interactive Applications SE
   //!
@@ -104,7 +104,7 @@ namespace Dg
   template<typename Real>
   Real Plane<Real>::SignedDistance(Vector4<Real> const & a_point) const
   {
-    return a_point.Dot(m_normal) + m_offset;
+    return a_point.Dot(m_normal) - m_offset;
 
   }	//End: Plane::SignedDistance()
   
@@ -115,7 +115,7 @@ namespace Dg
   template<typename Real>
   Real Plane<Real>::Distance(Vector4<Real> const & a_point) const
   {
-    return abs(a_point.Dot(m_normal) + m_offset);
+    return abs(a_point.Dot(m_normal) - m_offset);
 
   }	//End: Plane::Distance()
 
@@ -249,7 +249,7 @@ namespace Dg
 	  {
 		  Real recip = static_cast<Real>(1.0) / sqrt(lensq);
 		  m_normal.Set(a*recip, b*recip, c*recip, static_cast<Real>(0.0));
-		  m_offset = d*recip;
+		  m_offset = -d*recip;
 	  }
 
   }	//End: Plane4::Set()
@@ -274,7 +274,7 @@ namespace Dg
 	  {
 		  Real recip = static_cast<Real>(1.0) / sqrt(lensq);
 		  m_normal.Set(n.x()*recip, n.y()*recip, n.z()*recip, static_cast<Real>(0.0));
-		  m_offset = d*recip;
+		  m_offset = -d*recip;
 	  }
 
   }	//End: Plane4::Set()
@@ -299,7 +299,7 @@ namespace Dg
 	  {
 		  Real recip = static_cast<Real>(1.0) / sqrt(lensq);
 		  m_normal.Set(n.x()*recip, n.y()*recip, n.z()*recip, static_cast<Real>(0.0));
-		  m_offset = -(n.x()*p.x() + n.y()*p.y() + n.z()*p.z())*recip;
+		  m_offset = (n.x()*p.x() + n.y()*p.y() + n.z()*p.z())*recip;
 	  }
 
   }	//End: Plane4::Set()
@@ -331,7 +331,7 @@ namespace Dg
 	  {
 		  Real recip = static_cast<Real>(1.0) / sqrt(lensq);
 		  m_normal.Set(w.x()*recip, w.y()*recip, w.z()*recip, static_cast<Real>(0.0));
-      m_offset = -p0.Dot(m_normal);
+      m_offset = p0.Dot(m_normal);
 	  }
 
   }	//End: Plane4::Set()
