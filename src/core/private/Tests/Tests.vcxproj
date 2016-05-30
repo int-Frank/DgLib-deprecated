@@ -167,9 +167,6 @@
     <ProjectReference Include="..\Containers\Containers.vcxproj">
       <Project>{8db75ac3-eec3-4235-be94-cf62c035601d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\cppunitlite\cppunitlite.vcxproj">
-      <Project>{ad2c7fc0-2feb-42ef-bc18-04f13c4d5a40}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
       <Project>{2e5996fd-c559-4ad1-9541-9f9cc4d485b4}</Project>
     </ProjectReference>
