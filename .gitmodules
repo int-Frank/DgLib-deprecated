@@ -1,3 +1,6 @@
 [submodule "cppunitlite"]
 	path = cppunitlite
 	url = ../cppunitlite.git
+[submodule "src/core/private/cppunitlite"]
+	path = src/core/private/cppunitlite
+	url = ../cppunitlite.git
