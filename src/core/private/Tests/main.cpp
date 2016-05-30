@@ -15,15 +15,21 @@ int main()
 
   TestResult tr;
   TestRegistry::runAllTests(tr);
+  
+  char * buf = 0;
+  size_t sze = 0;
+  _dupenv_s(&buf, &sze, "SUPPRESS_OUTPUT");
+  if (sze == 0)
+  {
+    std::ifstream fs(RESULTS_FILE);
+    std::string file((std::istreambuf_iterator<char>(fs)),
+      std::istreambuf_iterator<char>());
+    std::cout << file;
 
-  std::ifstream fs(RESULTS_FILE);
-  std::string file((std::istreambuf_iterator<char>(fs)),
-    std::istreambuf_iterator<char>());
-  std::cout << file;
-
-  char c;
-  std::cin >> c;
+    char brk;
+    std::cin >> brk;
+  }
 
   std::clog.rdbuf(CLOG_OLD_BUF);
-  return 0;
+  return tr.FailureCount();
 }
