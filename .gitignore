@@ -194,3 +194,5 @@ Docs/latex/_vector4_8h.tex
 exit
 TableGeneration/tables.txt
 Tests/values.txt
+*.VC.VC.opendb
+*.VC.db
