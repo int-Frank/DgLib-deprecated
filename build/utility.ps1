@@ -6,7 +6,8 @@ Push-Location $scriptDir
 #Constants
 
 $MSBuildPath = 'C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe'
-$LibEXEPath = 'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\lib.exe'
+$LibEXEPath64 = 'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\lib.exe'
+$LibEXEPath32 = 'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\lib.exe'
 $DgLibFilePath = Resolve-Path '..\DgLib.sln'
 $BuildFailedTitle = "Build Failed"
 $DgLibLibName = "DgLib.lib"

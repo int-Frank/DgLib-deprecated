@@ -196,3 +196,4 @@ TableGeneration/tables.txt
 Tests/values.txt
 *.VC.VC.opendb
 *.VC.db
+/deploy/
