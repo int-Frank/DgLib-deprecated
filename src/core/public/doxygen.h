@@ -15,16 +15,16 @@
   //! @defgroup Math_constants Constants 
   //! @defgroup Math_functions Functions 
   //! @defgroup Math_gTests Geometric Tests 
-  //! @defgroup Math_classes Types
+  //! @defgroup Math_types Types
 
 //! @}
 
-//! @defgroup utility Utility 
+//! @defgroup DgUtility Utility 
 //! @{
 
   //! @defgroup utility_constants Constants 
   //! @defgroup utility_functions Functions 
-  //! @defgroup utility_classes Classes
+  //! @defgroup utility_types Types
 
 //! @}
 

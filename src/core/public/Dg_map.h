@@ -1,4 +1,4 @@
-//! @file dg_pod_map_p.h
+//! @file Dg_map.h
 //!
 //! @author: Frank B. Hart
 //! @date 2/5/2015
@@ -41,7 +41,9 @@ namespace Dg
 
     //! Initialize map with to a capacity. 
     //! If the constructor fails to allocate the map, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
-    map(unsigned int);
+    //!
+    //! @param[in] size Requested size
+    map(unsigned int size);
     ~map();
 
     //! Copy constructor.
@@ -52,11 +54,19 @@ namespace Dg
 
     //! Returns a reference to the \a i<SUP>th</SUP> element in the map. 
     //! This function does not perform a range check.
+    //!
+    //! @return Reference to the item
+    //!
+    //! @param[in] i Index of the item
     T& operator[](unsigned int i)	{ return m_data[i].item; }
 
     //! Returns a const reference to the \a i<SUP>th</SUP> element in the map. 
     //! This function does not perform a range check.
-    const T& operator[](unsigned int i) const { return m_data[i].item; }
+    //!
+    //! @return const reference to the item
+    //!
+    //! @param[in] i Index of the item
+    T const & operator[](unsigned int i) const { return m_data[i].item; }
 
     //! Return number of elements in the map.
     int size() const	{ return m_currentSize; }
@@ -69,31 +79,46 @@ namespace Dg
 
     //! Returns the key of the ith element in the map.
     //! This function does not perform a range check.
+    //!
+    //! @return Key
+    //!
+    //! @param[in] i Index of item to query
     U query_key(int i)	const { return m_data[i].key; }
 
     //! Searches the map for an element with a key equivalent to \a k.
-    //! \return True if the element was found with \a index being set to the 
+    //! @return True if the element was found with \a index being set to the 
     //!         index of the element inthe map. False if not found with \a index
     //!         set to one lower to where \a k would be.
-    //! \param lower Set a low bound to the search sublist.
+    //! @param[in] k The key to search for.
+    //! @param[out] index The resulting index is stored here.
+    //! @param[in] lower Set a low bound to the search sublist.
     bool find(U k, int& index, int lower = 0) const;			 //Use binary search
 
     //! Searches the map for an element with a key equivalent to \a k.
-    //! \return True if the element was found with \a index being set to the 
+    //! @return True if the element was found with \a index being set to the 
     //!         index of the element inthe map. False if not found with \a index
     //!         set to one lower to where \a k would be.
-    //! \param lower Set a low bound to the search sublist.
-    //! \param upper Set an upper bound to the search sublist.
+    //! @param[in] k The key to search for.
+    //! @param[out] index The resulting index is stored here.
+    //! @param[in] lower Set a low bound to the search sublist.
+    //! @param[in] upper Set an upper bound to the search sublist.
     bool find(U k, int& index, int lower, int upper) const;	//Use binary search
 
     //! Extends the container by inserting new elements, effectively increasing 
     //! the container size by the number of elements inserted.
     //! If the function fails to allocate memory, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
-    //! \return False if key already exists in the map.
+    //!
+    //! @return False if key already exists in the map.
+    //!
+    //! @param[in] k The key associated with the item
+    //! @param[in] t The item to insert
     bool insert(U k, T t);
 
     //! Set element with key \a k, with value \a t.
-    //! \return True if key found.
+    //! @return True if key found.
+    //!
+    //! @param[in] k Key
+    //! @param[in] t item
     bool set(U k, T t);
 
     //! Removes the item in the map with key \a k.

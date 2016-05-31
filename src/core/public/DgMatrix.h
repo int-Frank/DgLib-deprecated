@@ -1,4 +1,4 @@
-//! @file Matrix.h
+//! @file DgMatrix.h
 //!
 //! @author: Frank B. Hart
 //! @date 4/10/2015
@@ -14,23 +14,29 @@ namespace Dg
 {
   template<size_t M, size_t N, typename Real> class Matrix;
 
+  //! Compute the transpose matrix.
   template<size_t M, size_t N, typename Real>
   Matrix<N, M, Real> Transpose(Matrix<M, N, Real> const &);
 
+  //! Element-wise dot product.
   template<size_t M, size_t N, typename Real>
   Real Dot(Matrix<M, N, Real> const &, Matrix<M, N, Real> const &);
 
+  //! Scalar multiplication
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real> operator*(Real, Matrix<M, N, Real> const &);
 
   namespace impl
   {
+    //!
     template<size_t M, size_t N, typename Real>
     Real Determinant(Matrix<M, N, Real> const &);
 
+    //!
     template<typename Real>
     Real Determinant(Matrix<2, 2, Real> const &);
 
+    //!
     template<typename Real>
     Real Determinant(Matrix<1, 1, Real> const &);
   }

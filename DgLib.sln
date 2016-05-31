@@ -29,7 +29,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Containers", "src\core\priv
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{4D0C5A0B-BE9A-416D-BD7E-C234DDFCE51A}"
 	ProjectSection(SolutionItems) = preProject
-		doxygen.h = doxygen.h
+		src\core\public\doxygen.h = src\core\public\doxygen.h
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppunitlite", "src\core\private\cppunitlite\cppunitlite.vcxproj", "{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}"

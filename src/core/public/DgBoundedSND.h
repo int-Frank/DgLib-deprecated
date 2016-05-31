@@ -1,4 +1,4 @@
-//! @file BoundedNormal.h
+//! @file DgBoundedSND.h
 //!
 //! @author Frank Hart
 //! @date 4/8/2015

@@ -1,4 +1,4 @@
-//! @file Dglist_pod.h
+//! @file Dg_list_pod.h
 //!
 //! @author: Frank B. Hart
 //! @date 21/05/2016
@@ -45,7 +45,7 @@ namespace Dg
 
   public:
 
-    //! @class Dg_list_pod::const_iterator
+    //! @class const_iterator
     //!
     //! Const iterator for the list.
     //!
@@ -57,40 +57,51 @@ namespace Dg
 		  friend class list_pod;
 		
 	  private:
-		  //Special constructor, not for external use
-		  const_iterator(const DataContainer* _ptr) {ptr = _ptr;}
+		  //! Special constructor, not for external use
+		  const_iterator(DataContainer const * _ptr) {ptr = _ptr;}
 
 	  public:
-		  //Constructor / destructor
-		  const_iterator(){}
+
+		  const_iterator(): ptr(nullptr) {}
 		  ~const_iterator(){}
 
-		  //Copy operations
-		  const_iterator(const const_iterator& it): ptr(it.ptr){}
-		  const_iterator& operator= (const const_iterator&);
-		
-		  //Comparison
-		  bool operator==(const const_iterator& it) const {return ptr == it.ptr;}
-		  bool operator!=(const const_iterator& it) const {return ptr != it.ptr;}
+		  //! Copy constructor
+		  const_iterator(const_iterator const & it): ptr(it.ptr){}
 
-		  //operators
+      //! Assignment
+		  const_iterator& operator= (const_iterator const &);
+		
+		  //! Comparison.
+		  bool operator==(const_iterator const & it) const {return ptr == it.ptr;}
+
+      //! Comparison.
+		  bool operator!=(const_iterator const & it) const {return ptr != it.ptr;}
+
+		  //! Post increment
 		  const_iterator& operator++();
+
+      //! Pre increment
 		  const_iterator operator++(int);
+
+      //! Post decrement
 		  const_iterator& operator--();
+
+      //! Pre decrement
 		  const_iterator operator--(int);
 
-		  //Conversion
-		  const T* operator->() const {return &(ptr->element);}
-		  const T& operator*() const {return ptr->element;}
+		  //! Conversion. Returns pointer to element.
+		  T const * operator->() const {return &(ptr->element);}
+
+      //! Conversion. Returns reference to element.
+		  T const & operator*() const {return ptr->element;}
 
 	  private:
-		  //Data members
-		  const DataContainer *ptr;
+		  DataContainer const * ptr;
 
 	  };
 
 
-    //! @class Dg_list_pod::iterator
+    //! @class iterator
     //!
     //! Iterator for the list.
     //!
@@ -101,35 +112,48 @@ namespace Dg
 		  friend class list_pod;
 
 	  private:
-		  //Special constructor, not for external use
+		  //! Special constructor, not for external use
 		  iterator(DataContainer* _ptr) {ptr = _ptr;}
 
 	  public:
-		  //Constructor / destructor
-		  iterator(){}
+
+		  iterator(): ptr(nullptr) {}
 		  ~iterator(){}
 
-		  //Copy operations
-		  iterator(const iterator& it): ptr(it.ptr){}
-		  iterator& operator= (const iterator&);
+		  //! Copy constructor.
+		  iterator(iterator const & it): ptr(it.ptr){}
+		  
+      //! Assignment.
+      iterator& operator= (iterator const &);
 
-		  //Comparison
-		  bool operator==(const iterator& it) const {return ptr == it.ptr;}
-		  bool operator!=(const iterator& it) const {return ptr != it.ptr;}
+		  //! Comparison.
+		  bool operator==(iterator const & it) const {return ptr == it.ptr;}
 
-		  //operators
+      //! Comparison.
+		  bool operator!=(iterator const & it) const {return ptr != it.ptr;}
+
+		  //! Post increment
 		  iterator& operator++();
+
+      //! Pre increment
 		  iterator operator++(int);
+
+      //! Post decrement
 		  iterator& operator--();
+
+      //! Pre decrement
 		  iterator operator--(int);
 
-		  //Conversion
+		  //! Conversion
 		  operator const_iterator() const {return const_iterator(ptr);}
+
+      //! Conversion
 		  T* operator->() const {return &(ptr->element);}
+
+      //! Conversion
 		  T& operator*() const {return ptr->element;}
 
 	  private:
-		  //Data members
 		  DataContainer *ptr;
 
 	  };
@@ -147,25 +171,33 @@ namespace Dg
 	  ~list_pod();
 
 	  //! Copy constructor
-	  list_pod(const list_pod&);
+	  list_pod(list_pod const &);
 
     //! Assignment
-	  list_pod& operator= (const list_pod&);
+	  list_pod& operator= (list_pod const &);
 
 	  //! Returns an iterator pointing to the first element in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
+    //!
+    //! @return iterator
 	  iterator			  begin()		  const {return iterator(m_rootContainer.next);}
     
     //! Returns an iterator referring to the <em>past-the-end</em> element in the list container.
     //! This iterator shall not be dereferenced.
+    //!
+    //! @return iterator
     iterator			  end()		    const {return iterator(const_cast<DataContainer*>(&m_endContainer)); }
 	  
     //! Returns a const iterator pointing to the first element in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
+    //!
+    //! @return const_iterator
     const_iterator	cbegin()	  const {return const_iterator(m_rootContainer.next);}
     
     //! Returns an iterator referring to the <em>past-the-end</em> element in the list container.
     //! This iterator shall not be dereferenced.
+    //!
+    //! @return const_iterator
     const_iterator	cend()		  const {return const_iterator(const_cast<DataContainer*>(&m_endContainer)); }
 	  
     //! Returns number of elements in the list.
@@ -179,18 +211,26 @@ namespace Dg
 
     //! Returns a reference to the last element in the list container.
     //! Calling this function on an empty container causes undefined behavior.
+    //!
+    //! @return Reference to data type
     T &             back()		  const { return m_endContainer.previous->element; }
 
     //! Returns a reference to the first element in the list container.
     //! Calling this function on an empty container causes undefined behavior.
+    //!
+    //! @return Reference to data type
     T &             front()		  const { return m_rootContainer.next->element; }
 
     //! Returns a const reference to the last element in the list container.
     //! Calling this function on an empty container causes undefined behavior.
+    //!
+    //! @return const reference to data type
     T const &				back()		  const { return m_endContainer.previous->element; }
 
     //! Returns a const reference to the first element in the list container.
     //! Calling this function on an empty container causes undefined behavior.
+    //!
+    //! @return const reference to data type
     T const &				front()		  const { return m_rootContainer.next->element; }
 
 	  //! Add an element to the back of the list
@@ -198,6 +238,8 @@ namespace Dg
 
     //! Add an element to the back of the list, but does not assign, nor
     //!	resize the array.
+    //!
+    //! @return false if allocated memory is full
 	  bool push_back();
 
     //!Add an element to the front of the list
@@ -205,6 +247,8 @@ namespace Dg
     
     //! Add an element to the front of the list, but does not assign, nor
     //! resize the array.
+    //!
+    //! @return false if allocated memory is full
     bool push_front();
 
     //! Add an element to the list at position. 
@@ -255,7 +299,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<class T>
   typename list_pod<T>::iterator& list_pod<T>::iterator::operator=
-	  (const typename list_pod<T>::iterator& other)
+	  (typename list_pod<T>::iterator const & other)
   {
 	  ptr = other.ptr;
 
@@ -319,7 +363,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<class T>
   typename list_pod<T>::const_iterator& list_pod<T>::const_iterator::operator=
-	  (const typename list_pod<T>::const_iterator& other)
+	  (typename list_pod<T>::const_iterator const & other)
   {
 	  ptr = other.ptr;
 
@@ -386,8 +430,6 @@ namespace Dg
   template<class T>
   void list_pod<T>::init(size_t a_size) 
   {
-    assert(a_size > 0);
-
     T * tempPtr = static_cast<DataContainer *>(realloc(m_data, a_size * sizeof(DataContainer)));
 
     if (tempPtr == nullptr)
@@ -459,7 +501,7 @@ namespace Dg
   //	@	list_pod<T>::list_pod<T>()
   //--------------------------------------------------------------------------------
   template<class T>
-  list_pod<T>::list_pod(const list_pod& other)
+  list_pod<T>::list_pod(list_pod const & other)
   {
 	  //Initialise m_data
 	  init(other.m_arraySize);
@@ -478,7 +520,7 @@ namespace Dg
   //	@	list_pod<T>::operator=()
   //--------------------------------------------------------------------------------
   template<class T>
-  list_pod<T>& list_pod<T>::operator=(const list_pod& other)
+  list_pod<T>& list_pod<T>::operator=(list_pod const & other)
   {
 	  if (this == &other)
 		  return *this;
@@ -543,7 +585,7 @@ namespace Dg
   //	@	list_pod<T>::push_back()
   //--------------------------------------------------------------------------------
   template<class T>
-  void list_pod<T>::push_back(const T& a_item)
+  void list_pod<T>::push_back(T const & a_item)
   {
 	  //Is the list full?
 	  if (m_currentSize == m_arraySize)
@@ -634,7 +676,7 @@ namespace Dg
   //	@	list_pod<T>::push_front()
   //--------------------------------------------------------------------------------
   template<class T>
-  void list_pod<T>::push_front(const T& val)
+  void list_pod<T>::push_front(T const & val)
   {
 	  //Is the list full?
 	  if (m_currentSize == m_arraySize)
@@ -717,7 +759,7 @@ namespace Dg
   //	@	list_pod<T>::insert()
   //--------------------------------------------------------------------------------
   template<class T>
-  void list_pod<T>::insert(iterator const & it, const T& a_item)
+  void list_pod<T>::insert(iterator const & it, T const & a_item)
   {
     assert(it.ptr != &m_rootContainer);
 
@@ -847,11 +889,18 @@ namespace Dg
   //! @ingroup Containers_functions
   //!
   //! Find a value in the list, returns iterator.
+  //! 
+  //! @param[in] first Iterator to start searching from
+  //! @param[in] last Search will stop when this iterator is found
+  //! @param[in] val Object to compare
+  //!
+  //! @return Iterator pointing to the val in the list_pod. If no item was found,
+  //!         will return last.
   template<class T>
   typename list_pod<T>::iterator find (
 	  typename list_pod<T>::iterator first, 
 	  typename list_pod<T>::iterator last, 
-	  const T& val)
+	  T const & val)
   {
     while (first!=last) 
     {
@@ -869,11 +918,18 @@ namespace Dg
   //! @ingroup Containers_functions
   //!
   //! Find a value in the list, returns const_iterator.
+  //! 
+  //! @param[in] first Iterator to start searching from
+  //! @param[in] last Search will stop when this iterator is found
+  //! @param[in] val Object to compare
+  //!
+  //! @return Iterator pointing to the val in the list_pod. If no item was found,
+  //!         will return last.
   template<class T>
   typename list_pod<T>::const_iterator find (
 	  typename list_pod<T>::const_iterator first, 
 	  typename list_pod<T>::const_iterator last, 
-	  const T& val)
+	  T const & val)
   {
     while (first!=last) 
     {

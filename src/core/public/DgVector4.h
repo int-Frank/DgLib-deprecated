@@ -1,4 +1,4 @@
-//! @file Vector4.h
+//! @file DgVector4.h
 //!
 //! @author: Frank B. Hart
 //! @date 4/10/2015

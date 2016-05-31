@@ -24,7 +24,7 @@ namespace Dg
     //!
     //! ReqisterResource(new ResourceType(key, pData), opts);
     //!
-    //! @param a_key Associate a unique key with this resource
+    //! @param a_resource New instance of a resource
     //! @param a_options Options for this resource
     Dg_Error RegisterResource(Resource * a_resource, uint32_t a_options = rDEFAULT);
 

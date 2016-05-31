@@ -1,4 +1,4 @@
-//! @file Line.h
+//! @file DgLine.h
 //!
 //! @author: Frank B. Hart
 //! @date 29/05/2016
@@ -215,7 +215,7 @@ namespace Dg
   //!
   //! @param[in] a_plane Input plane
   //! @param[in] a_line Input line
-  //! @param[out] a_out Point of intersection.
+  //! @param[out] a_point Point of intersection.
   //!
   //! @return 0: Success
   //! @return 1: No Intersection. Line is orthogonal to the plane normal. Output point not set.

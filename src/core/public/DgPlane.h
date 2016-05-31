@@ -1,4 +1,4 @@
-//! @file Plane.h
+//! @file DgPlane.h
 //!
 //! @author: Frank B. Hart
 //! @date 29/05/2016

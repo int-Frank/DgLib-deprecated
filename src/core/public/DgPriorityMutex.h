@@ -1,4 +1,4 @@
-//! @file priority_mutex.h
+//! @file DgPriorityMutex.h
 //!
 //! @author Frank Hart
 //! @date 4/10/2015

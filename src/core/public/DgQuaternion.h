@@ -1,4 +1,4 @@
-//! @file Quaternion.h
+//! @file DgQuaternion.h
 //!
 //! @author: James M. Van Verth, Lars M. Bishop, Frank B. Hart
 //! @date 4/10/2015

@@ -1,4 +1,4 @@
-//! @file ResourceKey.h
+//! @file ResourceTypes.h
 //!
 //! @author: Frank B. Hart
 //! @date 25/7/2015

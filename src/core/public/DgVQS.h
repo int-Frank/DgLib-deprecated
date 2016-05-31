@@ -1,4 +1,4 @@
-//! @file VQS.h
+//! @file DgVQS.h
 //!
 //! @author: Frank B. Hart
 //! @date 4/10/2015

@@ -1,4 +1,4 @@
-//! @file dgmath.h
+//! @file DgMath.h
 //!
 //! @author Frank Hart
 //! @date 4/8/2015
@@ -81,7 +81,7 @@ namespace Dg
   uint32_t NextPower2(uint32_t input);
 
   //! Inverse error function. Uses Mclaurin series expansion approximation.
-  //! @param nTerms Number of terms in the series expansion to use. 0 denotes maximum number.
+  //! The template param nTerms represents the number of terms in the series expansion to use.
   template<typename Real, unsigned nTerms = 16>
   Real inverf(Real a_x)
   {

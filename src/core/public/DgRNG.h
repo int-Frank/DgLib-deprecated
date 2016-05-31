@@ -1,4 +1,4 @@
-//! @file RNG.cpp
+//! @file DgRNG.h
 //!
 //! @author Frank Hart
 //! @date 4/8/2015

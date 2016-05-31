@@ -1,5 +1,10 @@
-#ifndef UTILITY_H
-#define UTILITY_H
+//! @file DgUtility.h
+//!
+//! @author Frank Hart
+//! @date 4/10/2015
+
+#ifndef DGUTILITY_H
+#define DGUTILITY_H
 
 #include <iostream>
 #include <fstream>

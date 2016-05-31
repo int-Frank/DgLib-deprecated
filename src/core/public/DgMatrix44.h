@@ -1,4 +1,4 @@
-//! @file Matrix44.h
+//! @file DgMatrix44.h
 //!
 //! @author: James M. Van Verth, Lars M. Bishop, Frank B. Hart
 //! @date 4/10/2015

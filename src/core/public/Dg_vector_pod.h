@@ -1,4 +1,4 @@
-//! @file vector_pod.h
+//! @file Dg_vector_pod.h
 //!
 //! @author Frank Hart
 //! @date 2/01/2014
@@ -54,31 +54,38 @@ namespace Dg
     vector_pod(size_t);
     ~vector_pod();
 
-    vector_pod(const vector_pod&);
-    vector_pod& operator= (const vector_pod&);
+    //! Copy constructor
+    vector_pod(vector_pod const &);
+
+    //! Assignment
+    vector_pod& operator= (vector_pod const &);
 
     //! Copy both the current elements and the elements in the reserved memory.
-    void copy_all(const vector_pod& other);
+    void copy_all(vector_pod const & other);
 
     //! Access element
     T& operator[](size_t i)				{ return m_data[i]; }
 
     //! Accessor, no range check.
-    const T& operator[](size_t i) const	{ return m_data[i]; }
+    T const & operator[](size_t i) const	{ return m_data[i]; }
 
     //! Get last element
     //! Calling this function on an empty container causes undefined behavior.
+    //!
+    //! @return Reference to item in the vector
     T& back() { return m_data[m_arraySize - 1]; }
 
     //! Get last element
     //! Calling this function on an empty container causes undefined behavior.
-    const T& back() const { return m_data[m_arraySize - 1]; }
+    //!
+    //! @return const reference to item in the vector
+    T const & back() const { return m_data[m_arraySize - 1]; }
 
     //! Accessor with range check.
     T& at(size_t);
 
     //! Accessor with range check.
-    const T& at(size_t) const;
+    T const & at(size_t) const;
 
     //! Current size of the array
     size_t size()		const			{ return m_currentSize; }
@@ -96,13 +103,13 @@ namespace Dg
     const T* Data()		const			{ return m_data; }
 
     //! Add element to the back of the array.
-    void push_back(const T&);
+    void push_back(T const &);
 
     //! Remove element from the back of the array.
     void pop_back();
 
     //! Add element to the back of the array.
-    void push_front(const T&);
+    void push_front(T const &);
 
     //! Remove element from the back of the array.
     void pop_front();
@@ -117,7 +124,7 @@ namespace Dg
     //! Exteneds the total size of the array (current + reserve) by a factor of 2
     void extend();
 
-    void init(const vector_pod&);
+    void init(vector_pod const &);
 
   private:
     //Data members
@@ -184,7 +191,7 @@ namespace Dg
   //	@	vector_pod<T>::init()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::init(const vector_pod& a_other)
+  void vector_pod<T>::init(vector_pod const & a_other)
   {
     T * tempPtr = static_cast<T*>(realloc(a_.m_arraySize * sizeof(T)));
 
@@ -208,7 +215,7 @@ namespace Dg
   //	@	vector_pod<T>::vector_pod()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector_pod<T>::vector_pod(const vector_pod& other) : m_data(nullptr)
+  vector_pod<T>::vector_pod(vector_pod const & other) : m_data(nullptr)
   {
     init(other);
 
@@ -219,7 +226,7 @@ namespace Dg
   //	@	vector_pod<T>::operator=()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector_pod<T>& vector_pod<T>::operator=(const vector_pod& other)
+  vector_pod<T>& vector_pod<T>::operator=(vector_pod const & other)
   {
     if (this == &other)
       return *this;
@@ -262,7 +269,7 @@ namespace Dg
   //	@	vector_pod<T>::at()
   //--------------------------------------------------------------------------------
   template<class T>
-  const T& vector_pod<T>::at(size_t index) const
+  T const & vector_pod<T>::at(size_t index) const
   {
     if (index >= m_currentSize)
       throw std::out_of_range("vector_pod: range error");
@@ -276,7 +283,7 @@ namespace Dg
   //	@	vector_pod<T>::push_back()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::push_back(const T& a_item)
+  void vector_pod<T>::push_back(T const & a_item)
   {
     //Range check
     if (m_currentSize == m_arraySize)
@@ -314,7 +321,7 @@ namespace Dg
   //	@	vector_pod<T>::push_front()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::push_front(const T& a_item)
+  void vector_pod<T>::push_front(T const & a_item)
   {
     //Range check
     if (m_currentSize == m_arraySize)
@@ -431,7 +438,7 @@ namespace Dg
   //!
   //! Find a value in the list, returns pointer to element.
   template<class T>
-  T* find(vector_pod<T>& container, const T& val)
+  T* find(vector_pod<T>& container, T const & val)
   {
     for (size_t i = 0; i < container.size(); ++i)
     {
@@ -448,7 +455,7 @@ namespace Dg
   //!
   //! Fills the vector with a value.
   template<class T>
-  void fill(vector_pod<T>& container, const T& val)
+  void fill(vector_pod<T>& container, T const & val)
   {
     for (size_t i = 0; i < container.size(); ++i)
     {
