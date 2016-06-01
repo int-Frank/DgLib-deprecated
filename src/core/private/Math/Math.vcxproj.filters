@@ -56,6 +56,9 @@
     <ClInclude Include="..\..\public\DgVQS.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgRay.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\public\DgMath.inl">
