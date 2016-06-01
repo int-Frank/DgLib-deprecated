@@ -11,7 +11,7 @@
 namespace Dg
 {
 
-	//! @ingroup Math_classes
+	//! @ingroup DgMath_types
 	//!
 	//! @class RNG
 	//!

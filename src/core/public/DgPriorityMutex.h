@@ -12,7 +12,7 @@
 
 namespace Dg
 {
-  //! @ingroup utility_classes
+  //! @ingroup DgUtility_types
   //!
   //! @class priority_mutex
   //!

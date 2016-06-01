@@ -10,7 +10,7 @@
 
 namespace Dg
 {
-  //! @ingroup utility_classes
+  //! @ingroup DgUtility_types
   //!
   //! @class Singleton
   //!

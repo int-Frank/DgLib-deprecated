@@ -23,7 +23,7 @@ namespace Dg
   template<typename Real>
   Matrix44<Real> AffineInverse(Matrix44<Real> const &);
 
-  //! @ingroup Math_classes
+  //! @ingroup DgMath_types
   //!
   //! @class Matrix44
   //!

@@ -21,7 +21,7 @@ namespace Dg
   template<typename Real>
   VQS<Real> Inverse(VQS<Real> const &);
 
-  //! @ingroup Math_classes
+  //! @ingroup DgMath_types
   //!
   //! @class VQS
   //!

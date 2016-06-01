@@ -71,7 +71,7 @@ namespace Dg
   template<typename Real>
   Real Distance(Vector4<Real> const &, Vector4<Real> const &);
 
-  //! @ingroup Math_classes
+  //! @ingroup DgMath_types
   //!
   //! @class Vector4
   //!

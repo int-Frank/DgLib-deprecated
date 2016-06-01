@@ -37,7 +37,7 @@ namespace Dg
   template<typename Real>
   Quaternion<Real> Inverse(Quaternion<Real> const &);
 
-
+  //! @ingroup DgMath_types
   //! Linearly interpolate two quaternions.
   //! This will always take the shorter path between them.
   //!

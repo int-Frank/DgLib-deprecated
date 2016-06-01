@@ -886,7 +886,7 @@ namespace Dg
   //		Helpful functions
   //--------------------------------------------------------------------------------
 
-  //! @ingroup Containers_functions
+  //! @ingroup DgContainers_functions
   //!
   //! Find a value in the list, returns iterator.
   //! 
@@ -915,7 +915,7 @@ namespace Dg
   }	//End find()
 
 
-  //! @ingroup Containers_functions
+  //! @ingroup DgContainers_functions
   //!
   //! Find a value in the list, returns const_iterator.
   //! 

@@ -16,10 +16,14 @@ namespace Dg
 {
   namespace Rm
   {
+    //! @ingroup DgEngine_Rm
+    //!
     //! Resource manager key
     typedef uint32_t RKey;
 
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Options for individual resources
     enum
     {
@@ -31,6 +35,8 @@ namespace Dg
     };
 
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Global options for the Resource Manager
     enum
     {
@@ -38,6 +44,8 @@ namespace Dg
     };
 
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Resource base class. All resource types should inherit from this class.
     class Resource
     {
@@ -70,6 +78,8 @@ namespace Dg
       class ResourceManager;
     }
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Reference counted pointer to a resource. Avoid excessive copying as this 
     //! Registers and Deregisters resources in the resource manager.
     class hResource

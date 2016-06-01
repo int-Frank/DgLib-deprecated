@@ -12,7 +12,7 @@
 #include <string>
 #include <algorithm>
 
-//! @ingroup utility_constants
+//! @ingroup DgUtility_constants
 //! Error codes
 enum Dg_Error
 {
@@ -25,7 +25,7 @@ enum Dg_Error
 
 namespace Dg
 {
-  //! @ingroup utility_functions
+  //! @ingroup DgUtility_functions
   //!
   //! @brief Converts a string to a number.
   //!

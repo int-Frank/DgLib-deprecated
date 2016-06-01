@@ -4,28 +4,37 @@
 //! @defgroup DgContainers Containers 
 //! @{
 
-  //! @defgroup Containers_constants Constants 
-  //! @defgroup Containers_functions Functions
+  //! @defgroup DgContainers_constants Constants 
+  //! @defgroup DgContainers_functions Functions
   
 //! @}
 
 //! @defgroup DgMath Math 
 //! @{
 
-  //! @defgroup Math_constants Constants 
-  //! @defgroup Math_functions Functions 
-  //! @defgroup Math_gTests Geometric Tests 
-  //! @defgroup Math_types Types
+  //! @defgroup DgMath_constants Constants 
+  //! @defgroup DgMath_functions Functions 
+  //! @defgroup DgMath_gTests Geometric Tests 
+  //! @defgroup DgMath_types Types
 
 //! @}
 
 //! @defgroup DgUtility Utility 
 //! @{
 
-  //! @defgroup utility_constants Constants 
-  //! @defgroup utility_functions Functions 
-  //! @defgroup utility_types Types
+  //! @defgroup DgUtility_constants Constants 
+  //! @defgroup DgUtility_functions Functions 
+  //! @defgroup DgUtility_types Types
 
 //! @}
 
+//! @defgroup DgEngine Engine 
+//! @{
+
+//! @defgroup DgEngine_constants Constants 
+//! @defgroup DgEngine_functions Functions 
+//! @defgroup DgEngine_types Types
+//! @defgroup DgEngine_Rm Resource Manager 
+
+//! @}
 #endif

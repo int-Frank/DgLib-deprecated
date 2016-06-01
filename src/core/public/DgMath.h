@@ -13,13 +13,14 @@
 #include "DgUtility.h"
 #include "DgMath.inl"
 
+//! @ingroup DgMath_constants
 #define USE_PRECISION_32
 //#define USE_PRECISION_64
 
 namespace Dg
 {
 	
-  //! @ingroup Math_constants
+  //! @ingroup DgMath_constants
   //! @{
 
   enum class EulerOrder
@@ -68,7 +69,7 @@ namespace Dg
 
   //! @}
   
-  //! @ingroup Math_functions
+  //! @ingroup DgMath_functions
   //! @{
 
   //! Finds log base 2 of a 32-bit integer.

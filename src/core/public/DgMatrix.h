@@ -44,7 +44,7 @@ namespace Dg
     Real Determinant(Matrix<1, 1, Real> const &);
   }
 
-  //! @ingroup Math_classes
+  //! @ingroup DgMath_types
   //!
   //! @class Matrix
   //!

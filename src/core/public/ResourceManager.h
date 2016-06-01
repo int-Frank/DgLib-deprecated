@@ -20,6 +20,8 @@ namespace Dg
     //! Check an option.
     bool CheckOption(uint32_t);
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Register a new resource. The call will look like this:
     //!
     //! ReqisterResource(new ResourceType(key, pData), opts);
@@ -30,26 +32,42 @@ namespace Dg
     //! @return Error code
     Dg_Error RegisterResource(Resource * a_resource, uint32_t a_options = rDEFAULT);
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Get a pointer to a resource. Will fail if the resouce has not been 
     //! successfully registed first with RegisterResource().
     //!
     //! @return Error code
     Dg_Error GetResourceHandle(RKey, hResource &);
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Initialise a particular resource. 
     //!
     //! @return Error code
     Dg_Error InitResource(RKey);
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Initialises all resources.
     //!
     //! @return Error code
     Dg_Error InitAll();
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Deinitialise a particular resource. 
-    void DeinitResource(RKey, bool a_force = false);
+    //!
+    //! @param a_k Key of the resource
+    //! @param a_force Force a resource even if there are active handles to this resource.
+    void DeinitResource(RKey a_k, bool a_force = false);
 
+    //! @ingroup DgEngine_Rm
+    //!
     //! Deinitialises all resources.
+    //!
+    //! @param a_force Force deinit of all resources even if there
+    //!                there are active handles.
     void DeinitAll(bool a_force = false);
   }
 }
