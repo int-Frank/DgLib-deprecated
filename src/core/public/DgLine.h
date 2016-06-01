@@ -229,7 +229,7 @@ namespace Dg
   //! @param[out] a_point Point of intersection.
   //!
   //! @return 0: Line intersects plane
-  //! @return 1: Line lies on the plane. Output point not set.
+  //! @return 1: Line lies on the plane. Output set to line origin.
   //! @return 2: No Intersection. Line is orthogonal to the plane normal. Output point not set.
   template<typename Real>
   int TestPlaneLine(Plane<Real> const & a_plane, Line<Real> const & a_line,
@@ -245,6 +245,8 @@ namespace Dg
     //check if line is parallel to plane
     if (Dg::IsZero(denom))
     {
+      a_point = lo;
+
       //check if line is on the plane
       if (Dg::IsZero(a_plane.Distance(lo)))
       {

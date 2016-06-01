@@ -22,9 +22,10 @@ TEST(Stack_DgLine, DgLine)
   CHECK(l1 == l0);
   CHECK(l2 == l0);
 
-  CHECK(l0.ClosestPoint(vec(7.0, -34.5, 90.53, 1.0)) == vec(7.0, 0.0, 0.0, 1.0));
-
   //Geometric tests
+
+  //Line-Point
+  CHECK(l0.ClosestPoint(vec(7.0, -34.5, 90.53, 1.0)) == vec(7.0, 0.0, 0.0, 1.0));
 
   //Line-Line
   vec p0, p1;
@@ -51,11 +52,13 @@ TEST(Stack_DgLine, DgLine)
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), -1.0);
   result = TestPlaneLine(pl, l0, p0);
   CHECK(result == 2);
+  CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
 
   //Line on plane
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), 0.0);
   result = TestPlaneLine(pl, l0, p0);
   CHECK(result == 1);
+  CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
 
   //Line intersecting plane
   pl.Set(vec(1.0, 0.0, 0.0, 0.0), -1.0);

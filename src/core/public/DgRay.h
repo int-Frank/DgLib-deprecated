@@ -210,7 +210,7 @@ namespace Dg
   //! @param[out] a_p1 Point on a_ray1 closest to a_ray0
   //!
   //! @return 0: Success
-  //! @return 1: Rays are parallel. Closest points are based off a_ray0 origin.
+  //! @return 1: Rays are parallel.
   template<typename Real>
   int ClosestPointsRayRay(Ray<Real> const & a_ray0, Ray<Real> const & a_ray1,
                           Real & a_u0, Real & a_u1,
@@ -299,7 +299,7 @@ namespace Dg
   //! @param[out] a_pl Point on a_line closest to a_ray
   //!
   //! @return 0: Success
-  //! @return 1: Ray and line are parallel. Closest points are based off a_ray origin.
+  //! @return 1: Ray and line are parallel.
   template<typename Real>
   int ClosestPointsRayLine(Ray<Real> const & a_ray, Line<Real> const & a_line,
                            Real & a_ur, Real & a_ul,
@@ -311,12 +311,12 @@ namespace Dg
     Vector4<Real> dl(a_line.Direction());
 
     //compute intermediate parameters
-    Vector4<Real> w0(o0 - o1);
-    Real a = d0.Dot(d0);
-    Real b = d0.Dot(d1);
-    Real c = d1.Dot(d1);
-    Real d = d0.Dot(w0);
-    Real e = d1.Dot(w0);
+    Vector4<Real> w0(or - ol);
+    Real a = dr.Dot(dr);
+    Real b = dr.Dot(dl);
+    Real c = dl.Dot(dl);
+    Real d = dr.Dot(w0);
+    Real e = dl.Dot(w0);
     Real denom = a*c - b*b;
 
     int result = 0;
@@ -360,7 +360,7 @@ namespace Dg
 
       //compute closest points
       a_pr = or +a_ur*dr;
-      a_pl = or +a_ul*dl;
+      a_pl = ol +a_ul*dl;
     }
 
     return result;
@@ -379,7 +379,7 @@ namespace Dg
   //! @param[out] a_point Closest point from plane to ray.
   //!
   //! @return 0: Ray intersects plane
-  //! @return 1: Ray lies on the plane. Output point not set.
+  //! @return 1: Ray lies on the plane. Output set to ray origin.
   //! @return 2: No Intersection. Ray is orthogonal to the plane normal. Output point not set.
   //! @return 3: Ray does not intersect plane; points away from plane. Output point set as the ray origin.
   template<typename Real>
@@ -396,6 +396,9 @@ namespace Dg
     //check if ray is parallel to plane
     if (Dg::IsZero(denom))
     {
+      a_point = ro;
+      a_u = 0.0;
+
       //check if ray is on the plane
       if (Dg::IsZero(a_plane.Distance(ro)))
       {
