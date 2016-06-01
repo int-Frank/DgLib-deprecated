@@ -17,6 +17,7 @@ namespace Dg
 {
   template<typename Real> class VQS;
 
+  //! Inverse of a vqs
   template<typename Real>
   VQS<Real> Inverse(VQS<Real> const &);
 
@@ -47,17 +48,25 @@ namespace Dg
                 static_cast<Real>(0.0), 
                 static_cast<Real>(0.0), 
                 static_cast<Real>(0.0)), 
-            m_s(static_cast<Real>(1.0)) {m_v.Zero();}
+            m_s(static_cast<Real>(1.0)),
+            m_v(Vector4<Real>::ZeroVector()){}
+
+    //! Construct vqs from vector, quaternion and scalar
     VQS(Vector4<Real> const & a_v, Quaternion<Real> const & a_q, Real a_s) :
       m_v(a_v), m_q(a_q), m_s(a_s) {}
+
     ~VQS() {}
 
-    //Copy operations
+    //! Copy constructor
     VQS(VQS<Real> const & a_other) : m_v(a_other.m_v), m_q(a_other.m_q), m_s(a_other.m_s) {}
+    
+    //! Assignment
     VQS<Real>& operator=(VQS<Real> const &);
 
-    //Comparison
+    //! Comparison
     bool operator==(VQS<Real> const & a_other) const;
+    
+    //! Comparison
     bool operator!=(VQS<Real> const & a_other) const;
 
     //! Ensure a valid VQS.
@@ -68,9 +77,17 @@ namespace Dg
 
     //! Set VQS based on an affine matrix
     void Set(Matrix44<Real> const &);
+
+    //! Set VQS from vector, quaternion and scalar
     void Set(Vector4<Real> const &, Quaternion<Real> const &, Real);
+    
+    //! Set vector of the vqs
     void SetV(Vector4<Real> const &);
+
+    //! Set quaternion of the vqs
     void SetQ(Quaternion<Real> const &);
+
+    //! Set scalar of the vqs
     void SetS(Real);
 
     //! Translation update data
@@ -82,8 +99,12 @@ namespace Dg
     //! Scalar update data
     void UpdateS(Real);
 
-    //! VQS structures concatenate left to right.
+    //! vqs-vqs concatenation. VQS structures concatenate left to right.
     VQS<Real> operator* (VQS<Real> const &) const;
+
+    //! vqs-vqs concatenation, assign to self. 
+    //! VQS structures concatenate left to right.
+    //! @return Reference to self
     VQS<Real>& operator*= (VQS<Real> const &);
 
     //! Point transformations also apply translation.
@@ -123,18 +144,24 @@ namespace Dg
     template<typename T>
     friend VQS<T> Inverse(VQS<T> const &);
 
-    //Returns
+    //! Get the vector, quaternion and scalar
     void Get(Vector4<Real>& a_v, Quaternion<Real>& a_q, Real& a_s) const;
 
     //! Conversion to Matrix.
     void GetMatrix(Matrix44<Real>&) const;
-    Vector4<Real> const & V()	  const	{ return m_v; }
-    Quaternion<Real> const & Q() const	{ return m_q; }
-    Real S()	                  const	{ return m_s; }
+
+    //! Access vector
+    Vector4<Real> const & V()	    const	{ return m_v; }
+
+    //! Access quaternion
+    Quaternion<Real> const & Q()  const	{ return m_q; }
+
+    //! Access scalar
+    Real S()	                    const	{ return m_s; }
 
   private:
     //Data members
-    Vector4<Real>		m_v;		//translation
+    Vector4<Real>		  m_v;		//translation
     Quaternion<Real>	m_q;		//rotation
     Real		          m_s;		//scale
   };

@@ -43,15 +43,21 @@ namespace Dg
     {
     public:
 
+      //! Constructor.
       Resource(RKey a_key, void * a_data = nullptr) : m_key(a_key) {}
 
       virtual ~Resource() {};
 
+      //! Is the resource initialized?
       virtual bool IsInitialised() = 0;
 
+      //! Initializes the resource
       virtual Dg_Error Init() = 0;
+
+      //! Deinitializes the resource
       virtual Dg_Error DeInit() = 0;
 
+      //! Get the key associated with this resource
       RKey GetKey() const { return m_key; }
 
     private:
@@ -75,7 +81,11 @@ namespace Dg
 
       hResource() : m_resource(nullptr) {}
       ~hResource();
+
+      //! Copy constructor
       hResource(hResource const & a_other);
+
+      //! Assignment
       hResource & operator=(hResource const & a_other);
 
       //! Conversion operator

@@ -36,6 +36,11 @@ namespace Dg
 
     //! Construct plane form coefficients of the equation:
     //!     Ax + By + Cz + D = 0
+    //!
+    //! @param[in] A x-coefficient
+    //! @param[in] B y-coefficient
+    //! @param[in] C z-coefficient
+    //! @param[in] D constant 
     Plane(Real A, Real B, Real C, Real D);
 
     //! Construct plane from three points that lie on the plane.
@@ -48,7 +53,10 @@ namespace Dg
     Plane(Vector4<Real> const & n, Vector4<Real> const & p);
     ~Plane() {}
 
+    //! Copy constructor
     Plane(Plane const &);
+
+    //! Assignment
     Plane& operator= (Plane const &);
 
     //! Get the plane normal.
@@ -68,6 +76,11 @@ namespace Dg
 
     //! Set the plane form coefficients of the equation:
     //!     Ax + By + Cz + D = 0
+    //!
+    //! @param[in] A x-coefficient
+    //! @param[in] B y-coefficient
+    //! @param[in] C z-coefficient
+    //! @param[in] D constant 
     void Set(Real A, Real B, Real C, Real D);
 
     //! Set the plane from normal vector and offset.
@@ -80,8 +93,9 @@ namespace Dg
     void Set(Vector4<Real> const & p0, Vector4<Real> const & p1, Vector4<Real> const & p2);
 
     //! Signed distance from point to plane.
-    //! Negative is behind the normal vector.
-    //! Positive is in front of normal vector.
+    //! @return Negative if behind the plane.
+    //!
+    //! @param[in] a_point Input point
     Real SignedDistance(Vector4<Real> const & a_point) const;
 
     //! Distance from point to plane.

@@ -19,11 +19,9 @@ namespace Dg
 {
   template<typename Real> class Matrix44;
 
+  //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
   template<typename Real>
-  Matrix44<Real> AffineInverse(const Matrix44<Real>&);
-
-  template<typename Real>
-  Matrix44<Real> Transpose(const Matrix44<Real>&);
+  Matrix44<Real> AffineInverse(Matrix44<Real> const &);
 
   //! @ingroup Math_classes
   //!
@@ -56,21 +54,32 @@ namespace Dg
     Matrix44() { Identity(); }
     ~Matrix44() {}
 
+    //! Copy Constructor
     Matrix44(Matrix < 4, 4, Real > const & a_other) : Matrix<4, 4, Real>(a_other){}
+    
+    //! Assignment
     Matrix44& operator=(Matrix < 4, 4, Real > const &);
 
-    //Manipulators
+    //! Set matrix by rows
     void SetRows(Matrix<1, 4, Real> const & row0, Matrix<1, 4, Real> const & row1,
                  Matrix<1, 4, Real> const & row2, Matrix<1, 4, Real> const & row3);
+
+    //! Get rows of the matrix
     void GetRows(Matrix<1, 4, Real>& row0, Matrix<1, 4, Real>& row1,
                  Matrix<1, 4, Real>& row2, Matrix<1, 4, Real>& row3) const;
+
+    //! Set matrix by columns
     void SetColumns(Matrix<4, 1, Real> const & col0, Matrix<4, 1, Real> const & col1,
                     Matrix<4, 1, Real> const & col2, Matrix<4, 1, Real> const & col3);
+
+    //! Get matrix columns
     void GetColumns(Matrix<4, 1, Real>& col0, Matrix<4, 1, Real>& col1,
                     Matrix<4, 1, Real>& col2, Matrix<4, 1, Real>& col3) const;
 
     //! Get quaternion from the upper 3x3 rotation matrix.
     //! @pre The upper 3x3 is a rotation matrix.
+    //!
+    //! @return Quaternion
     Quaternion<Real> GetQuaternion() const;
 
     //! Get quaternion from the upper 3x3 rotation matrix.

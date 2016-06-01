@@ -28,15 +28,18 @@ namespace Dg
 
   namespace impl
   {
+    //! Recursive function which finds the determinant of a matrix.
+    //! Not the most efficient algorithm O(n!).
     //!
+    //! @return value
     template<size_t M, size_t N, typename Real>
     Real Determinant(Matrix<M, N, Real> const &);
 
-    //!
+    //!Finds the determinant of a 2x2 matrix.
     template<typename Real>
     Real Determinant(Matrix<2, 2, Real> const &);
 
-    //!
+    //!Finds the determinant of a 1x1 matrix.
     template<typename Real>
     Real Determinant(Matrix<1, 1, Real> const &);
   }
@@ -61,7 +64,10 @@ namespace Dg
     Matrix();
     ~Matrix() {}
 
+    //! Copy constructor
     Matrix(Matrix const &);
+
+    //! Assignment
     Matrix& operator=(Matrix const &);
 
     //! Accessor m: row, n:column.
@@ -76,7 +82,10 @@ namespace Dg
     //! Accessor element by index.
     Real operator[](size_t i) const { return m_V[i]; }
 
+    //! Comparison
     bool operator== (Matrix const &) const;
+
+    //! Comparison
     bool operator!= (Matrix const &) const;
 
     //! Checks if all elements are below the tolerance.
@@ -95,9 +104,16 @@ namespace Dg
     template<size_t _M, size_t _N>
     Matrix<_M, _N, Real> GetSubMatrix(size_t m0, size_t n0) const;
 
+    //! Set a row in the matrix
     void SetRow(size_t m, Matrix<1, N, Real> const &);
+
+    //! Get a row in the matrix
     void GetRow(size_t m, Matrix<1, N, Real>&) const;
+
+    //! Set a column in the matrix
     void SetColumn(size_t n, Matrix<M, 1, Real> const &);
+
+    //! Get a column in the matrix
     void GetColumn(size_t n, Matrix<M, 1, Real>&) const;
 
     //! Sets near-zero elements to 0.
@@ -119,30 +135,47 @@ namespace Dg
     //! Element-wise dot product.
 	  Real Dot(Matrix const &) const;
 
+    //! Matrix-matrix addition
     Matrix operator+ (Matrix const &) const;
+
+    //! Matrix-matrix addition, assign to self
     Matrix& operator+= (Matrix const &);
+
+    //! Matrix-matrix subtraction
     Matrix operator- (Matrix const &) const;
+
+    //! Matrix-matrix subtraction, assign to self
     Matrix& operator-= (Matrix const &);
 
     //! Negate matrix.
     Matrix operator-() const;
 
+    //! Matrix-matrix multiplication, assign to self
     Matrix& operator*= (Matrix const &);
 
+    //! Matrix-matrix multiplication
     template<size_t _M>
     Matrix<M, _M, Real> operator* (Matrix<N, _M, Real> const &) const;
 
+    //! Matrix-scalar multiplication, assign to self
     Matrix& operator*= (Real);
+
+    //! Matrix-scalar multiplication
     Matrix operator* (Real) const;
+
+    //! Matrix-scalar division, assign to self
     Matrix& operator/= (Real);
+
+    //! Matrix-scalar division
     Matrix operator/ (Real) const;
 
+    //! Scalar multiplication
     template<size_t _M, size_t _N, typename _Real>
     friend Matrix<_M, _N, _Real> operator* (_Real, Matrix<_M, _N, _Real> const &);
 
   protected:
 
-    //Data Members
+    //! Data
     Real m_V[M * N];
 
   };

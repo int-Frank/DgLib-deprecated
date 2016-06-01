@@ -437,6 +437,11 @@ namespace Dg
   //! @ingroup Containers_functions
   //!
   //! Find a value in the list, returns pointer to element.
+  //!
+  //! @return Pointer to object
+  //!
+  //! @param container vector to search
+  //! @param val Item to search for
   template<class T>
   T* find(vector_pod<T>& container, T const & val)
   {
@@ -454,6 +459,9 @@ namespace Dg
   //! @ingroup Containers_functions
   //!
   //! Fills the vector with a value.
+  //!
+  //! @param container Target container
+  //! @param val value to fill set each element
   template<class T>
   void fill(vector_pod<T>& container, T const & val)
   {

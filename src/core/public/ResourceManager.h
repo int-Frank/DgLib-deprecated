@@ -26,16 +26,24 @@ namespace Dg
     //!
     //! @param a_resource New instance of a resource
     //! @param a_options Options for this resource
+    //!
+    //! @return Error code
     Dg_Error RegisterResource(Resource * a_resource, uint32_t a_options = rDEFAULT);
 
     //! Get a pointer to a resource. Will fail if the resouce has not been 
     //! successfully registed first with RegisterResource().
+    //!
+    //! @return Error code
     Dg_Error GetResourceHandle(RKey, hResource &);
 
     //! Initialise a particular resource. 
+    //!
+    //! @return Error code
     Dg_Error InitResource(RKey);
 
     //! Initialises all resources.
+    //!
+    //! @return Error code
     Dg_Error InitAll();
 
     //! Deinitialise a particular resource. 

@@ -23,6 +23,7 @@ namespace Dg
   {
   public:
 
+    //! Get pointer to the static instance of the object
     static T * Instance() 
     {
       static T s_instance;
@@ -31,10 +32,17 @@ namespace Dg
    
   protected:
 
-    Singleton(){} // Prevent construction
-    Singleton(Singleton const &); // Prevent construction by copying
-    Singleton & operator=(Singleton const &); // Prevent assignment
-    virtual ~Singleton(){} // Prevent unwanted destruction
+    //! Prevent construction
+    Singleton(){}
+
+    //! Prevent construction by copying
+    Singleton(Singleton const &);
+
+    //! Prevent assignment
+    Singleton & operator=(Singleton const &);
+
+    //! Prevent unwanted destruction
+    virtual ~Singleton(){}
 
   };
 

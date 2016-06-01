@@ -82,6 +82,10 @@ namespace Dg
 
   //! Inverse error function. Uses Mclaurin series expansion approximation.
   //! The template param nTerms represents the number of terms in the series expansion to use.
+  //!
+  //! @return Result
+  //!
+  //! @param a_x Input: -1 < x < 1
   template<typename Real, unsigned nTerms = 16>
   Real inverf(Real a_x)
   {

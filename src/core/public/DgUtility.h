@@ -13,6 +13,7 @@
 #include <algorithm>
 
 //! @ingroup utility_constants
+//! Error codes
 enum Dg_Error
 {
   DgR_Success = 0,

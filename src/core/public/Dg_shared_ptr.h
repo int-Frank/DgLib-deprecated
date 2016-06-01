@@ -21,6 +21,7 @@ namespace Dg
   template<typename T>
   struct DefaultDeleter
   {
+    //! Deleting operator
     void operator()(T * a_obj) const { delete a_obj; }
   };
 

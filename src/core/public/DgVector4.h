@@ -24,6 +24,7 @@ namespace Dg
   template<typename Real>
   Vector4<Real> operator*(Vector4<Real> const &, VQS<Real> const &);
 
+  //! Cross product
   template<typename Real>
   Vector4<Real> Cross(Vector4<Real> const &, Vector4<Real> const &);
 
@@ -45,11 +46,20 @@ namespace Dg
 
   //! Returns a random orthonormal vector to an axis.
   //! @pre Input must be a unit vector.
+  //!
+  //! @return Vector
+  //!
+  //! @param axis Resulting vector will be orthormal to this
   template<typename Real>
   Vector4<Real> GetRandomOrthonormalVector(Vector4<Real> const & axis);
 
   //! Returns a random vector at an angle to an axis.
   //! @pre Input axis must be a unit vector.
+  //!
+  //! @return Vector
+  //!
+  //! @param axis Axis
+  //! @param angle Angle
   template<typename Real>
   Vector4<Real> GetRandomVector(Vector4<Real> const & axis, Real angle);
 
@@ -81,11 +91,15 @@ namespace Dg
 
     //! Default constructor. Members not initialized.
     Vector4() {}
+
+    //! Construct vector from coefficients
     Vector4(Real x, Real y, Real z, Real w);
     ~Vector4() {}
 
-    // copy operations
+    //! Copy constructor
     Vector4(Matrix<1, 4, Real> const & a_other) : Matrix<1, 4, Real>(a_other) {}
+
+    //! Assignment
     Vector4& operator=(Matrix<1, 4, Real> const &);
 
     //! Determines if the vector is the unit vector within some tolerance.
@@ -97,7 +111,10 @@ namespace Dg
     //! Make unit vector
     void Normalize();
 
+    //! Vector length
     Real Length() const;
+
+    //! Squared length
     Real LengthSquared() const;
 
     //! Squared distance between two points.
@@ -108,22 +125,45 @@ namespace Dg
     template<typename Real>
     friend Real Distance(Vector4<Real> const &, Vector4<Real> const &);
 
+    //! Access element-x by value
     Real x() const { return m_V[0]; }
+
+    //! Access element-y by value
     Real y() const { return m_V[1]; }
+
+    //! Access element-z by value
     Real z() const { return m_V[2]; }
+
+    //! Access element-w by value
     Real w() const { return m_V[3]; }
 
+    //! Access element-x by reference
     Real & x() { return m_V[0]; }
+
+    //! Access element-y by reference
     Real & y() { return m_V[1]; }
+
+    //! Access element-z by reference
     Real & z() { return m_V[2]; }
+
+    //! Access element-w by reference
     Real & w() { return m_V[3]; }
 
   public:
 
+    //! v = [0, 0, 0, 0]
     static Vector4 Origin();
+
+    //! v = [0, 0, 0, 0]
     static Vector4 ZeroVector();
+
+    //! v = [1, 0, 0, 0]
     static Vector4 xAxis();
+
+    //! v = [0, 1, 0, 0]
     static Vector4 yAxis();
+
+    //! v = [0, 0, 1, 0]
     static Vector4 zAxis();
 
   };

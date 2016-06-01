@@ -27,7 +27,10 @@ namespace Dg
 		RNG() {}
 		~RNG() {}
 
+    //! Copy Constructor
 		RNG(const RNG&) {}
+
+    //! Assignment
 		RNG& operator= (const RNG&) { return *this; }
 
 		//! Seed the internal generator from one value.

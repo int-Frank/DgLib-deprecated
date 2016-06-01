@@ -37,14 +37,25 @@ namespace Dg
     Line(Vector4<Real> const & origin, Vector4<Real> const & direction);
     ~Line() {}
 
+    //! Copy constructor
     Line(Line const &);
+
+    //! Assignment
     Line& operator=(Line const &);
 
+    //! Get the origin of the line
     Vector4<Real> const & Origin() const { return m_origin; }
+
+    //! Get the direction of the line
     Vector4<Real> const & Direction() const { return m_direction; }
+
+    //! Get the origin and direction of the line
     void Get(Vector4<Real>& origin, Vector4<Real>& direction) const;
 
+    //! Comparison
     bool operator== (Line const &) const;
+
+    //! Comparison
     bool operator!= (Line const &) const;
 
     //! Set line from an origin and direction

@@ -34,7 +34,10 @@ namespace Dg
     BoundedSND() : m_values(nullptr), m_nValues(0) {}
     ~BoundedSND();
 
+    //! Copy constructor.
     BoundedSND(const BoundedSND&);
+
+    //! Assignment
     BoundedSND& operator=(const BoundedSND&);
 
     //! Initiate the table of values.
