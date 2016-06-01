@@ -63,7 +63,16 @@ namespace Dg
     void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
 
     //! Closest point on a line to a point.
-    Vector4<Real> ClosestPoint(Vector4<Real> const & a_pIn) const;
+    //!
+    //! @return 0: Closest point lies on the ray
+    //! @return 1: Closest point is the ray origin (point lies behind the ray)
+    //!
+    //! @param[in] a_pIn Input point
+    //! @param[out] a_pOut Closest point on the ray
+    //! @param[out] a_u Distance along the ray to the closest point.
+    int ClosestPoint(Vector4<Real> const & a_pIn,
+                     Vector4<Real> & a_pOut,
+                     Real & a_u) const;
 
   private:
 
@@ -169,19 +178,23 @@ namespace Dg
   //  @ Ray::ClosestPoint()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Ray<Real>::ClosestPoint(Vector4<Real> const & a_pIn) const
+  int Ray<Real>::ClosestPoint(Vector4<Real> const & a_pIn,
+                              Vector4<Real> & a_pOut,
+                              Real & a_u) const
   {
     Vector4<Real> w(a_pIn - m_origin);
-
     Real proj = w.Dot(m_direction);
 
     if (proj < static_cast<Real>(0.0))
     {
-      return m_origin;
+      a_u = static_cast<Real>(0.0);
+      a_pOut = m_origin;
+      return 1;
     }
 
-    Real vsq = m_direction.Dot(m_direction);
-    return m_origin + (proj / vsq) * m_direction;
+    a_u = proj / m_direction.Dot(m_direction);
+    a_pOut = m_origin + a_u * m_direction;
+    return 0;
   }	//End: Ray::ClosestPoint()
 
 
@@ -366,12 +379,12 @@ namespace Dg
   //! @param[out] a_point Closest point from plane to ray.
   //!
   //! @return 0: Ray intersects plane
-  //! @return 1: No Intersection. Ray is orthogonal to the plane normal. Output point not set.
-  //! @return 2: Ray lies on the plane. Output point not set.
+  //! @return 1: Ray lies on the plane. Output point not set.
+  //! @return 2: No Intersection. Ray is orthogonal to the plane normal. Output point not set.
   //! @return 3: Ray does not intersect plane; points away from plane. Output point set as the ray origin.
   template<typename Real>
-  int TestPlaneLine(Plane<Real> const & a_plane, Ray<Real> const & a_ray,
-                    Real & a_u, Vector4<Real> & a_point)
+  int TestPlaneRay(Plane<Real> const & a_plane, Ray<Real> const & a_ray,
+                   Real & a_u, Vector4<Real> & a_point)
   {
     Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
@@ -386,9 +399,9 @@ namespace Dg
       //check if ray is on the plane
       if (Dg::IsZero(a_plane.Distance(ro)))
       {
-        return 2;
+        return 1;
       }
-      return 1;
+      return 2;
     }
 
     a_u = ((ro.Dot(pn) + po) / denom);
@@ -403,7 +416,7 @@ namespace Dg
 
     a_point = ro + a_u * rd;
     return 0;
-  }	//End: Ray::IntersectionPlaneLine()
+  }	//End: Ray::IntersectionPlaneRay()
 }
 
 #endif

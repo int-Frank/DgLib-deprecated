@@ -45,9 +45,9 @@ TEST(Stack_DgLine, DgLine)
 
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), -1.0);
   result = TestPlaneLine(pl, l0, p0);
-  CHECK(result == 1);
+  CHECK(result == 2);
 
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), 0.0);
   result = TestPlaneLine(pl, l0, p0);
-  CHECK(result == 2);
+  CHECK(result == 1);
 }
