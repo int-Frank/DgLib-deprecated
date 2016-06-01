@@ -3,6 +3,10 @@ $scriptPath = $MyInvocation.MyCommand.Path
 $scriptDir = Split-Path $scriptPath
 Push-Location $scriptDir
 
+#Flags
+
+$FailOnBadDocs = $TRUE #Fail if documentation has errors
+
 #Constants
 
 $MSBuildPath = 'C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe'
@@ -11,7 +15,7 @@ $LibEXEPath32 = 'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\lib.
 $DoxygenPath = "C:\Program Files\doxygen\bin\doxygen.exe"
 $DgLibFilePath = Resolve-Path '..\DgLib.sln'
 $BuildFailedTitle = "Build Failed"
-$DgLibLibName = "DgLib.lib"
+$OutputLibName = "DgLib.lib"
 
 #Functions
 

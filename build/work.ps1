@@ -19,6 +19,7 @@ md "..\deploy\DgLib\lib"
 md "..\deploy\DgLib\samples"
 
 #Build DgLib Win32 & x64 solution
+
 foreach ($platform in ("Win32", "x64"))
 {
     Echo "Building ${platform}"
@@ -53,7 +54,7 @@ foreach ($platform in ("Win32", "x64"))
 
     pushd "..\bin\${platform}\Release\"
 
-    $args = '/OUT:DgLib.lib', 'Engine.lib', 'Math.lib', 'Utility.lib'
+    $args = "/OUT:${OutputLibName}", 'Engine.lib', 'Math.lib', 'Utility.lib'
 
     $LibEXEPath = $LibEXEPath32
     if ($platform -eq "x64")
@@ -81,14 +82,28 @@ foreach ($platform in ("Win32", "x64"))
 
 #Build Samples (make sure they build)
 
+#Copy samples to deployment folder
+
 #Copy public headers
 copy ..\src\core\public\*.* ..\deploy\DgLib\include
 
-#Copy samples to deployment folder
-
 #Create docs
 Echo "Creating docs"
-& $DoxygenPath "..\Doxyfile"
+
+#Need to run doxygen from the location of the doxy file
+pushd .\doxygen
+& $DoxygenPath "Doxyfile"
+
+If ($FailOnBadDocs -and (Get-Content "doxygen-error-log.txt") -ne $Null) 
+{
+    $ErrorMessage = "Documentation contains errors. Stopping build process..."
+    DisplayNotification "Error" $BuildFailedTitle $ErrorMessage
+    Echo $ErrorMessage
+    exit
+}
+
+popd
+
 Echo "Finished creating docs!"
 
 #Zip and copy archive to Google Drive
