@@ -25,29 +25,42 @@ TEST(Stack_DgLine, DgLine)
   CHECK(l0.ClosestPoint(vec(7.0, -34.5, 90.53, 1.0)) == vec(7.0, 0.0, 0.0, 1.0));
 
   //Geometric tests
-  line l3(vec(1.0, 1.0, 0.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
-  vec p0, p1;
-  int result = ClosestPointsLineLine(l0, l3, p0, p1);
-  CHECK(result == 0);
-  CHECK(p0 == vec(1.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(1.0, 1.0, 0.0, 1.0));
 
-  l3 = line(vec(4.0, 1.0, 0.0, 1.0), vec::xAxis());
-  result = ClosestPointsLineLine(l0, l3, p0, p1);
+  //Line-Line
+  vec p0, p1;
+  int result = 0;
+
+  //Lines parallel
+  l1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
+  result = ClosestPointsLineLine(l0, l1, p0, p1);
   CHECK(result == 1);
   CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
   CHECK(p1 == vec(0.0, 1.0, 0.0, 1.0));
 
-  plane pl(vec(1.0, 0.0, 0.0, 0.0), -1.0);
-  result = TestPlaneLine(pl, l0, p0);
+  //Lines not parallel
+  l1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
+  result = ClosestPointsLineLine(l0, l1, p0, p1);
   CHECK(result == 0);
   CHECK(p0 == vec(1.0, 0.0, 0.0, 1.0));
+  CHECK(p1 == vec(1.0, 1.0, 0.0, 1.0));
 
+  //Line-Plane
+  plane pl;
+
+  //Line parallel to plane
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), -1.0);
   result = TestPlaneLine(pl, l0, p0);
   CHECK(result == 2);
 
+  //Line on plane
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), 0.0);
   result = TestPlaneLine(pl, l0, p0);
   CHECK(result == 1);
+
+  //Line intersecting plane
+  pl.Set(vec(1.0, 0.0, 0.0, 0.0), -1.0);
+  result = TestPlaneLine(pl, l0, p0);
+  CHECK(result == 0);
+  CHECK(p0 == vec(1.0, 0.0, 0.0, 1.0));
+
 }

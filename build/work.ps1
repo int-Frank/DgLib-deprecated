@@ -80,7 +80,7 @@ foreach ($platform in ("Win32", "x64"))
     copy "..\bin\${platform}\Release\DgLib.lib" "..\deploy\DgLib\lib\${platform}"
 }
 
-#Build Samples (make sure they build)
+#Build Samples (to make sure they build)
 
 #Copy samples to deployment folder
 
