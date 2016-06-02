@@ -59,7 +59,7 @@
     <ClInclude Include="..\..\public\DgRay.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\LineSegment.h">
+    <ClInclude Include="..\..\public\DgLineSegment.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>
