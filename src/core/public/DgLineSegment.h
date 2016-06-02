@@ -80,7 +80,15 @@ namespace Dg
     Real LengthSquared() const;
 
     //! Closest point on a line segment to a point.
-    Vector4<Real> ClosestPoint(Vector4<Real> const & a_pIn) const;
+    //!
+    //! @return 0: Success
+    //!
+    //! @param[in] a_pIn Input point
+    //! @param[out] a_pOut Closest point on the line segment
+    //! @param[out] a_u Distance along the ray to the closest point: 0 < u < 1
+    int ClosestPoint(Vector4<Real> const & a_pIn,
+                     Vector4<Real> & a_pOut,
+                     Real & a_u) const;
 
   private:
 
@@ -206,7 +214,9 @@ namespace Dg
   //  @ LineSegment::ClosestPoint()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> LineSegment<Real>::ClosestPoint(Vector4<Real> const & a_pIn) const
+  int LineSegment<Real>::ClosestPoint(Vector4<Real> const & a_pIn,
+                                      Vector4<Real> & a_pOut,
+                                      Real & a_u) const
   {
     Vector4<Real> w = a_pIn - m_origin;
 
@@ -214,17 +224,26 @@ namespace Dg
 
     if (proj <= static_cast<Real>(0.0))
     {
-      return m_origin;
+      a_u = static_cast<Real>(0.0);
+      a_pOut = m_origin;
+    }
+    else
+    {
+      Real vsq = m_direction.Dot(m_direction);
+
+      if (proj >= vsq)
+      {
+        a_u = static_cast<Real>(1.0);
+        a_pOut = m_origin + m_direction;
+      }
+      else
+      {
+        a_u = (proj / vsq);
+        a_pOut = m_origin + a_u * m_direction;
+      }
     }
     
-    Real vsq = m_direction.Dot(m_direction);
-
-    if (proj >= vsq)
-    {
-      return m_origin + m_direction;
-    }
-
-    return m_origin + (proj / vsq) * m_direction;
+    return 0;
   }	//End: LineSegment::ClosestPoint()
 
 
@@ -465,7 +484,7 @@ namespace Dg
   //! @return 1: Line segment is parallel to line.
   template<typename Real>
   int ClosestPointsLineSegmentLine(
-    LineSegment<Real> const & a_ls, Ray<Real> const & a_line,
+    LineSegment<Real> const & a_ls, Line<Real> const & a_line,
     Real a_uls, Real a_ul,
     Vector4<Real> & a_pls, Vector4<Real> & a_pl)
   {
@@ -485,17 +504,13 @@ namespace Dg
     Real sn, sd, tn, td;
 
     // if denom is zero, try finding closest point on line to segment origin
-    if (::IsZero(denom))
+    if (Dg::IsZero(denom))
     {
       // compute closest points
       a_pls = ols;
       a_pl = ol + d*dl;
       return 1;
     }
-
-    // parameters to compute a_uls, a_ul
-    Real a_uls, a_ul;
-    Real sn;
 
     // clamp a_uls within [0,1]
     sn = b*d - c;

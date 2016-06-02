@@ -64,8 +64,7 @@ namespace Dg
 
     //! Closest point on a line to a point.
     //!
-    //! @return 0: Closest point lies on the ray
-    //! @return 1: Closest point is the ray origin (point lies behind the ray)
+    //! @return 0: Success
     //!
     //! @param[in] a_pIn Input point
     //! @param[out] a_pOut Closest point on the ray
@@ -189,11 +188,13 @@ namespace Dg
     {
       a_u = static_cast<Real>(0.0);
       a_pOut = m_origin;
-      return 1;
+    }
+    else
+    {
+      a_u = proj / m_direction.Dot(m_direction);
+      a_pOut = m_origin + a_u * m_direction;
     }
 
-    a_u = proj / m_direction.Dot(m_direction);
-    a_pOut = m_origin + a_u * m_direction;
     return 0;
   }	//End: Ray::ClosestPoint()
 

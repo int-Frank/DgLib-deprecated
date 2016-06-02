@@ -33,14 +33,46 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //Geometric tests
 
   //lineSeg-point
+  ls0.Set(vec(2.0, 0.0, 0.0, 1.0), vec(6.0, 0.0, 0.0, 1.0));
+  Real uls = 0.0;
+  vec pIn, pOut;
+  int result;
 
   //Point behind p0
+  pIn.Set(-1.0, -1.8, -2.9, 1.0);
+  result = ls0.ClosestPoint(pIn, pOut, uls);
+  CHECK(result == 0);
+  CHECK(uls == 0.0);
+  CHECK(pOut == ls0.GetP0());
+
   //Point behind p1
+  pIn.Set(10.0, 11.8, -12.9, 1.0);
+  result = ls0.ClosestPoint(pIn, pOut, uls);
+  CHECK(result == 0);
+  CHECK(uls == 1.0);
+  CHECK(pOut == ls0.GetP1());
+
   //Closest point along lineSeg
+  pIn.Set(3.0, 11.8, -12.9, 1.0);
+  result = ls0.ClosestPoint(pIn, pOut, uls);
+  CHECK(result == 0);
+  CHECK(uls == 0.25);
+  CHECK(pOut == vec(3.0, 0.0, 0.0, 1.0));
 
   //lineSeg-Line
+  line l;
+  vec pls, pl;
+  Real ul;
 
   //LineSeg parallel to line
+  l.Set(vec(1.0, 1.0, 1.0, 1.0), vec::xAxis());
+  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
+  CHECK(result == 1);
+  CHECK(uls == 0.0);
+  CHECK(ul == 1.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pl == vec(2.0, 0.0, 0.0, 1.0));
+
   //LineSeg parallel to line, opposite direction
   //lineSeg-p0 closest point
   //lineSeg-p1 closest point

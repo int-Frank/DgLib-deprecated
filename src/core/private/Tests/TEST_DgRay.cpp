@@ -41,7 +41,7 @@ TEST(Stack_DgRay, DgRay)
   //Point behind ray
   pIn.Set(-7.0, -34.5, 90.53, 1.0);
   result = r0.ClosestPoint(pIn, pOut, u);
-  CHECK(result == 1);
+  CHECK(result == 0);
   CHECK(u == 0.0);
   CHECK(pOut == vec(0.0, 0.0, 0.0, 1.0));
 

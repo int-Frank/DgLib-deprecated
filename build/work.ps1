@@ -7,9 +7,15 @@ $ErrorActionPreference = "Stop"
 
 .".\utility.ps1"
 
-
-#Clean and create new deployment folder
-Remove-Item -Recurse -Force "..\deploy\DgLib"
+if ((Test-Path ..\deploy) -ne $TRUE)
+{
+    md "..\deploy"
+}
+elseif (Test-Path ..\deploy\DgLib)
+{
+    #Clean and create new deployment folder
+    Remove-Item -Recurse -Force "..\deploy\DgLib"
+}
 
 md "..\deploy\DgLib"
 md "..\deploy\DgLib\3rd party"
