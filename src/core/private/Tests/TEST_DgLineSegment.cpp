@@ -62,7 +62,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //lineSeg-Line
   line l;
   vec pls, pl;
-  Real ul;
+  Real ul = 0.0;
 
   //LineSeg parallel to line
   l.Set(vec(1.0, 1.0, 1.0, 1.0), vec::xAxis());
@@ -71,9 +71,17 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(uls == 0.0);
   CHECK(ul == 1.0);
   CHECK(pls == ls0.GetP0());
-  CHECK(pl == vec(2.0, 0.0, 0.0, 1.0));
+  CHECK(pl == vec(2.0, 1.0, 1.0, 1.0));
 
   //LineSeg parallel to line, opposite direction
+  l.Set(vec(1.0, 1.0, 1.0, 1.0), -vec::xAxis());
+  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
+  CHECK(result == 1);
+  CHECK(uls == 0.0);
+  CHECK(ul == -1.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pl == vec(2.0, 1.0, 1.0, 1.0));
+
   //lineSeg-p0 closest point
   //lineSeg-p1 closest point
   //Closest point along lineSeg

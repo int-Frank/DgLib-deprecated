@@ -485,7 +485,7 @@ namespace Dg
   template<typename Real>
   int ClosestPointsLineSegmentLine(
     LineSegment<Real> const & a_ls, Line<Real> const & a_line,
-    Real a_uls, Real a_ul,
+    Real & a_uls, Real & a_ul,
     Vector4<Real> & a_pls, Vector4<Real> & a_pl)
   {
     Vector4<Real> ols(a_ls.Origin());
@@ -501,19 +501,19 @@ namespace Dg
     Real d = dl.Dot(w0);
     Real denom = a - b*b;
 
-    Real sn, sd, tn, td;
-
     // if denom is zero, try finding closest point on line to segment origin
     if (Dg::IsZero(denom))
     {
       // compute closest points
       a_pls = ols;
       a_pl = ol + d*dl;
+      a_uls = static_cast<Real>(0.0);
+      a_ul = d;
       return 1;
     }
 
     // clamp a_uls within [0,1]
-    sn = b*d - c;
+    Real sn = b*d - c;
 
     // clamp a_uls to 0
     if (sn < static_cast<Real>(0.0))
