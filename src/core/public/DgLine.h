@@ -200,22 +200,20 @@ namespace Dg
 
     //compute intermediate parameters
     Vector4<Real> w0(o0 - o1);
-    Real a = d0.Dot(d0);
-    Real b = d0.Dot(d1);
-    Real c = d1.Dot(d1);
-    Real d = d0.Dot(w0);
-    Real e = d1.Dot(w0);
-    Real denom = a*c - b*b;
-    if (Dg::IsZero(denom))
+    Real a = d0.Dot(d1);
+    Real b = d0.Dot(w0);
+    Real c = d1.Dot(w0);
+    Real d = static_cast<Real>(1.0) - a*a;
+    if (Dg::IsZero(d))
     {
       a_p0 = o0;
-      a_p1 = o1 + (e / c) * d1;
+      a_p1 = o1 + c * d1;
       return 1;
     }
     else
     {
-      a_p0 = o0 + ((b*e - c*d) / denom)*d0;
-      a_p1 = o1 + ((a*e - b*d) / denom)*d1;
+      a_p0 = o0 + ((a*c - b) / d)*d0;
+      a_p1 = o1 + ((c - a*b) / d)*d1;
       return 0;
     }
   }	//End: Line::ClosestPointLineLine()

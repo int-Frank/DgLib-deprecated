@@ -209,8 +209,8 @@ namespace Dg
   //! @param[out] a_p0 Point on a_ray0 closest to a_ray1 
   //! @param[out] a_p1 Point on a_ray1 closest to a_ray0
   //!
-  //! @return 0: Success
-  //! @return 1: Rays are parallel.
+  //! @return 0: Rays not parallel
+  //! @return 1: Rays are parallel, potentially infinite closest points.
   template<typename Real>
   int ClosestPointsRayRay(Ray<Real> const & a_ray0, Ray<Real> const & a_ray1,
                           Real & a_u0, Real & a_u1,
@@ -223,40 +223,38 @@ namespace Dg
 
     //compute intermediate parameters
     Vector4<Real> w0(o0 - o1);
-    Real a = d0.Dot(d0);
-    Real b = d0.Dot(d1);
-    Real c = d1.Dot(d1);
-    Real d = d0.Dot(w0);
-    Real e = d1.Dot(w0);
-    Real denom = a*c - b*b;
+    Real a = d0.Dot(d1);
+    Real b = d0.Dot(w0);
+    Real c = d1.Dot(w0);
+    Real d = static_cast<Real>(1.0) - a * a;
 
     //parameters to compute a_u0 and a_u1
     Real sn, sd, tn, td;
 
     int result = 0;
 
-    //if denom is zero, try finding closest point on R2 to origin1
-    if (Dg::IsZero(denom))
+    //if denom is zero, try finding closest point on ray1 to origin of ray0
+    if (Dg::IsZero(d))
     {
       //clamp a_u0 to 0
-      sd = td = c;
+      sd = td = static_cast<Real>(1.0);
       sn = static_cast<Real>(0.0);
-      tn = e;
-      result++;
+      tn = c;
+      result = 1;
     }
     else
     {
       //clamp a_u0 within[0, +inf]
-      sd = td = denom;
-      sn = b*e - c*d;
-      tn = a*e - b*d;
+      sd = td = d;
+      sn = a*c - b;
+      tn = c - a*b;
 
       //clamp a_u0 to 0
       if (sn < static_cast<Real>(0.0))
       {
         sn = static_cast<Real>(0.0);
-        tn = e;
-        td = c;
+        tn = c;
+        td = static_cast<Real>(1.0);
       }
     }
 
@@ -265,14 +263,15 @@ namespace Dg
     if (tn < static_cast<Real>(0.0))
     {
       a_u1 = static_cast<Real>(0.0);
+
       //clamp a_u0 to 0
-      if (-d < static_cast<Real>(0.0))
+      if (-b < static_cast<Real>(0.0))
       {
         a_u0 = static_cast<Real>(0.0);
       }
       else
       {
-        a_u0 = -d / a;
+        a_u0 = -b;
       }
     }
     else
@@ -311,22 +310,19 @@ namespace Dg
     Vector4<Real> dl(a_line.Direction());
 
     //compute intermediate parameters
-    Vector4<Real> w0(or - ol);
-    Real a = dr.Dot(dr);
-    Real b = dr.Dot(dl);
-    Real c = dl.Dot(dl);
-    Real d = dr.Dot(w0);
-    Real e = dl.Dot(w0);
-    Real denom = a*c - b*b;
+    Vector4<Real> diff(or - ol);
+    Real a = dr.Dot(dl);
+    Real b = dl.Dot(diff);
+    Real c = static_cast<Real>(1.0) - a * a;
 
     int result = 0;
 
-    //if denom is zero, try finding closest point on R to L.origin
-    if (Dg::IsZero(denom))
+    //if c is zero, try finding closest point on the ray to the line origin
+    if (Dg::IsZero(c))
     {
       //compute closest points
       a_ur = static_cast<Real>(0.0);
-      a_ul = e / c;
+      a_ul = b;
 
       a_pr = or ;
       a_pl = ol + a_ul*dl;
@@ -334,28 +330,21 @@ namespace Dg
     }
     else
     {
-      // parameters to compute a_ur, a_ul
-      Real sn;
-
-      // clamp a_ur within [0,1]
-      sn = b*e - c*d;
+      // clamp a_ur within [0,+inf]
+      Real d = dr.Dot(diff);
+      Real sn = a * b - d;
 
       // clamp a_ur to 0
       if (sn < static_cast<Real>(0.0))
       {
         a_ur = static_cast<Real>(0.0);
-        a_ul = e / c;
-      }
-      // clamp a_ur to 1
-      else if (sn > denom)
-      {
-        a_ur = static_cast<Real>(1.0);
-        a_ul = (e + b) / c;
+        a_ul = b;
       }
       else
       {
-        a_ur = sn / denom;
-        a_ul = (a*e - b*d) / denom;
+        Real denom = static_cast<Real>(1.0) / c;
+        a_ur = sn * denom;
+        a_ul = (b - a*d) * denom;
       }
 
       //compute closest points
@@ -366,7 +355,6 @@ namespace Dg
     return result;
 
   }	//End: Ray::ClosestPointRayLine()
-
 
 
   //! @ingroup Math_gTests

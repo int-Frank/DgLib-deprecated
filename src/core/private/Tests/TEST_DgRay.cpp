@@ -50,48 +50,48 @@ TEST(Stack_DgRay, DgRay)
   Real u0 = 0.0, u1 = 0.0;
 
   //Rays parallel, no overlap, facing opposite directions
-  r1.Set(vec(-1.0, 1.0, 0.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
+  r1.Set(vec(-2.0, 1.0, 0.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
   result = ClosestPointsRayRay(r0, r1, u0, u1, p0, p1);
   CHECK(result == 1);
   CHECK(u0 == 0.0);
   CHECK(u1 == 0.0);
   CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(-1.0, 1.0, 0.0, 1.0));
+  CHECK(p1 == vec(-2.0, 1.0, 0.0, 1.0));
 
   //Rays parallel, overlap, facing opposite directions
-  r1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
+  r1.Set(vec(2.0, 1.0, 0.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
   result = ClosestPointsRayRay(r0, r1, u0, u1, p0, p1);
   CHECK(result == 1);
   CHECK(u0 == 0.0);
-  CHECK(u1 == 1.0);
+  CHECK(u1 == 2.0);
   CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
   CHECK(p1 == vec(0.0, 1.0, 0.0, 1.0));
 
   //Rays parallel, overlap, facing same direction
-  r1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
+  r1.Set(vec(2.0, 1.0, 0.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
   result = ClosestPointsRayRay(r0, r1, u0, u1, p0, p1);
   CHECK(result == 1);
-  CHECK(u0 == 1.0);
+  CHECK(u0 == 2.0);
   CHECK(u1 == 0.0);
-  CHECK(p0 == vec(1.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(1.0, 1.0, 0.0, 1.0));
+  CHECK(p0 == vec(2.0, 0.0, 0.0, 1.0));
+  CHECK(p1 == vec(2.0, 1.0, 0.0, 1.0));
 
   //Rays parallel, overlap, facing same direction, switch rays
   result = ClosestPointsRayRay(r1, r0, u1, u0, p1, p0);
   CHECK(result == 1);
-  CHECK(u0 == 1.0);
+  CHECK(u0 == 2.0);
   CHECK(u1 == 0.0);
-  CHECK(p0 == vec(1.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(1.0, 1.0, 0.0, 1.0));
+  CHECK(p0 == vec(2.0, 0.0, 0.0, 1.0));
+  CHECK(p1 == vec(2.0, 1.0, 0.0, 1.0));
 
   //Rays not parallel
-  r1.Set(vec(1.0, 1.0, 1.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
+  r1.Set(vec(2.0, 2.0, 2.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
   result = ClosestPointsRayRay(r0, r1, u0, u1, p0, p1);
   CHECK(result == 0);
-  CHECK(u0 == 1.0);
-  CHECK(u1 == 1.0);
-  CHECK(p0 == vec(1.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(1.0, 1.0, 0.0, 1.0));
+  CHECK(u0 == 2.0);
+  CHECK(u1 == 2.0);
+  CHECK(p0 == vec(2.0, 0.0, 0.0, 1.0));
+  CHECK(p1 == vec(2.0, 2.0, 0.0, 1.0));
 
   //Line - Ray
   line ln;
@@ -99,40 +99,40 @@ TEST(Stack_DgRay, DgRay)
   vec pr, pl;
 
   //Line-Ray Parallel, same direction
-  ln.Set(vec(1.0, 1.0, 1.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
+  ln.Set(vec(5.0, 5.0, 5.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
   result = ClosestPointsRayLine(r0, ln, ur, ul, pr, pl);
   CHECK(result == 1);
   CHECK(ur == 0.0);
-  CHECK(ul == -1.0);
+  CHECK(ul == -5.0);
   CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
-  CHECK(pl == vec(0.0, 1.0, 1.0, 1.0));
+  CHECK(pl == vec(0.0, 5.0, 5.0, 1.0));
 
   //Line-Ray Parallel, opposite directions
-  ln.Set(vec(1.0, 1.0, 1.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
+  ln.Set(vec(5.0, 5.0, 5.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
   result = ClosestPointsRayLine(r0, ln, ur, ul, pr, pl);
   CHECK(result == 1);
   CHECK(ur == 0.0);
-  CHECK(ul == 1.0);
+  CHECK(ul == 5.0);
   CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
-  CHECK(pl == vec(0.0, 1.0, 1.0, 1.0));
+  CHECK(pl == vec(0.0, 5.0, 5.0, 1.0));
 
   //Line-Ray not parallel, closest point is ray origin
-  ln.Set(vec(-1.0, 1.0, 1.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
+  ln.Set(vec(-5.0, 1.0, -2.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
   result = ClosestPointsRayLine(r0, ln, ur, ul, pr, pl);
   CHECK(result == 0);
   CHECK(ur == 0.0);
-  CHECK(ul == 1.0);
+  CHECK(ul == -2.0);
   CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
-  CHECK(pl == vec(-1.0, 1.0, 0.0, 1.0));
+  CHECK(pl == vec(-5.0, 1.0, 0.0, 1.0));
 
   //Line-Ray not parallel, closest point is along the ray
-  ln.Set(vec(1.0, 1.0, 1.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
+  ln.Set(vec(5.0, 5.0, 5.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
   result = ClosestPointsRayLine(r0, ln, ur, ul, pr, pl);
   CHECK(result == 0);
-  CHECK(ur == 1.0);
-  CHECK(ul == 1.0);
-  CHECK(pr == vec(1.0, 0.0, 0.0, 1.0));
-  CHECK(pl == vec(1.0, 1.0, 0.0, 1.0));
+  CHECK(ur == 5.0);
+  CHECK(ul == 5.0);
+  CHECK(pr == vec(5.0, 0.0, 0.0, 1.0));
+  CHECK(pl == vec(5.0, 5.0, 0.0, 1.0));
 
   //Ray-Plane
   plane pln;

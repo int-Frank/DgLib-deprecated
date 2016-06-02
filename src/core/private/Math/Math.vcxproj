@@ -155,6 +155,7 @@
     <ClInclude Include="..\..\public\DgRNG.h" />
     <ClInclude Include="..\..\public\DgVector4.h" />
     <ClInclude Include="..\..\public\DgVQS.h" />
+    <ClInclude Include="..\..\public\LineSegment.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\public\DgMath.inl" />
