@@ -83,8 +83,31 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(pl == vec(2.0, 1.0, 1.0, 1.0));
 
   //lineSeg-p0 closest point
+  l.Set(vec(-2.0, 2.5, 3.0, 1.0), -vec::zAxis());
+  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
+  CHECK(result == 0);
+  CHECK(uls == 0.0);
+  CHECK(ul == 3.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pl == vec(-2.0, 2.5, 0.0, 1.0));
+
   //lineSeg-p1 closest point
+  l.Set(vec(20.0, 2.5, 3.0, 1.0), vec::zAxis());
+  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
+  CHECK(result == 0);
+  CHECK(uls == 1.0);
+  CHECK(ul == -3.0);
+  CHECK(pls == ls0.GetP1());
+  CHECK(pl == vec(20.0, 2.5, 0.0, 1.0));
+
   //Closest point along lineSeg
+  l.Set(vec(3.0, 2.5, 3.0, 1.0), vec::zAxis());
+  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
+  CHECK(result == 0);
+  CHECK(uls == 0.25);
+  CHECK(ul == -3.0);
+  CHECK(pls == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(pl == vec(3.0, 2.5, 0.0, 1.0));
 
   //lineSeg-Ray
 
