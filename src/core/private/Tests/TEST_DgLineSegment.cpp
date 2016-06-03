@@ -110,19 +110,117 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(pl == vec(3.0, 2.5, 0.0, 1.0));
 
   //lineSeg-Ray
+  ray r;
+  Real ur = 0.0;
+  vec pr;
 
   //LineSeg parallel to ray, but behind ray origin
+  r.Set(vec(-3.0, 2.5, 3.0, 1.0), -vec::xAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 1);
+  CHECK(uls == 0.0);
+  CHECK(ur == 0.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pr == r.Origin());
+
   //LineSeg parallel to ray, but behind ray origin, switch LineSeg direction
+  r.Set(vec(30.0, 2.5, 3.0, 1.0), vec::xAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 1);
+  CHECK(uls == 1.0);
+  CHECK(ur == 0.0);
+  CHECK(pls == ls0.GetP1());
+  CHECK(pr == r.Origin());
+
   //LineSeg parallel to ray, p0 behind ray origin, p1 along ray
+  r.Set(vec(3.0, 2.5, 3.0, 1.0), vec::xAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 1);
+  CHECK(uls == 0.25);
+  CHECK(ur == 0.0);
+  CHECK(pls == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(pr == r.Origin());
+
   //LineSeg parallel to ray, p1 behind ray origin, p0 along ray
+  r.Set(vec(3.0, 2.5, 3.0, 1.0), -vec::xAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 1);
+  CHECK(uls == 0.0);
+  CHECK(ur == 1.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pr == vec(2.0, 2.5, 3.0, 1.0));
+
   //LineSeg parallel to ray, completely in front of ray, p0 closer to ray origin
+  r.Set(vec(-3.0, 2.5, 3.0, 1.0), vec::xAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 1);
+  CHECK(uls == 0.0);
+  CHECK(ur == 5.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pr == vec(2.0, 2.5, 3.0, 1.0));
+
   //LineSeg parallel to ray, completely in front of ray, p1 closer to ray origin
+  r.Set(vec(8.0, 2.5, 3.0, 1.0), -vec::xAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 1);
+  CHECK(uls == 0.0);
+  CHECK(ur == 6.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pr == vec(2.0, 2.5, 3.0, 1.0));
+
   //LineSeg not parallel, behind ray, Closest points are ls-p0, ray-origin
+  r.Set(vec(-3.0, 2.3, 3.2, 1.0), vec::zAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 0);
+  CHECK(uls == 0.0);
+  CHECK(ur == 0.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pr == r.Origin());
+  
   //LineSeg not parallel, behind ray, Closest points are ls-p1, ray-origin
+  r.Set(vec(30.0, 2.5, 3.0, 1.0), vec::yAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 0);
+  CHECK(uls == 1.0);
+  CHECK(ur == 0.0);
+  CHECK(pls == ls0.GetP1());
+  CHECK(pr == r.Origin());
+  
   //LineSeg not parallel, behind ray, Closest points are along the ls, ray-origin
+  r.Set(vec(3.0, 2.5, 3.0, 1.0), vec::yAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 0);
+  CHECK(uls == 0.25);
+  CHECK(ur == 0.0);
+  CHECK(pls == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(pr == r.Origin());
+  
   //LineSeg in front of ray, closest point p0
+  r.Set(vec(-3.0, -2.0, 3.0, 1.0), vec::yAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 0);
+  CHECK(uls == 0.0);
+  CHECK(ur == 2.0);
+  CHECK(pls == ls0.GetP0());
+  CHECK(pr == vec(-3.0, 0.0, 3.0, 1.0));
+
   //LineSeg in front of ray, closest point p1
+  r.Set(vec(9.0, -2.0, 3.0, 1.0), vec::yAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 0);
+  CHECK(uls == 1.0);
+  CHECK(ur == 2.0);
+  CHECK(pls == ls0.GetP1());
+  CHECK(pr == vec(9.0, 0.0, 3.0, 1.0));
+
   //LineSeg in front of ray, closest point along ls
+  r.Set(vec(3.0, -2.0, 3.0, 1.0), vec::yAxis());
+  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
+  CHECK(result == 0);
+  CHECK(uls == 0.25);
+  CHECK(ur == 2.0);
+  CHECK(pls == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(pr == vec(3.0, 0.0, 3.0, 1.0));
 
   //lineSeg-LineSeg
 

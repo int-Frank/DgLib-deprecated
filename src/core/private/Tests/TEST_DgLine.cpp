@@ -35,7 +35,7 @@ TEST(Stack_DgLine, DgLine)
   l1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
   result = ClosestPointsLineLine(l0, l1, p0, p1);
   CHECK(result == 1);
-  CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(p0 == l0.Origin());
   CHECK(p1 == vec(0.0, 1.0, 0.0, 1.0));
 
   //Lines not parallel
@@ -52,13 +52,13 @@ TEST(Stack_DgLine, DgLine)
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), -1.0);
   result = TestPlaneLine(pl, l0, p0);
   CHECK(result == 2);
-  CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(p0 == l0.Origin());
 
   //Line on plane
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), 0.0);
   result = TestPlaneLine(pl, l0, p0);
   CHECK(result == 1);
-  CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(p0 == l0.Origin());
 
   //Line intersecting plane
   pl.Set(vec(1.0, 0.0, 0.0, 0.0), -1.0);

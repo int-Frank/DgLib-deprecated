@@ -43,7 +43,7 @@ TEST(Stack_DgRay, DgRay)
   result = r0.ClosestPoint(pIn, pOut, u);
   CHECK(result == 0);
   CHECK(u == 0.0);
-  CHECK(pOut == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(pOut == r0.Origin());
 
   //Ray - Ray
   vec p0, p1;
@@ -55,8 +55,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(result == 1);
   CHECK(u0 == 0.0);
   CHECK(u1 == 0.0);
-  CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(-2.0, 1.0, 0.0, 1.0));
+  CHECK(p0 == r0.Origin());
+  CHECK(p1 == r1.Origin());
 
   //Rays parallel, overlap, facing opposite directions
   r1.Set(vec(2.0, 1.0, 0.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
@@ -64,7 +64,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(result == 1);
   CHECK(u0 == 0.0);
   CHECK(u1 == 2.0);
-  CHECK(p0 == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(p0 == r0.Origin());
   CHECK(p1 == vec(0.0, 1.0, 0.0, 1.0));
 
   //Rays parallel, overlap, facing same direction
@@ -74,7 +74,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(u0 == 2.0);
   CHECK(u1 == 0.0);
   CHECK(p0 == vec(2.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(2.0, 1.0, 0.0, 1.0));
+  CHECK(p1 == r1.Origin());
 
   //Rays parallel, overlap, facing same direction, switch rays
   result = ClosestPointsRayRay(r1, r0, u1, u0, p1, p0);
@@ -82,7 +82,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(u0 == 2.0);
   CHECK(u1 == 0.0);
   CHECK(p0 == vec(2.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(2.0, 1.0, 0.0, 1.0));
+  CHECK(p1 == r1.Origin());
 
   //Rays not parallel
   r1.Set(vec(2.0, 2.0, 2.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
@@ -104,7 +104,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(result == 1);
   CHECK(ur == 0.0);
   CHECK(ul == -5.0);
-  CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(pr == r0.Origin());
   CHECK(pl == vec(0.0, 5.0, 5.0, 1.0));
 
   //Line-Ray Parallel, opposite directions
@@ -113,7 +113,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(result == 1);
   CHECK(ur == 0.0);
   CHECK(ul == 5.0);
-  CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(pr == r0.Origin());
   CHECK(pl == vec(0.0, 5.0, 5.0, 1.0));
 
   //Line-Ray not parallel, closest point is ray origin
@@ -122,7 +122,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(result == 0);
   CHECK(ur == 0.0);
   CHECK(ul == -2.0);
-  CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(pr == r0.Origin());
   CHECK(pl == vec(-5.0, 1.0, 0.0, 1.0));
 
   //Line-Ray not parallel, closest point is along the ray
@@ -142,14 +142,14 @@ TEST(Stack_DgRay, DgRay)
   result = TestPlaneRay(pln, r0, ur, pr);
   CHECK(result == 3);
   CHECK(ur == 0.0);
-  CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(pr == r0.Origin());
 
   //Ray not intersecting plane, parallel to plane
   pln.Set(vec(0.0, 1.0, 0.0, 0.0), vec(0.0, 1.0, 0.0, 1.0));
   result = TestPlaneRay(pln, r0, ur, pr);
   CHECK(result == 2);
   CHECK(ur == 0.0);
-  CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
+  CHECK(pr == r0.Origin());
 
   //Ray lies on the plane
   pln.Set(vec(0.0, 1.0, 0.0, 0.0), vec(0.0, 0.0, 0.0, 1.0));
