@@ -547,6 +547,7 @@ namespace Dg
   //!
   //! @param[in] a_plane Input plane
   //! @param[in] a_ls Input line segment
+  //! @param[out] a_u Distance along the line segment to the plane intersect.
   //! @param[out] a_point Point of intersection.
   //!
   //! @return 0: Line segment intersects plane

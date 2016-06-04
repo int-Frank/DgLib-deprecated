@@ -224,6 +224,7 @@ namespace Dg
   //!
   //! @param[in] a_plane Input plane
   //! @param[in] a_line Input line
+  //! @param[out] a_u Distance along the line to the plane intersect.
   //! @param[out] a_point Point of intersection.
   //!
   //! @return 0: Line intersects plane
