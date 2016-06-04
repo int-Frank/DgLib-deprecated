@@ -159,10 +159,18 @@ TEST(Stack_DgRay, DgRay)
   CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
 
   //Ray intersects plane
-  pln.Set(vec(1.0, 0.0, 0.0, 0.0), vec(1.0, 0.0, 0.0, 1.0));
+  pln.Set(vec(1.0, 0.0, 0.0, 0.0), vec(3.0, 0.0, 0.0, 1.0));
   result = TestPlaneRay(pln, r0, ur, pr);
   CHECK(result == 0);
-  CHECK(ur == 1.0);
-  CHECK(pr == vec(1.0, 0.0, 0.0, 1.0));
+  CHECK(ur == 3.0);
+  CHECK(pr == vec(3.0, 0.0, 0.0, 1.0));
+
+  //Ray intersects plane
+  r0.Set(vec(6.0, 2.3, -5.6, 1.0), vec::xAxis());
+  pln.Set(vec::xAxis(), vec(10.0, 0.0, 0.0, 1.0));
+  result = TestPlaneRay(pln, r0, ur, pr);
+  CHECK(result == 0);
+  CHECK(ur == 4.0);
+  CHECK(pr == vec(10.0, 2.3, -5.6, 1.0));
 
 }

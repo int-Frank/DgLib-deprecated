@@ -223,28 +223,187 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(pr == vec(3.0, 0.0, 3.0, 1.0));
 
   //lineSeg-LineSeg
+  Real uls0 = 0.0;
+  Real uls1 = 0.0;
+  vec pls0, pls1;
 
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p0
+  ls1.Set(vec(-3.0, -2.0, 3.0, 1.0), vec(-5.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 1);
+  CHECK(uls0 == 0.0);
+  CHECK(uls1 == 0.0);
+  CHECK(pls0 == ls0.GetP0());
+  CHECK(pls1 == ls1.GetP0());
+
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p1
+  ls1.Set(vec(-5.0, -2.0, 3.0, 1.0), vec(-3.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 1);
+  CHECK(uls0 == 0.0);
+  CHECK(uls1 == 1.0);
+  CHECK(pls0 == ls0.GetP0());
+  CHECK(pls1 == ls1.GetP1());
+  
   //LineSegs parallel, no overlap, closest points ls0-p1, ls1-p0
+  ls1.Set(vec(10.0, -2.0, 3.0, 1.0), vec(12.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 1);
+  CHECK(uls0 == 1.0);
+  CHECK(uls1 == 0.0);
+  CHECK(pls0 == ls0.GetP1());
+  CHECK(pls1 == ls1.GetP0());
+  
   //LineSegs parallel, no overlap, closest points ls0-p1, ls1-p1
+  ls1.Set(vec(12.0, -2.0, 3.0, 1.0), vec(10.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 1);
+  CHECK(uls0 == 1.0);
+  CHECK(uls1 == 1.0);
+  CHECK(pls0 == ls0.GetP1());
+  CHECK(pls1 == ls1.GetP1());
+  
   //LineSegs parallel, overlap, ls0p0---ls1p0---ls0p1---ls1p1
+  ls1.Set(vec(3.0, -2.0, 3.0, 1.0), vec(9.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 1);
+  CHECK(uls0 == 0.25);
+  CHECK(uls1 == 0.0);
+  CHECK(pls0 == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(pls1 == ls1.GetP0());
+
   //LineSegs parallel, overlap, ls0p1---ls1p0---ls0p0---ls1p1
+  ls1.Set(vec(-3.0, -2.0, 3.0, 1.0), vec(4.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 1);
+  CHECK(uls0 == 0.0);
+  CHECK(Dg::AreEqual(uls1, 5.0 / 7.0));
+  CHECK(pls0 == ls0.GetP0());
+  CHECK(pls1 == vec(2.0, -2.0, 3.0, 1.0));
+
   //LineSegs parallel, overlap, ls0p0---ls1p0---ls1p1---ls0p1
+  ls1.Set(vec(3.0, -2.0, 3.0, 1.0), vec(5.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 1);
+  CHECK(uls0 == 0.25);
+  CHECK(uls1 == 0.0);
+  CHECK(pls0 == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(pls1 == ls1.GetP0());
+
   //LineSegs parallel, overlap, ls0p1---ls1p0---ls1p1---ls0p0
+  ls1.Set(vec(5.0, -2.0, 3.0, 1.0), vec(3.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 1);
+  CHECK(uls0 == 0.25);
+  CHECK(uls1 == 1.0);
+  CHECK(pls0 == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(pls1 == ls1.GetP1());
+
   //LineSegs not parallel, closest points: ls0p0, ls1p0
+  ls1.Set(vec(-3.0, -2.0, 3.0, 1.0), vec(-4.0, -2.0, 5.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 0);
+  CHECK(uls0 == 0.0);
+  CHECK(uls1 == 0.0);
+  CHECK(pls0 == ls0.GetP0());
+  CHECK(pls1 == ls1.GetP0());
+
   //LineSegs not parallel, closest points: ls0p0, ls1p1
+  ls1.Set(vec(-3.0, -2.0, 5.0, 1.0), vec(-4.0, -2.0, 3.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 0);
+  CHECK(uls0 == 0.0);
+  CHECK(uls1 == 1.0);
+  CHECK(pls0 == ls0.GetP0());
+  CHECK(pls1 == ls1.GetP1());
+
   //LineSegs not parallel, closest points: ls0p1, ls1p0
+  ls1.Set(vec(10.0, -2.0, 5.0, 1.0), vec(12.0, -2.0, 30.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 0);
+  CHECK(uls0 == 1.0);
+  CHECK(uls1 == 0.0);
+  CHECK(pls0 == ls0.GetP1());
+  CHECK(pls1 == ls1.GetP0());
+
   //LineSegs not parallel, closest points: ls0p1, ls1p1
+  ls1.Set(vec(10.0, -2.0, 50.0, 1.0), vec(12.0, -2.0, 30.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 0);
+  CHECK(uls0 == 1.0);
+  CHECK(uls1 == 1.0);
+  CHECK(pls0 == ls0.GetP1());
+  CHECK(pls1 == ls1.GetP1());
+
   //LineSegs not parallel, closest points: ls0p0, ls1-along ls
+  ls1.Set(vec(-3.0, -2.0, 2.0, 1.0), vec(-3.0, -2.0, -2.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 0);
+  CHECK(uls0 == 0.0);
+  CHECK(uls1 == 0.5);
+  CHECK(pls0 == ls0.GetP0());
+  CHECK(pls1 == vec(-3.0, -2.0, 0.0, 1.0));
+
   //LineSegs not parallel, closest points: ls0p1, ls1-along ls
+  ls1.Set(vec(9.0, -2.0, 2.0, 1.0), vec(9.0, -2.0, -2.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 0);
+  CHECK(uls0 == 1.0);
+  CHECK(uls1 == 0.5);
+  CHECK(pls0 == ls0.GetP1());
+  CHECK(pls1 == vec(9.0, -2.0, 0.0, 1.0));
+
   //LineSegs not parallel, closest points: ls0-along ls, ls1-along ls
+  ls1.Set(vec(4.0, -2.0, 2.0, 1.0), vec(4.0, -2.0, -2.0, 1.0));
+  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
+  CHECK(result == 0);
+  CHECK(uls0 == 0.5);
+  CHECK(uls1 == 0.5);
+  CHECK(pls0 == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(pls1 == vec(4.0, -2.0, 0.0, 1.0));
 
   //LineSeg-plane
+  plane p;
 
   //LineSeg parallel to plane
+  p.Set(vec::yAxis(), vec(0.0, 2.0, 0.0, 1.0));
+  result = TestPlaneLineSegment(p, ls0, uls, pls);
+  CHECK(result == 2);
+  CHECK(uls == 0.0);
+  CHECK(pls == ls0.GetP0());
+
   //LineSeg on plane
-  //LineSeg not parallel to plane, not intersecting
+  p.Set(vec::yAxis(), vec(0.0, 0.0, 0.0, 1.0));
+  result = TestPlaneLineSegment(p, ls0, uls, pls);
+  CHECK(result == 1);
+  CHECK(uls == 0.0);
+  CHECK(pls == ls0.GetP0());
+
+  //LineSeg not parallel to plane, not intersecting, closest point p0
+  p.Set(vec(-0.1, 1.0, 0.1, 1.0), vec(0.0, 3.0, 0.0, 1.0));
+  result = TestPlaneLineSegment(p, ls0, uls, pls);
+  CHECK(result == 2);
+  CHECK(uls == 0.0);
+  CHECK(pls == ls0.GetP0());
+
+  //LineSeg not parallel to plane, not intersecting, closest point p1
+  p.Set(vec(0.1, 1.0, 0.1, 1.0), vec(0.0, 3.0, 0.0, 1.0));
+  result = TestPlaneLineSegment(p, ls0, uls, pls);
+  CHECK(result == 2);
+  CHECK(uls == 1.0);
+  CHECK(pls == ls0.GetP1());
+
   //LineSeg not parallel to plane, intersecting
+  p.Set(vec::xAxis(), vec(4.0, 0.0, 0.0, 1.0));
+  result = TestPlaneLineSegment(p, ls0, uls, pls);
+  CHECK(result == 0);
+  CHECK(uls == 0.5);
+  CHECK(pls == vec(4.0, 0.0, 0.0, 1.0));
+
   //LineSeg not parallel to plane, intersecting, switch points
+  p.Set(-vec::xAxis(), vec(4.0, 0.0, 0.0, 1.0));
+  result = TestPlaneLineSegment(p, ls0, uls, pls);
+  CHECK(result == 0);
+  CHECK(uls == 0.5);
+  CHECK(pls == vec(4.0, 0.0, 0.0, 1.0));
 }

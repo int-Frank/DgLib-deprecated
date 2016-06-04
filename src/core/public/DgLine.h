@@ -230,7 +230,9 @@ namespace Dg
   //! @return 1: Line lies on the plane. Output set to line origin.
   //! @return 2: No Intersection. Line is orthogonal to the plane normal. Output point not set.
   template<typename Real>
-  int TestPlaneLine(Plane<Real> const & a_plane, Line<Real> const & a_line,
+  int TestPlaneLine(Plane<Real> const & a_plane, 
+                    Line<Real> const & a_line,
+                    Real & a_u,
                     Vector4<Real> & a_point)
   {
     Vector4<Real> pn(a_plane.Normal());
@@ -243,6 +245,7 @@ namespace Dg
     //check if line is parallel to plane
     if (Dg::IsZero(denom))
     {
+      a_u = static_cast<Real>(0.0);
       a_point = lo;
 
       //check if line is on the plane
@@ -253,7 +256,8 @@ namespace Dg
       return 2;
     }
 
-    a_point = lo + ((lo.Dot(pn) + po) / denom) * ld;
+    a_u = -(lo.Dot(pn) + po) / denom;
+    a_point = lo + a_u * ld;
     return 0;
   }	//End: Line::IntersectionPlaneLine()
 }

@@ -47,23 +47,27 @@ TEST(Stack_DgLine, DgLine)
 
   //Line-Plane
   plane pl;
+  Real ul = 0.0;
 
   //Line parallel to plane
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), -1.0);
-  result = TestPlaneLine(pl, l0, p0);
+  result = TestPlaneLine(pl, l0, ul, p0);
   CHECK(result == 2);
+  CHECK(ul == 0.0);
   CHECK(p0 == l0.Origin());
 
   //Line on plane
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), 0.0);
-  result = TestPlaneLine(pl, l0, p0);
+  result = TestPlaneLine(pl, l0, ul, p0);
   CHECK(result == 1);
+  CHECK(ul == 0.0);
   CHECK(p0 == l0.Origin());
 
   //Line intersecting plane
-  pl.Set(vec(1.0, 0.0, 0.0, 0.0), -1.0);
-  result = TestPlaneLine(pl, l0, p0);
+  pl.Set(vec(1.0, 0.0, 0.0, 0.0), -3.0);
+  result = TestPlaneLine(pl, l0, ul, p0);
   CHECK(result == 0);
-  CHECK(p0 == vec(1.0, 0.0, 0.0, 1.0));
+  CHECK(ul == 3.0);
+  CHECK(p0 == vec(3.0, 0.0, 0.0, 1.0));
 
 }

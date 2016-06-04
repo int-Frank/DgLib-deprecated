@@ -284,7 +284,7 @@ namespace Dg
     int result = 0;
 
     // if denom is zero, try finding closest point on segment1 to origin0
-    if (::IsZero(denom))
+    if (Dg::IsZero(denom))
     {
       // clamp a_u0 to 0
       sd = td = c;
@@ -555,18 +555,33 @@ namespace Dg
   template<typename Real>
   int TestPlaneLineSegment(Plane<Real> const & a_plane, 
                            LineSegment<Real> const & a_ls,
+                           Real & a_u,
                            Vector4<Real> & a_point)
   {
     Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
-    Vector4<Real> lso(a_line.Origin());
-    Vector4<Real> lsd(a_line.Direction());
+    Vector4<Real> lso(a_ls.Origin());
+    Vector4<Real> lsd(a_ls.Direction());
+    //Real lsLength = a_ls.Length();
 
-    Real denom = pn.Dot(ld);
+    //Line segment of length 0
+    if (Dg::IsZero(a_ls.LengthSquared()))
+    {
+      a_point = lso;
+      a_u = static_cast<Real>(0.0);
+      if (Dg::IsZero(a_plane.SignedDistance(lso)))
+      {
+        return 1;
+      }
+      return 2;
+    }
+
+    Real denom = pn.Dot(lsd);
 
     //check if line is parallel to plane
     if (Dg::IsZero(denom))
     {
+      a_u = static_cast<Real>(0.0);
       a_point = lso;
 
       //check if line is on the plane
@@ -577,13 +592,22 @@ namespace Dg
       return 2;
     }
 
-    Real u = ((lo.Dot(pn) + po) / denom);
-    if (u < static_cast<Real>(0.0) || u > static_cast<Real>(1.0))
+    a_u = (-(lso.Dot(pn) + po) / denom);
+    if (a_u < static_cast<Real>(0.0))
     {
+      a_u = static_cast<Real>(0.0);
+      a_point = lso;
+      return 2;
+    }
+      
+    if (a_u > static_cast<Real>(1.0))
+    {
+      a_u = static_cast<Real>(1.0);
+      a_point = lso + lsd;
       return 2;
     }
 
-    a_point = lso + u * lsd;
+    a_point = lso + a_u * lsd;
     return 0;
   }	//End: LineSegment::IntersectionPlaneLineSegment()
 }

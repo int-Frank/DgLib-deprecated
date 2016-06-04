@@ -369,7 +369,7 @@ namespace Dg
   //!
   //! @return 0: Ray intersects plane
   //! @return 1: Ray lies on the plane. Output set to ray origin.
-  //! @return 2: No Intersection. Ray is orthogonal to the plane normal. Output point not set.
+  //! @return 2: No Intersection. Ray is orthogonal to the plane normal. Output point set as the ray origin.
   //! @return 3: Ray does not intersect plane; points away from plane. Output point set as the ray origin.
   template<typename Real>
   int TestPlaneRay(Plane<Real> const & a_plane, Ray<Real> const & a_ray,
@@ -386,7 +386,7 @@ namespace Dg
     if (Dg::IsZero(denom))
     {
       a_point = ro;
-      a_u = 0.0;
+      a_u = static_cast<Real>(0.0);
 
       //check if ray is on the plane
       if (Dg::IsZero(a_plane.Distance(ro)))
@@ -396,7 +396,7 @@ namespace Dg
       return 2;
     }
 
-    a_u = ((ro.Dot(pn) + po) / denom);
+    a_u = (-(ro.Dot(pn) + po) / denom);
 
     //ray points away from plane
     if (a_u < static_cast<Real>(0.0))
