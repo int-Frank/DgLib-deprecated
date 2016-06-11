@@ -107,7 +107,7 @@ namespace Dg
       result.point = lo;
 
       //check if line is on the plane
-      result.code = Dg::IsZero(a_plane.Distance(lo)) ? 1 : 2;
+      result.code = Dg::IsZero(a_plane.SignedDistance(lo)) ? 1 : 2;
     }
     else
     {

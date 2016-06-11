@@ -1,5 +1,6 @@
 #include "TestHarness.h"
 #include "DgPlane.h"
+#include "query/DgQueryPointPlane.h"
 
 typedef double Real;
 typedef Dg::Vector4<Real> vec;
@@ -47,6 +48,12 @@ TEST(Stack_DgPlane, DgPlane)
   CHECK(Dg::AreEqual(pl0.Distance(p3), 2.0));
   CHECK(Dg::IsZero(pl1.NormalDot(vec(0.0, 12.4, -5.3, 0.0))));
 
-  vec cp = pl0.ClosestPoint(p3);
-  CHECK(cp == vec(1.0, 23.5, -90.4, 1.0));
+  //Point-Plane query
+  Dg::DCPPointPlane<Real>           dcpPointPlane;
+  Dg::DCPPointPlane<Real>::Result   dcpPointPlane_res;
+
+  dcpPointPlane_res = dcpPointPlane(p3, pl0);
+  CHECK(dcpPointPlane_res.cp == vec(1.0, 23.5, -90.4, 1.0));
+  CHECK(dcpPointPlane_res.distance == 2.0);
+  CHECK(dcpPointPlane_res.sDistance == -2.0);
 }

@@ -104,9 +104,6 @@ namespace Dg
     //! Dot procuct of a vector against the plane normal.
     Real NormalDot(Vector4<Real> const & a_v) const;
 
-    //! Closest point from a point to a plane.
-    Vector4<Real> ClosestPoint(Vector4<Real> const &) const;
-
   private:
     Vector4<Real>   m_normal;
     Real            m_offset;
@@ -350,15 +347,6 @@ namespace Dg
 
   }	//End: Plane4::Set()
 
-
-  //--------------------------------------------------------------------------------
-  //		@ Plane::ClosestPoint()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> Plane<Real>::ClosestPoint(Vector4<Real> const & p) const
-  {
-    return p - SignedDistance(p) * m_normal;
-  }	//End: Plane::ClosestPoint()
 }
 
 #endif
