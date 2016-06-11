@@ -14,7 +14,7 @@
 
   //! @defgroup DgMath_constants Constants 
   //! @defgroup DgMath_functions Functions 
-  //! @defgroup DgMath_gTests Geometric Tests 
+  //! @defgroup DgMath_geoQueries Geometric Queries
   //! @defgroup DgMath_types Types
 
 //! @}

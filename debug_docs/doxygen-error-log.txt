@@ -1,0 +1,4 @@
+C:/dev/projects/DgLib/src/core/public/query/DgQueryLinePlane.h:60: warning: no uniquely matching class member found for 
+  template < Real >
+  TIQuery< Real, Line< Real >, Plane< Real > >::Result Dg::TIQuery< Real, Line< Real >, Plane< Real > >::operator()(Line< Real > const &a_line, Plane< Real > const &a_plane)
+

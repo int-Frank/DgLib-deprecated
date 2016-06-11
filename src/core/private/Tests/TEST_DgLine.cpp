@@ -1,10 +1,13 @@
 #include "TestHarness.h"
 #include "DgLine.h"
+#include "query/DgQueryLineLine.h"
+#include "query/DgQueryPointLine.h"
+#include "query/DgQueryLinePlane.h"
 
-typedef double Real;
-typedef Dg::Vector4<Real> vec;
-typedef Dg::Plane<Real>   plane;
-typedef Dg::Line<Real>    line;
+typedef double                          Real;
+typedef Dg::Vector4<Real>               vec;
+typedef Dg::Plane<Real>                 plane;
+typedef Dg::Line<Real>                  line;
 
 TEST(Stack_DgLine, DgLine)
 {
@@ -25,49 +28,78 @@ TEST(Stack_DgLine, DgLine)
   //Geometric tests
 
   //Line-Point
-  CHECK(l0.ClosestPoint(vec(7.0, -34.5, 90.53, 1.0)) == vec(7.0, 0.0, 0.0, 1.0));
+  Dg::DCPPointLine<Real>          dcpPointLine;
+  Dg::DCPPointLine<Real>::Result  dcpPointLine_res;
+
+  dcpPointLine_res = dcpPointLine(vec(7.0, -3.0, 4.0, 1.0), l0);
+  CHECK(dcpPointLine_res.u == 7.0);
+  CHECK(dcpPointLine_res.cp == vec(7.0, 0.0, 0.0, 1.0));
+  CHECK(dcpPointLine_res.distance == 5.0);
+  CHECK(dcpPointLine_res.sqDistance == 25);
 
   //Line-Line
-  vec p0, p1;
-  int result = 0;
+  Dg::DCPLineLine<Real>             dcpLineLine;
+  Dg::DCPLineLine<Real>::Result     dcpLineLine_res;
 
   //Lines parallel
   l1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
-  result = ClosestPointsLineLine(l0, l1, p0, p1);
-  CHECK(result == 1);
-  CHECK(p0 == l0.Origin());
-  CHECK(p1 == vec(0.0, 1.0, 0.0, 1.0));
+  dcpLineLine_res = dcpLineLine(l0, l1);
+  CHECK(dcpLineLine_res.code == 1);
+  CHECK(dcpLineLine_res.cp0 == l0.Origin());
+  CHECK(dcpLineLine_res.cp1 == vec(0.0, 1.0, 0.0, 1.0));
+  CHECK(dcpLineLine_res.sqDistance == 1.0);
+  CHECK(dcpLineLine_res.distance == 1.0);
 
   //Lines not parallel
   l1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
-  result = ClosestPointsLineLine(l0, l1, p0, p1);
-  CHECK(result == 0);
-  CHECK(p0 == vec(1.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(1.0, 1.0, 0.0, 1.0));
+  dcpLineLine_res = dcpLineLine(l0, l1);
+  CHECK(dcpLineLine_res.code == 0);
+  CHECK(dcpLineLine_res.cp0 == vec(1.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLineLine_res.cp1 == vec(1.0, 1.0, 0.0, 1.0));
+  CHECK(dcpLineLine_res.sqDistance == 1.0);
+  CHECK(dcpLineLine_res.distance == 1.0);
 
   //Line-Plane
+  Dg::TILinePlane<Real>          tiLinePlane;
+  Dg::FILinePlane<Real>          fiLinePlane;
+  Dg::TILinePlane<Real>::Result  tiLinePlane_res;
+  Dg::FILinePlane<Real>::Result  fiLinePlane_res;
   plane pl;
-  Real ul = 0.0;
 
   //Line parallel to plane
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), -1.0);
-  result = TestPlaneLine(pl, l0, ul, p0);
-  CHECK(result == 2);
-  CHECK(ul == 0.0);
-  CHECK(p0 == l0.Origin());
+  tiLinePlane_res = tiLinePlane(l0, pl);
+  CHECK(tiLinePlane_res.isIntersecting == false);
+
+  fiLinePlane_res = fiLinePlane(l0, pl);
+  CHECK(fiLinePlane_res.code == 2);
+  CHECK(fiLinePlane_res.point == l0.Origin());
+  CHECK(fiLinePlane_res.u == 0.0);
 
   //Line on plane
   pl.Set(vec(0.0, 1.0, 0.0, 0.0), 0.0);
-  result = TestPlaneLine(pl, l0, ul, p0);
-  CHECK(result == 1);
-  CHECK(ul == 0.0);
-  CHECK(p0 == l0.Origin());
+  tiLinePlane_res = tiLinePlane(l0, pl);
+  CHECK(tiLinePlane_res.isIntersecting == true);
+
+  fiLinePlane_res = fiLinePlane(l0, pl);
+  CHECK(fiLinePlane_res.code == 1);
+  CHECK(fiLinePlane_res.point == l0.Origin());
+  CHECK(fiLinePlane_res.u == 0.0);
 
   //Line intersecting plane
   pl.Set(vec(1.0, 0.0, 0.0, 0.0), -3.0);
-  result = TestPlaneLine(pl, l0, ul, p0);
-  CHECK(result == 0);
-  CHECK(ul == 3.0);
-  CHECK(p0 == vec(3.0, 0.0, 0.0, 1.0));
+  tiLinePlane_res = tiLinePlane(l0, pl);
+  CHECK(tiLinePlane_res.isIntersecting == true);
+
+  fiLinePlane_res = fiLinePlane(l0, pl);
+  CHECK(fiLinePlane_res.code == 0);
+  CHECK(fiLinePlane_res.point == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(fiLinePlane_res.u == 3.0);
+
+
+  //result = TestPlaneLine(pl, l0, ul, p0);
+  //CHECK(result == 0);
+  //CHECK(ul == 3.0);
+  //CHECK(p0 == vec(3.0, 0.0, 0.0, 1.0));
 
 }

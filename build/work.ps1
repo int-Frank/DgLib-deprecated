@@ -91,7 +91,7 @@ foreach ($platform in ("Win32", "x64"))
 #Copy samples to deployment folder
 
 #Copy public headers
-copy ..\src\core\public\*.* ..\deploy\DgLib\include
+copy ..\src\core\public\* ..\deploy\DgLib\include -Recurse
 
 #Create docs
 Echo "Creating docs"

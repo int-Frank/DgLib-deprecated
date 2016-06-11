@@ -61,9 +61,6 @@ namespace Dg
     //! Set line from an origin and direction
     void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
 
-    //! Closest point on a line to a point.
-    Vector4<Real> ClosestPoint(Vector4<Real> const & a_pIn) const;
-
   private:
 
     //Data members
@@ -163,104 +160,6 @@ namespace Dg
 
   }	//End: Line::Set()
 
-
-  //--------------------------------------------------------------------------------
-  //	@	Line::ClosestPoint()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> Line<Real>::ClosestPoint(Vector4<Real> const & a_pIn) const
-  {
-    Vector4<Real> w = a_pIn - m_origin;
-
-    Real vsq = m_direction.Dot(m_direction);
-    Real proj = w.Dot(m_direction);
-
-    return m_origin + (proj / vsq) * m_direction;
-  }	//End: Line::ClosestPoint()
-
-  //! @ingroup Math_gTests
-  //!
-  //! Closest points between two lines.
-  //!
-  //! @param[in] a_line0 Input line
-  //! @param[in] a_line1 Input line
-  //! @param[out] a_p0 Point on a_line0 closest to a_line1 
-  //! @param[out] a_p1 Point on a_line1 closest to a_line0
-  //!
-  //! @return 0: Success
-  //! @return 1: Lines are parallel. Closest points are based off a_line0 origin.
-  template<typename Real>
-  int ClosestPointsLineLine(Line<Real> const & a_line0, Line<Real> const & a_line1,
-                            Vector4<Real> & a_p0, Vector4<Real> & a_p1)
-  {
-    Vector4<Real> o0(a_line0.Origin());
-    Vector4<Real> o1(a_line1.Origin());
-    Vector4<Real> d0(a_line0.Direction());
-    Vector4<Real> d1(a_line1.Direction());
-
-    //compute intermediate parameters
-    Vector4<Real> w0(o0 - o1);
-    Real a = d0.Dot(d1);
-    Real b = d0.Dot(w0);
-    Real c = d1.Dot(w0);
-    Real d = static_cast<Real>(1.0) - a*a;
-    if (Dg::IsZero(d))
-    {
-      a_p0 = o0;
-      a_p1 = o1 + c * d1;
-      return 1;
-    }
-    else
-    {
-      a_p0 = o0 + ((a*c - b) / d)*d0;
-      a_p1 = o1 + ((c - a*b) / d)*d1;
-      return 0;
-    }
-  }	//End: Line::ClosestPointLineLine()
-
-  //! @ingroup Math_gTests
-  //!
-  //! Intersection test between a plane and a line
-  //!
-  //! @param[in] a_plane Input plane
-  //! @param[in] a_line Input line
-  //! @param[out] a_u Distance along the line to the plane intersect.
-  //! @param[out] a_point Point of intersection.
-  //!
-  //! @return 0: Line intersects plane
-  //! @return 1: Line lies on the plane. Output set to line origin.
-  //! @return 2: No Intersection. Line is orthogonal to the plane normal. Output point not set.
-  template<typename Real>
-  int TestPlaneLine(Plane<Real> const & a_plane, 
-                    Line<Real> const & a_line,
-                    Real & a_u,
-                    Vector4<Real> & a_point)
-  {
-    Vector4<Real> pn(a_plane.Normal());
-    Real          po(a_plane.Offset());
-    Vector4<Real> lo(a_line.Origin());
-    Vector4<Real> ld(a_line.Direction());
-
-    Real denom = pn.Dot(ld);
-
-    //check if line is parallel to plane
-    if (Dg::IsZero(denom))
-    {
-      a_u = static_cast<Real>(0.0);
-      a_point = lo;
-
-      //check if line is on the plane
-      if (Dg::IsZero(a_plane.Distance(lo)))
-      {
-        return 1;
-      }
-      return 2;
-    }
-
-    a_u = -(lo.Dot(pn) + po) / denom;
-    a_point = lo + a_u * ld;
-    return 0;
-  }	//End: Line::IntersectionPlaneLine()
 }
 
 #endif

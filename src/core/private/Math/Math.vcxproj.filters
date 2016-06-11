@@ -16,6 +16,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Public Headers\Query">
+      <UniqueIdentifier>{34dd14d9-e48d-4266-adc0-d8b912b5e78c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgRNG.cpp">
@@ -61,6 +64,24 @@
     </ClInclude>
     <ClInclude Include="..\..\public\DgLineSegment.h">
       <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgDCPQuery.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgTIQuery.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgFIQuery.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgQueryLinePlane.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgQueryPointLine.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgQueryLineLine.h">
+      <Filter>Public Headers\Query</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
