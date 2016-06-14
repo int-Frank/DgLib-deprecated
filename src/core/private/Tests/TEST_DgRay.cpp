@@ -2,6 +2,8 @@
 #include "DgRay.h"
 #include "query/DgQueryPointRay.h"
 #include "query/DgQueryRayLine.h"
+#include "query/DgQueryRayRay.h"
+#include "query/DgQueryRayPlane.h"
 
 typedef double Real;
 typedef Dg::Vector4<Real> vec;
@@ -49,53 +51,74 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpPointRay_res.cp == r0.Origin());
 
   //Ray - Ray
-  vec p0, p1;
-  Real u0 = 0.0, u1 = 0.0;
-  int result;
+  Dg::DCPRayRay<Real> dcpRayRay;
+  Dg::DCPRayRay<Real>::Result dcpRayRay_res;
 
   //Rays parallel, no overlap, facing opposite directions
-  r1.Set(vec(-2.0, 1.0, 0.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
-  result = ClosestPointsRayRay(r0, r1, u0, u1, p0, p1);
-  CHECK(result == 1);
-  CHECK(u0 == 0.0);
-  CHECK(u1 == 0.0);
-  CHECK(p0 == r0.Origin());
-  CHECK(p1 == r1.Origin());
+  r1.Set(vec(-3.0, 8.0, 36.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
+  dcpRayRay_res = dcpRayRay(r0, r1);
+  CHECK(dcpRayRay_res.code == 0);
+  CHECK(dcpRayRay_res.u0 == 0.0);
+  CHECK(dcpRayRay_res.u1 == 0.0);
+  CHECK(dcpRayRay_res.cp0 == r0.Origin());
+  CHECK(dcpRayRay_res.cp1 == r1.Origin());
+  CHECK(dcpRayRay_res.distance == 37.0);
+  CHECK(dcpRayRay_res.sqDistance == 37.0 * 37.0);
 
   //Rays parallel, overlap, facing opposite directions
-  r1.Set(vec(2.0, 1.0, 0.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
-  result = ClosestPointsRayRay(r0, r1, u0, u1, p0, p1);
-  CHECK(result == 1);
-  CHECK(u0 == 0.0);
-  CHECK(u1 == 2.0);
-  CHECK(p0 == r0.Origin());
-  CHECK(p1 == vec(0.0, 1.0, 0.0, 1.0));
+  r1.Set(vec(4.0, 13.0, 84.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
+  dcpRayRay_res = dcpRayRay(r0, r1);
+  CHECK(dcpRayRay_res.code == 1);
+  CHECK(dcpRayRay_res.u0 == 0.0);
+  CHECK(dcpRayRay_res.u1 == 4.0);
+  CHECK(dcpRayRay_res.cp0 == r0.Origin());
+  CHECK(dcpRayRay_res.cp1 == vec(0.0, 13.0, 84.0, 1.0));
+  CHECK(dcpRayRay_res.distance == 85.0);
+  CHECK(dcpRayRay_res.sqDistance == 85.0 * 85.0);
 
   //Rays parallel, overlap, facing same direction
-  r1.Set(vec(2.0, 1.0, 0.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
-  result = ClosestPointsRayRay(r0, r1, u0, u1, p0, p1);
-  CHECK(result == 1);
-  CHECK(u0 == 2.0);
-  CHECK(u1 == 0.0);
-  CHECK(p0 == vec(2.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == r1.Origin());
+  r1.Set(vec(4.0, 3.0, 4.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
+  dcpRayRay_res = dcpRayRay(r0, r1);
+  CHECK(dcpRayRay_res.code == 1);
+  CHECK(dcpRayRay_res.u0 == 4.0);
+  CHECK(dcpRayRay_res.u1 == 0.0);
+  CHECK(dcpRayRay_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(dcpRayRay_res.cp1 == r1.Origin());
+  CHECK(dcpRayRay_res.distance == 5.0);
+  CHECK(dcpRayRay_res.sqDistance == 25.0);
 
   //Rays parallel, overlap, facing same direction, switch rays
-  result = ClosestPointsRayRay(r1, r0, u1, u0, p1, p0);
-  CHECK(result == 1);
-  CHECK(u0 == 2.0);
-  CHECK(u1 == 0.0);
-  CHECK(p0 == vec(2.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == r1.Origin());
+  r1.Set(vec(4.0, 3.0, 4.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
+  dcpRayRay_res = dcpRayRay(r1, r0);
+  CHECK(dcpRayRay_res.code == 1);
+  CHECK(dcpRayRay_res.u1 == 4.0);
+  CHECK(dcpRayRay_res.u0 == 0.0);
+  CHECK(dcpRayRay_res.cp1 == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(dcpRayRay_res.cp0 == r1.Origin());
+  CHECK(dcpRayRay_res.distance == 5.0);
+  CHECK(dcpRayRay_res.sqDistance == 25.0);
 
-  //Rays not parallel
-  r1.Set(vec(2.0, 2.0, 2.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
-  result = ClosestPointsRayRay(r0, r1, u0, u1, p0, p1);
-  CHECK(result == 0);
-  CHECK(u0 == 2.0);
-  CHECK(u1 == 2.0);
-  CHECK(p0 == vec(2.0, 0.0, 0.0, 1.0));
-  CHECK(p1 == vec(2.0, 2.0, 0.0, 1.0));
+  //Rays not parallel, cp are along r0, r1.Origin.
+  r1.Set(vec(3.0, 4.0, 3.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
+  dcpRayRay_res = dcpRayRay(r0, r1);
+  CHECK(dcpRayRay_res.code == 0);
+  CHECK(dcpRayRay_res.u0 == 3.0);
+  CHECK(dcpRayRay_res.u1 == 0.0);
+  CHECK(dcpRayRay_res.cp0 == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(dcpRayRay_res.cp1 == r1.Origin());
+  CHECK(dcpRayRay_res.distance == 5.0);
+  CHECK(dcpRayRay_res.sqDistance == 25.0);
+
+  //Rays not parallel, cp are along both rays
+  r1.Set(vec(3.0, 4.0, 3.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
+  dcpRayRay_res = dcpRayRay(r0, r1);
+  CHECK(dcpRayRay_res.code == 0);
+  CHECK(dcpRayRay_res.u0 == 3.0);
+  CHECK(dcpRayRay_res.u1 == 3.0);
+  CHECK(dcpRayRay_res.cp0 == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(dcpRayRay_res.cp1 == vec(3.0, 4.0, 0.0, 1.0));
+  CHECK(dcpRayRay_res.distance == 4.0);
+  CHECK(dcpRayRay_res.sqDistance == 16.0);
 
   //Line - Ray
   line ln;
@@ -150,6 +173,7 @@ TEST(Stack_DgRay, DgRay)
   plane pln;
   vec pr;
   Real ur;
+  int result;
 
   //Ray not intersecting plane, pointing away from plane
   pln.Set(vec(-1.0, 0.0, 0.0, 0.0), vec(-1.0, 0.0, 0.0, 1.0));
