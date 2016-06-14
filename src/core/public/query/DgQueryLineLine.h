@@ -46,7 +46,7 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(Line<Real> const & a_line0, Line<Real> const & a_line1);
+    Result operator()(Line<Real> const &, Line<Real> const &);
   };
   
   //! Template alias for convenience.
@@ -80,24 +80,19 @@ namespace Dg
     {
       result.u0 = static_cast<Real>(0.0);
       result.u1 = c;
-      result.cp0 = o0;
-      result.cp1 = o1 + c * d1;
-      vec diff = result.cp0 - result.cp1;
-      result.sqDistance = diff.LengthSquared();
-      result.distance = sqrt(result.sqDistance);
       result.code = 1;
     }
     else
     {
       result.u0 = ((a*c - b) / d);
       result.u1 = ((c - a*b) / d);
-      result.cp0 = o0 + result.u0 * d0;
-      result.cp1 = o1 + result.u1 * d1;
-      vec diff = result.cp0 - result.cp1;
-      result.sqDistance = diff.LengthSquared();
-      result.distance = sqrt(result.sqDistance);
       result.code = 0;
     }
+
+    result.cp0 = o0 + result.u0 * d0;
+    result.cp1 = o1 + result.u1 * d1;
+    result.sqDistance = SquaredDistance(result.cp0, result.cp1);
+    result.distance = sqrt(result.sqDistance);
     return result;
   } //End: DCPQuery::operator()
 }

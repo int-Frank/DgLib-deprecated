@@ -86,6 +86,12 @@
     <ClInclude Include="..\..\public\query\DgQueryPointPlane.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\query\DgQueryRayLine.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgQueryPointRay.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\public\DgMath.inl">

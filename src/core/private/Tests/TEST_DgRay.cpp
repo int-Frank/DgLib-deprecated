@@ -1,5 +1,7 @@
 #include "TestHarness.h"
 #include "DgRay.h"
+#include "query/DgQueryPointRay.h"
+#include "query/DgQueryRayLine.h"
 
 typedef double Real;
 typedef Dg::Vector4<Real> vec;
@@ -26,28 +28,30 @@ TEST(Stack_DgRay, DgRay)
   //Geometric tests
 
   //Ray-Point
-  Real u = 0.0;
-  vec pOut;
+  Dg::DCPPointRay<Real> dcpPointRay;
+  Dg::DCPPointRay<Real>::Result dcpPointRay_res;
   vec pIn;
-  int result;
 
   //Point in front of ray
-  pIn.Set(7.0, -34.5, 90.53, 1.0);
-  result = r0.ClosestPoint(pIn, pOut, u);
-  CHECK(result == 0);
-  CHECK(u == 7.0);
-  CHECK(pOut == vec(7.0, 0.0, 0.0, 1.0));
+  pIn.Set(7.0, -12.0, 35.0, 1.0);
+  dcpPointRay_res = dcpPointRay(pIn, r0);
+  CHECK(dcpPointRay_res.u == 7.0);
+  CHECK(dcpPointRay_res.distance = 37.0);
+  CHECK(dcpPointRay_res.sqDistance = 37.0 * 37.0);
+  CHECK(dcpPointRay_res.cp == vec(7.0, 0.0, 0.0, 1.0));
 
   //Point behind ray
-  pIn.Set(-7.0, -34.5, 90.53, 1.0);
-  result = r0.ClosestPoint(pIn, pOut, u);
-  CHECK(result == 0);
-  CHECK(u == 0.0);
-  CHECK(pOut == r0.Origin());
+  pIn.Set(-2.0, -3.0, 6.0, 1.0);
+  dcpPointRay_res = dcpPointRay(pIn, r0);
+  CHECK(dcpPointRay_res.u == 0.0);
+  CHECK(dcpPointRay_res.distance = 7.0);
+  CHECK(dcpPointRay_res.sqDistance = 49.0);
+  CHECK(dcpPointRay_res.cp == r0.Origin());
 
   //Ray - Ray
   vec p0, p1;
   Real u0 = 0.0, u1 = 0.0;
+  int result;
 
   //Rays parallel, no overlap, facing opposite directions
   r1.Set(vec(-2.0, 1.0, 0.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));

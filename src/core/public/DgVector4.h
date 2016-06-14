@@ -305,9 +305,9 @@ namespace Dg
   Real SquaredDistance(Vector4<Real> const & a_p0,
                        Vector4<Real> const & a_p1)
   {
-    Real a = a_p0.m_V[0] * a_p1.m_V[0];
-    Real b = a_p0.m_V[1] * a_p1.m_V[1];
-    Real c = a_p0.m_V[2] * a_p1.m_V[2];
+    Real a = a_p0.m_V[0] - a_p1.m_V[0];
+    Real b = a_p0.m_V[1] - a_p1.m_V[1];
+    Real c = a_p0.m_V[2] - a_p1.m_V[2];
 
     return a*a + b*b + c*c;
 
@@ -321,9 +321,9 @@ namespace Dg
   Real Distance(Vector4<Real> const & a_p0,
                 Vector4<Real> const & a_p1)
   {
-    Real a = a_p0.m_V[0] * a_p1.m_V[0];
-    Real b = a_p0.m_V[1] * a_p1.m_V[1];
-    Real c = a_p0.m_V[2] * a_p1.m_V[2];
+    Real a = a_p0.m_V[0] - a_p1.m_V[0];
+    Real b = a_p0.m_V[1] - a_p1.m_V[1];
+    Real c = a_p0.m_V[2] - a_p1.m_V[2];
 
     return sqrt(a*a + b*b + c*c);
 

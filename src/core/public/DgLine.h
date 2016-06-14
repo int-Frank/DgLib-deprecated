@@ -9,7 +9,6 @@
 #define DGLINE_H
 
 #include "DgVector4.h"
-#include "DgPlane.h"
 #include "dgmath.h"
 
 namespace Dg

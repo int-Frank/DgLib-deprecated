@@ -1,20 +1,20 @@
-//! @file DgQueryPointLine.h
+//! @file DgQueryPointRay.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 
-#ifndef DGQUERYPOINTLINE_H
-#define DGQUERYPOINTLINE_H
+#ifndef DGQUERYPOINTRAY_H
+#define DGQUERYPOINTRAY_H
 
 #include "DgDCPQuery.h"
-#include "..\DgLine.h"
+#include "..\DgRay.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Point, Line.
+  //! Distance and closest-point query: Point, Ray.
   template <typename Real>
-  class DCPQuery<Real, Vector4<Real>, Line<Real>>
+  class DCPQuery<Real, Vector4<Real>, Ray<Real>>
   {
   public:
 
@@ -35,26 +35,32 @@ namespace Dg
     };
 
     //! Perform query
-    Result operator()(Vector4<Real> const &, Line<Real> const &);
+    Result operator()(Vector4<Real> const &, Ray<Real> const &);
   };
 
   //! Template alias for convenience
   template<typename Real>
-  using DCPPointLine = DCPQuery<Real, Vector4<Real>, Line<Real>>;
+  using DCPPointRay = DCPQuery<Real, Vector4<Real>, Ray<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	DCPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename DCPQuery<Real, Vector4<Real>, Line<Real>>::Result
-    DCPQuery<Real, Vector4<Real>, Line<Real>>::operator()
-    (Vector4<Real> const & a_point, Line<Real> const & a_line)
+  typename DCPQuery<Real, Vector4<Real>, Ray<Real>>::Result
+    DCPQuery<Real, Vector4<Real>, Ray<Real>>::operator()
+    (Vector4<Real> const & a_point, Ray<Real> const & a_line)
   {
     Result result;
 
     Vector4<Real> w = a_point - a_line.Origin();
     result.u = w.Dot(a_line.Direction());
+
+    if (result.u < static_cast<Real>(0.0))
+    {
+      result.u = static_cast<Real>(0.0);
+    }
+
     result.cp = a_line.Origin() + result.u * a_line.Direction();
     result.sqDistance = SquaredDistance(result.cp, a_point);
     result.distance = sqrt(result.sqDistance);
