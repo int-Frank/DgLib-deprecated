@@ -109,7 +109,7 @@ namespace Dg
 
     result.cpr = or + result.ur*dr;
     result.cpl = ol + result.ul*dl;
-    result.sqDistance = SquareDistance(result.cpr, result.cpl);
+    result.sqDistance = SquaredDistance(result.cpr, result.cpl);
     result.distance = sqrt(result.sqDistance);
     return result;
   } //End: DCPQuery::operator()

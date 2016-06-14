@@ -99,47 +99,57 @@ TEST(Stack_DgRay, DgRay)
 
   //Line - Ray
   line ln;
-  Real ul = 0.0, ur = 0.0;
-  vec pr, pl;
+  Dg::DCPRayLine<Real> dcpRayLine;
+  Dg::DCPRayLine<Real>::Result dcpRayLine_res;
 
   //Line-Ray Parallel, same direction
-  ln.Set(vec(5.0, 5.0, 5.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
-  result = ClosestPointsRayLine(r0, ln, ur, ul, pr, pl);
-  CHECK(result == 1);
-  CHECK(ur == 0.0);
-  CHECK(ul == -5.0);
-  CHECK(pr == r0.Origin());
-  CHECK(pl == vec(0.0, 5.0, 5.0, 1.0));
+  ln.Set(vec(5.0, 11.0, 60.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
+  dcpRayLine_res = dcpRayLine(r0, ln);
+  CHECK(dcpRayLine_res.code == 1);
+  CHECK(dcpRayLine_res.ur == 0.0);
+  CHECK(dcpRayLine_res.ul == -5.0);
+  CHECK(dcpRayLine_res.cpr == r0.Origin());
+  CHECK(dcpRayLine_res.cpl == vec(0.0, 11.0, 60.0, 1.0));
+  CHECK(dcpRayLine_res.distance == 61.0);
+  CHECK(dcpRayLine_res.sqDistance == 61.0 * 61.0);
 
   //Line-Ray Parallel, opposite directions
-  ln.Set(vec(5.0, 5.0, 5.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
-  result = ClosestPointsRayLine(r0, ln, ur, ul, pr, pl);
-  CHECK(result == 1);
-  CHECK(ur == 0.0);
-  CHECK(ul == 5.0);
-  CHECK(pr == r0.Origin());
-  CHECK(pl == vec(0.0, 5.0, 5.0, 1.0));
+  ln.Set(vec(5.0, 11.0, 60.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
+  dcpRayLine_res = dcpRayLine(r0, ln);
+  CHECK(dcpRayLine_res.code == 1);
+  CHECK(dcpRayLine_res.ur == 0.0);
+  CHECK(dcpRayLine_res.ul == 5.0);
+  CHECK(dcpRayLine_res.cpr == r0.Origin());
+  CHECK(dcpRayLine_res.cpl == vec(0.0, 11.0, 60.0, 1.0));
+  CHECK(dcpRayLine_res.distance == 61.0);
+  CHECK(dcpRayLine_res.sqDistance == 61.0 * 61.0);
 
   //Line-Ray not parallel, closest point is ray origin
-  ln.Set(vec(-5.0, 1.0, -2.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
-  result = ClosestPointsRayLine(r0, ln, ur, ul, pr, pl);
-  CHECK(result == 0);
-  CHECK(ur == 0.0);
-  CHECK(ul == -2.0);
-  CHECK(pr == r0.Origin());
-  CHECK(pl == vec(-5.0, 1.0, 0.0, 1.0));
+  ln.Set(vec(-9.0, 40.0, 61.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
+  dcpRayLine_res = dcpRayLine(r0, ln);
+  CHECK(dcpRayLine_res.code == 0);
+  CHECK(dcpRayLine_res.ur == 0.0);
+  CHECK(dcpRayLine_res.ul == 61.0);
+  CHECK(dcpRayLine_res.cpr == r0.Origin());
+  CHECK(dcpRayLine_res.cpl == vec(-9.0, 40.0, 0.0, 1.0));
+  CHECK(dcpRayLine_res.distance == 41.0);
+  CHECK(dcpRayLine_res.sqDistance == 41.0 * 41.0);
 
   //Line-Ray not parallel, closest point is along the ray
-  ln.Set(vec(5.0, 5.0, 5.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
-  result = ClosestPointsRayLine(r0, ln, ur, ul, pr, pl);
-  CHECK(result == 0);
-  CHECK(ur == 5.0);
-  CHECK(ul == 5.0);
-  CHECK(pr == vec(5.0, 0.0, 0.0, 1.0));
-  CHECK(pl == vec(5.0, 5.0, 0.0, 1.0));
+  ln.Set(vec(9.0, 40.0, -61.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
+  dcpRayLine_res = dcpRayLine(r0, ln);
+  CHECK(dcpRayLine_res.code == 0);
+  CHECK(dcpRayLine_res.ur == 9.0);
+  CHECK(dcpRayLine_res.ul == 61.0);
+  CHECK(dcpRayLine_res.cpr == vec(9.0, 0.0, 0.0, 1.0));
+  CHECK(dcpRayLine_res.cpl == vec(9.0, 40.0, 0.0, 1.0));
+  CHECK(dcpRayLine_res.distance == 40.0);
+  CHECK(dcpRayLine_res.sqDistance == 1600.0);
 
   //Ray-Plane
   plane pln;
+  vec pr;
+  Real ur;
 
   //Ray not intersecting plane, pointing away from plane
   pln.Set(vec(-1.0, 0.0, 0.0, 0.0), vec(-1.0, 0.0, 0.0, 1.0));
