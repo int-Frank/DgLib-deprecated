@@ -96,10 +96,4 @@ TEST(Stack_DgLine, DgLine)
   CHECK(fiLinePlane_res.point == vec(3.0, 0.0, 0.0, 1.0));
   CHECK(fiLinePlane_res.u == 3.0);
 
-
-  //result = TestPlaneLine(pl, l0, ul, p0);
-  //CHECK(result == 0);
-  //CHECK(ul == 3.0);
-  //CHECK(p0 == vec(3.0, 0.0, 0.0, 1.0));
-
 }

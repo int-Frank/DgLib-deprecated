@@ -170,45 +170,61 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayLine_res.sqDistance == 1600.0);
 
   //Ray-Plane
-  plane pln;
-  vec pr;
-  Real ur;
-  int result;
+  Dg::TIRayPlane<Real>          tiRayPlane;
+  Dg::FIRayPlane<Real>          fiRayPlane;
+  Dg::TIRayPlane<Real>::Result  tiRayPlane_res;
+  Dg::FIRayPlane<Real>::Result  fiRayPlane_res;
+  plane pl;
 
   //Ray not intersecting plane, pointing away from plane
-  pln.Set(vec(-1.0, 0.0, 0.0, 0.0), vec(-1.0, 0.0, 0.0, 1.0));
-  result = TestPlaneRay(pln, r0, ur, pr);
-  CHECK(result == 3);
-  CHECK(ur == 0.0);
-  CHECK(pr == r0.Origin());
+  pl.Set(vec(-1.0, 0.0, 0.0, 0.0), vec(-1.0, 0.0, 0.0, 1.0));
+  tiRayPlane_res = tiRayPlane(r0, pl);
+  CHECK(tiRayPlane_res.isIntersecting == false);
+
+  fiRayPlane_res = fiRayPlane(r0, pl);
+  CHECK(fiRayPlane_res.code == 2);
+  CHECK(fiRayPlane_res.point == r0.Origin());
+  CHECK(fiRayPlane_res.u == 0.0);
 
   //Ray not intersecting plane, parallel to plane
-  pln.Set(vec(0.0, 1.0, 0.0, 0.0), vec(0.0, 1.0, 0.0, 1.0));
-  result = TestPlaneRay(pln, r0, ur, pr);
-  CHECK(result == 2);
-  CHECK(ur == 0.0);
-  CHECK(pr == r0.Origin());
+  pl.Set(vec(0.0, 1.0, 0.0, 0.0), vec(0.0, 1.0, 0.0, 1.0));
+  tiRayPlane_res = tiRayPlane(r0, pl);
+  CHECK(tiRayPlane_res.isIntersecting == false);
+
+  fiRayPlane_res = fiRayPlane(r0, pl);
+  CHECK(fiRayPlane_res.code == 2);
+  CHECK(fiRayPlane_res.point == r0.Origin());
+  CHECK(fiRayPlane_res.u == 0.0);
 
   //Ray lies on the plane
-  pln.Set(vec(0.0, 1.0, 0.0, 0.0), vec(0.0, 0.0, 0.0, 1.0));
-  result = TestPlaneRay(pln, r0, ur, pr);
-  CHECK(result == 1);
-  CHECK(ur == 0.0);
-  CHECK(pr == vec(0.0, 0.0, 0.0, 1.0));
+  pl.Set(vec(0.0, 1.0, 0.0, 0.0), vec(0.0, 0.0, 0.0, 1.0));
+  tiRayPlane_res = tiRayPlane(r0, pl);
+  CHECK(tiRayPlane_res.isIntersecting == true);
+
+  fiRayPlane_res = fiRayPlane(r0, pl);
+  CHECK(fiRayPlane_res.code == 1);
+  CHECK(fiRayPlane_res.point == r0.Origin());
+  CHECK(fiRayPlane_res.u == 0.0);
 
   //Ray intersects plane
-  pln.Set(vec(1.0, 0.0, 0.0, 0.0), vec(3.0, 0.0, 0.0, 1.0));
-  result = TestPlaneRay(pln, r0, ur, pr);
-  CHECK(result == 0);
-  CHECK(ur == 3.0);
-  CHECK(pr == vec(3.0, 0.0, 0.0, 1.0));
+  pl.Set(vec(1.0, 0.0, 0.0, 0.0), vec(3.0, 0.0, 0.0, 1.0));
+  tiRayPlane_res = tiRayPlane(r0, pl);
+  CHECK(tiRayPlane_res.isIntersecting == true);
+
+  fiRayPlane_res = fiRayPlane(r0, pl);
+  CHECK(fiRayPlane_res.code == 0);
+  CHECK(fiRayPlane_res.point == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(fiRayPlane_res.u == 3.0);
 
   //Ray intersects plane
   r0.Set(vec(6.0, 2.3, -5.6, 1.0), vec::xAxis());
-  pln.Set(vec::xAxis(), vec(10.0, 0.0, 0.0, 1.0));
-  result = TestPlaneRay(pln, r0, ur, pr);
-  CHECK(result == 0);
-  CHECK(ur == 4.0);
-  CHECK(pr == vec(10.0, 2.3, -5.6, 1.0));
+  pl.Set(vec::xAxis(), vec(10.0, 0.0, 0.0, 1.0));
+  tiRayPlane_res = tiRayPlane(r0, pl);
+  CHECK(tiRayPlane_res.isIntersecting == true);
+
+  fiRayPlane_res = fiRayPlane(r0, pl);
+  CHECK(fiRayPlane_res.code == 0);
+  CHECK(fiRayPlane_res.point == vec(10.0, 2.3, -5.6, 1.0));
+  CHECK(fiRayPlane_res.u == 4.0);
 
 }
