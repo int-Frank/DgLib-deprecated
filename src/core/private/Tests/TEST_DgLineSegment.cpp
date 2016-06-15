@@ -1,5 +1,6 @@
 #include "TestHarness.h"
 #include "DgLineSegment.h"
+#include "query/DgQueryPointLineSegment.h"
 
 typedef double Real;
 typedef Dg::Vector4<Real> vec;
@@ -33,36 +34,41 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //Geometric tests
 
   //lineSeg-point
+  Dg::DCPPointLineSegment<Real>           dcpPointLS;
+  Dg::DCPPointLineSegment<Real>::Result   dcpPointLS_res;
   ls0.Set(vec(2.0, 0.0, 0.0, 1.0), vec(6.0, 0.0, 0.0, 1.0));
-  Real uls = 0.0;
-  vec pIn, pOut;
-  int result;
+  vec pIn;
 
   //Point behind p0
-  pIn.Set(-1.0, -1.8, -2.9, 1.0);
-  result = ls0.ClosestPoint(pIn, pOut, uls);
-  CHECK(result == 0);
-  CHECK(uls == 0.0);
-  CHECK(pOut == ls0.GetP0());
+  pIn.Set(0.0, 3.0, -6.0, 1.0);
+  dcpPointLS_res = dcpPointLS(pIn, ls0);
+  CHECK(dcpPointLS_res.u == 0.0);
+  CHECK(dcpPointLS_res.cp == ls0.GetP0());
+  CHECK(dcpPointLS_res.distance == 7.0);
+  CHECK(dcpPointLS_res.sqDistance == 49.0);
 
   //Point behind p1
-  pIn.Set(10.0, 11.8, -12.9, 1.0);
-  result = ls0.ClosestPoint(pIn, pOut, uls);
-  CHECK(result == 0);
-  CHECK(uls == 1.0);
-  CHECK(pOut == ls0.GetP1());
+  pIn.Set(8.0, 3.0, -6.0, 1.0);
+  dcpPointLS_res = dcpPointLS(pIn, ls0);
+  CHECK(dcpPointLS_res.u == 1.0);
+  CHECK(dcpPointLS_res.cp == ls0.GetP1());
+  CHECK(dcpPointLS_res.distance == 7.0);
+  CHECK(dcpPointLS_res.sqDistance == 49.0);
 
   //Closest point along lineSeg
-  pIn.Set(3.0, 11.8, -12.9, 1.0);
-  result = ls0.ClosestPoint(pIn, pOut, uls);
-  CHECK(result == 0);
-  CHECK(uls == 0.25);
-  CHECK(pOut == vec(3.0, 0.0, 0.0, 1.0));
+  pIn.Set(3.0, 3.0, -4.0, 1.0);
+  dcpPointLS_res = dcpPointLS(pIn, ls0);
+  CHECK(dcpPointLS_res.u == 0.25);
+  CHECK(dcpPointLS_res.cp == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(dcpPointLS_res.distance == 5.0);
+  CHECK(dcpPointLS_res.sqDistance == 25.0);
 
   //lineSeg-Line
   line l;
   vec pls, pl;
   Real ul = 0.0;
+  Real uls = 0.0;
+  int result = 0;
 
   //LineSeg parallel to line
   l.Set(vec(1.0, 1.0, 1.0, 1.0), vec::xAxis());

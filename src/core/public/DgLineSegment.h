@@ -79,17 +79,6 @@ namespace Dg
     //! Get the squared length of the line segment
     Real LengthSquared() const;
 
-    //! Closest point on a line segment to a point.
-    //!
-    //! @return 0: Success
-    //!
-    //! @param[in] a_pIn Input point
-    //! @param[out] a_pOut Closest point on the line segment
-    //! @param[out] a_u Distance along the ray to the closest point: 0 < u < 1
-    int ClosestPoint(Vector4<Real> const & a_pIn,
-                     Vector4<Real> & a_pOut,
-                     Real & a_u) const;
-
   private:
 
     //Data members
@@ -208,43 +197,6 @@ namespace Dg
     return m_direction.LengthSquared();
 
   }	//End: LineSegment::LengthSquared()
-
-
-  //--------------------------------------------------------------------------------
-  //  @ LineSegment::ClosestPoint()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  int LineSegment<Real>::ClosestPoint(Vector4<Real> const & a_pIn,
-                                      Vector4<Real> & a_pOut,
-                                      Real & a_u) const
-  {
-    Vector4<Real> w = a_pIn - m_origin;
-
-    Real proj = w.Dot(m_direction);
-
-    if (proj <= static_cast<Real>(0.0))
-    {
-      a_u = static_cast<Real>(0.0);
-      a_pOut = m_origin;
-    }
-    else
-    {
-      Real vsq = m_direction.Dot(m_direction);
-
-      if (proj >= vsq)
-      {
-        a_u = static_cast<Real>(1.0);
-        a_pOut = m_origin + m_direction;
-      }
-      else
-      {
-        a_u = (proj / vsq);
-        a_pOut = m_origin + a_u * m_direction;
-      }
-    }
-    
-    return 0;
-  }	//End: LineSegment::ClosestPoint()
 
 
   //! @ingroup Math_gTests
