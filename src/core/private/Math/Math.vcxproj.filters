@@ -101,6 +101,9 @@
     <ClInclude Include="..\..\public\query\DgQueryPointLineSegment.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\query\DgQueryLineSegmentLine.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\public\DgMath.inl">

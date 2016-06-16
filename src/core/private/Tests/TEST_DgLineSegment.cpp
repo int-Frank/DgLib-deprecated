@@ -1,6 +1,7 @@
 #include "TestHarness.h"
 #include "DgLineSegment.h"
 #include "query/DgQueryPointLineSegment.h"
+#include "query/DgQueryLineSegmentLine.h"
 
 typedef double Real;
 typedef Dg::Vector4<Real> vec;
@@ -64,61 +65,71 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(dcpPointLS_res.sqDistance == 25.0);
 
   //lineSeg-Line
+  Dg::DCPLineSegmentLine<Real>           dcpLSLine;
+  Dg::DCPLineSegmentLine<Real>::Result   dcpLSLine_res;
   line l;
-  vec pls, pl;
-  Real ul = 0.0;
-  Real uls = 0.0;
-  int result = 0;
 
   //LineSeg parallel to line
-  l.Set(vec(1.0, 1.0, 1.0, 1.0), vec::xAxis());
-  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
-  CHECK(result == 1);
-  CHECK(uls == 0.0);
-  CHECK(ul == 1.0);
-  CHECK(pls == ls0.GetP0());
-  CHECK(pl == vec(2.0, 1.0, 1.0, 1.0));
+  l.Set(vec(3.0, 3.0, 4.0, 1.0), vec::xAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  CHECK(dcpLSLine_res.code == 1);
+  CHECK(dcpLSLine_res.ul == -1.0);
+  CHECK(dcpLSLine_res.uls == 0.0);
+  CHECK(dcpLSLine_res.cpls == ls0.GetP0());
+  CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 4.0, 1.0));
+  CHECK(dcpLSLine_res.distance == 5.0);
+  CHECK(dcpLSLine_res.sqDistance == 25.0);
 
   //LineSeg parallel to line, opposite direction
-  l.Set(vec(1.0, 1.0, 1.0, 1.0), -vec::xAxis());
-  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
-  CHECK(result == 1);
-  CHECK(uls == 0.0);
-  CHECK(ul == -1.0);
-  CHECK(pls == ls0.GetP0());
-  CHECK(pl == vec(2.0, 1.0, 1.0, 1.0));
+  l.Set(vec(3.0, 3.0, 4.0, 1.0), -vec::xAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  CHECK(dcpLSLine_res.code == 1);
+  CHECK(dcpLSLine_res.ul == 1.0);
+  CHECK(dcpLSLine_res.uls == 0.0);
+  CHECK(dcpLSLine_res.cpls == ls0.GetP0());
+  CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 4.0, 1.0));
+  CHECK(dcpLSLine_res.distance == 5.0);
+  CHECK(dcpLSLine_res.sqDistance == 25.0);
 
   //lineSeg-p0 closest point
-  l.Set(vec(-2.0, 2.5, 3.0, 1.0), -vec::zAxis());
-  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
-  CHECK(result == 0);
-  CHECK(uls == 0.0);
-  CHECK(ul == 3.0);
-  CHECK(pls == ls0.GetP0());
-  CHECK(pl == vec(-2.0, 2.5, 0.0, 1.0));
+  l.Set(vec(-1.0, 4.0, 3.0, 1.0), -vec::zAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  CHECK(dcpLSLine_res.code == 0);
+  CHECK(dcpLSLine_res.ul == 3.0);
+  CHECK(dcpLSLine_res.uls == 0.0);
+  CHECK(dcpLSLine_res.cpls == ls0.GetP0());
+  CHECK(dcpLSLine_res.cpl == vec(-1.0, 4.0, 0.0, 1.0));
+  CHECK(dcpLSLine_res.distance == 5.0);
+  CHECK(dcpLSLine_res.sqDistance == 25.0);
 
   //lineSeg-p1 closest point
-  l.Set(vec(20.0, 2.5, 3.0, 1.0), vec::zAxis());
-  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
-  CHECK(result == 0);
-  CHECK(uls == 1.0);
-  CHECK(ul == -3.0);
-  CHECK(pls == ls0.GetP1());
-  CHECK(pl == vec(20.0, 2.5, 0.0, 1.0));
+  l.Set(vec(9.0, 4.0, 3.0, 1.0), -vec::zAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  CHECK(dcpLSLine_res.code == 0);
+  CHECK(dcpLSLine_res.ul == 3.0);
+  CHECK(dcpLSLine_res.uls == 1.0);
+  CHECK(dcpLSLine_res.cpls == ls0.GetP1());
+  CHECK(dcpLSLine_res.cpl == vec(9.0, 4.0, 0.0, 1.0));
+  CHECK(dcpLSLine_res.distance == 5.0);
+  CHECK(dcpLSLine_res.sqDistance == 25.0);
 
   //Closest point along lineSeg
-  l.Set(vec(3.0, 2.5, 3.0, 1.0), vec::zAxis());
-  result = ClosestPointsLineSegmentLine(ls0, l, uls, ul, pls, pl);
-  CHECK(result == 0);
-  CHECK(uls == 0.25);
-  CHECK(ul == -3.0);
-  CHECK(pls == vec(3.0, 0.0, 0.0, 1.0));
-  CHECK(pl == vec(3.0, 2.5, 0.0, 1.0));
+  l.Set(vec(3.0, 4.0, 3.0, 1.0), vec::zAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  CHECK(dcpLSLine_res.code == 0);
+  CHECK(dcpLSLine_res.ul == -3.0);
+  CHECK(dcpLSLine_res.uls == 0.25);
+  CHECK(dcpLSLine_res.cpls == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSLine_res.cpl == vec(3.0, 4.0, 0.0, 1.0));
+  CHECK(dcpLSLine_res.distance == 4.0);
+  CHECK(dcpLSLine_res.sqDistance == 16.0);
 
   //lineSeg-Ray
   ray r;
   Real ur = 0.0;
-  vec pr;
+  Real uls = 0.0;
+  vec pr, pls;
+  int result;
 
   //LineSeg parallel to ray, but behind ray origin
   r.Set(vec(-3.0, 2.5, 3.0, 1.0), -vec::xAxis());
