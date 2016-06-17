@@ -62,6 +62,8 @@ namespace Dg
     DCPQuery<Real, Ray<Real>, Ray<Real>>::operator()
     (Ray<Real> const & a_ray0, Ray<Real> const & a_ray1)
   {
+    Result result;
+
     Vector4<Real> o0(a_ray0.Origin());
     Vector4<Real> o1(a_ray1.Origin());
     Vector4<Real> d0(a_ray0.Direction());
@@ -77,9 +79,6 @@ namespace Dg
     //parameters to compute result.u0 and result.u1
     Real sn, sd, tn, td;
 
-    Result result;
-    result.code = 0;
-
     //if denom is zero, try finding closest point on ray1 to origin of ray0
     if (Dg::IsZero(d))
     {
@@ -88,15 +87,17 @@ namespace Dg
       sn = static_cast<Real>(0.0);
       tn = c;
 
-      Real t = w0.Dot(d1);
-      if (!(w0.Dot(d1) < static_cast<Real>(0.0) && 
-            w0.Dot(d0) > static_cast<Real>(0.0)))
+      //Do the rays overlap?
+      if (!(c < static_cast<Real>(0.0) && 
+            b > static_cast<Real>(0.0)))
       {
         result.code = 1;
       }
     }
     else
     {
+      result.code = 0;
+
       //clamp result.u0 within[0, +inf]
       sd = td = d;
       sn = a*c - b;
