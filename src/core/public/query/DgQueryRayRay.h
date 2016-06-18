@@ -63,6 +63,7 @@ namespace Dg
     (Ray<Real> const & a_ray0, Ray<Real> const & a_ray1)
   {
     Result result;
+    result.code = 0;
 
     Vector4<Real> o0(a_ray0.Origin());
     Vector4<Real> o1(a_ray1.Origin());
@@ -96,8 +97,6 @@ namespace Dg
     }
     else
     {
-      result.code = 0;
-
       //clamp result.u0 within[0, +inf]
       sd = td = d;
       sn = a*c - b;

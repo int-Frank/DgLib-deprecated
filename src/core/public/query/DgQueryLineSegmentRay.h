@@ -91,8 +91,8 @@ namespace Dg
 
       //Does the live segment overlap the ray?
       Vector4<Real> w1((ols + dls) - or );
-      if (d < static_cast<Real>(0.0) &&
-          w1.Dot(dr) < static_cast<Real>(0.0))
+      if (!(d < static_cast<Real>(0.0) &&
+          w1.Dot(dr) < static_cast<Real>(0.0)))
       {
         result.code = 1;
       }
@@ -100,8 +100,6 @@ namespace Dg
     }
     else
     {
-      result.code = 0;
-
       // clamp result.uls within [0,1]
       sd = td = denom;
       sn = b*d - c;

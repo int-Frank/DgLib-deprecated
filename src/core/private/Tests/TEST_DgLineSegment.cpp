@@ -167,10 +167,10 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   r.Set(vec(4.0, 3.0, 4.0, 1.0), -vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 1);
-  CHECK(dcpLSRay_res.ur == 0.0);
-  CHECK(dcpLSRay_res.uls == 0.5);
-  CHECK(dcpLSRay_res.cpls == vec(4.0, 0.0, 0.0, 1.0));
-  CHECK(dcpLSRay_res.cpr == r.Origin());
+  CHECK(dcpLSRay_res.ur == 2.0);
+  CHECK(dcpLSRay_res.uls == 0.0);
+  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.cpr == vec(2.0, 3.0, 4.0, 1.0));
   CHECK(dcpLSRay_res.distance == 5.0);
   CHECK(dcpLSRay_res.sqDistance == 25.0);
 
@@ -178,10 +178,10 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   r.Set(vec(-2.0, 3.0, 4.0, 1.0), vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 1);
-  CHECK(dcpLSRay_res.ur == 3.0);
+  CHECK(dcpLSRay_res.ur == 4.0);
   CHECK(dcpLSRay_res.uls == 0.0);
   CHECK(dcpLSRay_res.cpls == ls0.Origin());
-  CHECK(dcpLSRay_res.cpr == r.Origin());
+  CHECK(dcpLSRay_res.cpr == vec(2.0, 3.0, 4.0, 1.0));
   CHECK(dcpLSRay_res.distance == 5.0);
   CHECK(dcpLSRay_res.sqDistance == 25.0);
 
@@ -189,15 +189,26 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   r.Set(vec(10.0, 3.0, 4.0, 1.0), -vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 1);
-  CHECK(dcpLSRay_res.ur == 4.0);
+  CHECK(dcpLSRay_res.ur == 8.0);
   CHECK(dcpLSRay_res.uls == 0.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP1());
-  CHECK(dcpLSRay_res.cpr == vec(6.0, 3.0, 4.0, 1.0));
+  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.cpr == vec(2.0, 3.0, 4.0, 1.0));
   CHECK(dcpLSRay_res.distance == 5.0);
   CHECK(dcpLSRay_res.sqDistance == 25.0);
 
   //LineSeg not parallel, behind ray, Closest points are ls-p0, ray-origin
-  r.Set(vec(10.0, 3.0, 4.0, 1.0), -vec::xAxis());
+  r.Set(vec(1.0, 6.0, -18.0, 1.0), -vec::zAxis());
+  dcpLSRay_res = dcpLSRay(ls0, r);
+  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.ur == 0.0);
+  CHECK(dcpLSRay_res.uls == 0.0);
+  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.cpr == r.Origin());
+  CHECK(dcpLSRay_res.distance == 19.0);
+  CHECK(dcpLSRay_res.sqDistance == 19.0 * 19.0);
+  
+  //LineSeg not parallel, behind ray, Closest points are ls-p1, ray-origin
+  r.Set(vec(7.0, -6.0, 18.0, 1.0), -vec::yAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 0.0);
@@ -207,57 +218,55 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(dcpLSRay_res.distance == 19.0);
   CHECK(dcpLSRay_res.sqDistance == 19.0 * 19.0);
   
-  //LineSeg not parallel, behind ray, Closest points are ls-p1, ray-origin
-  r.Set(vec(7.0, -6.0, 18.0, 1.0), vec::yAxis());
+  //LineSeg not parallel, behind ray, Closest points are along the ls, ray-origin
+  r.Set(vec(5.0, -3.0, 4.0, 1.0), -vec::yAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
-  CHECK(dcpLSRay_res.ur == 4.0);
-  CHECK(dcpLSRay_res.uls == 0.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP1());
-  CHECK(dcpLSRay_res.cpr == vec(6.0, 3.0, 4.0, 1.0));
+  CHECK(dcpLSRay_res.ur == 0.0);
+  CHECK(dcpLSRay_res.uls == 0.75);
+  CHECK(dcpLSRay_res.cpls == vec(5.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSRay_res.cpr == r.Origin());
   CHECK(dcpLSRay_res.distance == 5.0);
   CHECK(dcpLSRay_res.sqDistance == 25.0);
   
-  //LineSeg not parallel, behind ray, Closest points are along the ls, ray-origin
-  r.Set(vec(3.0, 2.5, 3.0, 1.0), vec::yAxis());
-  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
-  CHECK(result == 0);
-  CHECK(uls == 0.25);
-  CHECK(ur == 0.0);
-  CHECK(pls == vec(3.0, 0.0, 0.0, 1.0));
-  CHECK(pr == r.Origin());
-  
   //LineSeg in front of ray, closest point p0
-  r.Set(vec(-3.0, -2.0, 3.0, 1.0), vec::yAxis());
-  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
-  CHECK(result == 0);
-  CHECK(uls == 0.0);
-  CHECK(ur == 2.0);
-  CHECK(pls == ls0.GetP0());
-  CHECK(pr == vec(-3.0, 0.0, 3.0, 1.0));
+  r.Set(vec(-1.0, -4.0, -3.0, 1.0), vec::zAxis());
+  dcpLSRay_res = dcpLSRay(ls0, r);
+  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.ur == 3.0);
+  CHECK(dcpLSRay_res.uls == 0.0);
+  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.cpr == vec(-1.0, -4.0, 0.0, 1.0));
+  CHECK(dcpLSRay_res.distance == 5.0);
+  CHECK(dcpLSRay_res.sqDistance == 25.0);
 
   //LineSeg in front of ray, closest point p1
-  r.Set(vec(9.0, -2.0, 3.0, 1.0), vec::yAxis());
-  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
-  CHECK(result == 0);
-  CHECK(uls == 1.0);
-  CHECK(ur == 2.0);
-  CHECK(pls == ls0.GetP1());
-  CHECK(pr == vec(9.0, 0.0, 3.0, 1.0));
+  r.Set(vec(9.0, -4.0, -3.0, 1.0), vec::zAxis());
+  dcpLSRay_res = dcpLSRay(ls0, r);
+  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.ur == 3.0);
+  CHECK(dcpLSRay_res.uls == 1.0);
+  CHECK(dcpLSRay_res.cpls == ls0.GetP1());
+  CHECK(dcpLSRay_res.cpr == vec(9.0, -4.0, 0.0, 1.0));
+  CHECK(dcpLSRay_res.distance == 5.0);
+  CHECK(dcpLSRay_res.sqDistance == 25.0);
 
   //LineSeg in front of ray, closest point along ls
-  r.Set(vec(3.0, -2.0, 3.0, 1.0), vec::yAxis());
-  result = ClosestPointsLineSegmentRay(ls0, r, uls, ur, pls, pr);
-  CHECK(result == 0);
-  CHECK(uls == 0.25);
-  CHECK(ur == 2.0);
-  CHECK(pls == vec(3.0, 0.0, 0.0, 1.0));
-  CHECK(pr == vec(3.0, 0.0, 3.0, 1.0));
+  r.Set(vec(5.0, -4.0, -3.0, 1.0), vec::zAxis());
+  dcpLSRay_res = dcpLSRay(ls0, r);
+  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.ur == 3.0);
+  CHECK(dcpLSRay_res.uls == 0.75);
+  CHECK(dcpLSRay_res.cpls == vec(5.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSRay_res.cpr == vec(5.0, -4.0, 0.0, 1.0));
+  CHECK(dcpLSRay_res.distance == 4.0);
+  CHECK(dcpLSRay_res.sqDistance == 16.0);
 
   //lineSeg-LineSeg
   Real uls0 = 0.0;
   Real uls1 = 0.0;
   vec pls0, pls1;
+  int result;
 
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p0
   ls1.Set(vec(-3.0, -2.0, 3.0, 1.0), vec(-5.0, -2.0, 3.0, 1.0));
@@ -396,6 +405,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
 
   //LineSeg-plane
   plane p;
+  Real uls = 0.0;
+  vec pls;
 
   //LineSeg parallel to plane
   p.Set(vec::yAxis(), vec(0.0, 2.0, 0.0, 1.0));
