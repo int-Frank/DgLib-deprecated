@@ -172,7 +172,7 @@ namespace Dg
     }
 
     result.cp0 = o0 + result.u0*d0;
-    result.cp1 = o1 +result.u1*d1;
+    result.cp1 = o1 + result.u1*d1;
     result.sqDistance = SquaredDistance(result.cp0, result.cp1);
     result.distance = sqrt(result.sqDistance);
     return result;

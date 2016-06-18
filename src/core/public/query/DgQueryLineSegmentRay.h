@@ -22,22 +22,22 @@ namespace Dg
     //! Query return data
     struct Result
     {
-      //! Distance between lines
+      //! Distance between line segment and ray
       Real distance;
 
-      //! Squared distance between lines
+      //! Squared distance between line segment and ray
       Real sqDistance;
 
-      //! Distance from the line origin to closest point to the line segment
+      //! Distance from the ray origin to closest point to the line segment
       Real ur;
 
-      //! Distance from the line segment origin to closest point to the line
+      //! Distance from the line segment origin to closest point to the ray
       Real uls;
 
-      //! Closest point on line to the line segment
+      //! Closest point on ray to the line segment
       Vector4<Real> cpr;
 
-      //! Closest point on line segment to the line
+      //! Closest point on line segment to the ray
       Vector4<Real> cpls;
 
       //! Return code. Codes include:
