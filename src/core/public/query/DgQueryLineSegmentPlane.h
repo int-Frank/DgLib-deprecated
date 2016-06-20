@@ -1,4 +1,4 @@
-//! @file DgQueryLineSewgmentPlane.h
+//! @file DgQueryLineSegmentPlane.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
@@ -14,7 +14,7 @@
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Test for intersection between a line and a plane.
+  //! Test for intersection between a line segment and a plane.
   template <typename Real>
   class TIQuery<Real, LineSegment<Real>, Plane<Real>>
   {
@@ -33,7 +33,7 @@ namespace Dg
 
 
   //! @ingroup DgMath_geoQueries
-  //! Find the intersection point between a line and a plane.
+  //! Find the intersection point between a line segment and a plane.
   template <typename Real>
   class FIQuery<Real, LineSegment<Real>, Plane<Real>>
   {
@@ -42,10 +42,10 @@ namespace Dg
     //! Query result data
     struct Result
     {
-      //! Point of intersection. Set to origin if line is parallel to plane.
+      //! Point of intersection. Set to origin if line segment is parallel to plane.
       Vector4<Real> point;
 
-      //! Distance from the line origin to the point of intersection. Set to 0 if line is parallel to the plane.
+      //! Distance from the line segment origin to the point of intersection. Set to 0 if line segment is parallel to the plane.
       Real u;
 
       //! Return code. Codes include:

@@ -13,7 +13,7 @@
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Line, Line
+  //! Distance and closest-point query: Ray, Line
   template <typename Real>
   class DCPQuery<Real, Ray<Real>, Line<Real>>
   {
@@ -22,10 +22,10 @@ namespace Dg
     //! Query return data
     struct Result
     {
-      //! Distance between lines
+      //! Distance between ray and line
       Real distance;
 
-      //! Squared distance between lines
+      //! Squared distance between ray and line
       Real sqDistance;
 
       //! Distance from the line origin to closest point to the ray

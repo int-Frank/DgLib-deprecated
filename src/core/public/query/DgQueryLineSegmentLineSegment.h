@@ -1,4 +1,4 @@
-//! @file DgQueryLineSegmentRay.h
+//! @file DgQueryLineSegmentLineSegment.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
@@ -41,7 +41,7 @@ namespace Dg
 
       //! Return code. Codes include:
       //!   - <code><b>0</b></code>: Success
-      //!   - <code><b>1</b></code>: Line segmentsvare parallel and overlap - infinite closest points.
+      //!   - <code><b>1</b></code>: Line segments are parallel and overlap - infinite closest points.
       int code;
     };
 

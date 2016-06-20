@@ -14,7 +14,7 @@
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Test for intersection between a line and a plane.
+  //! Test for intersection between a ray and a plane.
   template <typename Real>
   class TIQuery<Real, Ray<Real>, Plane<Real>>
   {
@@ -23,7 +23,7 @@ namespace Dg
     //! Query result data.
     struct Result
     {
-      //! True if line intersects plane.
+      //! True if ray intersects plane.
       bool isIntersecting;
     };
 
@@ -33,7 +33,7 @@ namespace Dg
 
 
   //! @ingroup DgMath_geoQueries
-  //! Find the intersection point between a line and a plane.
+  //! Find the intersection point between a ray and a plane.
   template <typename Real>
   class FIQuery<Real, Ray<Real>, Plane<Real>>
   {
@@ -42,15 +42,15 @@ namespace Dg
     //! Query result data
     struct Result
     {
-      //! Point of intersection. Set to origin if line is parallel to plane.
+      //! Point of intersection. Set to origin if ray is parallel to plane.
       Vector4<Real> point;
 
-      //! Distance from the line origin to the point of intersection. Set to 0 if line is parallel to the plane.
+      //! Distance from the ray origin to the point of intersection. Set to 0 if ray is parallel to the plane.
       Real u;
 
       //! Return code. Codes include:
       //!   - <code><b>0</b></code>: Ray intersects plane
-      //!   - <code><b>1</b></code>: Ray lies on the plane. Output set to line origin.
+      //!   - <code><b>1</b></code>: Ray lies on the plane. Output set to ray origin.
       //!   - <code><b>2</b></code>: No Intersection. 
       int code;
     };

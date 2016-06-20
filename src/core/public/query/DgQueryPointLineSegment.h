@@ -21,16 +21,16 @@ namespace Dg
     //! Query result data
     struct Result
     {
-      //! Distance between point and line
+      //! Distance between point and line segment
       Real distance;
 
-      //! Squared distance between point and line
+      //! Squared distance between point and line segment
       Real sqDistance;
 
-      //! Distance from line origin to closest point to point
+      //! Distance from line segment origin to closest point to point
       Real u;
 
-      //! Closest point on the line to the point.
+      //! Closest point on the line segment to the point.
       Vector4<Real> cp;
     };
 
