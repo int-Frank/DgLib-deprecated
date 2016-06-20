@@ -4,6 +4,7 @@
 #include "query/DgQueryLineSegmentLine.h"
 #include "query/DgQueryLineSegmentRay.h"
 #include "query/DgQueryLineSegmentLineSegment.h"
+#include "query/DgQueryLineSegmentPlane.h"
 
 typedef double Real;
 typedef Dg::Vector4<Real> vec;
@@ -433,50 +434,69 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(dcpLSLS_res.sqDistance == 9.0);
 
   //LineSeg-plane
-  plane p;
-  Real uls = 0.0;
-  vec pls;
-  int result;
-
+  Dg::TILineSegmentPlane<Real>          tiLSPlane;
+  Dg::FILineSegmentPlane<Real>          fiLSPlane;
+  Dg::TILineSegmentPlane<Real>::Result  tiLSPlane_res;
+  Dg::FILineSegmentPlane<Real>::Result  fiLSPlane_res;
+  plane pl;
+  
   //LineSeg parallel to plane
-  p.Set(vec::yAxis(), vec(0.0, 2.0, 0.0, 1.0));
-  result = TestPlaneLineSegment(p, ls0, uls, pls);
-  CHECK(result == 2);
-  CHECK(uls == 0.0);
-  CHECK(pls == ls0.GetP0());
+  pl.Set(vec::yAxis(), vec(0.0, 2.0, 0.0, 1.0));
+  tiLSPlane_res = tiLSPlane(ls0, pl);
+  CHECK(tiLSPlane_res.isIntersecting == false);
+
+  fiLSPlane_res = fiLSPlane(ls0, pl);
+  CHECK(fiLSPlane_res.code == 2);
+  CHECK(fiLSPlane_res.point == ls0.Origin());
+  CHECK(fiLSPlane_res.u == 0.0);
 
   //LineSeg on plane
-  p.Set(vec::yAxis(), vec(0.0, 0.0, 0.0, 1.0));
-  result = TestPlaneLineSegment(p, ls0, uls, pls);
-  CHECK(result == 1);
-  CHECK(uls == 0.0);
-  CHECK(pls == ls0.GetP0());
+  pl.Set(vec::yAxis(), vec(0.0, 0.0, 0.0, 1.0));
+  tiLSPlane_res = tiLSPlane(ls0, pl);
+  CHECK(tiLSPlane_res.isIntersecting == true);
+
+  fiLSPlane_res = fiLSPlane(ls0, pl);
+  CHECK(fiLSPlane_res.code == 1);
+  CHECK(fiLSPlane_res.point == ls0.Origin());
+  CHECK(fiLSPlane_res.u == 0.0);
 
   //LineSeg not parallel to plane, not intersecting, closest point p0
-  p.Set(vec(-0.1, 1.0, 0.1, 1.0), vec(0.0, 3.0, 0.0, 1.0));
-  result = TestPlaneLineSegment(p, ls0, uls, pls);
-  CHECK(result == 2);
-  CHECK(uls == 0.0);
-  CHECK(pls == ls0.GetP0());
+  pl.Set(vec(-0.1, 1.0, 0.1, 1.0), vec(0.0, 3.0, 0.0, 1.0));
+  tiLSPlane_res = tiLSPlane(ls0, pl);
+  CHECK(tiLSPlane_res.isIntersecting == false);
+
+  fiLSPlane_res = fiLSPlane(ls0, pl);
+  CHECK(fiLSPlane_res.code == 2);
+  CHECK(fiLSPlane_res.point == ls0.Origin());
+  CHECK(fiLSPlane_res.u == 0.0);
 
   //LineSeg not parallel to plane, not intersecting, closest point p1
-  p.Set(vec(0.1, 1.0, 0.1, 1.0), vec(0.0, 3.0, 0.0, 1.0));
-  result = TestPlaneLineSegment(p, ls0, uls, pls);
-  CHECK(result == 2);
-  CHECK(uls == 1.0);
-  CHECK(pls == ls0.GetP1());
+  pl.Set(vec(0.1, 1.0, 0.1, 1.0), vec(0.0, 3.0, 0.0, 1.0));
+  tiLSPlane_res = tiLSPlane(ls0, pl);
+  CHECK(tiLSPlane_res.isIntersecting == false);
+
+  fiLSPlane_res = fiLSPlane(ls0, pl);
+  CHECK(fiLSPlane_res.code == 2);
+  CHECK(fiLSPlane_res.point == ls0.GetP1());
+  CHECK(fiLSPlane_res.u == 1.0);
 
   //LineSeg not parallel to plane, intersecting
-  p.Set(vec::xAxis(), vec(4.0, 0.0, 0.0, 1.0));
-  result = TestPlaneLineSegment(p, ls0, uls, pls);
-  CHECK(result == 0);
-  CHECK(uls == 0.5);
-  CHECK(pls == vec(4.0, 0.0, 0.0, 1.0));
+  pl.Set(vec::xAxis(), vec(4.0, 0.0, 0.0, 1.0));
+  tiLSPlane_res = tiLSPlane(ls0, pl);
+  CHECK(tiLSPlane_res.isIntersecting == true);
+
+  fiLSPlane_res = fiLSPlane(ls0, pl);
+  CHECK(fiLSPlane_res.code == 0);
+  CHECK(fiLSPlane_res.point == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(fiLSPlane_res.u == 0.5);
 
   //LineSeg not parallel to plane, intersecting, switch points
-  p.Set(-vec::xAxis(), vec(4.0, 0.0, 0.0, 1.0));
-  result = TestPlaneLineSegment(p, ls0, uls, pls);
-  CHECK(result == 0);
-  CHECK(uls == 0.5);
-  CHECK(pls == vec(4.0, 0.0, 0.0, 1.0));
+  pl.Set(-vec::xAxis(), vec(4.0, 0.0, 0.0, 1.0));
+  tiLSPlane_res = tiLSPlane(ls0, pl);
+  CHECK(tiLSPlane_res.isIntersecting == true);
+
+  fiLSPlane_res = fiLSPlane(ls0, pl);
+  CHECK(fiLSPlane_res.code == 0);
+  CHECK(fiLSPlane_res.point == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(fiLSPlane_res.u == 0.5);
 }
