@@ -3,6 +3,7 @@
 #include "query/DgQueryPointLineSegment.h"
 #include "query/DgQueryLineSegmentLine.h"
 #include "query/DgQueryLineSegmentRay.h"
+#include "query/DgQueryLineSegmentLineSegment.h"
 
 typedef double Real;
 typedef Dg::Vector4<Real> vec;
@@ -263,150 +264,179 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(dcpLSRay_res.sqDistance == 16.0);
 
   //lineSeg-LineSeg
-  Real uls0 = 0.0;
-  Real uls1 = 0.0;
-  vec pls0, pls1;
-  int result;
+  Dg::DCPLineSegmentLineSegment<Real>           dcpLSLS;
+  Dg::DCPLineSegmentLineSegment<Real>::Result   dcpLSLS_res;
 
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p0
-  ls1.Set(vec(-3.0, -2.0, 3.0, 1.0), vec(-5.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 1);
-  CHECK(uls0 == 0.0);
-  CHECK(uls1 == 0.0);
-  CHECK(pls0 == ls0.GetP0());
-  CHECK(pls1 == ls1.GetP0());
+  ls1.Set(vec(-1.0, -4.0, 12.0, 1.0), vec(-5.0, -4.0, 12.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 0.0);
+  CHECK(dcpLSLS_res.u1 == 0.0);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
+  CHECK(dcpLSLS_res.distance == 13.0);
+  CHECK(dcpLSLS_res.sqDistance == 169.0);
 
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p1
-  ls1.Set(vec(-5.0, -2.0, 3.0, 1.0), vec(-3.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 1);
-  CHECK(uls0 == 0.0);
-  CHECK(uls1 == 1.0);
-  CHECK(pls0 == ls0.GetP0());
-  CHECK(pls1 == ls1.GetP1());
+  ls1.Set(vec(-5.0, -4.0, 12.0, 1.0), vec(-1.0, -4.0, 12.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 0.0);
+  CHECK(dcpLSLS_res.u1 == 1.0);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP1());
+  CHECK(dcpLSLS_res.distance == 13.0);
+  CHECK(dcpLSLS_res.sqDistance == 169.0);
   
   //LineSegs parallel, no overlap, closest points ls0-p1, ls1-p0
-  ls1.Set(vec(10.0, -2.0, 3.0, 1.0), vec(12.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 1);
-  CHECK(uls0 == 1.0);
-  CHECK(uls1 == 0.0);
-  CHECK(pls0 == ls0.GetP1());
-  CHECK(pls1 == ls1.GetP0());
+  ls1.Set(vec(9.0, -4.0, 12.0, 1.0), vec(18.0, -4.0, 12.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 1.0);
+  CHECK(dcpLSLS_res.u1 == 0.0);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
+  CHECK(dcpLSLS_res.distance == 13.0);
+  CHECK(dcpLSLS_res.sqDistance == 169.0);
   
   //LineSegs parallel, no overlap, closest points ls0-p1, ls1-p1
-  ls1.Set(vec(12.0, -2.0, 3.0, 1.0), vec(10.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 1);
-  CHECK(uls0 == 1.0);
-  CHECK(uls1 == 1.0);
-  CHECK(pls0 == ls0.GetP1());
-  CHECK(pls1 == ls1.GetP1());
+  ls1.Set(vec(10.0, -4.0, 12.0, 1.0), vec(9.0, -4.0, 12.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 1.0);
+  CHECK(dcpLSLS_res.u1 == 1.0);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP1());
+  CHECK(dcpLSLS_res.distance == 13.0);
+  CHECK(dcpLSLS_res.sqDistance == 169.0);
   
   //LineSegs parallel, overlap, ls0p0---ls1p0---ls0p1---ls1p1
-  ls1.Set(vec(3.0, -2.0, 3.0, 1.0), vec(9.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 1);
-  CHECK(uls0 == 0.25);
-  CHECK(uls1 == 0.0);
-  CHECK(pls0 == vec(3.0, 0.0, 0.0, 1.0));
-  CHECK(pls1 == ls1.GetP0());
+  ls1.Set(vec(4.0, -3.0, 4.0, 1.0), vec(10.0, -3.0, 4.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 1);
+  CHECK(dcpLSLS_res.u0 == 0.5);
+  CHECK(dcpLSLS_res.u1 == 0.0);
+  CHECK(dcpLSLS_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
+  CHECK(dcpLSLS_res.distance == 5.0);
+  CHECK(dcpLSLS_res.sqDistance == 25.0);
 
   //LineSegs parallel, overlap, ls0p1---ls1p0---ls0p0---ls1p1
-  ls1.Set(vec(-3.0, -2.0, 3.0, 1.0), vec(4.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 1);
-  CHECK(uls0 == 0.0);
-  CHECK(Dg::AreEqual(uls1, 5.0 / 7.0));
-  CHECK(pls0 == ls0.GetP0());
-  CHECK(pls1 == vec(2.0, -2.0, 3.0, 1.0));
+  ls1.Set(vec(4.0, -3.0, 4.0, 1.0), vec(0.0, -3.0, 4.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 1);
+  CHECK(dcpLSLS_res.u0 == 0.0);
+  CHECK(dcpLSLS_res.u1 == 0.5);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
+  CHECK(dcpLSLS_res.cp1 == vec(2.0, -3.0, 4.0, 1.0));
+  CHECK(dcpLSLS_res.distance == 5.0);
+  CHECK(dcpLSLS_res.sqDistance == 25.0);
 
   //LineSegs parallel, overlap, ls0p0---ls1p0---ls1p1---ls0p1
-  ls1.Set(vec(3.0, -2.0, 3.0, 1.0), vec(5.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 1);
-  CHECK(uls0 == 0.25);
-  CHECK(uls1 == 0.0);
-  CHECK(pls0 == vec(3.0, 0.0, 0.0, 1.0));
-  CHECK(pls1 == ls1.GetP0());
+  ls1.Set(vec(4.0, -3.0, 4.0, 1.0), vec(5.0, -3.0, 4.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 1);
+  CHECK(dcpLSLS_res.u0 == 0.5);
+  CHECK(dcpLSLS_res.u1 == 0.0);
+  CHECK(dcpLSLS_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
+  CHECK(dcpLSLS_res.distance == 5.0);
+  CHECK(dcpLSLS_res.sqDistance == 25.0);
 
   //LineSegs parallel, overlap, ls0p1---ls1p0---ls1p1---ls0p0
-  ls1.Set(vec(5.0, -2.0, 3.0, 1.0), vec(3.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 1);
-  CHECK(uls0 == 0.25);
-  CHECK(uls1 == 1.0);
-  CHECK(pls0 == vec(3.0, 0.0, 0.0, 1.0));
-  CHECK(pls1 == ls1.GetP1());
+  ls1.Set(vec(4.0, -3.0, 4.0, 1.0), vec(8.0, -3.0, 4.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 1);
+  CHECK(dcpLSLS_res.u0 == 0.5);
+  CHECK(dcpLSLS_res.u1 == 0.0);
+  CHECK(dcpLSLS_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
+  CHECK(dcpLSLS_res.distance == 5.0);
+  CHECK(dcpLSLS_res.sqDistance == 25.0);
 
   //LineSegs not parallel, closest points: ls0p0, ls1p0
-  ls1.Set(vec(-3.0, -2.0, 3.0, 1.0), vec(-4.0, -2.0, 5.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 0);
-  CHECK(uls0 == 0.0);
-  CHECK(uls1 == 0.0);
-  CHECK(pls0 == ls0.GetP0());
-  CHECK(pls1 == ls1.GetP0());
+  ls1.Set(vec(-2.0, -5.0, 20.0, 1.0), vec(-2.0, -5.0, 23.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 0.0);
+  CHECK(dcpLSLS_res.u1 == 0.0);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
+  CHECK(dcpLSLS_res.distance == 21.0);
+  CHECK(dcpLSLS_res.sqDistance == 21.0 * 21.0);
 
   //LineSegs not parallel, closest points: ls0p0, ls1p1
-  ls1.Set(vec(-3.0, -2.0, 5.0, 1.0), vec(-4.0, -2.0, 3.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 0);
-  CHECK(uls0 == 0.0);
-  CHECK(uls1 == 1.0);
-  CHECK(pls0 == ls0.GetP0());
-  CHECK(pls1 == ls1.GetP1());
+  ls1.Set(vec(-2.0, -5.0, 23.0, 1.0), vec(-2.0, -5.0, 20.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 0.0);
+  CHECK(dcpLSLS_res.u1 == 1.0);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP1());
+  CHECK(dcpLSLS_res.distance == 21.0);
+  CHECK(dcpLSLS_res.sqDistance == 21.0 * 21.0);
 
   //LineSegs not parallel, closest points: ls0p1, ls1p0
-  ls1.Set(vec(10.0, -2.0, 5.0, 1.0), vec(12.0, -2.0, 30.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 0);
-  CHECK(uls0 == 1.0);
-  CHECK(uls1 == 0.0);
-  CHECK(pls0 == ls0.GetP1());
-  CHECK(pls1 == ls1.GetP0());
+  ls1.Set(vec(10.0, -5.0, 20.0, 1.0), vec(10.0, -5.0, 23.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 1.0);
+  CHECK(dcpLSLS_res.u1 == 0.0);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
+  CHECK(dcpLSLS_res.distance == 21.0);
+  CHECK(dcpLSLS_res.sqDistance == 21.0 * 21.0);
 
   //LineSegs not parallel, closest points: ls0p1, ls1p1
-  ls1.Set(vec(10.0, -2.0, 50.0, 1.0), vec(12.0, -2.0, 30.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 0);
-  CHECK(uls0 == 1.0);
-  CHECK(uls1 == 1.0);
-  CHECK(pls0 == ls0.GetP1());
-  CHECK(pls1 == ls1.GetP1());
+  ls1.Set(vec(10.0, -5.0, 23.0, 1.0), vec(10.0, -5.0, 20.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 1.0);
+  CHECK(dcpLSLS_res.u1 == 1.0);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
+  CHECK(dcpLSLS_res.cp1 == ls1.GetP1());
+  CHECK(dcpLSLS_res.distance == 21.0);
+  CHECK(dcpLSLS_res.sqDistance == 21.0 * 21.0);
 
   //LineSegs not parallel, closest points: ls0p0, ls1-along ls
-  ls1.Set(vec(-3.0, -2.0, 2.0, 1.0), vec(-3.0, -2.0, -2.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 0);
-  CHECK(uls0 == 0.0);
-  CHECK(uls1 == 0.5);
-  CHECK(pls0 == ls0.GetP0());
-  CHECK(pls1 == vec(-3.0, -2.0, 0.0, 1.0));
+  ls1.Set(vec(-1.0, 4.0, -3.0, 1.0), vec(-1.0, 4.0, 3.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 0.0);
+  CHECK(dcpLSLS_res.u1 == 0.5);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
+  CHECK(dcpLSLS_res.cp1 == vec(-1.0, 4.0, 0.0, 1.0));
+  CHECK(dcpLSLS_res.distance == 5.0);
+  CHECK(dcpLSLS_res.sqDistance == 25.0);
 
   //LineSegs not parallel, closest points: ls0p1, ls1-along ls
-  ls1.Set(vec(9.0, -2.0, 2.0, 1.0), vec(9.0, -2.0, -2.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 0);
-  CHECK(uls0 == 1.0);
-  CHECK(uls1 == 0.5);
-  CHECK(pls0 == ls0.GetP1());
-  CHECK(pls1 == vec(9.0, -2.0, 0.0, 1.0));
+  ls1.Set(vec(9.0, 4.0, -3.0, 1.0), vec(9.0, 4.0, 3.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 1.0);
+  CHECK(dcpLSLS_res.u1 == 0.5);
+  CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
+  CHECK(dcpLSLS_res.cp1 == vec(9.0, 4.0, 0.0, 1.0));
+  CHECK(dcpLSLS_res.distance == 5.0);
+  CHECK(dcpLSLS_res.sqDistance == 25.0);
 
   //LineSegs not parallel, closest points: ls0-along ls, ls1-along ls
-  ls1.Set(vec(4.0, -2.0, 2.0, 1.0), vec(4.0, -2.0, -2.0, 1.0));
-  result = ClosestPointsLineSegmentLineSegment(ls0, ls1, uls0, uls1, pls0, pls1);
-  CHECK(result == 0);
-  CHECK(uls0 == 0.5);
-  CHECK(uls1 == 0.5);
-  CHECK(pls0 == vec(4.0, 0.0, 0.0, 1.0));
-  CHECK(pls1 == vec(4.0, -2.0, 0.0, 1.0));
+  ls1.Set(vec(4.0, 4.0, -3.0, 1.0), vec(4.0, -4.0, -3.0, 1.0));
+  dcpLSLS_res = dcpLSLS(ls0, ls1);
+  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.u0 == 0.5);
+  CHECK(dcpLSLS_res.u1 == 0.5);
+  CHECK(dcpLSLS_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSLS_res.cp1 == vec(4.0, 0.0, -3.0, 1.0));
+  CHECK(dcpLSLS_res.distance == 3.0);
+  CHECK(dcpLSLS_res.sqDistance == 9.0);
 
   //LineSeg-plane
   plane p;
   Real uls = 0.0;
   vec pls;
+  int result;
 
   //LineSeg parallel to plane
   p.Set(vec::yAxis(), vec(0.0, 2.0, 0.0, 1.0));

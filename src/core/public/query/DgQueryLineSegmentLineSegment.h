@@ -95,10 +95,10 @@ namespace Dg
       Vector4<Real> w3((o0 + d0) - (o1+ d1));
       bool bse = (e < static_cast<Real>(0.0));
       if (!(
-            bse == (w1.Dot(dr) < static_cast<Real>(0.0)) &&
-            bse == (w2.Dot(dr) < static_cast<Real>(0.0)) &&
-            bse == (w3.Dot(dr) < static_cast<Real>(0.0))
-           )
+            bse == (w1.Dot(d1) < static_cast<Real>(0.0)) &&
+            bse == (w2.Dot(d1) < static_cast<Real>(0.0)) &&
+            bse == (w3.Dot(d1) < static_cast<Real>(0.0))
+           ))
       {
         result.code = 1;
       }
