@@ -141,7 +141,7 @@ namespace Dg
   template<typename Real>
   void Sphere<Real>::SetCenter(Vector4<Real> const & a_center)
   {
-    a_center = m_center;
+    m_center = a_center;
     m_center.w() = static_cast<Real>(1.0);
   }	//End: Sphere::SetCenter()
 

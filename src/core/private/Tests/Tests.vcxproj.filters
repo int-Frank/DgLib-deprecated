@@ -69,6 +69,9 @@
     <ClCompile Include="TEST_DgLineSegment.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="TEST_DgSphere.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="results.txt">

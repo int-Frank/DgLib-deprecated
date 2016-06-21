@@ -159,6 +159,7 @@
     <ClCompile Include="TEST_DgPlane.cpp" />
     <ClCompile Include="TEST_DgRay.cpp" />
     <ClCompile Include="TEST_DgSharedPtr.cpp" />
+    <ClCompile Include="TEST_DgSphere.cpp" />
     <ClCompile Include="TEST_dg_map.cpp" />
     <ClCompile Include="TEST_dg_map_p.cpp" />
     <ClCompile Include="TEST_dg_set_p.cpp" />
