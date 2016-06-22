@@ -65,16 +65,16 @@ namespace Dg
     void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
 
     //! Transform the ray
-    Ray operator*(Matrix44<Real> const &) const;
+    Ray GetTransformed(Matrix44<Real> const &) const;
 
     //! Transform the ray, assign to self
-    Ray & operator*=(Matrix44<Real> const &);
+    Ray & TransformSelf(Matrix44<Real> const &);
 
     //! Transform the ray
-    Ray operator*(VQS<Real> const &) const;
+    Ray GetTransformed(VQS<Real> const &) const;
 
     //! Transform the ray, assign to self
-    Ray & operator*=(VQS<Real> const &);
+    Ray & TransformSelf(VQS<Real> const &);
   private:
 
     //Data members
@@ -176,45 +176,45 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	Ray::operator*()
+  //	@	Ray::GetTransformed()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Ray<Real> Ray<Real>::operator*(Matrix44<Real> const & a_mat) const
+  Ray<Real> Ray<Real>::GetTransformed(Matrix44<Real> const & a_mat) const
   {
     return Ray<Real>(m_origin * a_mat, m_direction * a_mat);
-  }	//End: Ray::operator*()
+  }	//End: Ray::GetTransformed()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Ray::operator*=()
+  //	@	Ray::TransformSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Ray<Real>& Ray<Real>::operator*=(Matrix44<Real> const & a_mat)
+  Ray<Real>& Ray<Real>::TransformSelf(Matrix44<Real> const & a_mat)
   {
     Set(m_origin * a_mat, m_direction * a_mat);
     return *this;
-  }	//End: Ray::operator*=()
+  }	//End: Ray::TransformSelf()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Ray::operator*()
+  //	@	Ray::GetTransformed()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Ray<Real> Ray<Real>::operator*(VQS<Real> const & a_vqs) const
+  Ray<Real> Ray<Real>::GetTransformed(VQS<Real> const & a_vqs) const
   {
     return Ray<Real>(a_vqs.TransformPoint(m_origin), a_vqs.Rotate(m_direction));
-  }	//End: Ray::operator*()
+  }	//End: Ray::GetTransformed()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Ray::operator*=()
+  //	@	Ray::TransformSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Ray<Real>& Ray<Real>::operator*=(VQS<Real> const & a_vqs)
+  Ray<Real>& Ray<Real>::TransformSelf(VQS<Real> const & a_vqs)
   {
     Set(a_vqs.TransformPoint(m_origin), a_vqs.Rotate(m_direction));
     return *this;
-  }	//End: Ray::operator*=()
+  }	//End: Ray::TransformSelf()
 }
 
 #endif

@@ -82,16 +82,16 @@ namespace Dg
     Real LengthSquared() const;
 
     //! Transform the line segment
-    LineSegment operator*(Matrix44<Real> const &) const;
+    LineSegment GetTransformed(Matrix44<Real> const &) const;
 
     //! Transform the line segment, assign to self
-    LineSegment & operator*=(Matrix44<Real> const &);
+    LineSegment & TransformSelf(Matrix44<Real> const &);
 
     //! Transform the line segment
-    LineSegment operator*(VQS<Real> const &) const;
+    LineSegment GetTransformed(VQS<Real> const &) const;
 
     //! Transform the line segment, assign to self
-    LineSegment & operator*=(VQS<Real> const &);
+    LineSegment & TransformSelf(VQS<Real> const &);
   private:
 
     //Data members
@@ -213,52 +213,52 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::operator*()
+  //	@	LineSegment::GetTransformed()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real> LineSegment<Real>::operator*(Matrix44<Real> const & a_mat) const
+  LineSegment<Real> LineSegment<Real>::GetTransformed(Matrix44<Real> const & a_mat) const
   {
     Vector4<Real> p0(m_origin * a_mat);
     Vector4<Real> p1(p0 + m_direction * a_mat);
     return LineSegment<Real>(p0, p1);
-  }	//End: LineSegment::operator*()
+  }	//End: LineSegment::GetTransformed()
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::operator*=()
+  //	@	LineSegment::TransformSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real>& LineSegment<Real>::operator*=(Matrix44<Real> const & a_mat)
+  LineSegment<Real>& LineSegment<Real>::TransformSelf(Matrix44<Real> const & a_mat)
   {
     Vector4<Real> p0(m_origin * a_mat);
     Vector4<Real> p1(p0 + m_direction * a_mat);
     Set(p0, p1);
     return *this;
-  }	//End: LineSegment::operator*=()
+  }	//End: LineSegment::TransformSelf()
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::operator*()
+  //	@	LineSegment::GetTransformed()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real> LineSegment<Real>::operator*(VQS<Real> const & a_vqs) const
+  LineSegment<Real> LineSegment<Real>::GetTransformed(VQS<Real> const & a_vqs) const
   {
     Vector4<Real> p0(a_vqs.TransformPoint(m_origin));
     Vector4<Real> p1(p0 + a_vqs.TransformVector(m_direction));
     return LineSegment<Real>(p0, p1);
-  }	//End: LineSegment::operator*()
+  }	//End: LineSegment::GetTransformed()
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::operator*=()
+  //	@	LineSegment::TransformSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real>& LineSegment<Real>::operator*=(VQS<Real> const & a_vqs)
+  LineSegment<Real>& LineSegment<Real>::TransformSelf(VQS<Real> const & a_vqs)
   {
     Vector4<Real> p0(a_vqs.TransformPoint(m_origin));
     Vector4<Real> p1(p0 + a_vqs.TransformVector(m_direction));
     Set(p0, p1);
     return *this;
-  }	//End: LineSegment::operator*=()
+  }	//End: LineSegment::TransformSelf()
 }
 #endif

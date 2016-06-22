@@ -63,16 +63,16 @@ namespace Dg
     void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
 
     //! Transform the line
-    Line operator*(Matrix44<Real> const &) const;
+    Line GetTransformed(Matrix44<Real> const &) const;
 
     //! Transform the line, assign to self
-    Line & operator*=(Matrix44<Real> const &);
+    Line & TransformSelf(Matrix44<Real> const &);
 
     //! Transform the line
-    Line operator*(VQS<Real> const &) const;
+    Line GetTransformed(VQS<Real> const &) const;
 
     //! Transform the line, assign to self
-    Line & operator*=(VQS<Real> const &);
+    Line & TransformSelf(VQS<Real> const &);
 
   private:
 
@@ -175,45 +175,45 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	Line::operator*()
+  //	@	Line::GetTransformed()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Line<Real> Line<Real>::operator*(Matrix44<Real> const & a_mat) const
+  Line<Real> Line<Real>::GetTransformed(Matrix44<Real> const & a_mat) const
   {
     return Line<Real>(m_origin * a_mat, m_direction * a_mat);
-  }	//End: Line::operator*()
+  }	//End: Line::GetTransformed()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Line::operator*=()
+  //	@	Line::TransformSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Line<Real>& Line<Real>::operator*=(Matrix44<Real> const & a_mat)
+  Line<Real>& Line<Real>::TransformSelf(Matrix44<Real> const & a_mat)
   {
     Set(m_origin * a_mat, m_direction * a_mat);
     return *this;
-  }	//End: Line::operator*=()
+  }	//End: Line::TransformSelf()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Line::operator*()
+  //	@	Line::GetTransformed()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Line<Real> Line<Real>::operator*(VQS<Real> const & a_vqs) const
+  Line<Real> Line<Real>::GetTransformed(VQS<Real> const & a_vqs) const
   {
     return Line<Real>(a_vqs.TransformPoint(m_origin), a_vqs.Rotate(m_direction));
-  }	//End: Line::operator*()
+  }	//End: Line::GetTransformed()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Line::operator*=()
+  //	@	Line::TransformSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Line<Real>& Line<Real>::operator*=(VQS<Real> const & a_vqs)
+  Line<Real>& Line<Real>::TransformSelf(VQS<Real> const & a_vqs)
   {
     Set(a_vqs.TransformPoint(m_origin), a_vqs.Rotate(m_direction));
     return *this;
-  }	//End: Line::operator*=()
+  }	//End: Line::TransformSelf()
 }
 
 #endif

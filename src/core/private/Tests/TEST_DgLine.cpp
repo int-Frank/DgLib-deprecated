@@ -128,14 +128,14 @@ TEST(Stack_DgLineTransform, DgLineTransform)
   v.SetS(scale);
   v.SetV(trans);
 
-  x1 *= m;
-  x2 = x0 * m;
+  x1.TransformSelf(m);
+  x2 = x0.GetTransformed(m);
   CHECK(x1 == x2);
   CHECK(x1 == xFinal);
 
   x1 = x0;
-  x1 *= v;
-  x2 = x0 * v;
+  x1.TransformSelf(v);
+  x2 = x0.GetTransformed(v);
   CHECK(x1 == x2);
   CHECK(x1 == xFinal);
 }
