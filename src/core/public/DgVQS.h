@@ -108,16 +108,16 @@ namespace Dg
     VQS<Real>& operator*= (VQS<Real> const &);
 
     //! Point transformations also apply translation.
-    Vector4<Real> TransformPoint(Vector4<Real> const &);
+    Vector4<Real> TransformPoint(Vector4<Real> const &) const;
 
     //! Vector transformations do not apply translation.
-    Vector4<Real> TransformVector(Vector4<Real> const &);
+    Vector4<Real> TransformVector(Vector4<Real> const &) const;
 
     //! Point transformations also apply translation.
-    Vector4<Real>& TransformPointSelf(Vector4<Real>&);
+    Vector4<Real>& TransformPointSelf(Vector4<Real>&) const;
 
     //! Vector transformations do not apply translation.
-    Vector4<Real>& TransformVectorSelf(Vector4<Real>&);
+    Vector4<Real>& TransformVectorSelf(Vector4<Real>&) const;
 
     //! Apply translation to Vector4.
     Vector4<Real> Translate(Vector4<Real> const &) const;
@@ -129,13 +129,13 @@ namespace Dg
     Vector4<Real> Scale(Vector4<Real> const &) const;
 
     //! Apply translation to Vector4.
-    void TranslateSelf(Vector4<Real>&) const;
+    Vector4<Real> & TranslateSelf(Vector4<Real>&) const;
 
     //! Apply rotation to Vector4.
-    void RotateSelf(Vector4<Real>&) const;
+    Vector4<Real> & RotateSelf(Vector4<Real>&) const;
 
     //! Apply scale to Vector4.
-    void ScaleSelf(Vector4<Real>&) const;
+    Vector4<Real> & ScaleSelf(Vector4<Real>&) const;
 
     //! Inverse.
     const VQS& Inverse();
@@ -336,14 +336,14 @@ namespace Dg
   //	@	TransformPoint()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> VQS<Real>::TransformPoint(Vector4<Real> const & a_v)
+  Vector4<Real> VQS<Real>::TransformPoint(Vector4<Real> const & a_v) const
   {
     Vector4<Real> result(a_v);
 
     //Scale
-    result.m_x *= m_s;
-    result.m_y *= m_s;
-    result.m_z *= m_s;
+    result.m_V[0] *= m_s;
+    result.m_V[1] *= m_s;
+    result.m_V[2] *= m_s;
 
     //Rotate;
     m_q.RotateSelf(result);
@@ -360,12 +360,12 @@ namespace Dg
   //	@	TransformPointSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real>& VQS<Real>::TransformPointSelf(Vector4<Real> & a_v)
+  Vector4<Real>& VQS<Real>::TransformPointSelf(Vector4<Real> & a_v) const
   {
     //Scale
-    a_v.m_x *= m_s;
-    a_v.m_y *= m_s;
-    a_v.m_z *= m_s;
+    a_v.m_V[0] *= m_s;
+    a_v.m_V[1] *= m_s;
+    a_v.m_V[2] *= m_s;
 
     //Rotate;
     m_q.RotateSelf(a_v);
@@ -382,7 +382,7 @@ namespace Dg
   //	@	TransformVector()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> VQS<Real>::TransformVector(Vector4<Real> const & a_v)
+  Vector4<Real> VQS<Real>::TransformVector(Vector4<Real> const & a_v) const
   {
     Vector4<Real> result(a_v);
 
@@ -403,12 +403,12 @@ namespace Dg
   //	@	TransformVectorSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real>& VQS<Real>::TransformVectorSelf(Vector4<Real> & a_v)
+  Vector4<Real>& VQS<Real>::TransformVectorSelf(Vector4<Real> & a_v) const
   {
     //Scale
-    a_v.m_x *= m_s;
-    a_v.m_y *= m_s;
-    a_v.m_z *= m_s;
+    a_v.m_V[0] *= m_s;
+    a_v.m_V[1] *= m_s;
+    a_v.m_V[2] *= m_s;
 
     //Rotate;
     m_q.RotateSelf(a_v);
@@ -469,7 +469,7 @@ namespace Dg
   //	@	VQS<Real>::TranslateSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::TranslateSelf(Vector4<Real>& a_v) const
+  Vector4<Real> & VQS<Real>::TranslateSelf(Vector4<Real>& a_v) const
   {
     a_v.x += m_v.x;
     a_v.y += m_v.y;
@@ -482,7 +482,7 @@ namespace Dg
   //	@	VQS<Real>::RotateSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::RotateSelf(Vector4<Real>& a_v) const
+  Vector4<Real> & VQS<Real>::RotateSelf(Vector4<Real>& a_v) const
   {
     //Rotate;
     m_q.RotateSelf(a_v);
@@ -494,7 +494,7 @@ namespace Dg
   //	@	VQS<Real>::ScaleSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void VQS<Real>::ScaleSelf(Vector4<Real>& a_v) const
+  Vector4<Real> & VQS<Real>::ScaleSelf(Vector4<Real>& a_v) const
   {
     //Scale
     a_v.x *= m_s;

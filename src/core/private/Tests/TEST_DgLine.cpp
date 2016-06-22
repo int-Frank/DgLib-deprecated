@@ -7,6 +7,9 @@
 typedef double                          Real;
 typedef Dg::Vector4<Real>               vec;
 typedef Dg::Plane<Real>                 plane;
+typedef Dg::Matrix44<Real>              mat44;
+typedef Dg::VQS<Real>                   vqs;
+typedef Dg::Quaternion<Real>            quat;
 typedef Dg::Line<Real>                  line;
 
 TEST(Stack_DgLine, DgLine)
@@ -95,5 +98,32 @@ TEST(Stack_DgLine, DgLine)
   CHECK(fiLinePlane_res.code == 0);
   CHECK(fiLinePlane_res.point == vec(3.0, 0.0, 0.0, 1.0));
   CHECK(fiLinePlane_res.u == 3.0);
+}
 
+
+TEST(Stack_DgLineTransform, DgLineTransform)
+{
+  line x0(vec(2.0, 0.0, 0.0, 1.0), vec::xAxis());
+  line x1 = x0;
+  line x2 = x0;
+  line xFinal(vec(0.0, 0.0, 2.0, 1.0), vec::zAxis());
+
+  mat44 m;
+  m.Rotation(Dg::PI / 2.0, 0.0, Dg::PI / 2.0, Dg::EulerOrder::ZXY);
+  
+  vqs v;
+  quat q;
+  q.SetRotation(Dg::PI / 2.0, 0.0, Dg::PI / 2.0, Dg::EulerOrder::ZXY);
+  v.SetQ(q);
+
+  x1 *= m;
+  x2 = x0 * m;
+  CHECK(x1 == x2);
+  CHECK(x1 == xFinal);
+
+  x1 = x0;
+  x1 *= v;
+  x2 = x0 * v;
+  CHECK(x1 == x2);
+  CHECK(x1 == xFinal);
 }

@@ -9,6 +9,8 @@
 #define DGLINE_H
 
 #include "DgVector4.h"
+#include "DgMatrix44.h"
+#include "DgVQS.h"
 #include "dgmath.h"
 
 namespace Dg
@@ -59,6 +61,18 @@ namespace Dg
 
     //! Set line from an origin and direction
     void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
+
+    //! Transform the line
+    Line operator*(Matrix44<Real> const &) const;
+
+    //! Transform the line, assign to self
+    Line & operator*=(Matrix44<Real> const &);
+
+    //! Transform the line
+    Line operator*(VQS<Real> const &) const;
+
+    //! Transform the line, assign to self
+    Line & operator*=(VQS<Real> const &);
 
   private:
 
@@ -159,6 +173,47 @@ namespace Dg
 
   }	//End: Line::Set()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	Line::operator*()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Line<Real> Line<Real>::operator*(Matrix44<Real> const & a_mat) const
+  {
+    return Line<Real>(m_origin * a_mat, m_direction * a_mat);
+  }	//End: Line::operator*()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Line::operator*=()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Line<Real>& Line<Real>::operator*=(Matrix44<Real> const & a_mat)
+  {
+    Set(m_origin * a_mat, m_direction * a_mat);
+    return *this;
+  }	//End: Line::operator*=()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Line::operator*()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Line<Real> Line<Real>::operator*(VQS<Real> const & a_vqs) const
+  {
+    return Line<Real>(a_vqs.TransformPoint(m_origin), a_vqs.Rotate(m_direction));
+  }	//End: Line::operator*()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Line::operator*=()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Line<Real>& Line<Real>::operator*=(VQS<Real> const & a_vqs)
+  {
+    Set(a_vqs.TransformPoint(m_origin), a_vqs.Rotate(m_direction));
+    return *this;
+  }	//End: Line::operator*=()
 }
 
 #endif

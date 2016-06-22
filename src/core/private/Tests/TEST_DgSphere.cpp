@@ -35,5 +35,4 @@ TEST(Stack_DgSphere, DgSphere)
   s.Set(center, radius);
   CHECK(s.Center() == center);
   CHECK(s.Radius() == radius);
-
 }
