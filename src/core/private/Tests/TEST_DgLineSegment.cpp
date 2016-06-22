@@ -1,5 +1,7 @@
 #include "TestHarness.h"
 #include "DgLineSegment.h"
+#include "DgMatrix44.h"
+#include "DgVQS.h"
 #include "query/DgQueryPointLineSegment.h"
 #include "query/DgQueryLineSegmentLine.h"
 #include "query/DgQueryLineSegmentRay.h"
@@ -7,11 +9,14 @@
 #include "query/DgQueryLineSegmentPlane.h"
 
 typedef double Real;
-typedef Dg::Vector4<Real> vec;
-typedef Dg::Plane<Real>   plane;
-typedef Dg::Line<Real>    line;
-typedef Dg::Ray<Real>     ray;
-typedef Dg::LineSegment<Real> lineSeg;
+typedef Dg::Vector4<Real>               vec;
+typedef Dg::Plane<Real>                 plane;
+typedef Dg::Line<Real>                  line;
+typedef Dg::Matrix44<Real>              mat44;
+typedef Dg::VQS<Real>                   vqs;
+typedef Dg::Quaternion<Real>            quat;
+typedef Dg::Ray<Real>                   ray;
+typedef Dg::LineSegment<Real>           lineSeg;
 
 TEST(Stack_DgLineSegment, DgLineSegment)
 {
@@ -499,4 +504,43 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(fiLSPlane_res.code == 0);
   CHECK(fiLSPlane_res.point == vec(4.0, 0.0, 0.0, 1.0));
   CHECK(fiLSPlane_res.u == 0.5);
+}
+
+TEST(Stack_DgLineSegmentTransform, DgLineSegmentTransform)
+{
+  lineSeg x0(vec(2.0, 0.0, 0.0, 1.0), vec(4.0, 0.0, 0.0, 1.0));
+  lineSeg x1 = x0;
+  lineSeg x2 = x0;
+  lineSeg xFinal(vec(1.0, 2.0, 7.0, 1.0), vec(1.0, 2.0, 11.0, 1.0));
+
+  Real scale = 2.0;
+  vec trans(1.0, 2.0, 3.0, 0.0);
+  Real rx = Dg::PI / 2.0;
+  Real ry = 0.0;
+  Real rz = Dg::PI / 2.0;
+  Dg::EulerOrder eo = Dg::EulerOrder::ZXY;
+
+  mat44 m, m_rot, m_scl, m_trans;
+  m_rot.Rotation(rz, ry, rx, eo);
+  m_scl.Scaling(scale);
+  m_trans.Translation(trans);
+  m = m_rot * m_scl * m_trans;
+
+  vqs v;
+  quat q;
+  q.SetRotation(rx, ry, rz, eo);
+  v.SetQ(q);
+  v.SetS(scale);
+  v.SetV(trans);
+
+  x1 *= m;
+  x2 = x0 * m;
+  CHECK(x1 == x2);
+  CHECK(x1 == xFinal);
+
+  x1 = x0;
+  x1 *= v;
+  x2 = x0 * v;
+  CHECK(x1 == x2);
+  CHECK(x1 == xFinal);
 }

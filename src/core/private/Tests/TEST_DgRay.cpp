@@ -1,15 +1,20 @@
 #include "TestHarness.h"
 #include "DgRay.h"
+#include "DgMatrix44.h"
+#include "DgVQS.h"
 #include "query/DgQueryPointRay.h"
 #include "query/DgQueryRayLine.h"
 #include "query/DgQueryRayRay.h"
 #include "query/DgQueryRayPlane.h"
 
 typedef double Real;
-typedef Dg::Vector4<Real> vec;
-typedef Dg::Plane<Real>   plane;
-typedef Dg::Line<Real>    line;
-typedef Dg::Ray<Real>     ray;
+typedef Dg::Vector4<Real>               vec;
+typedef Dg::Plane<Real>                 plane;
+typedef Dg::Line<Real>                  line;
+typedef Dg::Matrix44<Real>              mat44;
+typedef Dg::VQS<Real>                   vqs;
+typedef Dg::Quaternion<Real>            quat;
+typedef Dg::Ray<Real>                   ray;
 
 TEST(Stack_DgRay, DgRay)
 {
@@ -227,4 +232,43 @@ TEST(Stack_DgRay, DgRay)
   CHECK(fiRayPlane_res.point == vec(10.0, 2.3, -5.6, 1.0));
   CHECK(fiRayPlane_res.u == 4.0);
 
+}
+
+TEST(Stack_DgRayTransform, DgRayTransform)
+{
+  ray x0(vec(2.0, 0.0, 0.0, 1.0), vec::xAxis());
+  ray x1 = x0;
+  ray x2 = x0;
+  ray xFinal(vec(1.0, 2.0, 7.0, 1.0), vec::zAxis());
+
+  Real scale = 2.0;
+  vec trans(1.0, 2.0, 3.0, 0.0);
+  Real rx = Dg::PI / 2.0;
+  Real ry = 0.0;
+  Real rz = Dg::PI / 2.0;
+  Dg::EulerOrder eo = Dg::EulerOrder::ZXY;
+
+  mat44 m, m_rot, m_scl, m_trans;
+  m_rot.Rotation(rz, ry, rx, eo);
+  m_scl.Scaling(scale);
+  m_trans.Translation(trans);
+  m = m_rot * m_scl * m_trans;
+
+  vqs v;
+  quat q;
+  q.SetRotation(rx, ry, rz, eo);
+  v.SetQ(q);
+  v.SetS(scale);
+  v.SetV(trans);
+
+  x1 *= m;
+  x2 = x0 * m;
+  CHECK(x1 == x2);
+  CHECK(x1 == xFinal);
+
+  x1 = x0;
+  x1 *= v;
+  x2 = x0 * v;
+  CHECK(x1 == x2);
+  CHECK(x1 == xFinal);
 }

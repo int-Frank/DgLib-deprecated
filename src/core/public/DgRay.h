@@ -11,6 +11,8 @@
 #include "DgVector4.h"
 #include "DgPlane.h"
 #include "DgLine.h"
+#include "DgMatrix44.h"
+#include "DgVQS.h"
 #include "dgmath.h"
 
 namespace Dg
@@ -44,13 +46,13 @@ namespace Dg
     //! Assignment
     Ray& operator=(Ray const &);
 
-    //! Get the origin of the line
+    //! Get the origin of the ray
     Vector4<Real> const & Origin() const { return m_origin; }
 
-    //! Get the direction of the line
+    //! Get the direction of the ray
     Vector4<Real> const & Direction() const { return m_direction; }
 
-    //! Get the origin and direction of the line
+    //! Get the origin and direction of the ray
     void Get(Vector4<Real>& origin, Vector4<Real>& direction) const;
 
     //! Comparison
@@ -59,9 +61,20 @@ namespace Dg
     //! Comparison
     bool operator!= (Ray const &) const;
 
-    //! Set line from an origin and direction
+    //! Set ray from an origin and direction
     void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
 
+    //! Transform the ray
+    Ray operator*(Matrix44<Real> const &) const;
+
+    //! Transform the ray, assign to self
+    Ray & operator*=(Matrix44<Real> const &);
+
+    //! Transform the ray
+    Ray operator*(VQS<Real> const &) const;
+
+    //! Transform the ray, assign to self
+    Ray & operator*=(VQS<Real> const &);
   private:
 
     //Data members
@@ -161,6 +174,47 @@ namespace Dg
 
   }	//End: Ray::Set()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	Ray::operator*()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Ray<Real> Ray<Real>::operator*(Matrix44<Real> const & a_mat) const
+  {
+    return Ray<Real>(m_origin * a_mat, m_direction * a_mat);
+  }	//End: Ray::operator*()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Ray::operator*=()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Ray<Real>& Ray<Real>::operator*=(Matrix44<Real> const & a_mat)
+  {
+    Set(m_origin * a_mat, m_direction * a_mat);
+    return *this;
+  }	//End: Ray::operator*=()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Ray::operator*()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Ray<Real> Ray<Real>::operator*(VQS<Real> const & a_vqs) const
+  {
+    return Ray<Real>(a_vqs.TransformPoint(m_origin), a_vqs.Rotate(m_direction));
+  }	//End: Ray::operator*()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Ray::operator*=()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Ray<Real>& Ray<Real>::operator*=(VQS<Real> const & a_vqs)
+  {
+    Set(a_vqs.TransformPoint(m_origin), a_vqs.Rotate(m_direction));
+    return *this;
+  }	//End: Ray::operator*=()
 }
 
 #endif
