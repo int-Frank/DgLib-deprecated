@@ -106,15 +106,27 @@ TEST(Stack_DgLineTransform, DgLineTransform)
   line x0(vec(2.0, 0.0, 0.0, 1.0), vec::xAxis());
   line x1 = x0;
   line x2 = x0;
-  line xFinal(vec(0.0, 0.0, 2.0, 1.0), vec::zAxis());
+  line xFinal(vec(1.0, 2.0, 7.0, 1.0), vec::zAxis());
 
-  mat44 m;
-  m.Rotation(Dg::PI / 2.0, 0.0, Dg::PI / 2.0, Dg::EulerOrder::ZXY);
-  
+  Real scale = 2.0;
+  vec trans(1.0, 2.0, 3.0, 0.0);
+  Real rx = Dg::PI / 2.0;
+  Real ry = 0.0;
+  Real rz = Dg::PI / 2.0;
+  Dg::EulerOrder eo = Dg::EulerOrder::ZXY;
+
+  mat44 m, m_rot, m_scl, m_trans;
+  m_rot.Rotation(rz, ry, rx, eo);
+  m_scl.Scaling(scale);
+  m_trans.Translation(trans);
+  m = m_rot * m_scl * m_trans;
+
   vqs v;
   quat q;
-  q.SetRotation(Dg::PI / 2.0, 0.0, Dg::PI / 2.0, Dg::EulerOrder::ZXY);
+  q.SetRotation(rx, ry, rz, eo);
   v.SetQ(q);
+  v.SetS(scale);
+  v.SetV(trans);
 
   x1 *= m;
   x2 = x0 * m;
