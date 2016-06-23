@@ -9,6 +9,8 @@
 #define DGSPHERE_H
 
 #include "DgVector4.h"
+#include "DgMatrix44.h"
+#include "DgVQS.h"
 #include "dgmath.h"
 
 namespace Dg

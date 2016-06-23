@@ -34,5 +34,8 @@
     <ClInclude Include="ResourceManager_private.h">
       <Filter>Private Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\particle_system\ParticleData.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
