@@ -11,16 +11,31 @@
 #include "../DgVector4.h"
 #include <stdint.h>
 
+
 namespace Dg
 {
   //! Adding / Removing Attributes SHOULD ONLY be done through the interface.
-  //!
-  //! Template arguments:
-  //!   Real: number type
-  //!   Attr: 
-  template<typename Real, uint32_t Attr, uint32_t SavedAttr>
+  template<typename Real, uint32_t SavedAttr = 0>
   class ParticleData
   {
+  public:
+
+    enum
+    {
+      ID = 0,
+      Position,
+      Velocity,
+      Acceleration,
+      Force,
+      Size,
+      StartSize,
+      EndSize,
+      Life,
+      Color,
+      StartColor,
+      EndColor
+    };
+
   public:
 
     int                   * m_ID;
@@ -78,10 +93,11 @@ namespace Dg
     size_t                  m_countAlive;
   };
 
-  template<typename Real, uint32_t Opts>
-  ParticleData<Real, Opts>::ParticleData(size_t a_maxCount)
+  template<typename Real, uint32_t SavedAttr>
+  ParticleData<Real, SavedAttr>::ParticleData(size_t a_maxCount)
     : m_maxCount(a_maxCount),
       m_countAlive(0),
+      m_ID(nullptr),
       m_position(nullptr),
       m_velocity(nullptr),
       m_acceleration(nullptr),
@@ -97,9 +113,10 @@ namespace Dg
    
   }
 
-  template<typename Real, uint32_t Opts>
-  ParticleData<Real, Opts>::~ParticleData()
+  template<typename Real, uint32_t SavedAttr>
+  ParticleData<Real, SavedAttr>::~ParticleData()
   {
+    delete[] m_ID;
     delete[] m_position;
     delete[] m_velocity;
     delete[] m_acceleration;
@@ -113,6 +130,196 @@ namespace Dg
     delete[] m_endColor;
   }
 
+  template<typename Real, uint32_t SavedAttr>
+  void ParticleData<Real, SavedAttr>::Kill(size_t a_index)
+  {
+    if (m_countAlive == 0)
+    {
+      return;
+    }
+
+    --m_countAlive;
+
+    //ID
+    if (m_ID)
+    {
+      if (SavedAttr & (1 << ID))
+      {
+        int temp(m_ID[a_index]);
+        m_ID[a_index] = m_ID[m_countAlive];
+        m_ID[m_countAlive] = temp;
+      }
+      else
+      {
+        m_ID[a_index] = m_ID[m_countAlive];
+      }
+    }
+
+    //Position
+    if (m_position)
+    {
+      if (SavedAttr & (1 << Position))
+      {
+        Vector4<Real> temp(m_position[a_index]);
+        m_position[a_index] = m_position[m_countAlive];
+        m_position[m_countAlive] = temp;
+      }
+      else
+      {
+        m_position[a_index] = m_position[m_countAlive];
+      }
+    }
+
+    //Velocity
+    if (m_velocity)
+    {
+      if (SavedAttr & (1 << Velocity))
+      {
+        Vector4<Real> temp(m_velocity[a_index]);
+        m_velocity[a_index] = m_velocity[m_countAlive];
+        m_velocity[m_countAlive] = temp;
+      }
+      else
+      {
+        m_velocity[a_index] = m_velocity[m_countAlive];
+      }
+    }
+
+    //Acceleration
+    if (m_acceleration)
+    {
+      if (SavedAttr & (1 << Acceleration))
+      {
+        Vector4<Real> temp(m_acceleration[a_index]);
+        m_acceleration[a_index] = m_acceleration[m_countAlive];
+        m_acceleration[m_countAlive] = temp;
+      }
+      else
+      {
+        m_acceleration[a_index] = m_acceleration[m_countAlive];
+      }
+    }
+
+    //Force
+    if (m_force)
+    {
+      if (SavedAttr & (1 << Force))
+      {
+        Real temp(m_force[a_index]);
+        m_force[a_index] = m_force[m_countAlive];
+        m_force[m_countAlive] = temp;
+      }
+      else
+      {
+        m_force[a_index] = m_force[m_countAlive];
+      }
+    }
+
+    //Size
+    if (m_size)
+    {
+      if (SavedAttr & (1 << Size))
+      {
+        Real temp(m_size[a_index]);
+        m_size[a_index] = m_size[m_countAlive];
+        m_size[m_countAlive] = temp;
+      }
+      else
+      {
+        m_size[a_index] = m_size[m_countAlive];
+      }
+    }
+
+    //Start size
+    if (m_startSize)
+    {
+      if (SavedAttr & (1 << StartSize))
+      {
+        Real temp(m_startSize[a_index]);
+        m_startSize[a_index] = m_startSize[m_countAlive];
+        m_startSize[m_countAlive] = temp;
+      }
+      else
+      {
+        m_startSize[a_index] = m_startSize[m_countAlive];
+      }
+    }
+
+    //End size
+    if (m_endSize)
+    {
+      if (SavedAttr & (1 << EndSize))
+      {
+        Real temp(m_endSize[a_index]);
+        m_endSize[a_index] = m_endSize[m_countAlive];
+        m_endSize[m_countAlive] = temp;
+      }
+      else
+      {
+        m_endSize[a_index] = m_endSize[m_countAlive];
+      }
+    }
+
+    //Life
+    if (m_life)
+    {
+      if (SavedAttr & (1 << Life))
+      {
+        int temp(m_life[a_index]);
+        m_life[a_index] = m_life[m_countAlive];
+        m_life[m_countAlive] = temp;
+      }
+      else
+      {
+        m_life[a_index] = m_life[m_countAlive];
+      }
+    }
+
+    //Color
+    if (m_color)
+    {
+      if (SavedAttr & (1 << Color))
+      {
+        Vector4<float> temp(m_color[a_index]);
+        m_color[a_index] = m_color[m_countAlive];
+        m_color[m_countAlive] = temp;
+      }
+      else
+      {
+        m_color[a_index] = m_color[m_countAlive];
+      }
+    }
+
+    //Start color
+    if (m_startColor)
+    {
+      if (SavedAttr & (1 << StartColor))
+      {
+        Vector4<float> temp(m_startColor[a_index]);
+        m_startColor[a_index] = m_startColor[m_countAlive];
+        m_startColor[m_countAlive] = temp;
+      }
+      else
+      {
+        m_startColor[a_index] = m_startColor[m_countAlive];
+      }
+    }
+
+    //End color
+    if (m_endColor)
+    {
+      if (SavedAttr & (1 << EndColor))
+      {
+        Vector4<float> temp(m_endColor[a_index]);
+        m_endColor[a_index] = m_endColor[m_countAlive];
+        m_endColor[m_countAlive] = temp;
+      }
+      else
+      {
+        m_endColor[a_index] = m_endColor[m_countAlive];
+      }
+    }
+  }
 }
 
 #endif // !PARTICLEDATA_H
