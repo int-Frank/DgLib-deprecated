@@ -14,6 +14,9 @@
 #include "DgVariadicMacros.h"
 #include "../impl/DgParticleData_impl.inl"
 
+
+//! Attribute must be a list on name, type pairs:
+//!   #define ATTIBUTES ID, int, Position, Dg::Vector4<Real>, Life, float
 #define ATTRIBUTES ID,                  int,\
                    Position,            Dg::Vector4<Real>,\
                    Velocity,            Dg::Vector4<Real>,\
@@ -34,7 +37,8 @@ namespace Dg
   struct ParticleDataAttributes
   {
     enum
-    {
+    { 
+      //Enum enrty names are taken from ATTRIBUTES names
       ADD_ENUM_ENTRIES(ATTRIBUTES)
     };
   };
@@ -52,13 +56,19 @@ namespace Dg
 
     void Kill(size_t);
     size_t Wake();
-
+    
+    //! For each entry in ATTRIBUTES, there exists an Init, Deint and Get function.
+    //! For example,for the Postion attribute, there exists:
+    //!   void InitPosition();
+    //!   void DeinitPosition();
+    //!   void GetPosition();
     ADD_METHODS(ATTRIBUTES)
 
   private:
     size_t const            m_maxCount;
     size_t                  m_countAlive;
 
+    //! Members are built from ATTRIBUTES name-type pairs
     ADD_MEMBERS(ATTRIBUTES)
   };
 
