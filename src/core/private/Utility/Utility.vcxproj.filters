@@ -29,5 +29,8 @@
     <ClInclude Include="..\..\public\DgUtility.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgVariadicMacros.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

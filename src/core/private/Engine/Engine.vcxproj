@@ -149,6 +149,9 @@
     <ClInclude Include="..\..\public\ResourceTypes.h" />
     <ClInclude Include="ResourceManager_private.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\public\impl\DgParticleData_impl.inl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

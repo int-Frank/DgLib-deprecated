@@ -38,4 +38,9 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\public\impl\DgParticleData_impl.inl">
+      <Filter>Public Headers</Filter>
+    </None>
+  </ItemGroup>
 </Project>

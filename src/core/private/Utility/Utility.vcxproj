@@ -141,6 +141,7 @@
     <ClInclude Include="..\..\public\DgPriorityMutex.h" />
     <ClInclude Include="..\..\public\DgSingleton.h" />
     <ClInclude Include="..\..\public\DgUtility.h" />
+    <ClInclude Include="..\..\public\DgVariadicMacros.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
