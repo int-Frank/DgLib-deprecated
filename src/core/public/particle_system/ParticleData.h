@@ -14,19 +14,18 @@
 #include "DgVariadicMacros.h"
 #include "../impl/DgParticleData_impl.inl"
 
-#define ATTRIBUTES \
-int,                  ID,\
-Dg::Vector4<Real>,    Position,\
-Dg::Vector4<Real>,    Velocity,\
-Dg::Vector4<Real>,    Acceleration,\
-Real,                 Force,\
-Real,                 Size,\
-Real,                 StartSize,\
-Real,                 EndSize,\
-int,                  Life,\
-Dg::Vector4<float>,   Color,\
-Dg::Vector4<float>,   StartColor,\
-Dg::Vector4<float>,   EndColor
+#define ATTRIBUTES ID,                  int,\
+                   Position,            Dg::Vector4<Real>,\
+                   Velocity,            Dg::Vector4<Real>,\
+                   Acceleration,        Dg::Vector4<Real>,\
+                   Force,               Real,\
+                   Size,                Real,\
+                   StartSize,           Real,\
+                   EndSize,             Real,\
+                   Life,                int,\
+                   Color,               Dg::Vector4<float>,\
+                   StartColor,          Dg::Vector4<float>,\
+                   EndColor,            Dg::Vector4<float>
 
 
 
