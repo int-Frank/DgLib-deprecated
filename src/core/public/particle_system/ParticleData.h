@@ -32,16 +32,17 @@ Dg::Vector4<float>,   EndColor
 
 namespace Dg
 {
-  template<typename Real, uint32_t SavedAttr = 0>
-  class ParticleData
+  struct ParticleDataAttributes
   {
-  public:
-
     enum
     {
       ADD_ENUM_ENTRIES(ATTRIBUTES)
     };
+  };
 
+  template<typename Real, uint32_t SavedAttr = 0>
+  class ParticleData
+  {
   public:
 
     explicit ParticleData(size_t a_maxCount);

@@ -29,7 +29,7 @@ if (SavedAttr & (1 << n0))\
 } 
 #define ADD_WAKE_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(WAKE, __VA_ARGS__))
 
-#define ADD_SINGLE_KILL \
+#define ADD_SINGLE_KILL(t0, n0) \
 if (m_ ## n0)\
 {\
   if (SavedAttr & (1 <<  ## n0))\
