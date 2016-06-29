@@ -148,7 +148,13 @@
     <ClCompile Include="ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\public\particle_system\ParticleData.h" />
+    <ClInclude Include="..\..\public\particle_system\DgAttractor.h" />
+    <ClInclude Include="..\..\public\particle_system\DgParticleEmitter.h" />
+    <ClInclude Include="..\..\public\particle_system\DgParticleGenerator.h" />
+    <ClInclude Include="..\..\public\particle_system\DgParticleData.h" />
+    <ClInclude Include="..\..\public\particle_system\DgParticleSystem.h" />
+    <ClInclude Include="..\..\public\particle_system\DgParticleUpdater.h" />
+    <ClInclude Include="..\..\public\particle_system\Trash.h" />
     <ClInclude Include="..\..\public\ResourceManager.h" />
     <ClInclude Include="..\..\public\ResourceTypes.h" />
     <ClInclude Include="ResourceManager_private.h" />

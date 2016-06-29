@@ -15,6 +15,9 @@
     <Filter Include="Private Headers">
       <UniqueIdentifier>{478be011-b116-4ff2-9df5-842bf9d36b18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Particle System">
+      <UniqueIdentifier>{92eb167f-473e-4fa0-8f72-af65816a662e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceHandle.cpp">
@@ -34,13 +37,31 @@
     <ClInclude Include="ResourceManager_private.h">
       <Filter>Private Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\particle_system\ParticleData.h">
-      <Filter>Public Headers</Filter>
+    <ClInclude Include="..\..\public\particle_system\DgParticleGenerator.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\particle_system\DgParticleData.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\particle_system\DgAttractor.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\particle_system\Trash.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\particle_system\DgParticleUpdater.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\particle_system\DgParticleEmitter.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\particle_system\DgParticleSystem.h">
+      <Filter>Particle System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\public\impl\DgParticleData_impl.inl">
-      <Filter>Public Headers</Filter>
+      <Filter>Particle System</Filter>
     </None>
   </ItemGroup>
 </Project>

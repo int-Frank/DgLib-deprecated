@@ -17,6 +17,7 @@
 
 //! Attribute must be a list on name, type pairs:
 //!   #define ATTIBUTES ID, int, Position, Dg::Vector4<Real>, Life, float
+//! Be sure there are no spaces after the final '\' on each line.
 #define ATTRIBUTES ID,                  int,\
                    Position,            Dg::Vector4<Real>,\
                    Velocity,            Dg::Vector4<Real>,\
@@ -29,8 +30,6 @@
                    Color,               Dg::Vector4<float>,\
                    StartColor,          Dg::Vector4<float>,\
                    EndColor,            Dg::Vector4<float>
-
-
 
 namespace Dg
 {

@@ -142,6 +142,8 @@
     <ClCompile Include="DgPriorityMutex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\public\DgObject.h" />
+    <ClInclude Include="..\..\public\DgObjectWrapper.h" />
     <ClInclude Include="..\..\public\DgPriorityMutex.h" />
     <ClInclude Include="..\..\public\DgSingleton.h" />
     <ClInclude Include="..\..\public\DgUtility.h" />
