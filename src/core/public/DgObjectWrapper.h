@@ -1,3 +1,10 @@
+//! @file DgObjectWrapper.h
+//!
+//! @author: Frank B. Hart
+//! @date 29/06/2016
+//!
+//! Class declaration: ObjectWrapper
+
 #ifndef DGOBJECTWRAPPER
 #define DGOBJECTWRAPPER
 
@@ -5,100 +12,64 @@
 
 namespace Dg
 {
-  /*!
-  * @ingroup utility_container
-  *
-  * @class ObjectWrapper
-  *
-  * @brief Wraps base pointers for automatic deep copying and deletion.
-  *
-  * Type T should be type BaseClass<T>. If not, the type should
-  * contain the method clone().
-  *
-  * @author Frank Hart
-  * @date 2/01/2014
-  */
+  //! @ingroup DgUtility_types
+  //!
+  //! @class ObjectWrapper
+  //!
+  //! Wraps base pointers for automatic deep copying and deletion.
+  //! Type T should be type Object<T>. If not, the type should
+  //! contain the method Clone().
+  //!
+  //! @author Frank Hart
+  //! @date 29/06/2016
   template<class T>
   class ObjectWrapper
   {
   public:
-    /*!
-    * @brief Build internal resource from input.
-    *
-    * @pre input type must contain the clone() method.
-    * @post Pointer to new resource stored.
-    */
-    ObjectWrapper(const T&);
 
-    /*!
-    * @brief Build a new object on the heap from a pointer.
-    *
-    * @param[in] t Pointer to the object to clone.
-    * @param[in] dealloc Flag to determine if the input resource 't' should be freed.
-    *
-    * @pre 't' must be a valid pointer to an object contained the clone() method.
-    * @post Pointer to new resource stored.
-    */
+    //! Build internal resource from input.
+    //!
+    //! @pre input type must contain the Clone() method.
+    //! @post Pointer to new resource stored.
+    ObjectWrapper(T const &);
+
+    //! Build a new object on the heap from a pointer.
+    //!
+    //! @param[in] t Pointer to the object to clone.
+    //! @param[in] dealloc Flag to determine if the input resource 't' should be freed.
+    //!
+    //! @pre 't' must be a valid pointer to an object contained the clone() method.
+    //! @post Pointer to new resource stored.
     ObjectWrapper(T* t, bool dealloc = true);
 
-    /*!
-    * @brief Internal pointer set to NULL
-    */
-    ObjectWrapper() : ptr(NULL) {}
-
-
+    //! Copy constructor
     ObjectWrapper(const ObjectWrapper& other);
+
+    //! Assignment
     ObjectWrapper& ObjectWrapper::operator=(const ObjectWrapper& other);
 
-
-    /*!
-    * @brief Internal resource cleared
-    */
     ~ObjectWrapper();
 
-    /*!
-    * @brief Clears current resource and build a new from input.
-    */
-    void Set(const T&);
+    //! Get pointer to resource.
+    //! @return Pointer to the internal resource.
+    operator T*() { return m_ptr; }
 
-    /*!
-    * @brief Clears current resource and build a new from input.
-    *
-    * @param[in] t Pointer to the object to clone.
-    * @param[in] dealloc Flag to determine if the input resource 't' should be cleared.
-    *
-    * @pre 't' must be a valid pointer to an object containing the clone() method.
-    * @post New derived class created, reference stored.
-    */
-    void Set(const T* t, bool dealloc = true);
+    //! Get const pointer to resource.
+    //! @return Pointer to the internal resource.
+    operator T const *() const { return m_ptr; }
 
-    /*!
-    * @brief Deletes the object
-    */
-    void Clear() { delete ptr; ptr = NULL; }
+    //! Get pointer to resource.
+    //! @return Pointer to the internal resource.
+    T* operator->() { return m_ptr; }
 
-    /*!
-    * @brief Get pointer to resource.
-    * @return Pointer to the internal resource.
-    */
-    operator T*() { return ptr; }
-
-    /*!
-    * @brief Get pointer to resource.
-    * @return Pointer to the internal resource.
-    */
-    operator const T*() const { return ptr; }
-
-    /*!
-    * @brief Get pointer to resource.
-    * @return Pointer to the internal resource.
-    */
-    T* operator->() { return ptr; }
+    //! Get const pointer to resource.
+    //! @return Pointer to the internal resource.
+    T const * operator->() const { return m_ptr; }
 
 
   private:
     //Data members
-    T* ptr;
+    T* m_ptr;
 
   };
 
@@ -106,25 +77,21 @@ namespace Dg
   //--------------------------------------------------------------------------------
   //	@	ObjectWrapper<T>::ObjectWrapper()
   //--------------------------------------------------------------------------------
-  //		Constructor
-  //--------------------------------------------------------------------------------
   template<class T>
   ObjectWrapper<T>::ObjectWrapper(const T& t)
   {
-    ptr = t.Clone();
+    m_ptr = t.Clone();
 
   }	//End: ObjectWrapper::ObjectWrapper()
 
 
-    //--------------------------------------------------------------------------------
-    //	@	ObjectWrapper<T>::ObjectWrapper()
-    //--------------------------------------------------------------------------------
-    //		Constructor
-    //--------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------
+  //	@	ObjectWrapper<T>::ObjectWrapper()
+  //--------------------------------------------------------------------------------
   template<class T>
   ObjectWrapper<T>::ObjectWrapper(T* t, bool dealloc)
   {
-    ptr = t->Clone();
+    m_ptr = t->Clone();
 
     if (dealloc)
       delete t;
@@ -132,88 +99,45 @@ namespace Dg
   }	//End: ObjectWrapper:ObjectWrapper()
 
 
-    //--------------------------------------------------------------------------------
-    //	@	ObjectWrapper<T>::~ObjectWrapper()
-    //--------------------------------------------------------------------------------
-    //		Destructor
-    //--------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------
+  //	@	ObjectWrapper<T>::~ObjectWrapper()
+  //--------------------------------------------------------------------------------
   template<class T>
   ObjectWrapper<T>::~ObjectWrapper()
   {
-    delete ptr;
+    delete m_ptr;
 
   }	//End: ObjectWrapper::~ObjectWrapper()
 
 
-    //--------------------------------------------------------------------------------
-    //	@	ObjectWrapper<T>::ObjectWrapper()
-    //--------------------------------------------------------------------------------
-    //		Copy constructor
-    //--------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------
+  //	@	ObjectWrapper<T>::ObjectWrapper()
+  //--------------------------------------------------------------------------------
   template<class T>
   ObjectWrapper<T>::ObjectWrapper(const ObjectWrapper& other)
   {
-    ptr = other.ptr->Clone();
+    m_ptr = other.m_ptr->Clone();
 
   }	//End: ObjectWrapper::ObjectWrapper()
 
 
-    //--------------------------------------------------------------------------------
-    //	@	ObjectWrapper<T>::operator=()
-    //--------------------------------------------------------------------------------
-    //		Assignment
-    //--------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------
+  //	@	ObjectWrapper<T>::operator=()
+  //--------------------------------------------------------------------------------
   template<class T>
   ObjectWrapper<T>& ObjectWrapper<T>::operator=(const ObjectWrapper& other)
   {
-    delete ptr;
+    delete m_ptr;
 
-    if (other.ptr != NULL)
+    if (other.m_ptr != nullptr)
     {
-      T* temp_ptr(other.ptr->Clone());
-      ptr = temp_ptr;
+      T* temp_m_ptr(other.m_ptr->Clone());
+      m_ptr = temp_m_ptr;
     }
 
     return *this;
 
   }	//End: ObjectWrapper::operator=()
-
-
-    //--------------------------------------------------------------------------------
-    //	@	ObjectWrapper<T>::Set()
-    //--------------------------------------------------------------------------------
-    //		Set data from other
-    //--------------------------------------------------------------------------------
-  template<class T>
-  void ObjectWrapper<T>::Set(const T& t)
-  {
-    //Free memory
-    delete ptr;
-
-    //Assign new object
-    ptr = t.Clone();
-
-  }	//End: ObjectWrapper:Set()
-
-
-    //--------------------------------------------------------------------------------
-    //	@	ObjectWrapper<T>::Set()
-    //--------------------------------------------------------------------------------
-    //		Set from other. Frees memory of original pointer if dealloc is true.
-    //--------------------------------------------------------------------------------
-  template<class T>
-  void ObjectWrapper<T>::Set(const T* t, bool dealloc)
-  {
-    //Free memory
-    delete ptr;
-
-    //Assign new object
-    ptr = t->Clone();
-
-    if (dealloc)
-      delete t;
-
-  } //End: ObjectWrapper:Set()
 }
 
 #endif

@@ -1,72 +1,131 @@
+//! @file DgAttractor.h
+//!
+//! @author: Frank B. Hart
+//! @date 29/06/2016
+//!
+//! Class declaration: ObjectWrapper
+
 #ifndef DGATTRACTOR_H
 #define DGATTRACTOR_H
 
 #include "..\DgVector4.h"
+#include "..\DgVQS.h"
 #include "..\DgObject.h"
 
 namespace Dg
 {
-  template<typename Real>
-  class Attractor : public Object<Attractor<Real>>
+  struct AttractorForce
+  {
+    enum
+    {
+      Constant,
+      Linear,
+      InverseSquare
+    };
+  };
+
+  //! @ingroup DgEngine_PS
+  //!
+  //! @class Attrator
+  //!
+  //! An attractor is a region in space which provides some force on particles.
+  //! It could be defined as a point, line or surface.
+  //!
+  //! @author Frank Hart
+  //! @date 29/06/2016
+  template<typename Real, unsigned Force = AttractorForce::Constant>
+  class Attractor : public Object<Attractor<Real, Force>>
   {
   public:
 
     Attractor();
     virtual ~Attractor() {}
 
-    Attractor(Attractor<Real> const &);
-    Attractor<Real> & operator=(Attractor<Real> const &);
+    Attractor(Attractor<Real, Force> const &);
+    Attractor<Real, Force> & operator=(Attractor<Real, Force> const &);
 
-    virtual void UpdateStrength(Real dt) {}
+    //! Update the attractor based on some change in time. For example,
+    //! Some attractors may pulse at some frequency.
+    virtual void Update(Real dt) {}
 
-    void SetPosition(Vector4<Real> const &);
-    void SetStrength(Real);
+    //! Set the location and size (if applicable) of he attractor.
+    virtual void SetTransformation(VQS<Real> const &) {}
 
-    Vector4<Real> const & GetPosition() const { return m_position; }
-    Real GetStrength() const { return m_strength; }
+    //! Get the accelleration of a particle to this attractor
+    virtual Vector4<Real> GetAccelVector(Vector4<Real> const & a_particle) { return Vector4<Real>::ZeroVector(); }
 
-    Attractor* Clone() const { return new Attractor(*this); }
+    //! Set the strength of the Attractor
+    virtual void SetStrength(Real a_str) { m_strength = a_str; }
+
+    //! Set the maximum magnitue of the acceleration vector this attractor applies to a particle.
+    virtual void SetMaxAccelMagnitude(Real a_val) { m_maxAccelMag = a_val; }
+
+    virtual Attractor* Clone() const { return new Attractor<Real, Force>(*this); }
+  protected:
+
+    Vector4<Real> GetAccelVector(Vector4<Real> const & p0, Vector4<Real> const & p1) const;
 
   protected:
-    Vector4<Real> m_position;
-    Real          m_strength;
+
+    Real m_strength;
+  private:
+
+    Real m_maxAccelMag;
   };
 
-  template<typename Real>
-  Attractor<Real>::Attractor()
-    : m_position(Vector4<Real>::Origin()), m_strength(static_cast<Real>(0.0))
+  template<typename Real, unsigned Force>
+  Attractor<Real, Force>::Attractor()
+    : m_strength(static_cast<Real>(0.0)), m_maxAccelMag(static_cast<Real>(10.0))
   {
 
   }
 
-  template<typename Real>
-  Attractor<Real>::Attractor(Attractor<Real> const & a_other)
-    : m_position(a_other.m_position), m_strength(a_other.m_strength)
+  template<typename Real, unsigned Force>
+  Attractor<Real, Force>::Attractor(Attractor<Real, Force> const & a_other)
+    : m_strength(a_other.m_strength), m_maxAccelMag(a_other.m_maxAccelMag)
   {
 
   }
 
-  template<typename Real>
-  Attractor<Real> & Attractor<Real>::operator=(Attractor<Real> const & a_other)
+  template<typename Real, unsigned Force>
+  Attractor<Real, Force> & Attractor<Real, Force>::operator=(Attractor<Real, Force> const & a_other)
   {
-    m_position = a_other.m_position;
     m_strength = a_other.m_strength;
+    m_maxAccelMag = a_other.m_maxAccelMag;
 
     return *this;
   }
 
 
-  template<typename Real>
-  void Attractor<Real>::SetPosition(Vector4<Real> const & a_p)
+  template<typename Real, unsigned Force>
+  Vector4<Real> Attractor<Real, Force>::GetAccelVector(Vector4<Real> const & p0, Vector4<Real> const & p1) const
   {
-    m_position = a_p;
-    m_position.w() = static_cast<Real>(1.0);
-  }
+    if (Force == AttractorForce::Constant)
+    {
+      return static_cast<Real>(1.0);
+    }
 
-  template<typename Real>
-  void Attractor<Real>::SetStrength(Real a_s)
-  {
-    m_strength = a_s;
+    Vector4<Real> v(p0 - p1);
+    Real dist = v.Length();
+    if (Dg::IsZero(dist))
+    {
+      return m_maxAccelMag;
+    }
+
+    Real invDist = static_cast<Real>(1.0) / dist;
+    Real accelMag;
+
+    if (Force == AttractorForce::Linear)
+    {
+      accelMag = m_strength * invDist;
+    }
+    else
+    {
+      accelMag = m_strength * invDist * invDist;
+    }
+
+    accelMag = (acclMag > m_maxAccelMag) ? m_maxAccelMag : accelMag;
+    return v * (invDist * accelMag);
   }
 }
 

@@ -3,7 +3,7 @@
 //! @author: Frank B. Hart
 //! @date 29/05/2016
 //!
-//! Class declaration: LineSegment
+//! Class declaration: ParticleData
 
 #ifndef PARTICLEDATA_H
 #define PARTICLEDATA_H
