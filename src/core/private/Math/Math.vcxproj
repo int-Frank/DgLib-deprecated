@@ -165,7 +165,7 @@
     <ClInclude Include="..\..\public\query\DgQueryRayPlane.h" />
     <ClInclude Include="..\..\public\query\DgQueryRayRay.h" />
     <ClInclude Include="..\..\public\query\DgQueryPointLine.h" />
-    <ClInclude Include="..\..\public\query\DgDCPQuery.h" />
+    <ClInclude Include="..\..\public\query\DgCPQuery.h" />
     <ClInclude Include="..\..\public\query\DgQueryLineLine.h" />
     <ClInclude Include="..\..\public\query\DgFIQuery.h" />
     <ClInclude Include="..\..\public\query\DgQueryLinePlane.h" />

@@ -6,7 +6,7 @@
 #ifndef DGQUERYLINELINE_H
 #define DGQUERYLINELINE_H
 
-#include "DgDCPQuery.h"
+#include "DgCPQuery.h"
 #include "..\DgLine.h"
 
 namespace Dg
@@ -14,19 +14,13 @@ namespace Dg
   //! @ingroup DgMath_geoQueries
   //! Distance and closest-point query: Line, Line
   template <typename Real>
-  class DCPQuery<Real, Line<Real>, Line<Real>>
+  class CPQuery<Real, Line<Real>, Line<Real>>
   {
   public:
 
     //! Query return data
     struct Result
     {
-      //! Distance between lines
-      Real distance;
-
-      //! Squared distance between lines
-      Real sqDistance;
-
       //! Distance from line 0 origin to closest point to line 1
       Real u0;
       
@@ -51,15 +45,15 @@ namespace Dg
   
   //! Template alias for convenience.
   template<typename Real>
-  using DCPLineLine = DCPQuery<Real, Line<Real>, Line<Real>>;
+  using CPLineLine = CPQuery<Real, Line<Real>, Line<Real>>;
 
 
   //--------------------------------------------------------------------------------
-  //	@	DCPQuery::operator()
+  //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename DCPQuery<Real, Line<Real>, Line<Real>>::Result
-    DCPQuery<Real, Line<Real>, Line<Real>>::operator()
+  typename CPQuery<Real, Line<Real>, Line<Real>>::Result
+    CPQuery<Real, Line<Real>, Line<Real>>::operator()
     (Line<Real> const & a_line0, Line<Real> const & a_line1)
   {
     Result result;
@@ -91,10 +85,8 @@ namespace Dg
 
     result.cp0 = o0 + result.u0 * d0;
     result.cp1 = o1 + result.u1 * d1;
-    result.sqDistance = SquaredDistance(result.cp0, result.cp1);
-    result.distance = sqrt(result.sqDistance);
     return result;
-  } //End: DCPQuery::operator()
+  } //End: CPQuery::operator()
 }
 
 #endif

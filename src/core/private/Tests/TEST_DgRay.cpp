@@ -35,29 +35,29 @@ TEST(Stack_DgRay, DgRay)
   //Geometric tests
 
   //Ray-Point
-  Dg::DCPPointRay<Real> dcpPointRay;
-  Dg::DCPPointRay<Real>::Result dcpPointRay_res;
+  Dg::CPPointRay<Real> dcpPointRay;
+  Dg::CPPointRay<Real>::Result dcpPointRay_res;
   vec pIn;
 
   //Point in front of ray
   pIn.Set(7.0, -12.0, 35.0, 1.0);
   dcpPointRay_res = dcpPointRay(pIn, r0);
   CHECK(dcpPointRay_res.u == 7.0);
-  CHECK(dcpPointRay_res.distance = 37.0);
-  CHECK(dcpPointRay_res.sqDistance = 37.0 * 37.0);
+  //CHECK(dcpPointRay_res.distance = 37.0);
+  //CHECK(dcpPointRay_res.sqDistance = 37.0 * 37.0);
   CHECK(dcpPointRay_res.cp == vec(7.0, 0.0, 0.0, 1.0));
 
   //Point behind ray
   pIn.Set(-2.0, -3.0, 6.0, 1.0);
   dcpPointRay_res = dcpPointRay(pIn, r0);
   CHECK(dcpPointRay_res.u == 0.0);
-  CHECK(dcpPointRay_res.distance = 7.0);
-  CHECK(dcpPointRay_res.sqDistance = 49.0);
+  //CHECK(dcpPointRay_res.distance = 7.0);
+  //CHECK(dcpPointRay_res.sqDistance = 49.0);
   CHECK(dcpPointRay_res.cp == r0.Origin());
 
   //Ray - Ray
-  Dg::DCPRayRay<Real> dcpRayRay;
-  Dg::DCPRayRay<Real>::Result dcpRayRay_res;
+  Dg::CPRayRay<Real> dcpRayRay;
+  Dg::CPRayRay<Real>::Result dcpRayRay_res;
 
   //Rays parallel, no overlap, facing opposite directions
   r1.Set(vec(-3.0, 8.0, 36.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
@@ -67,8 +67,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayRay_res.u1 == 0.0);
   CHECK(dcpRayRay_res.cp0 == r0.Origin());
   CHECK(dcpRayRay_res.cp1 == r1.Origin());
-  CHECK(dcpRayRay_res.distance == 37.0);
-  CHECK(dcpRayRay_res.sqDistance == 37.0 * 37.0);
+  //CHECK(dcpRayRay_res.distance == 37.0);
+  //CHECK(dcpRayRay_res.sqDistance == 37.0 * 37.0);
 
   //Rays parallel, overlap, facing opposite directions
   r1.Set(vec(4.0, 13.0, 84.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
@@ -78,8 +78,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayRay_res.u1 == 4.0);
   CHECK(dcpRayRay_res.cp0 == r0.Origin());
   CHECK(dcpRayRay_res.cp1 == vec(0.0, 13.0, 84.0, 1.0));
-  CHECK(dcpRayRay_res.distance == 85.0);
-  CHECK(dcpRayRay_res.sqDistance == 85.0 * 85.0);
+  //CHECK(dcpRayRay_res.distance == 85.0);
+  //CHECK(dcpRayRay_res.sqDistance == 85.0 * 85.0);
 
   //Rays parallel, overlap, facing same direction
   r1.Set(vec(4.0, 3.0, 4.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
@@ -89,8 +89,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayRay_res.u1 == 0.0);
   CHECK(dcpRayRay_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
   CHECK(dcpRayRay_res.cp1 == r1.Origin());
-  CHECK(dcpRayRay_res.distance == 5.0);
-  CHECK(dcpRayRay_res.sqDistance == 25.0);
+  //CHECK(dcpRayRay_res.distance == 5.0);
+  //CHECK(dcpRayRay_res.sqDistance == 25.0);
 
   //Rays parallel, overlap, facing same direction, switch rays
   r1.Set(vec(4.0, 3.0, 4.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
@@ -100,8 +100,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayRay_res.u0 == 0.0);
   CHECK(dcpRayRay_res.cp1 == vec(4.0, 0.0, 0.0, 1.0));
   CHECK(dcpRayRay_res.cp0 == r1.Origin());
-  CHECK(dcpRayRay_res.distance == 5.0);
-  CHECK(dcpRayRay_res.sqDistance == 25.0);
+  //CHECK(dcpRayRay_res.distance == 5.0);
+  //CHECK(dcpRayRay_res.sqDistance == 25.0);
 
   //Rays not parallel, cp are along r0, r1.Origin.
   r1.Set(vec(3.0, 4.0, 3.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
@@ -111,8 +111,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayRay_res.u1 == 0.0);
   CHECK(dcpRayRay_res.cp0 == vec(3.0, 0.0, 0.0, 1.0));
   CHECK(dcpRayRay_res.cp1 == r1.Origin());
-  CHECK(dcpRayRay_res.distance == 5.0);
-  CHECK(dcpRayRay_res.sqDistance == 25.0);
+  //CHECK(dcpRayRay_res.distance == 5.0);
+  //CHECK(dcpRayRay_res.sqDistance == 25.0);
 
   //Rays not parallel, cp are along both rays
   r1.Set(vec(3.0, 4.0, 3.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
@@ -122,13 +122,13 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayRay_res.u1 == 3.0);
   CHECK(dcpRayRay_res.cp0 == vec(3.0, 0.0, 0.0, 1.0));
   CHECK(dcpRayRay_res.cp1 == vec(3.0, 4.0, 0.0, 1.0));
-  CHECK(dcpRayRay_res.distance == 4.0);
-  CHECK(dcpRayRay_res.sqDistance == 16.0);
+  //CHECK(dcpRayRay_res.distance == 4.0);
+  //CHECK(dcpRayRay_res.sqDistance == 16.0);
 
   //Line - Ray
   line ln;
-  Dg::DCPRayLine<Real> dcpRayLine;
-  Dg::DCPRayLine<Real>::Result dcpRayLine_res;
+  Dg::CPRayLine<Real> dcpRayLine;
+  Dg::CPRayLine<Real>::Result dcpRayLine_res;
 
   //Line-Ray Parallel, same direction
   ln.Set(vec(5.0, 11.0, 60.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
@@ -138,8 +138,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayLine_res.ul == -5.0);
   CHECK(dcpRayLine_res.cpr == r0.Origin());
   CHECK(dcpRayLine_res.cpl == vec(0.0, 11.0, 60.0, 1.0));
-  CHECK(dcpRayLine_res.distance == 61.0);
-  CHECK(dcpRayLine_res.sqDistance == 61.0 * 61.0);
+  //CHECK(dcpRayLine_res.distance == 61.0);
+  //CHECK(dcpRayLine_res.sqDistance == 61.0 * 61.0);
 
   //Line-Ray Parallel, opposite directions
   ln.Set(vec(5.0, 11.0, 60.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
@@ -149,8 +149,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayLine_res.ul == 5.0);
   CHECK(dcpRayLine_res.cpr == r0.Origin());
   CHECK(dcpRayLine_res.cpl == vec(0.0, 11.0, 60.0, 1.0));
-  CHECK(dcpRayLine_res.distance == 61.0);
-  CHECK(dcpRayLine_res.sqDistance == 61.0 * 61.0);
+  //CHECK(dcpRayLine_res.distance == 61.0);
+  //CHECK(dcpRayLine_res.sqDistance == 61.0 * 61.0);
 
   //Line-Ray not parallel, closest point is ray origin
   ln.Set(vec(-9.0, 40.0, 61.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
@@ -160,8 +160,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayLine_res.ul == 61.0);
   CHECK(dcpRayLine_res.cpr == r0.Origin());
   CHECK(dcpRayLine_res.cpl == vec(-9.0, 40.0, 0.0, 1.0));
-  CHECK(dcpRayLine_res.distance == 41.0);
-  CHECK(dcpRayLine_res.sqDistance == 41.0 * 41.0);
+  //CHECK(dcpRayLine_res.distance == 41.0);
+  //CHECK(dcpRayLine_res.sqDistance == 41.0 * 41.0);
 
   //Line-Ray not parallel, closest point is along the ray
   ln.Set(vec(9.0, 40.0, -61.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
@@ -171,8 +171,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpRayLine_res.ul == 61.0);
   CHECK(dcpRayLine_res.cpr == vec(9.0, 0.0, 0.0, 1.0));
   CHECK(dcpRayLine_res.cpl == vec(9.0, 40.0, 0.0, 1.0));
-  CHECK(dcpRayLine_res.distance == 40.0);
-  CHECK(dcpRayLine_res.sqDistance == 1600.0);
+  //CHECK(dcpRayLine_res.distance == 40.0);
+  //CHECK(dcpRayLine_res.sqDistance == 1600.0);
 
   //Ray-Plane
   Dg::TIRayPlane<Real>          tiRayPlane;

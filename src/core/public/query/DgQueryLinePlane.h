@@ -70,7 +70,7 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	DCPQuery::operator()
+  //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
   typename TIQuery<Real, Line<Real>, Plane<Real>>::Result
@@ -81,11 +81,11 @@ namespace Dg
     result.isIntersecting = !Dg::IsZero(a_plane.NormalDot(a_line.Direction())) ||
                              Dg::IsZero(a_plane.SignedDistance(a_line.Origin()));
     return result;
-  } //End: DCPQuery::operator()
+  } //End: CPQuery::operator()
 
 
   //--------------------------------------------------------------------------------
-  //	@	DCPQuery::operator()
+  //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
   typename FIQuery<Real, Line<Real>, Plane<Real>>::Result
@@ -117,7 +117,7 @@ namespace Dg
     }
 
     return result;
-  } //End: DCPQuery::operator()
+  } //End: CPQuery::operator()
 }
 
 #endif

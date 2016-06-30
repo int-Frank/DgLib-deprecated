@@ -3,7 +3,7 @@
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 //!
-//! Class declaration: DCPQuery
+//! Class declaration: CPQuery
 
 #ifndef DGFIQUERY_H
 #define DGFIQUERY_H
@@ -19,10 +19,10 @@ namespace Dg
   public:
 
     //! A FIQuery-base class B must define a B::Result struct with member
-    //! 'Real distance'.  A DCPQuery-derived class D must also derive a
+    //! 'Real distance'.  A CPQuery-derived class D must also derive a
     //! D::Result from B:Result but may have no members.  The idea is to
     //! allow Result to store closest-point information in addition to the
-    //! distance.  The operator() is non-const to allow DCPQuery to store
+    //! distance.  The operator() is non-const to allow CPQuery to store
     //! and modify private state that supports the query.
     struct Result
     {

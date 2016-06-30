@@ -6,7 +6,7 @@
 #ifndef DGQUERYPOINTPLANE_H
 #define DGQUERYPOINTPLANE_H
 
-#include "DgDCPQuery.h"
+#include "DgCPQuery.h"
 #include "..\DgPlane.h"
 
 namespace Dg
@@ -14,7 +14,7 @@ namespace Dg
   //! @ingroup DgMath_geoQueries
   //! Distance and closest-point query: Point, Plane.
   template <typename Real>
-  class DCPQuery<Real, Vector4<Real>, Plane<Real>>
+  class CPQuery<Real, Vector4<Real>, Plane<Real>>
   {
   public:
 
@@ -37,15 +37,15 @@ namespace Dg
 
   //! Template alias for convenience
   template<typename Real>
-  using DCPPointPlane = DCPQuery<Real, Vector4<Real>, Plane<Real>>;
+  using CPPointPlane = CPQuery<Real, Vector4<Real>, Plane<Real>>;
 
 
   //--------------------------------------------------------------------------------
-  //	@	DCPQuery::operator()
+  //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename DCPQuery<Real, Vector4<Real>, Plane<Real>>::Result
-    DCPQuery<Real, Vector4<Real>, Plane<Real>>::operator()
+  typename CPQuery<Real, Vector4<Real>, Plane<Real>>::Result
+    CPQuery<Real, Vector4<Real>, Plane<Real>>::operator()
     (Vector4<Real> const & a_point, Plane<Real> const & a_plane)
   {
     Result result;
@@ -56,6 +56,6 @@ namespace Dg
 
     return result;
   }
-} //End: DCPQuery::operator()
+} //End: CPQuery::operator()
 
 #endif

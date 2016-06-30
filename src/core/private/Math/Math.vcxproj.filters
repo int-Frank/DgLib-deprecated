@@ -65,9 +65,6 @@
     <ClInclude Include="..\..\public\DgLineSegment.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\query\DgDCPQuery.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\query\DgTIQuery.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
@@ -117,6 +114,9 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\query\DgQueryLineSphere.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgCPQuery.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,7 @@
 #ifndef DGQUERYRAYLINE_H
 #define DGQUERYRAYLINE_H
 
-#include "DgDCPQuery.h"
+#include "DgCPQuery.h"
 #include "..\DgLine.h"
 #include "..\DgRay.h"
 
@@ -15,19 +15,13 @@ namespace Dg
   //! @ingroup DgMath_geoQueries
   //! Distance and closest-point query: Ray, Line
   template <typename Real>
-  class DCPQuery<Real, Ray<Real>, Line<Real>>
+  class CPQuery<Real, Ray<Real>, Line<Real>>
   {
   public:
 
     //! Query return data
     struct Result
     {
-      //! Distance between ray and line
-      Real distance;
-
-      //! Squared distance between ray and line
-      Real sqDistance;
-
       //! Distance from the line origin to closest point to the ray
       Real ul;
 
@@ -52,15 +46,15 @@ namespace Dg
 
   //! Template alias for convenience.
   template<typename Real>
-  using DCPRayLine = DCPQuery<Real, Ray<Real>, Line<Real>>;
+  using CPRayLine = CPQuery<Real, Ray<Real>, Line<Real>>;
 
 
   //--------------------------------------------------------------------------------
-  //	@	DCPQuery::operator()
+  //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename DCPQuery<Real, Ray<Real>, Line<Real>>::Result
-    DCPQuery<Real, Ray<Real>, Line<Real>>::operator()
+  typename CPQuery<Real, Ray<Real>, Line<Real>>::Result
+    CPQuery<Real, Ray<Real>, Line<Real>>::operator()
     (Ray<Real> const & a_ray, Line<Real> const & a_line)
   {
     Vector4<Real> or (a_ray.Origin());
@@ -109,10 +103,8 @@ namespace Dg
 
     result.cpr = or + result.ur*dr;
     result.cpl = ol + result.ul*dl;
-    result.sqDistance = SquaredDistance(result.cpr, result.cpl);
-    result.distance = sqrt(result.sqDistance);
     return result;
-  } //End: DCPQuery::operator()
+  } //End: CPQuery::operator()
 }
 
 #endif

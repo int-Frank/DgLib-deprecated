@@ -6,7 +6,7 @@
 #ifndef DGQUERYLINESEGMENTLINESEGMENT_H
 #define DGQUERYLINESEGMENTLINESEGMENT_H
 
-#include "DgDCPQuery.h"
+#include "DgCPQuery.h"
 #include "..\DgLineSegment.h"
 
 namespace Dg
@@ -14,19 +14,13 @@ namespace Dg
   //! @ingroup DgMath_geoQueries
   //! Distance and closest-point query: Line Segment, Line Segment
   template <typename Real>
-  class DCPQuery<Real, LineSegment<Real>, LineSegment<Real>>
+  class CPQuery<Real, LineSegment<Real>, LineSegment<Real>>
   {
   public:
 
     //! Query return data
     struct Result
     {
-      //! Distance between line segments
-      Real distance;
-
-      //! Squared distance between line segments
-      Real sqDistance;
-
       //! Fraction along segment 0 to closest point to the segment 1
       Real u0;
 
@@ -51,15 +45,15 @@ namespace Dg
 
   //! Template alias for convenience.
   template<typename Real>
-  using DCPLineSegmentLineSegment = DCPQuery<Real, LineSegment<Real>, LineSegment<Real>>;
+  using CPLineSegmentLineSegment = CPQuery<Real, LineSegment<Real>, LineSegment<Real>>;
 
 
   //--------------------------------------------------------------------------------
-  //	@	DCPQuery::operator()
+  //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename DCPQuery<Real, LineSegment<Real>, LineSegment<Real>>::Result
-    DCPQuery<Real, LineSegment<Real>, LineSegment<Real>>::operator()
+  typename CPQuery<Real, LineSegment<Real>, LineSegment<Real>>::Result
+    CPQuery<Real, LineSegment<Real>, LineSegment<Real>>::operator()
     (LineSegment<Real> const & a_ls0, LineSegment<Real> const & a_ls1)
   {
     Result result;
@@ -173,10 +167,8 @@ namespace Dg
 
     result.cp0 = o0 + result.u0*d0;
     result.cp1 = o1 + result.u1*d1;
-    result.sqDistance = SquaredDistance(result.cp0, result.cp1);
-    result.distance = sqrt(result.sqDistance);
     return result;
-  } //End: DCPQuery::operator()
+  } //End: CPQuery::operator()
 }
 
 #endif

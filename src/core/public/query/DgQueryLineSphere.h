@@ -75,7 +75,7 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	DCPQuery::operator()
+  //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
   typename TIQuery<Real, Line<Real>, Sphere<Real>>::Result
@@ -89,11 +89,11 @@ namespace Dg
     Real c = w0.LengthSquared() - a_sphere.Radius() *a_sphere.Radius();
     result.isIntersecting = (b*b >= a*c);
     return result;
-  } //End: DCPQuery::operator()
+  } //End: CPQuery::operator()
 
 
   //--------------------------------------------------------------------------------
-  //	@	DCPQuery::operator()
+  //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
   typename FIQuery<Real, Line<Real>, Sphere<Real>>::Result
@@ -123,7 +123,7 @@ namespace Dg
     }
 
     return result;
-  } //End: DCPQuery::operator()
+  } //End: CPQuery::operator()
 }
 
 #endif
