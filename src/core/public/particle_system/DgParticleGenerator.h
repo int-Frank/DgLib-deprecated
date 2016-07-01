@@ -7,10 +7,11 @@
 #define DGPARTICLEGENERATOR_H
 
 #include "DgObject.h"
+#include "DgVQS.h"
 
 namespace Dg
 {
-  template<typename Real, uint32_t>
+  template<typename Real>
   class ParticleData;
 
   template<typename Real>
@@ -23,7 +24,10 @@ namespace Dg
     ParticleGenerator(ParticleGenerator<Real> const & a_other) {}
     ParticleGenerator<Real> & operator=(ParticleGenerator<Real> const & a_other) { return *this; }
 
-    virtual void Generate(size_t, size_t, ParticleData<Real> &) {}
+    //! Set the location and size (if applicable) of the attractor.
+    virtual void SetTransformation(VQS<Real> const &) {}
+
+    virtual void Generate(int, int, ParticleData<Real> &) {}
     virtual ParticleGenerator<Real> * Clone() const { return new ParticleGenerator<Real>(*this); }
   };
 }

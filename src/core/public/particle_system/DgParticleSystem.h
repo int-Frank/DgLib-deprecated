@@ -19,7 +19,7 @@ namespace Dg
   class ParticleSystem
   {
   public:
-    ParticleSystem(size_t);
+    ParticleSystem(int);
     ~ParticleSystem() {}
 
     ParticleSystem(ParticleSystem<Real> const & a_other);
@@ -27,17 +27,20 @@ namespace Dg
 
     void AddEmitter(ParMapKey, ParticleEmitter<Real> const &);
     void AddUpdater(ParMapKey, ParticleUpdater<Real> const &);
-    void AddAttractor(ParMapKey, Attractor<Real> const &);
+    
+    void RemoveEmitter(ParMapKey);
+    void RemoveUpdater(ParMapKey);
+
+    void Update(Real dt);
 
   private:
     Dg::map<ParMapKey, ObjectWrapper<ParticleEmitter<Real>>>   m_emitters;
-    ParticleData<Real, 0>                                      m_particleData;
+    ParticleData<Real>                                         m_particleData;
     Dg::map<ParMapKey, ObjectWrapper<ParticleUpdater<Real>>>   m_updaters;
-    Dg::map<ParMapKey, ObjectWrapper<Attractor<Real>>>         m_attractors;
   };
 
   template<typename Real>
-  ParticleSystem<Real>::ParticleSystem(size_t a_nPar): m_particleData(a_nPar)
+  ParticleSystem<Real>::ParticleSystem(int a_nPar): m_particleData(a_nPar)
   {
 
   }
@@ -47,8 +50,7 @@ namespace Dg
   ParticleSystem<Real>::ParticleSystem(ParticleSystem<Real> const & a_other) 
     : m_particleData(a_other.m_particleData),
       m_emitters(a_other.m_emitters),
-      m_updaters(a_other.m_updaters),
-      m_attractors(a_other.m_attractors)
+      m_updaters(a_other.m_updaters)
   {
 
   }
@@ -64,7 +66,6 @@ namespace Dg
 
     m_emitters = a_other.m_emitters;
     m_updaters = a_other.m_updaters;
-    m_attractors = a_other.m_attractors;
     m_particleData = a_other.m_particleData;
 
     return *this;
@@ -86,12 +87,52 @@ namespace Dg
     m_updaters.insert(a_key, newUpdater);
   }
 
+  template<typename Real>
+  void ParticleSystem<Real>::RemoveEmitter(ParMapKey a_key)
+  {
+    m_emitters.erase(a_key);
+  }
 
   template<typename Real>
-  void ParticleSystem<Real>::AddAttractor(ParMapKey a_key, Attractor<Real> const & a_attractor)
+  void ParticleSystem<Real>::RemoveUpdater(ParMapKey a_key)
   {
-    ObjectWrapper<Attractor<Real>> newAttractor(a_attractor);
-    m_attractors.insert(a_key, newAttractor);
+    m_updaters.erase(a_key);
+  }
+
+  template<typename Real>
+  void ParticleSystem<Real>::Update(Real a_dt)
+  {
+    //Update all particles
+    for (int i = 0; i < m_updaters.size(); ++i)
+    {
+      m_updaters[i]->Update(0, m_particleData.GetCountAlive(), a_dt, m_particleData);
+    }
+
+    //Emit new particles, keep tally of particles emitted
+    //from the various emitters
+    int nNewParticles = 0;
+    for (int i = 0; i < m_emitters.size(); ++i)
+    {
+      if (!m_emitters[i]->IsOn())
+      {
+        continue;
+      }
+
+      nNewParticles += m_emitters[i]->EmitParticles(a_dt, m_particleData);
+    }
+
+    //Update all newly emitted particles.
+    Real * pTimeSinceEmit = m_particleData.GetTimeSinceEmit();
+    if (pTimeSinceEmit)
+    {
+      for (int u = 0; u < m_updaters.size(); ++u)
+      {
+        for (int i = m_particleData.GetCountAlive() - nNewParticles; i < m_particleData.GetCountAlive(); ++i)
+        {
+          m_updaters[u]->Update(i, i, pTimeSinceEmit[i], m_particleData);
+        }
+      }
+    }
   }
 }
 

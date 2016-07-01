@@ -25,11 +25,14 @@
                    Force,               Real,\
                    Size,                Real,\
                    StartSize,           Real,\
-                   EndSize,             Real,\
-                   Life,                int,\
+                   DSize,               Real,\
+                   Life,                Real,\
+                   LifeMax,             Real,\
+                   DLife,               Real,\
+                   TimeSinceEmit,       Real,\
                    Color,               Dg::Vector4<float>,\
                    StartColor,          Dg::Vector4<float>,\
-                   EndColor,            Dg::Vector4<float>
+                   DColor,              Dg::Vector4<float>
 
 namespace Dg
 {
@@ -42,19 +45,21 @@ namespace Dg
     };
   };
 
-  template<typename Real, uint32_t SavedAttr = 0>
+  template<typename Real>
   class ParticleData
   {
   public:
 
-    explicit ParticleData(size_t a_maxCount);
+    explicit ParticleData(int a_maxCount);
     ~ParticleData();
 
-    size_t GetCountAlive() const { return m_countAlive; }
-    size_t GetCountMax() const { return m_countMax; }
+    bool IsFull() const { return m_countAlive == m_countMax; }
 
-    void Kill(size_t);
-    size_t Wake();
+    int GetCountAlive() const { return m_countAlive; }
+    int GetCountMax() const { return m_countMax; }
+
+    void Kill(int);
+    int Wake();
     
     //! For each entry in ATTRIBUTES, there exists an Init, Deint and Get function.
     //! For example,for the Postion attribute, there exists:
@@ -64,47 +69,45 @@ namespace Dg
     ADD_METHODS(ATTRIBUTES)
 
   private:
-    size_t const            m_maxCount;
-    size_t                  m_countAlive;
+    int const            m_countMax;
+    int                  m_countAlive;
 
     //! Members are built from ATTRIBUTES name-type pairs
     ADD_MEMBERS(ATTRIBUTES)
   };
 
-  template<typename Real, uint32_t SavedAttr>
-  ParticleData<Real, SavedAttr>::ParticleData(size_t a_maxCount)
+  template<typename Real>
+  ParticleData<Real>::ParticleData(int a_maxCount)
     : ADD_MEMBER_CONSTRUCTORS(ATTRIBUTES)
-      m_maxCount(a_maxCount),
+      m_countMax(a_maxCount),
       m_countAlive(0)
   {
    
   }
 
-  template<typename Real, uint32_t SavedAttr>
-  ParticleData<Real, SavedAttr>::~ParticleData()
+  template<typename Real>
+  ParticleData<Real>::~ParticleData()
   {
     ADD_MEMBER_DESTRUCTORS(ATTRIBUTES)
   }
 
-  template<typename Real, uint32_t SavedAttr>
-  size_t ParticleData<Real, SavedAttr>::Wake()
+  template<typename Real>
+  int ParticleData<Real>::Wake()
   {
-    ADD_WAKE_CODE(ATTRIBUTES)
-
     return m_countAlive++;
   }
 
-  template<typename Real, uint32_t SavedAttr>
-  void ParticleData<Real, SavedAttr>::Kill(size_t a_index)
+  template<typename Real>
+  void ParticleData<Real>::Kill(int a_index)
   {
     if (m_countAlive == 0)
     {
       return;
     }
 
-    ADD_KILL_CODE(ATTRIBUTES)
-
     --m_countAlive;
+
+    ADD_KILL_CODE(ATTRIBUTES)
   }
 }
 

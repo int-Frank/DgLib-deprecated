@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Attractors">
+      <UniqueIdentifier>{4ea07e17-2ae1-49f7-8838-e4c190a58c26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Updaters">
+      <UniqueIdentifier>{d2a6dcd7-0344-4d9c-aa5a-2f2c219c7440}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Emitters">
+      <UniqueIdentifier>{9005d236-728e-4fdf-a77c-bec04d92c3c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generators">
+      <UniqueIdentifier>{8ed3769f-a941-438d-af30-e43d1200d923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{ee649e23-ce8d-4d00-92a1-7480f90c9ea6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UpdaterZeroAccel.h">
+      <Filter>Updaters</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdaterLife.h">
+      <Filter>Updaters</Filter>
+    </ClInclude>
+    <ClInclude Include="AttractorPointPulse.h">
+      <Filter>Attractors</Filter>
+    </ClInclude>
+    <ClInclude Include="AttractorPoint.h">
+      <Filter>Attractors</Filter>
+    </ClInclude>
+    <ClInclude Include="AttractorPlaneRepel.h">
+      <Filter>Attractors</Filter>
+    </ClInclude>
+    <ClInclude Include="AttractorPlane.h">
+      <Filter>Attractors</Filter>
+    </ClInclude>
+    <ClInclude Include="AttractorLine.h">
+      <Filter>Attractors</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdaterEuler.h">
+      <Filter>Updaters</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdaterColor.h">
+      <Filter>Updaters</Filter>
+    </ClInclude>
+    <ClInclude Include="AttractorGlobal.h">
+      <Filter>Attractors</Filter>
+    </ClInclude>
+    <ClInclude Include="EmitterLinear.h">
+      <Filter>Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="EmitterPoisson.h">
+      <Filter>Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="GenVelCone.h">
+      <Filter>Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="GenPosPoint.h">
+      <Filter>Generators</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

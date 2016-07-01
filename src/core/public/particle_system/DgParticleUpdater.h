@@ -10,7 +10,7 @@
 
 namespace Dg
 {
-  template<typename Real, uint32_t>
+  template<typename Real>
   class ParticleData;
 
   template<typename Real>
@@ -23,8 +23,8 @@ namespace Dg
     ParticleUpdater(ParticleUpdater<Real> const & a_other) {}
     ParticleUpdater<Real> & operator=(ParticleUpdater<Real> const & a_other) { return *this; }
 
-    virtual void Update(size_t start,
-                        size_t finish,
+    virtual void Update(int start,
+                        int finish,
                         Real dt,
                         ParticleData<Real> & data) {}
 

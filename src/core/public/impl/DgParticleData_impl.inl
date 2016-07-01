@@ -17,30 +17,9 @@
 #define ADD_SINGLE_DESTRUCTOR(_name, _type) delete[] m_ ## _name;
 #define ADD_MEMBER_DESTRUCTORS(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(DESTRUCTOR, __VA_ARGS__))
 
-#define ADD_SINGLE_WAKE(_name, _type) \
-if (SavedAttr & (1 << _name))\
-{\
-  if (m_ ## _name)\
-  {\
-    int temp(m_ ## _name[m_countAlive]);\
-    m_ ## _name[m_countAlive] = m_ ## _name[m_countMax - 1];\
-    m_ ## _name[m_countMax - 1] = temp;\
-  }\
-} 
-#define ADD_WAKE_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(WAKE, __VA_ARGS__))
-
 #define ADD_SINGLE_KILL(_name, _type) \
 if (m_ ## _name)\
 {\
-  if (SavedAttr & (1 <<  ## _name))\
-  {\
-    int temp(m_ ## _name[a_index]);\
-    m_ ## _name[a_index] = m_ ## _name[m_countAlive];\
-    m_ ## _name[m_countAlive] = temp;\
-  }\
-  else\
-  {\
-    m_ ## _name[a_index] = m_ ## _name[m_countAlive];\
-  }\
+  m_ ## _name[a_index] = m_ ## _name[m_countAlive];\
 }
 #define ADD_KILL_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(KILL, __VA_ARGS__))
