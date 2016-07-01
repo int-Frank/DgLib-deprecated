@@ -8,6 +8,7 @@
 template<typename Real>
 class UpdaterLife : public Dg::ParticleUpdater<Real>
 {
+public:
   UpdaterLife() : Dg::ParticleUpdater<Real>() {}
   ~UpdaterLife() {}
 

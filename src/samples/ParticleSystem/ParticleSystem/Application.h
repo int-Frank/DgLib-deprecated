@@ -5,13 +5,37 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
+#include "particle_system/DgParticleSystem.h"
+
 struct GLFWwindow;
 
 class Application
 {
 public:
+  enum
+  {
+    //Updaters 
+    E_UpdaterLife,
+    E_UpdaterZeroAccel,
+    E_UpdaterAttractor_1,
+    E_UpdaterAttractor_2,
+    E_UpdaterEuler,
+    E_UpdaterColor,
 
-  Application() : m_window(nullptr) {}
+    //Generators
+    E_GenPosPoint,
+    E_GenVelCone,
+    E_GenColor,
+
+    //Emitters
+    E_Emitter_1,
+    E_Emitter_2,
+    E_Emitter_3,
+
+  };
+public:
+
+  Application() : m_window(nullptr), m_particleSystem(4096) {}
   ~Application() {}
 
   Application(const Application&);
@@ -61,6 +85,17 @@ private:
 
 private:
 
+  Dg::ParticleSystem<float>   m_particleSystem;
+
+  //The system will contain the following entities
+  int                 m_att_1;
+  int                 m_att_2;
+  int                 m_emitter_1;
+  int                 m_emitter_2;
+  int                 m_emitter_3;
+
+private:
+
   APPINFO		          m_info;
   GLFWwindow*         m_window;
   GLuint              m_renderingProgram;
@@ -69,6 +104,7 @@ private:
   GLuint              m_indexBuffer;
 
   void Init();
+  void InitParticleSystem();
   void Startup();
   void Shutdown();
   GLuint CompileShaders();

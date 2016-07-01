@@ -31,6 +31,8 @@ double Application::s_prevY(0.0);
 typedef Dg::Matrix44<float> mat44;
 typedef Dg::Vector4<float>  vec4;
 
+
+
 /*
 Pre Condition: -None
 Post Condition:
@@ -157,13 +159,13 @@ void Application::Shutdown()
 void Application::Render(double currentTime)
 {
   //Generate the cube transformation matrix
-  float f = currentTime;
+  float f = float(currentTime);
 
   mat44 translate, rotate, scale;
   translate.Translation(vec4(0.0f, 0.0f, -2.0f, 0.0f));
   rotate.Rotation(0.0f,
-                  s_mouseX / 100.0f,
-                  s_mouseY / 100.0f,
+                  float(s_mouseX) / 100.0f,
+                  float(s_mouseY) / 100.0f,
                   Dg::EulerOrder::XYZ);
   scale.Scaling(1.0f);
   mat44 mv_matrix = scale * rotate * translate;

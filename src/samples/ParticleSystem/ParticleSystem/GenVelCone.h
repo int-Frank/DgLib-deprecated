@@ -9,6 +9,7 @@
 template<typename Real>
 class GenVelCone : public Dg::ParticleGenerator<Real>
 {
+public:
   GenVelCone() : m_axis(Dg::Vector4<Real>::xAxis()), 
                  m_angle(static_cast<Real>(0.785)),
                  Dg::ParticleGenerator<Real>() {}

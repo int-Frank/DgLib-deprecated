@@ -36,12 +36,13 @@
 
 namespace Dg
 {
-  struct ParticleDataAttributes
+  struct ParticleAttr
   {
-    enum
+    enum Value
     { 
       //Enum enrty names are taken from ATTRIBUTES names
       ADD_ENUM_ENTRIES(ATTRIBUTES)
+      COUNT
     };
   };
 
@@ -60,12 +61,13 @@ namespace Dg
 
     void Kill(int);
     int Wake();
-    
-    //! For each entry in ATTRIBUTES, there exists an Init, Deint and Get function.
-    //! For example,for the Postion attribute, there exists:
-    //!   void InitPosition();
-    //!   void DeinitPosition();
-    //!   void GetPosition();
+
+    void InitAttribute(ParticleAttr::Value);
+    void DeinitAttribute(ParticleAttr::Value);
+
+    //! For each entry in ATTRIBUTES, there exists a Get function.
+    //! For example, for the Position attribute:
+    //!   Dg::Vector4<Real> * GetPosition();
     ADD_METHODS(ATTRIBUTES)
 
   private:
@@ -108,6 +110,24 @@ namespace Dg
     --m_countAlive;
 
     ADD_KILL_CODE(ATTRIBUTES)
+  }
+
+  template<typename Real>
+  void ParticleData<Real>::InitAttribute(ParticleAttr::Value a_val)
+  {
+    switch (a_val)
+    {
+      ADD_INIT_CODE(ATTRIBUTES)
+    }
+  }
+
+  template<typename Real>
+  void ParticleData<Real>::DeinitAttribute(ParticleAttr::Value a_val)
+  {
+    switch (a_val)
+    {
+      ADD_DEINIT_CODE(ATTRIBUTES)
+    }
   }
 }
 

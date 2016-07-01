@@ -8,6 +8,7 @@
 template<typename Real>
 class GenPosPoint : public Dg::ParticleGenerator<Real>
 {
+public:
   GenPosPoint() : m_origin(Dg::Vector4<Real>::Origin()),
                   Dg::ParticleGenerator<Real>() {}
 
@@ -20,7 +21,7 @@ class GenPosPoint : public Dg::ParticleGenerator<Real>
   GenPosPoint<Real> & operator=(GenPosPoint<Real> const & a_other)
   {
     Dg::ParticleGenerator<Real>::operator=(a_other);
-    origin = a_other.origin;
+    m_origin = a_other.m_origin;
     return *this;
   }
 
@@ -37,7 +38,7 @@ private:
 template<typename Real>
 void GenPosPoint<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 {
-  origin = a_vqs.Translate(Dg::Vector4<Real>::Origin());
+  m_origin = a_vqs.Translate(Dg::Vector4<Real>::Origin());
 }
 
 template<typename Real>

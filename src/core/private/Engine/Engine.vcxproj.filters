@@ -46,9 +46,6 @@
     <ClInclude Include="..\..\public\particle_system\DgAttractor.h">
       <Filter>Particle System</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\particle_system\Trash.h">
-      <Filter>Particle System</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\particle_system\DgParticleUpdater.h">
       <Filter>Particle System</Filter>
     </ClInclude>

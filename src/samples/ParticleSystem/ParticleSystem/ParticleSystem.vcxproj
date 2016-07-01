@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="ApplicationParSys.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +140,7 @@
     <ClInclude Include="AttractorPointPulse.h" />
     <ClInclude Include="EmitterLinear.h" />
     <ClInclude Include="EmitterPoisson.h" />
+    <ClInclude Include="GenColor.h" />
     <ClInclude Include="GenPosPoint.h" />
     <ClInclude Include="GenVelCone.h" />
     <ClInclude Include="UpdaterColor.h" />

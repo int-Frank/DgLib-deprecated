@@ -10,6 +10,7 @@
 template<typename Real>
 class UpdaterEuler : public Dg::ParticleUpdater<Real>
 {
+public:
   UpdaterEuler() : Dg::ParticleUpdater<Real>() {}
   ~UpdaterEuler() {}
 
@@ -38,7 +39,7 @@ void UpdaterEuler<Real>::Update(int a_start,
   Dg::Vector4<Real> * pPos = a_data.GetPosition();
   Dg::Vector4<Real> * pVels = a_data.GetVelocity();
   Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
-  Dg::Vector4<Real> * pForces = a_data.GetForce();
+  Real * pForces = a_data.GetForce();
 
   if (pVels)
   {

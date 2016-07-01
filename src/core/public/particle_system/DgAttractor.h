@@ -59,6 +59,9 @@ namespace Dg
     //! Set the strength of the Attractor
     virtual void SetStrength(Real a_str) { m_strength = a_str; }
 
+    //! Get the strength of the Attractor
+    virtual Real GetStrength() const { return m_strength; }
+
     //! Set the maximum allowed magnitue of the acceleration vector this attractor applies to a particle.
     virtual void SetMaxAccelMagnitude(Real a_val) { m_maxAccelMag = a_val; }
 

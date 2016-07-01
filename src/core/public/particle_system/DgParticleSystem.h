@@ -9,6 +9,7 @@
 #include "Dg_map.h"
 #include "DgParticleEmitter.h"
 #include "DgParticleUpdater.h"
+#include "DgParticleData.h"
 #include "DgAttractor.h"
 
 namespace Dg
@@ -31,6 +32,14 @@ namespace Dg
     void RemoveEmitter(ParMapKey);
     void RemoveUpdater(ParMapKey);
 
+    void InitParticleAttr(ParticleAttr::Value);
+    void DeinitParticleAttr(ParticleAttr::Value);
+
+    void InitAllParticleAttr();
+    void DeinitAllParticleAttr();
+
+    ParticleEmitter<Real> * GetEmitter(ParMapKey) const;
+
     void Update(Real dt);
 
   private:
@@ -40,7 +49,10 @@ namespace Dg
   };
 
   template<typename Real>
-  ParticleSystem<Real>::ParticleSystem(int a_nPar): m_particleData(a_nPar)
+  ParticleSystem<Real>::ParticleSystem(int a_nPar)
+    : m_particleData(a_nPar)
+    , m_emitters(16)
+    , m_updaters(32)
   {
 
   }
@@ -97,6 +109,47 @@ namespace Dg
   void ParticleSystem<Real>::RemoveUpdater(ParMapKey a_key)
   {
     m_updaters.erase(a_key);
+  }
+
+  template<typename Real>
+  ParticleEmitter<Real> * ParticleSystem<Real>::GetEmitter(ParMapKey a_key) const
+  {
+    int index(0);
+    if (m_emitters.find(a_key, index))
+    {
+      return m_emitters[index];
+    }
+    return nullptr;
+  }
+
+  template<typename Real>
+  void ParticleSystem<Real>::InitParticleAttr(ParticleAttr::Value a_val)
+  {
+    m_particleData.InitAttribute(a_val);
+  }
+
+  template<typename Real>
+  void ParticleSystem<Real>::DeinitParticleAttr(ParticleAttr::Value a_val)
+  {
+    m_particleData.DeinitAttribute(a_val);
+  }
+
+  template<typename Real>
+  void ParticleSystem<Real>::InitAllParticleAttr()
+  {
+    for (int i = 0; i < ParticleAttr::COUNT; ++i)
+    {
+      m_particleData.InitAttribute(static_cast<ParticleAttr::Value>(i));
+    }
+  }
+
+  template<typename Real>
+  void ParticleSystem<Real>::DeinitAllParticleAttr()
+  {
+    for (int i = 0; i < ParticleAttr::COUNT; ++i)
+    {
+      m_particleData.DeinitAttribute(static_cast<ParticleAttr::Value>(i));
+    }
   }
 
   template<typename Real>

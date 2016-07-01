@@ -154,7 +154,6 @@
     <ClInclude Include="..\..\public\particle_system\DgParticleData.h" />
     <ClInclude Include="..\..\public\particle_system\DgParticleSystem.h" />
     <ClInclude Include="..\..\public\particle_system\DgParticleUpdater.h" />
-    <ClInclude Include="..\..\public\particle_system\Trash.h" />
     <ClInclude Include="..\..\public\ResourceManager.h" />
     <ClInclude Include="..\..\public\ResourceTypes.h" />
     <ClInclude Include="ResourceManager_private.h" />

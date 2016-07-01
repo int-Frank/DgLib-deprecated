@@ -35,7 +35,7 @@ namespace Dg
     //! If the constructor fails to allocate the map, the function throws a <a href="http://www.cplusplus.com/reference/new/bad_alloc/">bad_alloc</a> exception.
     //!
     //! @param[in] size Requested size
-    map(size_t size);
+    map(int size);
     ~map();
 
     //! Copy constructor.
@@ -161,7 +161,7 @@ namespace Dg
   //	@	map<K,T>::map()
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
-  map<K, T>::map(size_t a_size)
+  map<K, T>::map(int a_size)
     : m_data(nullptr), m_keys(nullptr), m_arraySize(0), m_currentSize(0)
   {
     T * tempData = static_cast<T*>(malloc(sizeof(T) * a_size));

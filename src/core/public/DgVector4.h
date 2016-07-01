@@ -166,6 +166,8 @@ namespace Dg
     //! v = [0, 0, 1, 0]
     static Vector4 zAxis();
 
+    //! v = [1, 1, 1, 1]
+    static Vector4 Ones();
   };
 
 
@@ -232,6 +234,19 @@ namespace Dg
                    static_cast<Real>(1.0),
                    static_cast<Real>(0.0));
   }   // End:  Vector4::zAxis()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector4::Ones()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> Vector4<Real>::Ones()
+  {
+    return Vector4(static_cast<Real>(1.0),
+                   static_cast<Real>(1.0),
+                   static_cast<Real>(1.0),
+                   static_cast<Real>(1.0));
+  }   // End:  Vector4::Ones()
 
 
   //-------------------------------------------------------------------------------

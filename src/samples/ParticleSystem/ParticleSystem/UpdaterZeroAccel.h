@@ -8,6 +8,7 @@
 template<typename Real>
 class UpdaterZeroAccel : public Dg::ParticleUpdater<Real>
 {
+public:
   UpdaterZeroAccel() : Dg::ParticleUpdater<Real>() {}
   ~UpdaterZeroAccel() {}
 

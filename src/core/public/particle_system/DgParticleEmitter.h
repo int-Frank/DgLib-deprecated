@@ -21,7 +21,7 @@ namespace Dg
   class ParticleEmitter : public Object<ParticleEmitter<Real>>
   {
   public:
-    ParticleEmitter(): m_isOn(false) {}
+    ParticleEmitter(): m_isOn(false), m_generators(32){}
     virtual ~ParticleEmitter() {}
 
     ParticleEmitter(ParticleEmitter<Real> const & a_other): m_isOn(a_other.m_isOn) {}
@@ -40,7 +40,7 @@ namespace Dg
     void Start() const { m_isOn = true; }
     void Stop() const { m_isOn = false; }
     void ToggleOn() const { m_isOn = !m_isOn; }
-    void IsOn() const { return m_isOn; }
+    bool IsOn() const { return m_isOn; }
 
     void AddGenerator(ParMapKey, ParticleGenerator<Real> const &);
     ParticleGenerator<Real> * GetGenerator(ParMapKey) const;
@@ -56,7 +56,7 @@ namespace Dg
   template<typename Real>
   void ParticleEmitter<Real>::AddGenerator(ParMapKey a_key, ParticleGenerator<Real> const & a_gen)
   {
-    ObjectWrapper<ParticleEmitter<Real>> newGenerator(a_gen);
+    ObjectWrapper<ParticleGenerator<Real>> newGenerator(a_gen);
     m_generators.insert(a_key, newGenerator);
   }
 

@@ -8,6 +8,7 @@
 template<typename Real>
 class UpdaterColor : public Dg::ParticleUpdater<Real>
 {
+public:
   UpdaterColor() : Dg::ParticleUpdater<Real>() {}
   ~UpdaterColor() {}
 
@@ -44,7 +45,7 @@ void UpdaterColor<Real>::Update(int a_start,
     {
       for (int i = a_start; i <= a_finish; ++i)
       {
-        pColors[i] = StartColor[i] + pDLifes[i] * pDColor[i];
+        pColors[i] = pStartColors[i] + pDLifes[i] * pDColors[i];
       }
     }
     else
@@ -56,7 +57,7 @@ void UpdaterColor<Real>::Update(int a_start,
         {
           for (int i = a_start; i <= a_finish; ++i)
           {
-            pColors[i] = StartColor[i] + (pLifes[i] / pLifeMaxes[i]) * DColor[i];
+            pColors[i] = pStartColors[i] + (pLifes[i] / pLifeMaxes[i]) * pDColors[i];
           }
         }
       }

@@ -1,25 +1,40 @@
 
-#define ADD_SINGLE_MEMBER(_name, _type) _type * m_ ## _name;
+#define ADD_SINGLE_MEMBER(NAME, TYPE) TYPE * m_ ## NAME;
 #define ADD_MEMBERS(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(MEMBER, __VA_ARGS__))
 
-#define ADD_SINGLE_METHOD(_name, _type) void Init ## _name() { if (m_ ## _name == nullptr) {m_ ## _name = new _type[m_maxCount];} }\
-                             void Deinit ## _name() { delete[] m_ ## _name; m_ ## _name = nullptr;}\
-                             _type * Get ## _name() {return m_ ## _name;}
+#define ADD_SINGLE_METHOD(NAME, TYPE) TYPE * Get ## NAME() {return m_ ## NAME;}
 #define ADD_METHODS(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(METHOD, __VA_ARGS__))
 
-#define ADD_SINGLE_ENUM(_name, _type) _name,
+#define ADD_SINGLE_ENUM(NAME, TYPE) NAME,
 #define ADD_ENUM_ENTRIES(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(ENUM, __VA_ARGS__))
 
-#define ADD_SINGLE_CONSTRUCTOR(_name, _type) m_ ## _name(nullptr),
+#define ADD_SINGLE_CONSTRUCTOR(NAME, TYPE) m_ ## NAME(nullptr),
 #define ADD_MEMBER_CONSTRUCTORS(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(CONSTRUCTOR, __VA_ARGS__))
 
 
-#define ADD_SINGLE_DESTRUCTOR(_name, _type) delete[] m_ ## _name;
+#define ADD_SINGLE_DESTRUCTOR(NAME, TYPE) delete[] m_ ## NAME;
 #define ADD_MEMBER_DESTRUCTORS(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(DESTRUCTOR, __VA_ARGS__))
 
-#define ADD_SINGLE_KILL(_name, _type) \
-if (m_ ## _name)\
+#define ADD_SINGLE_KILL(NAME, TYPE) \
+if (m_ ## NAME)\
 {\
-  m_ ## _name[a_index] = m_ ## _name[m_countAlive];\
+  m_ ## NAME[a_index] = m_ ## NAME[m_countAlive];\
 }
 #define ADD_KILL_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(KILL, __VA_ARGS__))
+
+#define ADD_SINGLE_INIT(NAME, TYPE) \
+case ParticleAttr::NAME:\
+{\
+  if (m_ ## NAME == nullptr) {m_ ## NAME = new TYPE[m_countMax];}\
+  break;\
+}
+#define ADD_INIT_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(INIT, __VA_ARGS__))
+
+#define ADD_SINGLE_DEINIT(NAME, TYPE) \
+case ParticleAttr::NAME:\
+{\
+  delete[] m_ ## NAME;\
+  m_ ## NAME = nullptr;\
+  break;\
+}
+#define ADD_DEINIT_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(DEINIT, __VA_ARGS__))
