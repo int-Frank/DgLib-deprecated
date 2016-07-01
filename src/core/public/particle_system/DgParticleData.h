@@ -65,6 +65,9 @@ namespace Dg
     void InitAttribute(ParticleAttr::Value);
     void DeinitAttribute(ParticleAttr::Value);
 
+    void InitAll();
+    void DeinitAll();
+
     //! For each entry in ATTRIBUTES, there exists a Get function.
     //! For example, for the Position attribute:
     //!   Dg::Vector4<Real> * GetPosition();
@@ -128,6 +131,18 @@ namespace Dg
     {
       ADD_DEINIT_CODE(ATTRIBUTES)
     }
+  }
+
+  template<typename Real>
+  void ParticleData<Real>::InitAll()
+  {
+    ADD_INITALL_CODE(ATTRIBUTES)
+  }
+
+  template<typename Real>
+  void ParticleData<Real>::DeinitAll()
+  {
+    ADD_DEINITALL_CODE(ATTRIBUTES)
   }
 }
 

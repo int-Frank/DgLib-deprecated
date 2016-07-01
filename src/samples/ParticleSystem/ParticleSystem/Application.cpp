@@ -229,6 +229,7 @@ void Application::Run(Application* the_app)
   }
 
   Init();
+  InitParticleSystem();
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_info.majorVersion);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_info.minorVersion);

@@ -11,7 +11,6 @@
 #define ADD_SINGLE_CONSTRUCTOR(NAME, TYPE) m_ ## NAME(nullptr),
 #define ADD_MEMBER_CONSTRUCTORS(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(CONSTRUCTOR, __VA_ARGS__))
 
-
 #define ADD_SINGLE_DESTRUCTOR(NAME, TYPE) delete[] m_ ## NAME;
 #define ADD_MEMBER_DESTRUCTORS(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(DESTRUCTOR, __VA_ARGS__))
 
@@ -38,3 +37,10 @@ case ParticleAttr::NAME:\
   break;\
 }
 #define ADD_DEINIT_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(DEINIT, __VA_ARGS__))
+
+#define ADD_SINGLE_INITALL(NAME, TYPE) if (m_ ## NAME == nullptr) {m_ ## NAME = new TYPE[m_countMax];}
+#define ADD_INITALL_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(INITALL, __VA_ARGS__))
+
+#define ADD_SINGLE_DEINITALL(NAME, TYPE) delete[] m_ ## NAME; m_ ## NAME = nullptr;
+#define ADD_DEINITALL_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(DEINITALL, __VA_ARGS__))
+

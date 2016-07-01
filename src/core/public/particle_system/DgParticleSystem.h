@@ -137,19 +137,13 @@ namespace Dg
   template<typename Real>
   void ParticleSystem<Real>::InitAllParticleAttr()
   {
-    for (int i = 0; i < ParticleAttr::COUNT; ++i)
-    {
-      m_particleData.InitAttribute(static_cast<ParticleAttr::Value>(i));
-    }
+    m_particleData.InitAll();
   }
 
   template<typename Real>
   void ParticleSystem<Real>::DeinitAllParticleAttr()
   {
-    for (int i = 0; i < ParticleAttr::COUNT; ++i)
-    {
-      m_particleData.DeinitAttribute(static_cast<ParticleAttr::Value>(i));
-    }
+    m_particleData.DeinitAll();
   }
 
   template<typename Real>
