@@ -173,6 +173,12 @@ namespace Dg
     template<size_t _M, size_t _N, typename _Real>
     friend Matrix<_M, _N, _Real> operator* (_Real, Matrix<_M, _N, _Real> const &);
 
+    //! Conversion
+    operator Real*() const { return &m_V[0]; }
+
+    //! Conversion
+    operator Real const *() const { return &m_V[0]; }
+
   protected:
 
     //! Data

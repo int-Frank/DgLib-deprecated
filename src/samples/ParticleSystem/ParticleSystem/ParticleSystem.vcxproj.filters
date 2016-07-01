@@ -25,12 +25,15 @@
     <Filter Include="Generators">
       <UniqueIdentifier>{8ed3769f-a941-438d-af30-e43d1200d923}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems">
-      <UniqueIdentifier>{ee649e23-ce8d-4d00-92a1-7480f90c9ea6}</UniqueIdentifier>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{361478dc-f80b-4f32-95e9-a7563867a75a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,5 +80,16 @@
     <ClInclude Include="GenPosPoint.h">
       <Filter>Generators</Filter>
     </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="vs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

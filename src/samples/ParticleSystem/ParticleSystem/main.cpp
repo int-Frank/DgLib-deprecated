@@ -1,14 +1,12 @@
-#include "AttractorPoint.h"
-#include "AttractorGlobal.h"
-#include "EmitterLinear.h"
-#include "GenPosPoint.h"
-#include "GenVelCone.h"
-#include "UpdaterColor.h"
-#include "UpdaterEuler.h"
-#include "UpdaterLife.h"
-#include "UpdaterZeroAccel.h"
+#include "Application.h"
 
-int main()
+//Comment out to get the console window (use for debugging)
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+
+int main(void)
 {
+  Application *app = new Application;
+  app->Run(app);
+  delete app;
   return 0;
 }
