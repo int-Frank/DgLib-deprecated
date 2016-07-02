@@ -150,7 +150,10 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
   map<K, T>::map()
-    : m_data(nullptr), m_keys(nullptr), m_arraySize(0), m_currentSize(0)
+    : m_data(nullptr)
+    , m_keys(nullptr)
+    , m_arraySize(0)
+    , m_currentSize(0)
   {
     resize(DG_CONTAINER_DEFAULT_SIZE);
 
@@ -162,7 +165,10 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
   map<K, T>::map(int a_size)
-    : m_data(nullptr), m_keys(nullptr), m_arraySize(0), m_currentSize(0)
+    : m_data(nullptr)
+    , m_keys(nullptr)
+    , m_arraySize(0)
+    , m_currentSize(0)
   {
     T * tempData = static_cast<T*>(malloc(sizeof(T) * a_size));
 
@@ -228,8 +234,11 @@ namespace Dg
   //	@	map<K,T>::map()
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
-  map<K, T>::map(map const & a_other) :
-    m_data(nullptr), m_keys(nullptr), m_arraySize(0), m_currentSize(0)
+  map<K, T>::map(map const & a_other)
+    : m_data(nullptr)
+    , m_keys(nullptr)
+    , m_arraySize(0)
+    , m_currentSize(0)
   {
     init(a_other);
 
