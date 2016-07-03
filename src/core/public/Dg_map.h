@@ -9,6 +9,8 @@
 #define DG_MAP_H
 
 #include <exception>
+#include <cstring>
+#include <stdexcept>
 
 #include "container_common.h"
 

@@ -139,14 +139,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DgParser_INI.cpp" />
     <ClCompile Include="DgPriorityMutex.cpp" />
+    <ClCompile Include="DgStringFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\public\DgObject.h" />
     <ClInclude Include="..\..\public\DgObjectWrapper.h" />
+    <ClInclude Include="..\..\public\DgParser_INI.h" />
     <ClInclude Include="..\..\public\DgPriorityMutex.h" />
     <ClInclude Include="..\..\public\DgSingleton.h" />
-    <ClInclude Include="..\..\public\DgUtility.h" />
+    <ClInclude Include="..\..\public\DgStringFunctions.h" />
+    <ClInclude Include="..\..\public\DgTypes.h" />
     <ClInclude Include="..\..\public\DgVariadicMacros.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

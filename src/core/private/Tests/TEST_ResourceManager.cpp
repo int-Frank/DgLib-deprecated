@@ -10,8 +10,8 @@ public:
   TestResource(Dg::Rm::RKey a_key) : Resource(a_key, nullptr), isInit(false) {}
   bool IsInitialised() { return isInit; }
 
-  Dg_Error Init() { isInit = true; return DgR_Success; }
-  Dg_Error DeInit() { isInit = false; return DgR_Success; }
+  Dg::ErrorCode Init() { isInit = true; return Dg::ErrorCode::None; }
+  Dg::ErrorCode DeInit() { isInit = false; return Dg::ErrorCode::None; }
 
 private:
   bool isInit;
@@ -25,18 +25,18 @@ TEST(Stack_ResourceKey, creation_ResourceKey)
   rKey key2 = 0xF2;
   rKey key3 = 0xF3;
 
-  Dg_Error result;
+  Dg::ErrorCode result;
   Dg::Rm::SetOptions(Dg::Rm::rmDEFAULT);
 
-  CHECK(Dg::Rm::RegisterResource(new TestResource(key0)) == DgR_Success);
+  CHECK(Dg::Rm::RegisterResource(new TestResource(key0)) == Dg::ErrorCode::None);
   
   Dg::Rm::hResource handle;
-  CHECK(Dg::Rm::GetResourceHandle(key1, handle) == DgR_Failure);
+  CHECK(Dg::Rm::GetResourceHandle(key1, handle) == Dg::ErrorCode::Failure);
 
   result = Dg::Rm::GetResourceHandle(key0, handle);
-  CHECK(result == DgR_Success);
+  CHECK(result == Dg::ErrorCode::None);
   
-  if (result == DgR_Success)
+  if (result == Dg::ErrorCode::None)
   {
     CHECK(handle->IsInitialised());
 

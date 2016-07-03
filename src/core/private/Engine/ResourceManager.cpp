@@ -27,7 +27,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //	@	RegisterResource()
     //--------------------------------------------------------------------------------
-    Dg_Error RegisterResource(Resource * a_resource, uint32_t a_options)
+    ErrorCode RegisterResource(Resource * a_resource, uint32_t a_options)
     {
       return impl::ResourceManager::Instance()->RegisterResource(a_resource, a_options);
     }
@@ -36,7 +36,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //	@	GetResourceHandle()
     //--------------------------------------------------------------------------------
-    Dg_Error GetResourceHandle(RKey a_key, hResource & a_out)
+    ErrorCode GetResourceHandle(RKey a_key, hResource & a_out)
     {
       return impl::ResourceManager::Instance()->GetResourceHandle(a_key, a_out);
     }
@@ -45,7 +45,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //	@	InitResource()
     //--------------------------------------------------------------------------------
-    Dg_Error InitResource(RKey a_key)
+    ErrorCode InitResource(RKey a_key)
     {
       return impl::ResourceManager::Instance()->InitResource(a_key);
     }
@@ -54,7 +54,7 @@ namespace Dg
     //--------------------------------------------------------------------------------
     //	@	InitAll()
     //--------------------------------------------------------------------------------
-    Dg_Error InitAll()
+    ErrorCode InitAll()
     {
       return impl::ResourceManager::Instance()->InitAll();
     }
@@ -101,12 +101,12 @@ namespace Dg
       //--------------------------------------------------------------------------------
       //	@	ResourceManager::InitResource()
       //--------------------------------------------------------------------------------
-      Dg_Error ResourceManager::InitResource(RKey a_key)
+      ErrorCode ResourceManager::InitResource(RKey a_key)
       {
         int index(0);
         if (!m_resourceList.find(a_key, index))
         {
-          return DgR_Failure;;
+          return ErrorCode::Failure;;
         }
 
         if (!m_resourceList[index].m_resource->IsInitialised())
@@ -114,26 +114,26 @@ namespace Dg
           return m_resourceList[index].m_resource->Init();
         }
 
-        return DgR_Success;
+        return ErrorCode::None;
       }// End: ResourceManager::InitResource()
 
 
       //--------------------------------------------------------------------------------
       //	@	ResourceManager::InitAll()
       //--------------------------------------------------------------------------------
-      Dg_Error ResourceManager::InitAll()
+      ErrorCode ResourceManager::InitAll()
       {
         bool isGood = true;
 
         for (int i = 0; i < m_resourceList.size(); ++i)
         {
-          if (m_resourceList[i].m_resource->Init() != DgR_Success)
+          if (m_resourceList[i].m_resource->Init() != ErrorCode::None)
           {
             isGood = false;
           }
         }
 
-        return isGood ? DgR_Success : DgR_Failure;
+        return isGood ? ErrorCode::None : ErrorCode::Failure;
 
       }// End: ResourceManager::InitAll()
 
@@ -216,7 +216,7 @@ namespace Dg
         if (!m_resourceList[index].m_resource->IsInitialised())
         {
           if ((m_resourceList[index].m_opts & rInitWhenInUse)
-            && m_resourceList[index].m_resource->Init() != DgR_Success)
+            && m_resourceList[index].m_resource->Init() != ErrorCode::None)
           {
             return nullptr;
           }
@@ -230,13 +230,13 @@ namespace Dg
       //--------------------------------------------------------------------------------
       //	@	ResourceManager::GetResourceHandle()
       //--------------------------------------------------------------------------------
-      Dg_Error ResourceManager::GetResourceHandle(RKey a_key, hResource & a_out)
+      ErrorCode ResourceManager::GetResourceHandle(RKey a_key, hResource & a_out)
       {
         Resource * pR(nullptr);
         pR = RegisterUser(a_key);
         if (pR == nullptr)
         {
-          return DgR_Failure;
+          return ErrorCode::Failure;
         }
 
         if (a_out.m_resource != nullptr)
@@ -245,7 +245,7 @@ namespace Dg
         }
 
         a_out.m_resource = pR;
-        return DgR_Success;
+        return ErrorCode::None;
 
       }// End: ResourceManager::GetResourceHandle()
 
@@ -254,19 +254,19 @@ namespace Dg
       //--------------------------------------------------------------------------------
       //	@	ResourceManager::RegisterResource()
       //--------------------------------------------------------------------------------
-      Dg_Error ResourceManager::RegisterResource(Resource * a_resource,
+      ErrorCode ResourceManager::RegisterResource(Resource * a_resource,
                                                   uint32_t a_options)
       {
         if (a_resource == nullptr)
         {
-          return DgR_Failure;
+          return ErrorCode::Failure;
         }
 
         int index(0);
         if (m_resourceList.find(a_resource->GetKey(), index))
         {
           delete a_resource;
-          return DgR_Duplicate;
+          return ErrorCode::Duplicate;
         }
 
         ResourceContainer rc;
@@ -276,15 +276,15 @@ namespace Dg
 
         if (a_options & rInitOnReg)
         {
-          if (rc.m_resource->Init() != DgR_Success)
+          if (rc.m_resource->Init() != ErrorCode::None)
           {
-            return DgR_Failure;
+            return ErrorCode::Failure;
           }
         }
 
         m_resourceList.insert(a_resource->GetKey(), rc);
 
-        return DgR_Success;
+        return ErrorCode::None;
       }// End: ResourceManager::RegisterResource()
     }
   }

@@ -84,8 +84,8 @@ namespace Dg
   template<typename Real>
   ParticleData<Real>::ParticleData(int a_maxCount)
     : ADD_MEMBER_CONSTRUCTORS(ATTRIBUTES)
-      m_countMax(a_maxCount),
-      m_countAlive(0)
+      m_countMax(a_maxCount)
+    , m_countAlive(0)
   {
    
   }

@@ -30,7 +30,7 @@ namespace Dg
     //! @param a_options Options for this resource
     //!
     //! @return Error code
-    Dg_Error RegisterResource(Resource * a_resource, uint32_t a_options = rDEFAULT);
+    ErrorCode RegisterResource(Resource * a_resource, uint32_t a_options = rDEFAULT);
 
     //! @ingroup DgEngine_Rm
     //!
@@ -38,21 +38,21 @@ namespace Dg
     //! successfully registed first with RegisterResource().
     //!
     //! @return Error code
-    Dg_Error GetResourceHandle(RKey, hResource &);
+    ErrorCode GetResourceHandle(RKey, hResource &);
 
     //! @ingroup DgEngine_Rm
     //!
     //! Initialise a particular resource. 
     //!
     //! @return Error code
-    Dg_Error InitResource(RKey);
+    ErrorCode InitResource(RKey);
 
     //! @ingroup DgEngine_Rm
     //!
     //! Initialises all resources.
     //!
     //! @return Error code
-    Dg_Error InitAll();
+    ErrorCode InitAll();
 
     //! @ingroup DgEngine_Rm
     //!

@@ -104,6 +104,7 @@ private:
   GLuint              m_indexBuffer;
 
   void Init();
+  void GetConfiguration();
   void InitParticleSystem();
   void Startup();
   void Shutdown();

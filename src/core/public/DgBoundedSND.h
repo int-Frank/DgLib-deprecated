@@ -10,7 +10,7 @@
 
 #include <math.h>
 
-#include "DgUtility.h"
+#include "DgTypes.h"
 
 #include "DgMath.h"
 #include "DgRNG.h"
@@ -46,8 +46,8 @@ namespace Dg
     //! @param a_lower Lower bound on the normal distribution
     //! @param a_upper Upper bound on the normal distribution
     //! @param a_nValues Number of values in the table to generate.
-    //! @return DgR_Success on success.
-    Dg_Error Init(Real a_mean,
+    //! @return ErrorCode::None on success.
+    ErrorCode Init(Real a_mean,
                    Real a_sd, 
                    Real a_lower,
                    Real a_upper,
@@ -138,7 +138,7 @@ namespace Dg
   //	@	BoundedSND<Real>::Init()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Dg_Error BoundedSND<Real>::Init(Real a_mean,
+  ErrorCode BoundedSND<Real>::Init(Real a_mean,
                                    Real a_sd,
                                    Real a_lower,
                                    Real a_upper,
@@ -151,7 +151,7 @@ namespace Dg
       || Dg::IsZero(a_sd)
       || a_nValues == 0)
     {
-      return DgR_OutOfBounds;
+      return ErrorCode::OutOfBounds;
     }
 
     Real zLower = 0.5 * (1.0 + std::erf((a_lower - a_mean) / (a_sd * Dg::SQRT2)));
@@ -168,7 +168,7 @@ namespace Dg
       m_values[i] = a_sd * static_cast<Real>(SQRT2_d) * inverfResult + a_mean;
     }
 
-    return DgR_Success;
+    return ErrorCode::None;
   }
 
   //--------------------------------------------------------------------------------

@@ -156,6 +156,7 @@
     <ClCompile Include="TEST_DgLine.cpp" />
     <ClCompile Include="TEST_DgLineSegment.cpp" />
     <ClCompile Include="TEST_DgMatrix.cpp" />
+    <ClCompile Include="TEST_DgParser_INI.cpp" />
     <ClCompile Include="TEST_DgPlane.cpp" />
     <ClCompile Include="TEST_DgRay.cpp" />
     <ClCompile Include="TEST_DgSharedPtr.cpp" />
@@ -190,6 +191,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="results.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="testini.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#include "DgUtility.h"
+#include "DgTypes.h"
 
 namespace Dg
 {
@@ -60,10 +60,10 @@ namespace Dg
       virtual bool IsInitialised() = 0;
 
       //! Initializes the resource
-      virtual Dg_Error Init() = 0;
+      virtual ErrorCode Init() = 0;
 
       //! Deinitializes the resource
-      virtual Dg_Error DeInit() = 0;
+      virtual ErrorCode DeInit() = 0;
 
       //! Get the key associated with this resource
       RKey GetKey() const { return m_key; }

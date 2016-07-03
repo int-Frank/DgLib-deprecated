@@ -13,7 +13,7 @@
 #include "Dg_map_pod.h"
 #include "DgSingleton.h"
 #include "ResourceTypes.h"
-#include "DgUtility.h"
+#include "DgTypes.h"
 
 namespace Dg
 {
@@ -42,18 +42,18 @@ namespace Dg
         //! Register a new resource.
         //! @param a_key Associate a unique key with this resource
         //! @param a_options Options for this resource
-        Dg_Error RegisterResource(Resource * a_resource,
+        ErrorCode RegisterResource(Resource * a_resource,
                                    uint32_t a_options = rDEFAULT);
 
         //! Get a pointer to a resource. Will fail if the resouce has not been 
         //! successfully registed first with RegisterResource().
-        Dg_Error GetResourceHandle(RKey, hResource &);
+        ErrorCode GetResourceHandle(RKey, hResource &);
 
         //! Initialise a particular resource. 
-        Dg_Error InitResource(RKey);
+        ErrorCode InitResource(RKey);
 
         //! Initialises all resources.
-        Dg_Error InitAll();
+        ErrorCode InitAll();
 
         //! Deinitialise a particular resource. 
         void DeinitResource(RKey, bool a_force = false);

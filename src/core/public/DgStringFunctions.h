@@ -1,27 +1,16 @@
-//! @file DgUtility.h
+//! @file DgStringFunctions.h
 //!
 //! @author Frank Hart
-//! @date 4/10/2015
+//! @date 3/07/2016
 
-#ifndef DGUTILITY_H
-#define DGUTILITY_H
+#ifndef DGSTRINGFUNCTIONS_H
+#define DGSTRINGFUNCTIONS_H
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <algorithm>
-
-//! @ingroup DgUtility_constants
-//! Error codes
-enum Dg_Error
-{
-  DgR_Success = 0,
-  DgR_Failure,
-  DgR_Undefined,
-  DgR_OutOfBounds,
-  DgR_Duplicate
-};
 
 namespace Dg
 {
@@ -41,9 +30,18 @@ namespace Dg
   {
     std::istringstream iss(s);
     return !(iss >> f >> t).fail();
-
   }	//End: StringToNumber()
 
+
+  //! @ingroup DgUtility_functions
+  //!
+  //! @brief Trims leading and trailing characters
+  //!
+  //! @param[in] a_str Input string.
+  //!
+  //! @return Trimed string
+  std::string Trim(std::string const & a_str
+                 , std::string const & a_chars = " \t");
 }
 
 #endif

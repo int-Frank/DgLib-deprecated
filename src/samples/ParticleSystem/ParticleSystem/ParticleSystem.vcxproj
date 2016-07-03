@@ -129,6 +129,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="ApplicationParSys.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="GenColor.h" />
     <ClInclude Include="GenPosPoint.h" />
     <ClInclude Include="GenVelCone.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="UpdaterColor.h" />
     <ClInclude Include="UpdaterEuler.h" />
     <ClInclude Include="UpdaterLife.h" />
@@ -150,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fs.glsl" />
+    <None Include="ParticleSystem.ini" />
     <None Include="vs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

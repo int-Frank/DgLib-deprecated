@@ -14,12 +14,14 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "Application.h"
 #include <string>
 #include <cstring>
 #include "DgMatrix44.h"
 #include <math.h>
 
+#include "DgParser_INI.h"
 
 Application* Application::s_app(nullptr);
 
@@ -190,8 +192,8 @@ void Application::Render(double currentTime)
   GLint mv_loc = glGetUniformLocation(m_renderingProgram, "mv_matrix");
   GLint proj_loc = glGetUniformLocation(m_renderingProgram, "proj_matrix");
 
-  glUniformMatrix4fv(mv_loc, 1, GL_FALSE, mv_matrix);
-  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, proj_matrix);
+  glUniformMatrix4fv(mv_loc, 1, GL_FALSE, mv_matrix.GetData());
+  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, proj_matrix.GetData());
 
   //Clear the depth buffer
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -216,6 +218,36 @@ void Application::OnMouseMove(GLFWwindow* m_window, double x, double y)
 
 }
 
+void Application::GetConfiguration()
+{
+  char const configFileName[] = "ParticleSystem.ini";
+
+  //Set defaults
+  strcpy_s(m_info.title, "Dg Paricle System Example");
+  m_info.windowWidth = 800;
+  m_info.windowHeight = 600;
+  m_info.majorVersion = 4;
+  m_info.minorVersion = 3;
+  m_info.samples = 0;
+  m_info.flags.all = 0;
+  m_info.flags.cursor = 1;
+  m_info.flags.fullscreen = 0;
+
+  Dg::Parser_INI parser;
+  Dg::ErrorCode result = parser.Parse(configFileName);
+
+  if (result == Dg::ErrorCode::FailedToOpenFile)
+  {
+    fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", configFileName);
+    return;
+  }
+  else if (result != Dg::ErrorCode::None)
+  {
+    fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", configFileName);
+    return;
+  }
+
+}
 
 void Application::Run(Application* the_app)
 {

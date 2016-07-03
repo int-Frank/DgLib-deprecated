@@ -75,10 +75,18 @@
     <ClCompile Include="TEST_ParticleSystems.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="TEST_DgParser_INI.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="results.txt">
       <Filter>Resource Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="testini.ini">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

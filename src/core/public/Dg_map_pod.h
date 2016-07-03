@@ -5,10 +5,12 @@
 //!
 //! Class declaration: map_pod
 
-#ifndef DG_MAP_P_H
-#define DG_MAP_P_H
+#ifndef DG_MAP_POD_H
+#define DG_MAP_POD_H
 
 #include <exception>
+#include <cstring>
+#include <stdexcept>
 
 #include "container_common.h"
 

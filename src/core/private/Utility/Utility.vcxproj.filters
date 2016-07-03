@@ -18,15 +18,18 @@
     <ClCompile Include="DgPriorityMutex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DgParser_INI.cpp">
+      <Filter>Public Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="DgStringFunctions.cpp">
+      <Filter>Public Headers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\public\DgPriorityMutex.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgSingleton.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgUtility.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgVariadicMacros.h">
@@ -36,6 +39,15 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgObjectWrapper.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgStringFunctions.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgTypes.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgParser_INI.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>

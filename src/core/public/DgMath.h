@@ -10,7 +10,7 @@
 #include <math.h>
 #include <stdint.h>
 
-#include "DgUtility.h"
+#include "DgTypes.h"
 #include "DgMath.inl"
 
 //! @ingroup DgMath_constants

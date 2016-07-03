@@ -77,7 +77,7 @@ namespace Dg
     Real operator()(size_t m, size_t n) const;
 
     //! Accessor element by index.
-    Real& operator[](size_t i) { return m_V[i]; }
+    Real & operator[](size_t i) { return m_V[i]; }
 
     //! Accessor element by index.
     Real operator[](size_t i) const { return m_V[i]; }
@@ -173,11 +173,11 @@ namespace Dg
     template<size_t _M, size_t _N, typename _Real>
     friend Matrix<_M, _N, _Real> operator* (_Real, Matrix<_M, _N, _Real> const &);
 
-    //! Conversion
-    operator Real*() const { return &m_V[0]; }
+    //! Get pointer to internal data
+    Real * GetData() { return &m_V[0]; }
 
-    //! Conversion
-    operator Real const *() const { return &m_V[0]; }
+    //! Get pointer to internal data
+    Real const * GetData() const { return &m_V[0]; }
 
   protected:
 
