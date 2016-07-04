@@ -52,7 +52,7 @@ namespace Dg
       std::string name, value;
       if (GetNameValue(line, name, value))
       {
-        m_items.insert(std::pair<std::string, std::string>(Trim(name), Trim(value)));
+        m_items.insert(Trim(name), Trim(value));
       }
     }
     return ErrorCode::None;

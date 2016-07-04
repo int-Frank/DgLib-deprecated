@@ -77,7 +77,7 @@ namespace Dg
     //! @return Key
     //!
     //! @param[in] i Index of item to query
-    K query_key(int i)	const { return m_keys[i]; }
+    K const & query_key(int i)	const { return m_keys[i]; }
 
     //! Searches the map for an element with a key equivalent to \a k.
     //! @return True if the element was found with \a index being set to the 

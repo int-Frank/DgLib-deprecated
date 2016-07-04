@@ -9,17 +9,20 @@ namespace Dg
 {
   template<typename Real>
   class ParticleData;
+
+  template<typename Real>
+  class Matrix44;
 }
 
 class Renderer
 {
 public:
-  Renderer()
-    : m_pParticleData(nullptr) {}
+  Renderer(){}
 
-  bool Init(Dg::ParticleData<float> const *);
-  void Update();
-  void Render();
+  bool Init(Dg::ParticleData<float> *);
+  void Update(Dg::ParticleData<float> *);
+  void Render(Dg::Matrix44<float> const & a_modelView
+            , Dg::Matrix44<float> const & a_proj);
   void ShutDown();
 
 private:
@@ -27,13 +30,10 @@ private:
   GLuint LoadShaderFromFile(std::string, GLenum shaderType);
 
 private:
-  Dg::ParticleData<float> * m_pParticleData;
-
-  GLFWwindow*         m_window;
-  GLuint              m_renderingProgram;
   GLuint              m_vao;
-  GLuint              m_posBuffer;
-  GLuint              m_indexBuffer;
+  GLuint              m_idBufffer;
+  GLuint              m_idShaderProgram;
+  int                 m_nCurrentParticles;
 };
 
 #endif

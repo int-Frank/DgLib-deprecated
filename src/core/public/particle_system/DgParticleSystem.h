@@ -40,6 +40,8 @@ namespace Dg
 
     ParticleEmitter<Real> * GetEmitter(ParMapKey) const;
 
+    ParticleData<Real> * GetParticleData() { return &m_particleData; }
+
     void Update(Real dt);
 
   private:

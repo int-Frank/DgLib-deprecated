@@ -22,6 +22,7 @@
 #include <math.h>
 
 #include "DgParser_INI.h"
+#include "DgStringFunctions.h"
 
 Application* Application::s_app(nullptr);
 
@@ -117,36 +118,83 @@ GLuint Application::CompileShaders()
 
 
 
-void Application::Init()
+bool Application::Init()
 {
-  strcpy_s(m_info.title, "Dg Paricle System Example");
-  m_info.windowWidth = 800;
-  m_info.windowHeight = 600;
-  m_info.majorVersion = 4;
-  m_info.minorVersion = 3;
-  m_info.samples = 0;
-  m_info.flags.all = 0;
-  m_info.flags.cursor = 1;
-  m_info.flags.fullscreen = 0;
-
-  m_window = nullptr;
+  GetConfiguration();
+  if (!InitGL())
+  {
+    return false;
+  }
+  InitControls();
+  InitParticleSystem();
+  return true;
 }
 
-
-void Application::Startup()
+bool Application::InitGL()
 {
-  m_renderingProgram = CompileShaders();
-  glGenVertexArrays(1, &m_vao);
-  glBindVertexArray(m_vao);
+  if (!glfwInit())
+  {
+    fprintf(stderr, "Failed to initialize GLFW\n");
+    return false;
+  }
 
-  glEnable(GL_CULL_FACE);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LESS);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_info.majorVersion);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_info.minorVersion);
 
-  ////Use this for inverse depth buffer
-  //glClearDepth(0.0f);
-  //glDepthFunc(GL_GREATER);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  glfwWindowHint(GLFW_SAMPLES, m_info.samples);
 
+  if (m_info.flags.fullscreen)
+  {
+    if (m_info.windowWidth == 0 || m_info.windowHeight == 0)
+    {
+      const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+      m_info.windowWidth = mode->width;
+      m_info.windowHeight = mode->height;
+    }
+    m_window = glfwCreateWindow(m_info.windowWidth,
+      m_info.windowHeight,
+      m_info.title,
+      glfwGetPrimaryMonitor(),
+      nullptr);
+    glfwSwapInterval((int)m_info.flags.vsync);
+  }
+  else
+  {
+    m_window = glfwCreateWindow(m_info.windowWidth,
+      m_info.windowHeight,
+      m_info.title,
+      nullptr,
+      nullptr);
+  }
+
+  if (!m_window)
+  {
+    fprintf(stderr, "Failed to open m_window\n");
+    glfwTerminate();
+    return false;
+  }
+
+  glfwMakeContextCurrent(m_window);
+
+  // start GLEW extension handler
+  glewExperimental = GL_TRUE;
+  glewInit();
+
+  // Display version info
+  const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
+  const GLubyte* version = glGetString(GL_VERSION); // version as a string
+  printf("Renderer: %s\n", renderer);
+  printf("OpenGL version supported %s\n", version);
+  return true;
+}
+
+void Application::InitControls()
+{
+  glfwSetKeyCallback(m_window, OnKey);
+  glfwSetCursorPosCallback(m_window, OnMouseMove);
 }
 
 
@@ -198,7 +246,7 @@ void Application::Render(double currentTime)
   //Clear the depth buffer
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  //Draw the triangle
+  //Draw the triangle 
   glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
 }
@@ -220,8 +268,6 @@ void Application::OnMouseMove(GLFWwindow* m_window, double x, double y)
 
 void Application::GetConfiguration()
 {
-  char const configFileName[] = "ParticleSystem.ini";
-
   //Set defaults
   strcpy_s(m_info.title, "Dg Paricle System Example");
   m_info.windowWidth = 800;
@@ -230,23 +276,73 @@ void Application::GetConfiguration()
   m_info.minorVersion = 3;
   m_info.samples = 0;
   m_info.flags.all = 0;
-  m_info.flags.cursor = 1;
   m_info.flags.fullscreen = 0;
 
   Dg::Parser_INI parser;
-  Dg::ErrorCode result = parser.Parse(configFileName);
+  Dg::ErrorCode result = parser.Parse(m_configFileName);
 
   if (result == Dg::ErrorCode::FailedToOpenFile)
   {
-    fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", configFileName);
+    fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", m_configFileName);
     return;
   }
   else if (result != Dg::ErrorCode::None)
   {
-    fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", configFileName);
+    fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", m_configFileName);
     return;
   }
 
+  for (int i = 0; i < parser.GetItems().size(); ++i)
+  {
+    if (parser.GetItems().query_key(i) == "windowWidth")
+    {
+      int val = 0;
+      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      {
+        m_info.windowWidth = val;
+      }
+    }
+    else if (parser.GetItems()[i] == "windowHeight")
+    {
+      int val = 0;
+      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      {
+        m_info.windowHeight = val;
+      }
+    }
+    else if (parser.GetItems()[i] == "glMajorVersion")
+    {
+      int val = 0;
+      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      {
+        m_info.majorVersion = val;
+      }
+    }
+    else if (parser.GetItems()[i] == "glMinorVersion")
+    {
+      int val = 0;
+      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      {
+        m_info.minorVersion = val;
+      }
+    }
+    else if (parser.GetItems()[i] == "glSamples")
+    {
+      int val = 0;
+      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      {
+        m_info.samples = val;
+      }
+    }
+    else if (parser.GetItems()[i] == "fullscreen")
+    {
+      int val = 0;
+      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      {
+        m_info.flags.fullscreen = val;
+      }
+    }
+  }
 }
 
 void Application::Run(Application* the_app)
@@ -254,72 +350,26 @@ void Application::Run(Application* the_app)
   bool running = true;
   s_app = the_app;
 
-  if (!glfwInit())
+  if (!Init())
   {
-    fprintf(stderr, "Failed to initialize GLFW\n");
+    fprintf(stderr, "Failed to initialize Application\n");
     return;
   }
 
-  Init();
   InitParticleSystem();
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_info.majorVersion);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_info.minorVersion);
+  //This should go in the Rendere 
+  m_renderingProgram = CompileShaders();
+  glGenVertexArrays(1, &m_vao);
+  glBindVertexArray(m_vao);
 
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  glfwWindowHint(GLFW_SAMPLES, m_info.samples);
-  glfwWindowHint(GLFW_STEREO, m_info.flags.stereo ? GL_TRUE : GL_FALSE);
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
 
-  if (m_info.flags.fullscreen)
-  {
-    if (m_info.windowWidth == 0 || m_info.windowHeight == 0)
-    {
-      const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-      m_info.windowWidth = mode->width;
-      m_info.windowHeight = mode->height;
-    }
-    m_window = glfwCreateWindow(m_info.windowWidth,
-      m_info.windowHeight,
-      m_info.title,
-      glfwGetPrimaryMonitor(),
-      nullptr);
-    glfwSwapInterval((int)m_info.flags.vsync);
-  }
-  else
-  {
-    m_window = glfwCreateWindow(m_info.windowWidth,
-      m_info.windowHeight,
-      m_info.title,
-      nullptr,
-      nullptr);
-  }
-
-  if (!m_window)
-  {
-    fprintf(stderr, "Failed to open m_window\n");
-    glfwTerminate();
-    return;
-  }
-
-  glfwMakeContextCurrent(m_window);
-
-  glfwSetKeyCallback(m_window, OnKey);
-  glfwSetCursorPosCallback(m_window, OnMouseMove);
-  m_info.flags.stereo = (glfwGetWindowAttrib(m_window, GLFW_STEREO) ? 1 : 0);
-
-  // start GLEW extension handler
-  glewExperimental = GL_TRUE;
-  glewInit();
-
-  // get version m_info
-  const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
-  const GLubyte* version = glGetString(GL_VERSION); // version as a string
-  printf("Renderer: %s\n", renderer);
-  printf("OpenGL version supported %s\n", version);
-
-  Startup();
+  ////Use this for inverse depth buffer
+  //glClearDepth(0.0f);
+  //glDepthFunc(GL_GREATER);
 
 
   //Set up the cube geometry

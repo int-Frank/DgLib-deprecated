@@ -8,10 +8,10 @@
 #ifndef DGPARSER_INI_H
 #define DGPARSER_INI_H
 
-#include <map>
 #include <string>
 #include <fstream>
 
+#include "Dg_map.h"
 #include "DgTypes.h"
 
 namespace Dg
@@ -31,11 +31,11 @@ namespace Dg
     //! Get pointer to the static instance of the object
     ErrorCode Parse(std::string const & file);
 
-    std::map<std::string, std::string> const & GetItems() const { return m_items; }
+    Dg::map<std::string, std::string> const & GetItems() const { return m_items; }
 
   private:
 
-    std::map<std::string, std::string> m_items;
+    Dg::map<std::string, std::string> m_items;
 
   private:
 

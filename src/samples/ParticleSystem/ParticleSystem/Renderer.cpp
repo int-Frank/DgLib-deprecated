@@ -3,28 +3,94 @@
 
 #include "Renderer.h"
 #include "particle_system/DgParticleData.h"
+#include "DgMatrix44.h"
 
 
-bool Renderer::Init(Dg::ParticleData<float> const * a_parSys)
+bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 {
+  if (a_parData == nullptr)
+  {
+    return false;
+  }
 
+  int count = a_parData->GetCountMax();
+
+  m_idShaderProgram = CompileShaders();
+
+  glGenVertexArrays(1, &m_vao);
+  glBindVertexArray(m_vao);
+
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+
+  glGenBuffers(1, &m_idBufffer);
+  glBindBuffer(GL_ARRAY_BUFFER, m_idBufffer);
+  glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 4 * count) * 2, nullptr, GL_DYNAMIC_DRAW);
+
+  GLuint idPosition = glGetAttribLocation(m_idShaderProgram, "parPos");
+  GLuint idColor = glGetAttribLocation(m_idShaderProgram, "parCol");
+
+  glVertexAttribPointer(idPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(idColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 4 * count));
+
+  glEnableVertexAttribArray(idPosition);
+  glEnableVertexAttribArray(idColor);
+
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   return true;
 }
 
-void Renderer::Update()
+void Renderer::Update(Dg::ParticleData<float> * a_parData)
 {
+  glBindBuffer(GL_ARRAY_BUFFER, m_idBufffer);
 
+  int m_nCurrentParticles = a_parData->GetCountAlive();
+  int countMax = a_parData->GetCountMax();
+
+  float * ptr = (a_parData->GetPosition()[0].GetData());
+  glBufferSubData(GL_ARRAY_BUFFER, 0, m_nCurrentParticles * 4 * sizeof(float), ptr);
+
+  ptr = (a_parData->GetColor()[0].GetData());
+  glBufferSubData(GL_ARRAY_BUFFER, countMax * 4 * sizeof(float), m_nCurrentParticles * 4 * sizeof(float), ptr);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Renderer::Render()
+void Renderer::Render(Dg::Matrix44<float> const & a_modelView
+                    , Dg::Matrix44<float> const & a_proj)
 {
+  glBindVertexArray(m_vao);
 
+  glUseProgram(m_idShaderProgram);
+
+  GLint mv_loc = glGetUniformLocation(m_idShaderProgram, "mv_matrix");
+  GLint proj_loc = glGetUniformLocation(m_idShaderProgram, "proj_matrix");
+
+  glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_modelView.GetData());
+  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
+
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+  //Draw the triangle 
+  glDrawArrays(GL_POINTS, 0, m_nCurrentParticles);
+
+  glBindVertexArray(0);
 }
 
 void Renderer::ShutDown()
 {
+  if (m_idBufffer != 0)
+  {
+    glDeleteBuffers(1, &m_idBufffer);
+    m_idBufffer = 0;
+    glDeleteProgram(m_idShaderProgram);
+  }
 
+  glDeleteVertexArrays(1, &m_vao);
+  glDeleteProgram(m_idShaderProgram);
 }
 
 GLuint Renderer::LoadShaderFromFile(std::string path, GLenum shaderType)

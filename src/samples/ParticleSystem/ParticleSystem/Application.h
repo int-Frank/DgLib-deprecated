@@ -6,6 +6,7 @@
 #include <string>
 
 #include "particle_system/DgParticleSystem.h"
+#include "Renderer.h"
 
 struct GLFWwindow;
 
@@ -66,8 +67,6 @@ public:
       {
         unsigned int    fullscreen : 1;
         unsigned int    vsync : 1;
-        unsigned int    cursor : 1;
-        unsigned int    stereo : 1;
         unsigned int    debug : 1;
       };
       unsigned int        all;
@@ -82,7 +81,6 @@ private:
 
   static Application* s_app;
 
-
 private:
 
   Dg::ParticleSystem<float>   m_particleSystem;
@@ -96,6 +94,8 @@ private:
 
 private:
 
+  char * const m_configFileName = "config.ini";
+
   APPINFO		          m_info;
   GLFWwindow*         m_window;
   GLuint              m_renderingProgram;
@@ -103,10 +103,16 @@ private:
   GLuint              m_posBuffer;
   GLuint              m_indexBuffer;
 
-  void Init();
+  //Renderer            m_renderer;
+
+  //Main initializer function. All others are called through here.
+  bool Init();
+
   void GetConfiguration();
+  bool InitGL();
+  void InitControls();
   void InitParticleSystem();
-  void Startup();
+
   void Shutdown();
   GLuint CompileShaders();
   GLuint LoadShaderFromFile(std::string, GLenum shaderType);

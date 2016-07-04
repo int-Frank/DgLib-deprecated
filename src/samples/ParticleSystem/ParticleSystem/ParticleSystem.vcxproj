@@ -151,6 +151,7 @@
     <ClInclude Include="UpdaterZeroAccel.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config.ini" />
     <None Include="fs.glsl" />
     <None Include="ParticleSystem.ini" />
     <None Include="vs.glsl" />

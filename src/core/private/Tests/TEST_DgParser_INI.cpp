@@ -6,12 +6,11 @@ TEST(Stack_DgParser_INI, creation_DgParser_INI)
   Dg::Parser_INI parser;
   parser.Parse("testini.ini");
   CHECK(parser.GetItems().size() == 2);
-
-  std::map<std::string, std::string>::const_iterator cit = parser.GetItems().find("n0");
-  CHECK(cit != parser.GetItems().end()
-    && cit->second == "v0");
-
-  cit = parser.GetItems().find("n1");
-  CHECK(cit != parser.GetItems().end()
-    && cit->second == "v1");
+  if (parser.GetItems().size() == 2)
+  {
+    CHECK(parser.GetItems().query_key(0) == "n0");
+    CHECK(parser.GetItems()[0] == "v0");
+    CHECK(parser.GetItems().query_key(1) == "n1");
+    CHECK(parser.GetItems()[1] == "v1");
+  }
 }
