@@ -17,12 +17,13 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 
   m_idShaderProgram = CompileShaders();
 
+  glEnable(GL_ALPHA_TEST);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_POINT_SMOOTH);
+  glDepthFunc(GL_LESS);
+
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
-
-  glEnable(GL_CULL_FACE);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LESS);
 
   glGenBuffers(1, &m_idBufffer);
   glBindBuffer(GL_ARRAY_BUFFER, m_idBufffer);

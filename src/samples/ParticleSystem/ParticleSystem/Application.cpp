@@ -356,8 +356,6 @@ void Application::Run(Application* the_app)
     return;
   }
 
-  InitParticleSystem();
-
   //This should go in the Rendere 
   m_renderingProgram = CompileShaders();
   glGenVertexArrays(1, &m_vao);
