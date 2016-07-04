@@ -36,19 +36,18 @@
 
 namespace Dg
 {
-  struct ParticleAttr
+  template<typename Real>
+  class ParticleData
   {
-    enum Value
-    { 
+  public:
+
+    enum Attr
+    {
       //Enum enrty names are taken from ATTRIBUTES names
       ADD_ENUM_ENTRIES(ATTRIBUTES)
       COUNT
     };
-  };
 
-  template<typename Real>
-  class ParticleData
-  {
   public:
 
     explicit ParticleData(int a_maxCount);
@@ -62,8 +61,8 @@ namespace Dg
     void Kill(int);
     int Wake();
 
-    void InitAttribute(ParticleAttr::Value);
-    void DeinitAttribute(ParticleAttr::Value);
+    void InitAttribute(Attr);
+    void DeinitAttribute(Attr);
 
     void InitAll();
     void DeinitAll();
@@ -116,7 +115,7 @@ namespace Dg
   }
 
   template<typename Real>
-  void ParticleData<Real>::InitAttribute(ParticleAttr::Value a_val)
+  void ParticleData<Real>::InitAttribute(Attr a_val)
   {
     switch (a_val)
     {
@@ -125,7 +124,7 @@ namespace Dg
   }
 
   template<typename Real>
-  void ParticleData<Real>::DeinitAttribute(ParticleAttr::Value a_val)
+  void ParticleData<Real>::DeinitAttribute(Attr a_val)
   {
     switch (a_val)
     {

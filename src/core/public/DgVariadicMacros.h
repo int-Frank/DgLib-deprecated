@@ -32,6 +32,7 @@
 
 #define GLUE(x, y) x##y
 
+#define ADD_ITEM0(itemName)
 #define ADD_ITEM2(itemName, n0, t0) ADD_SINGLE_ ## itemName(n0, t0)
 #define ADD_ITEM4(itemName, n0, t0, n1, t1) ADD_SINGLE_ ## itemName(n0, t0) ADD_ITEM2(itemName, n1, t1)
 #define ADD_ITEM6(itemName, n0, t0, n1, t1, n2, t2) ADD_SINGLE_ ## itemName(n0, t0) ADD_ITEM4(itemName, n1, t1, n2, t2)

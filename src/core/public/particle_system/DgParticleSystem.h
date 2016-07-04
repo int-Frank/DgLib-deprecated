@@ -32,8 +32,8 @@ namespace Dg
     void RemoveEmitter(ParMapKey);
     void RemoveUpdater(ParMapKey);
 
-    void InitParticleAttr(ParticleAttr::Value);
-    void DeinitParticleAttr(ParticleAttr::Value);
+    void InitParticleAttr(int);
+    void DeinitParticleAttr(int);
 
     void InitAllParticleAttr();
     void DeinitAllParticleAttr();
@@ -125,13 +125,13 @@ namespace Dg
   }
 
   template<typename Real>
-  void ParticleSystem<Real>::InitParticleAttr(ParticleAttr::Value a_val)
+  void ParticleSystem<Real>::InitParticleAttr(int a_val)
   {
     m_particleData.InitAttribute(a_val);
   }
 
   template<typename Real>
-  void ParticleSystem<Real>::DeinitParticleAttr(ParticleAttr::Value a_val)
+  void ParticleSystem<Real>::DeinitParticleAttr(int a_val)
   {
     m_particleData.DeinitAttribute(a_val);
   }

@@ -22,7 +22,7 @@ if (m_ ## NAME)\
 #define ADD_KILL_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(KILL, __VA_ARGS__))
 
 #define ADD_SINGLE_INIT(NAME, TYPE) \
-case ParticleAttr::NAME:\
+case ParticleData<Real>::Attr::NAME:\
 {\
   if (m_ ## NAME == nullptr) {m_ ## NAME = new TYPE[m_countMax];}\
   break;\
@@ -30,7 +30,7 @@ case ParticleAttr::NAME:\
 #define ADD_INIT_CODE(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(INIT, __VA_ARGS__))
 
 #define ADD_SINGLE_DEINIT(NAME, TYPE) \
-case ParticleAttr::NAME:\
+case ParticleData<Real>::Attr::NAME:\
 {\
   delete[] m_ ## NAME;\
   m_ ## NAME = nullptr;\
