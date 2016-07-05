@@ -9,5 +9,16 @@ in VS_OUT
 
 void main(void)
 {
-  color = fs_in.color;
+  float distSqrd = dot(gl_PointCoord-0.5,gl_PointCoord-0.5);
+  if(distSqrd > 0.25) 
+  {
+    discard;
+  }
+  else
+  {
+    color = fs_in.color;
+    color.w = 1.0 - distSqrd / 0.25;
+  }
+
+  //color = fs_in.color;
 }
