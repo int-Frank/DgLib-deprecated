@@ -247,7 +247,8 @@ void Application::Render(double currentTime)
   glClear(GL_DEPTH_BUFFER_BIT);
 
   //Draw the triangle 
-  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+  glDrawArrays(GL_POINTS, 0, 8);
+  //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
 }
 
@@ -361,8 +362,14 @@ void Application::Run(Application* the_app)
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
 
-  glEnable(GL_CULL_FACE);
+  glEnable(GL_ALPHA_TEST);
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_POINT_SMOOTH);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_POINT_SPRITE);
+  glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
   glDepthFunc(GL_LESS);
 
   ////Use this for inverse depth buffer
@@ -372,30 +379,16 @@ void Application::Run(Application* the_app)
 
   //Set up the cube geometry
   const GLfloat v_pos[] = {
-    0.5, -0.5, -0.5,
-    0.5, -0.5, 0.5,
-    -0.5, -0.5, 0.5,
-    -0.5, -0.5, -0.5,
-    0.5, 0.5, -0.5,
-    0.5, 0.5, 0.5,
-    -0.5, 0.5, 0.5,
-    -0.5, 0.5, -0.5
+    0.5, -0.5, -0.5, 1.0,
+    0.5, -0.5, 0.5, 1.0,
+    -0.5, -0.5, 0.5, 1.0,
+    -0.5, -0.5, -0.5, 1.0,
+    0.5, 0.5, -0.5, 1.0,
+    0.5, 0.5, 0.5, 1.0,
+    -0.5, 0.5, 0.5, 1.0,
+    -0.5, 0.5, -0.5, 1.0
   };
 
-  const GLushort v_ind[] = {
-    0, 1, 2,
-    0, 2, 3,
-    4, 7, 6,
-    4, 6, 5,
-    0, 4, 5,
-    0, 5, 1,
-    1, 5, 6,
-    1, 6, 2,
-    2, 6, 7,
-    2, 7, 3,
-    4, 0, 3,
-    4, 3, 7
-  };
 
   //Generate some data and put it in a buffer object
   glGenBuffers(1, &m_posBuffer);
@@ -406,16 +399,9 @@ void Application::Run(Application* the_app)
     GL_STATIC_DRAW);
 
   //Set the vertex attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+  GLuint idPosition = glGetAttribLocation(m_renderingProgram, "position");
+  glVertexAttribPointer(idPosition, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
   glEnableVertexAttribArray(0);
-
-  //Add index data
-  glGenBuffers(1, &m_indexBuffer);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-    sizeof(v_ind),
-    v_ind,
-    GL_STATIC_DRAW);
 
   //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
