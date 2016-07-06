@@ -21,7 +21,7 @@ public:
     return *this; 
   }
 
-  void Update(Dg::ParticleData<Real> &, int) {}
+  void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
   void Update(Dg::ParticleData<Real> &, int, Real);
 
   UpdaterEuler<Real> * Clone() const { return new UpdaterEuler<Real>(*this); }

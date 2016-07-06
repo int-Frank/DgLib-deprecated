@@ -121,9 +121,9 @@ void Application::InitControls()
 {
   GLFWscrollfun res = glfwSetScrollCallback(m_window, OnMouseScroll);
 
-  s_dZoom = 7.0;
+  s_dZoom = 0.0;
   m_mouseSpeed = 0.01;
-  m_camZoom = 1.0;
+  m_camZoom = 5.0;
   m_canRotate = false;
   glfwGetCursorPos(m_window, &m_mouseCurentX, &m_mouseCurentX);
   m_mousePrevX = m_mouseCurentX;
@@ -176,17 +176,14 @@ void Application::DoLogic()
 
 void Application::Render()
 {
-  //Generate the cube transformation matrix
-
   mat44 translate, rotate, scale;
-  translate.Translation(vec4(0.0f, -2.0f, -m_camZoom, 0.0f));
+  translate.Translation(vec4(0.0f, -2.0f, float(-m_camZoom), 0.0f));
   rotate.Rotation(float(Dg::PI_d + m_camRotX)
                 , 0.0f
                 , float(m_camRotZ)
                 , Dg::EulerOrder::ZYX);
   mat44 mv_matrix = rotate * translate;
 
-  //printf("%d, %d\n", mouseX, mouseY);
   //Set up the viewport
   float ratio;
   int width, height;
@@ -198,17 +195,22 @@ void Application::Render()
 
   //Set up the perspective matrix;
   mat44 proj_matrix;
-  proj_matrix.Perspective(1.5f, ratio, 0.1f, 1000.0f);
+  float fov = 1.5f;
+  proj_matrix.Perspective(fov, ratio, 0.1f, 1000.0f);
+
+  float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
+
+  //att = (w/2)/tan(fov/2)
+  //screenSize = parSize * att / eyePos.z
 
   m_renderer.Update(m_particleSystem.GetParticleData());
-  m_renderer.Render(mv_matrix, proj_matrix);
+  m_renderer.Render(mv_matrix, proj_matrix, parScale);
 }
 
 
 void Application::OnMouseScroll(GLFWwindow* window, double xOffset, double yOffset)
 {
   s_dZoom += xOffset;
-
 }
 
 void Application::GetConfiguration()
@@ -306,31 +308,15 @@ void Application::Run(Application* the_app)
   bool show_another_window = false;
   ImVec4 clear_color = ImColor(114, 144, 154);
 
-  //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
   double lastTick = glfwGetTime();
   m_particleSystem.StartAllEmitters();
 
   do
   {
-    /*
-    //This section demonstrates getting mouse input.
-    int width, height;
-    glfwGetFramebufferSize(m_window, &width, &height);
-
-    double wc = double(width) / 2.0;
-    double hc = double(height) / 2.0;
-
-    double mouse_x, mouse_y;
-    glfwGetCursorPos(m_window, &mouse_x, &mouse_y);
-    glfwSetCursorPos(m_window, wc, hc);*/
-
 
 	glfwPollEvents();
 	ImGui_ImplGlfwGL3_NewFrame();
 
-	// 1. Show a simple window
-	// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
 	{
     ImGui::Begin("Partice System");
 		//static float f = 0.0f;
@@ -339,7 +325,7 @@ void Application::Run(Application* the_app)
 		//ImGui::ColorEdit3("clear color", (float*)&clear_color);
 		if (ImGui::Button("Test Window")) show_test_window ^= 1;
 		//if (ImGui::Button("Another Window")) show_another_window ^= 1;
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
     ImGui::End();
   }
 
@@ -352,23 +338,12 @@ void Application::Run(Application* the_app)
   DoLogic();
   Render();
 
-
-  // 2. Show another simple window, this time using an explicit Begin/End pair
-  if (show_another_window)
-  {
-    ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
-    ImGui::Begin("Another Window", &show_another_window);
-    ImGui::Text("Hello");
-    ImGui::End();
-  }
-
   // 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
   if (show_test_window)
   {
     ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
     ImGui::ShowTestWindow(&show_test_window);
   }
-
 
 	ImGui::Render();
   glfwSwapBuffers(m_window);

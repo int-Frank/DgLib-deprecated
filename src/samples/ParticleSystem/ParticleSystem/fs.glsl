@@ -17,8 +17,6 @@ void main(void)
   else
   {
     color = fs_in.color;
-    color.w = 1.0 - distSqrd / 0.25;
+    color.w = color.w * (1.0 - distSqrd / 0.25);
   }
-
-  //color = fs_in.color;
 }

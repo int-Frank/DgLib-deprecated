@@ -22,12 +22,14 @@ public:
     E_UpdaterAttractor_2,
     E_UpdaterEuler,
     E_UpdaterColor,
+    E_UpdaterSize,
 
     //Generators
     E_GenPosPoint,
     E_GenVelCone,
     E_GenColor,
     E_GenLife,
+    E_GenSize,
 
     //Emitters
     E_Emitter_1,

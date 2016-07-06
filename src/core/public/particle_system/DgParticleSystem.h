@@ -192,7 +192,7 @@ namespace Dg
     {
       for (int u = 0; u < m_updaters.size(); ++u)
       {
-        m_updaters[u]->Update(m_particleData, m_particleData.GetCountAlive() - nNewParticles);
+        m_updaters[u]->UpdateNew(m_particleData, m_particleData.GetCountAlive() - nNewParticles, a_dt);
       }
     }
   }

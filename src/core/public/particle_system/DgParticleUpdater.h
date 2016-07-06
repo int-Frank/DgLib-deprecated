@@ -24,10 +24,10 @@ namespace Dg
     ParticleUpdater<Real> & operator=(ParticleUpdater<Real> const & a_other) { return *this; }
     
 
-    //This method typically will access a dt in each particle data element.
-    //Used to update newly emitted particles.
-    virtual void Update(ParticleData<Real> & data
-				              , int start) {}
+    //A secondary update method, specially called for newy created particles.
+    virtual void UpdateNew(ParticleData<Real> & data
+				                 , int start
+                         , Real dt) {}
 
     virtual void Update(ParticleData<Real> & data
 				              , int start

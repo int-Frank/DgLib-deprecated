@@ -33,16 +33,19 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 
   glGenBuffers(1, &m_idBufffer);
   glBindBuffer(GL_ARRAY_BUFFER, m_idBufffer);
-  glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 4 * countMax) * 2, nullptr, GL_DYNAMIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * (4 + 4 + 1) * countMax), nullptr, GL_DYNAMIC_DRAW);
 
   GLuint idPosition = glGetAttribLocation(m_idShaderProgram, "position");
   GLuint idColor = glGetAttribLocation(m_idShaderProgram, "color");
+  GLuint idSize = glGetAttribLocation(m_idShaderProgram, "pointSize");
 
   glVertexAttribPointer(idPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
   glVertexAttribPointer(idColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 4 * countMax));
+  glVertexAttribPointer(idSize, 1, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 8 * countMax));
 
   glEnableVertexAttribArray(idPosition);
   glEnableVertexAttribArray(idColor);
+  glEnableVertexAttribArray(idSize);
 
   glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -69,11 +72,15 @@ void Renderer::Update(Dg::ParticleData<float> * a_parData)
   ptr = (a_parData->GetColor()[0].GetData());
   glBufferSubData(GL_ARRAY_BUFFER, countMax * 4 * sizeof(float), m_nCurrentParticles * 4 * sizeof(float), ptr);
 
+  ptr = (a_parData->GetSize());
+  glBufferSubData(GL_ARRAY_BUFFER, countMax * 8 * sizeof(float), m_nCurrentParticles * 1 * sizeof(float), ptr);
+
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Renderer::Render(Dg::Matrix44<float> const & a_modelView
-                    , Dg::Matrix44<float> const & a_proj)
+                    , Dg::Matrix44<float> const & a_proj
+                    , float a_parScale)
 {
   glBindVertexArray(m_vao);
 
@@ -81,9 +88,11 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
 
   GLint mv_loc = glGetUniformLocation(m_idShaderProgram, "mv_matrix");
   GLint proj_loc = glGetUniformLocation(m_idShaderProgram, "proj_matrix");
+  GLint parScale_loc = glGetUniformLocation(m_idShaderProgram, "parScale");
 
   glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_modelView.GetData());
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
+  glUniform1f(parScale_loc, a_parScale);
 
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   

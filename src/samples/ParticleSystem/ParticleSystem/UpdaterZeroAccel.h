@@ -19,7 +19,7 @@ public:
     return *this;
   }
 
-  void Update(Dg::ParticleData<Real> &, int) {}
+  void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
   void Update(Dg::ParticleData<Real> &, int, Real);
 
   UpdaterZeroAccel<Real> * Clone() const { return new UpdaterZeroAccel<Real>(*this); }

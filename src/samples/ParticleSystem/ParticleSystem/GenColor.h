@@ -61,7 +61,7 @@ void GenColor<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int 
       pStartColor[i] = m_startColor;
     }
   }
-  if (pColor)
+  if (pDColor)
   {
     for (int i = a_start; i <= a_end; ++i)
     {

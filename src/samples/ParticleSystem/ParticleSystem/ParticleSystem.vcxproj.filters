@@ -134,6 +134,12 @@
     <ClInclude Include="imgui\stb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="UpdaterSize.h">
+      <Filter>Updaters</Filter>
+    </ClInclude>
+    <ClInclude Include="GenSize.h">
+      <Filter>Generators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fs.glsl">

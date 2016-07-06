@@ -22,7 +22,8 @@ public:
   bool Init(Dg::ParticleData<float> *);
   void Update(Dg::ParticleData<float> *);
   void Render(Dg::Matrix44<float> const & a_modelView
-            , Dg::Matrix44<float> const & a_proj);
+            , Dg::Matrix44<float> const & a_proj
+            , float parScale);
   void ShutDown();
 
 private:

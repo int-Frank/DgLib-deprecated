@@ -25,7 +25,7 @@ public:
     return *this;
   }
 
-  void SetLife(Real a_life) {m_life = a_life};
+  void SetLife(Real a_life) { m_life = a_life; };
 
   void Generate(Dg::ParticleData<Real> &, int, int);
 
