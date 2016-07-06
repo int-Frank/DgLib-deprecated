@@ -157,6 +157,58 @@ void Application::HandleInput()
 
 void Application::DoLogic()
 {
+  {
+    static float windowW = 360.0f;
+    static float windowH = 600.0f;
+
+    ImGui::Begin("Partice System");
+    ImGui::SetWindowSize(ImVec2(windowW, windowH), 0);
+
+    static int emitter = 0;
+    ImGui::RadioButton("Emitter 1", &emitter, 0); ImGui::SameLine();
+    ImGui::RadioButton("Emitter 2", &emitter, 1); ImGui::SameLine();
+    ImGui::RadioButton("Emitter 3", &emitter, 2);
+
+    static int emitterType;
+    ImGui::RadioButton("Linear", &emitterType, 0); ImGui::SameLine();
+    ImGui::RadioButton("Poisson", &emitterType, 1);
+
+    ImGui::BeginChild("Emitter attributes", ImVec2(ImGui::GetWindowWidth() - 20.0f, 200.0f), true);
+    ImGui::Text("Position");
+    static float posX = 0.0;
+    static float posY = 0.0;
+    static float posZ = 0.0;
+    ImGui::PushItemWidth(int(ImGui::GetWindowWidth() * 0.27));
+    ImGui::SliderFloat("X", &posX, -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
+    ImGui::SliderFloat("Y", &posY, -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
+    ImGui::SliderFloat("Z", &posZ, -5.0f, 5.0f, "%.1f");
+    ImGui::PopItemWidth();
+    ImGui::EndChild();
+    /*
+    Emitter selector:   3 x radio edit
+      Emitter Type:       2 x radio edit (linear, poisson)
+        Position Generator: radio edit for each generator
+          Cone:
+            Position:           3 x Slider (x, y, z)
+            Orientation:        2 x slider (rz, rx)
+            Spread:             1 x slider
+        Rate:               1 x slider
+        Life:               1 x slider
+        Start velocity:     1 x slider
+        Force:              1 x slider
+        Start Color:        1 x color edit
+        End Color:          1 x color edit
+        Start point size:   1 x slider
+        End point size:     1 x slider
+    */
+    //static float f = 0.0f;
+    //ImGui::Text("Hello, world!");
+    //ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+    //ImGui::ColorEdit3("clear color", (float*)&clear_color);
+    //if (ImGui::Button("Another Window")) show_another_window ^= 1;
+    ImGui::End();
+  }
+
   m_particleSystem.Update(m_dt);
 
   //Camera
