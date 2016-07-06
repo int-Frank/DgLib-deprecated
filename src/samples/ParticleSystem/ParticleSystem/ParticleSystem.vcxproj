@@ -134,6 +134,7 @@
     <ClCompile Include="imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -158,7 +159,7 @@
     <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="uiData.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="UpdaterColor.h" />
     <ClInclude Include="UpdaterEuler.h" />
     <ClInclude Include="UpdaterLife.h" />

@@ -27,7 +27,7 @@
 #include "imgui/imgui.h"
 #include "imgui_impl_glfw_gl3.h"
 
-#include "uiData.h"
+#include "UI.h"
 
 Application* Application::s_app(nullptr);
 
@@ -186,7 +186,7 @@ void Application::DoLogic()
     ImGui::RadioButton("Box", &uiData[curEm].posGenMethod, 1); ImGui::SameLine();
     ImGui::RadioButton("Sphere", &uiData[curEm].posGenMethod, 2);
 
-    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.27);
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.27f);
     if (uiData[curEm].posGenMethod == 1)
     {
       ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
@@ -420,10 +420,10 @@ void Application::Run(Application* the_app)
 
   // Setup ImGui binding
   bool show_test_window = false;
-  ImVec4 clear_color = ImColor(114, 144, 154);
 
   double lastTick = glfwGetTime();
   m_particleSystem.StartAllEmitters();
+
 
   do
   {
@@ -433,8 +433,9 @@ void Application::Run(Application* the_app)
 
 	{
     ImGui::Begin("Partice System");
-		if (ImGui::Button("Test Window")) show_test_window ^= 1;
-		ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
+    if (ImGui::Button("Blending")) UI::showAlphaBlendingWindow ^= 1; ImGui::SameLine();
+    if (ImGui::Button("Example UI")) show_test_window ^= 1;
+    ImGui::Spacing(); ImGui::Spacing();
     ImGui::End();
   }
 

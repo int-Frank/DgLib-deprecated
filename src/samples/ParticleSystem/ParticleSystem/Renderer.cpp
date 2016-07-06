@@ -6,6 +6,7 @@
 #include "DgMatrix44.h"
 
 #include "imgui/imgui.h"
+#include "UI.h"
 
 bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 {
@@ -78,11 +79,89 @@ void Renderer::Update(Dg::ParticleData<float> * a_parData)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+static int GetEnumFromListVal(int a_val)
+{
+  switch (a_val)
+  {
+  case 0: return GL_ZERO;
+  case 1: return GL_ONE;
+  case 2: return GL_SRC_COLOR;
+  case 3: return GL_ONE_MINUS_SRC_COLOR;
+  case 4: return GL_DST_COLOR;
+  case 5: return GL_ONE_MINUS_DST_COLOR;
+  case 6: return GL_SRC_ALPHA;
+  case 7: return GL_ONE_MINUS_SRC_ALPHA;
+  case 8: return GL_DST_ALPHA;
+  case 9: return GL_ONE_MINUS_DST_ALPHA;
+  case 10: return GL_CONSTANT_COLOR;
+  case 11: return GL_ONE_MINUS_CONSTANT_COLOR;
+  case 12: return GL_CONSTANT_ALPHA;
+  case 13: return GL_ONE_MINUS_CONSTANT_ALPHA;
+  case 14: return GL_SRC_ALPHA_SATURATE;
+  }
+}
+
 void Renderer::Render(Dg::Matrix44<float> const & a_modelView
                     , Dg::Matrix44<float> const & a_proj
                     , float a_parScale)
 {
   glBindVertexArray(m_vao);
+
+  static int sfactor_ind(6);
+  static int dfactor_ind(7);
+
+  if (UI::showAlphaBlendingWindow)
+  {
+    char const * sfactorItems[] = 
+    { 
+      "GL_ZERO",
+      "GL_ONE",
+      "GL_SRC_COLOR",
+      "GL_ONE_MINUS_SRC_COLOR",
+      "GL_DST_COLOR",
+      "GL_ONE_MINUS_DST_COLOR",
+      "GL_SRC_ALPHA",
+      "GL_ONE_MINUS_SRC_ALPHA",
+      "GL_DST_ALPHA",
+      "GL_ONE_MINUS_DST_ALPHA",
+      "GL_CONSTANT_COLOR",
+      "GL_ONE_MINUS_CONSTANT_COLOR",
+      "GL_CONSTANT_ALPHA",
+      "GL_ONE_MINUS_CONSTANT_ALPHA",
+      "GL_SRC_ALPHA_SATURATE" 
+    };
+
+    char const * dfactorItems[] =
+    {
+      "GL_ZERO",
+      "GL_ONE",
+      "GL_SRC_COLOR",
+      "GL_ONE_MINUS_SRC_COLOR",
+      "GL_DST_COLOR",
+      "GL_ONE_MINUS_DST_COLOR",
+      "GL_SRC_ALPHA",
+      "GL_ONE_MINUS_SRC_ALPHA",
+      "GL_DST_ALPHA",
+      "GL_ONE_MINUS_DST_ALPHA,"
+      "GL_CONSTANT_COLOR",
+      "GL_ONE_MINUS_CONSTANT_COLOR",
+      "GL_CONSTANT_ALPHA",
+      "GL_ONE_MINUS_CONSTANT_ALPHA"
+    };
+
+    ImGui::Begin("Alpha blending", &UI::showAlphaBlendingWindow, 0);
+    ImGui::Text("sfactor: Source rgba blending method");
+    ImGui::Text("dfactor: Destination rgba blending method");
+    ImGui::Spacing(); ImGui::Spacing();
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.8f);
+    ImGui::ListBox("sfactor", &sfactor_ind, sfactorItems, ((int)(sizeof(sfactorItems) / sizeof(*sfactorItems))), 15);
+    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    ImGui::ListBox("dfactor", &dfactor_ind, dfactorItems, ((int)(sizeof(dfactorItems) / sizeof(*dfactorItems))), 13);
+    ImGui::PopItemWidth();
+    ImGui::End();
+
+    glBlendFunc(GetEnumFromListVal(sfactor_ind), GetEnumFromListVal(dfactor_ind));
+  }
 
   glUseProgram(m_idShaderProgram);
 

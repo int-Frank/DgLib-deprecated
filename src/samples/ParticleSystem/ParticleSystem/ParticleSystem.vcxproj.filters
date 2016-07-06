@@ -57,6 +57,9 @@
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UpdaterZeroAccel.h">
@@ -140,7 +143,7 @@
     <ClInclude Include="GenSize.h">
       <Filter>Generators</Filter>
     </ClInclude>
-    <ClInclude Include="uiData.h">
+    <ClInclude Include="UI.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
