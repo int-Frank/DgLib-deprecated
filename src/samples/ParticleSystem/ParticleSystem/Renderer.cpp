@@ -84,6 +84,7 @@ static int GetEnumFromListVal(int a_val)
   switch (a_val)
   {
   case 0: return GL_ZERO;
+  default:
   case 1: return GL_ONE;
   case 2: return GL_SRC_COLOR;
   case 3: return GL_ONE_MINUS_SRC_COLOR;

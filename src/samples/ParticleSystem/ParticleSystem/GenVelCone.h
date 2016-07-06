@@ -11,7 +11,7 @@ class GenVelCone : public Dg::ParticleGenerator<Real>
 {
 public:
   GenVelCone() : Dg::ParticleGenerator<Real>()
-               , m_axis(Dg::Vector4<Real>::xAxis())
+               , m_axis(Dg::Vector4<Real>::yAxis())
                , m_angle(static_cast<Real>(0.785))
                , m_velocity(static_cast<Real>(1.0))
                   {}
@@ -49,7 +49,7 @@ private:
 template<typename Real>
 void GenVelCone<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 {
-  m_axis = a_vqs.Rotate(Dg::Vector4<Real>::xAxis());
+  m_axis = a_vqs.Rotate(Dg::Vector4<Real>::yAxis());
 }
 
 

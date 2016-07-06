@@ -41,7 +41,7 @@ namespace Dg
     void StartAllEmitters();
     void StopAllEmitters();
 
-    ParticleEmitter<Real> * GetEmitter(ParMapKey) const;
+    ParticleEmitter<Real> * GetEmitter(ParMapKey);
 
     ParticleData<Real> * GetParticleData() { return &m_particleData; }
 
@@ -117,7 +117,7 @@ namespace Dg
   }
 
   template<typename Real>
-  ParticleEmitter<Real> * ParticleSystem<Real>::GetEmitter(ParMapKey a_key) const
+  ParticleEmitter<Real> * ParticleSystem<Real>::GetEmitter(ParMapKey a_key)
   {
     int index(0);
     if (m_emitters.find(a_key, index))

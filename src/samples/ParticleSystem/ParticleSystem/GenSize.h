@@ -10,7 +10,7 @@ class GenSize : public Dg::ParticleGenerator<Real>
 {
 public:
   GenSize() : Dg::ParticleGenerator<Real>()
-            , m_startSize(static_cast<Real>(0.3))
+            , m_startSize(static_cast<Real>(0.1))
             , m_dSize(static_cast<Real>(0.0)) {}
 
   ~GenSize() {}
