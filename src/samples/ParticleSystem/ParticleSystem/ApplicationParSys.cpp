@@ -140,13 +140,11 @@ static EmitterLinear<float> CreateEmitter_3()
   return emitter;
 }
 
-static Attractor<float, AttractorForce::Constant> CreateAttractor_1()
+static AttractorGlobal<float, AttractorForce::Constant> CreateAttractor_1()
 {
   Vqs vqs;
   quat q;
 
-  q.SetRotationY(-PI / 2.0f);
-  vqs.SetQ(q);
   AttractorGlobal<float, AttractorForce::Constant> attr;
   attr.SetTransformation(vqs);
   attr.SetStrength(1.0f);
@@ -154,7 +152,7 @@ static Attractor<float, AttractorForce::Constant> CreateAttractor_1()
   return attr;
 }
 
-static Attractor<float, AttractorForce::InverseSquare> CreateAttractor_2()
+static AttractorPoint<float, AttractorForce::InverseSquare> CreateAttractor_2()
 {
   Vqs vqs;
   vec4 v;
@@ -163,7 +161,8 @@ static Attractor<float, AttractorForce::InverseSquare> CreateAttractor_2()
   vqs.SetV(v);
   AttractorPoint<float, AttractorForce::InverseSquare> attr;
   attr.SetTransformation(vqs);
-  attr.SetStrength(1.0f);
+  attr.SetStrength(-10.0f);
+  attr.SetMaxAccelMagnitude(1.0);
 
   return attr;
 }
@@ -195,7 +194,7 @@ void Application::InitParticleSystem()
   m_particleSystem.AddUpdater(E_UpdaterLife, UpdaterLife<float>());
   m_particleSystem.AddUpdater(E_UpdaterZeroAccel, UpdaterZeroAccel<float>());
   //m_particleSystem.AddUpdater(E_UpdaterAttractor_1, CreateAttractor_1());
-  //m_particleSystem.AddUpdater(E_UpdaterAttractor_2, CreateAttractor_2());
+  m_particleSystem.AddUpdater(E_UpdaterAttractor_2, CreateAttractor_2());
   m_particleSystem.AddUpdater(E_UpdaterEuler, UpdaterEuler<float>());
   m_particleSystem.AddUpdater(E_UpdaterColor, UpdaterColor<float>());
   m_particleSystem.AddUpdater(E_UpdaterSize, UpdaterSize<float>());

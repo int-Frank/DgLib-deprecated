@@ -200,9 +200,6 @@ void Application::Render()
 
   float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
 
-  //att = (w/2)/tan(fov/2)
-  //screenSize = parSize * att / eyePos.z
-
   m_renderer.Update(m_particleSystem.GetParticleData());
   m_renderer.Render(mv_matrix, proj_matrix, parScale);
 }

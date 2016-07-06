@@ -63,12 +63,20 @@ template<typename Real>
 void GenVelCone<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
   Dg::Vector4<Real> * pVels = a_data.GetVelocity();
+  Dg::Vector4<Real> * pAccel = a_data.GetAcceleration();
 
   if (pVels)
   {
     for (int i = a_start; i <= a_end; ++i)
     {
       pVels[i] = m_velocity * Dg::GetRandomVector(m_axis, m_angle);
+    }
+  }
+  if (pAccel)
+  {
+    for (int i = a_start; i <= a_end; ++i)
+    {
+      pAccel[i].Zero();
     }
   }
 }
