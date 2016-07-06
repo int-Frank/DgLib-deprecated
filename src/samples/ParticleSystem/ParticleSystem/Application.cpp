@@ -27,6 +27,8 @@
 #include "imgui/imgui.h"
 #include "imgui_impl_glfw_gl3.h"
 
+#include "uiData.h"
+
 Application* Application::s_app(nullptr);
 
 typedef Dg::Matrix44<float> mat44;
@@ -158,39 +160,103 @@ void Application::HandleInput()
 void Application::DoLogic()
 {
   {
-    static float windowW = 360.0f;
-    static float windowH = 600.0f;
+    static UIData uiData[3] = {};
+    ImVec4 headingClr(1.0f, 0.0f, 1.0f, 1.0f);
 
     ImGui::Begin("Partice System");
-    ImGui::SetWindowSize(ImVec2(windowW, windowH), 0);
+    
+    ImGui::BeginChild("Emitter attributes", ImVec2(ImGui::GetWindowWidth() - 40.0f, 700.0f), true);
 
-    static int emitter = 0;
-    ImGui::RadioButton("Emitter 1", &emitter, 0); ImGui::SameLine();
-    ImGui::RadioButton("Emitter 2", &emitter, 1); ImGui::SameLine();
-    ImGui::RadioButton("Emitter 3", &emitter, 2);
+    static int curEm = 0;
+    ImGui::RadioButton("Emitter 1", &curEm, 0); ImGui::SameLine();
+    ImGui::RadioButton("Emitter 2", &curEm, 1); ImGui::SameLine();
+    ImGui::RadioButton("Emitter 3", &curEm, 2);
+    
+    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    ImGui::Checkbox("Turn emitter off/on", &uiData[curEm].onOff);
 
-    static int emitterType;
-    ImGui::RadioButton("Linear", &emitterType, 0); ImGui::SameLine();
-    ImGui::RadioButton("Poisson", &emitterType, 1);
+    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    ImGui::TextColored(headingClr, "Emission method");
+    ImGui::RadioButton("Linear", &uiData[curEm].emitterType, 0); ImGui::SameLine();
+    ImGui::RadioButton("Poisson", &uiData[curEm].emitterType, 1);
 
-    ImGui::BeginChild("Emitter attributes", ImVec2(ImGui::GetWindowWidth() - 20.0f, 200.0f), true);
-    ImGui::Text("Position");
-    static float posX = 0.0;
-    static float posY = 0.0;
-    static float posZ = 0.0;
-    ImGui::PushItemWidth(int(ImGui::GetWindowWidth() * 0.27));
-    ImGui::SliderFloat("X", &posX, -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
-    ImGui::SliderFloat("Y", &posY, -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
-    ImGui::SliderFloat("Z", &posZ, -5.0f, 5.0f, "%.1f");
+    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    ImGui::TextColored(headingClr, "Define emitter shape");
+    ImGui::RadioButton("Point", &uiData[curEm].posGenMethod, 0); ImGui::SameLine();
+    ImGui::RadioButton("Box", &uiData[curEm].posGenMethod, 1); ImGui::SameLine();
+    ImGui::RadioButton("Sphere", &uiData[curEm].posGenMethod, 2);
+
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.27);
+    if (uiData[curEm].posGenMethod == 1)
+    {
+      ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+      ImGui::TextColored(headingClr, "Define box geometry");
+      ImGui::SliderFloat("L", &uiData[curEm].boxL, 0.0f, 10.0f, "%.1f"); ImGui::SameLine();
+      ImGui::SliderFloat("W", &uiData[curEm].boxW, 0.0f, 10.0f, "%.1f"); ImGui::SameLine();
+      ImGui::SliderFloat("H", &uiData[curEm].boxH, 0.0f, 10.0f, "%.1f");
+      ImGui::SliderFloat("rx", &uiData[curEm].rx, 0.0f, Dg::PI_f, "%.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("rz", &uiData[curEm].rz, 0.0f, Dg::PI_f * 2.0f, "%.2f");
+    }
+
+    if (uiData[curEm].posGenMethod == 2)
+    {
+      ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+      ImGui::TextColored(headingClr, "Define sphere geometry");
+      ImGui::SliderFloat("Radius", &uiData[curEm].sphereRadius, 0.0f, 10.0f, "%.1f");
+    }
+
+    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    ImGui::TextColored(headingClr, "Place Emitter");
+    ImGui::SliderFloat("X", &uiData[curEm].posX, -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
+    ImGui::SliderFloat("Y", &uiData[curEm].posY, -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
+    ImGui::SliderFloat("Z", &uiData[curEm].posZ, -5.0f, 5.0f, "%.1f");
+    
+    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    ImGui::TextColored(headingClr, "Define Initial velocity vector");
+    switch (uiData[curEm].posGenMethod)
+    {
+    case 0:
+    {
+      ImGui::SliderFloat("rz", &uiData[curEm].Velrz, 0.0f, Dg::PI_f * 2.0f, "%.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("rx", &uiData[curEm].Velrx, 0.0f, Dg::PI_f, "%.2f");
+      ImGui::SliderFloat("Spread", &uiData[curEm].spread, 0.0f, Dg::PI_f, "%.2f");
+      break;
+    }
+    case 1:
+    case 2:
+    {
+      ImGui::Checkbox("Repel from Center", &uiData[curEm].repelFromCenter);
+      
+      if (!uiData[curEm].repelFromCenter)
+      {
+        ImGui::SliderFloat("rz", &uiData[curEm].Velrz, 0.0f, Dg::PI_f * 2.0f, "%.2f"); ImGui::SameLine();
+        ImGui::SliderFloat("rx", &uiData[curEm].Velrx, 0.0f, Dg::PI_f, "%.2f");
+        ImGui::SliderFloat("Spread", &uiData[curEm].spread, 0.0f, Dg::PI_f, "%.2f");
+      }
+      break;
+    }
+    }
     ImGui::PopItemWidth();
+
+    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    ImGui::TextColored(headingClr, "Other attributes");
+    ImGui::ColorEdit4("Start color", uiData[curEm].startColor);
+    ImGui::ColorEdit4("End color", uiData[curEm].endColor);
+    ImGui::SliderFloat("Rate (par/s)", &uiData[curEm].rate, 0.0f, 100.0f, "%.2f");
+    ImGui::SliderFloat("Velocity (m/s)", &uiData[curEm].velocity, 0.0f, 100.0f, "%.2f");
+    ImGui::SliderFloat("Life (s)", &uiData[curEm].life, 0.0f, 60.0f, "%.2f");
+    ImGui::SliderFloat("Force (m/s/s)", &uiData[curEm].force, -100.0f, 100.0f, "%.2f");
+    ImGui::SliderFloat("Start size (m)", &uiData[curEm].startSize, 0.0f, 1.0f, "%.2f");
+    ImGui::SliderFloat("End size (m)", &uiData[curEm].endSize, 0.0f, 1.0f, "%.2f");
+
     ImGui::EndChild();
     /*
     Emitter selector:   3 x radio edit
       Emitter Type:       2 x radio edit (linear, poisson)
         Position Generator: radio edit for each generator
+          Position:           3 x Slider (x, y, z)
+          Orientation:        2 x slider (rz, rx)
           Cone:
-            Position:           3 x Slider (x, y, z)
-            Orientation:        2 x slider (rz, rx)
             Spread:             1 x slider
         Rate:               1 x slider
         Life:               1 x slider
@@ -354,7 +420,6 @@ void Application::Run(Application* the_app)
 
   // Setup ImGui binding
   bool show_test_window = false;
-  bool show_another_window = false;
   ImVec4 clear_color = ImColor(114, 144, 154);
 
   double lastTick = glfwGetTime();
@@ -368,13 +433,14 @@ void Application::Run(Application* the_app)
 
 	{
     ImGui::Begin("Partice System");
-		//static float f = 0.0f;
-		//ImGui::Text("Hello, world!");
-		//ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-		//ImGui::ColorEdit3("clear color", (float*)&clear_color);
 		if (ImGui::Button("Test Window")) show_test_window ^= 1;
-		//if (ImGui::Button("Another Window")) show_another_window ^= 1;
 		ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
+    ImGui::End();
+  }
+
+  {
+    ImGui::Begin("Stats");
+    ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
     ImGui::End();
   }
 

@@ -140,6 +140,9 @@
     <ClInclude Include="GenSize.h">
       <Filter>Generators</Filter>
     </ClInclude>
+    <ClInclude Include="uiData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fs.glsl">
@@ -147,9 +150,6 @@
     </None>
     <None Include="vs.glsl">
       <Filter>Shaders</Filter>
-    </None>
-    <None Include="ParticleSystem.ini">
-      <Filter>Source Files</Filter>
     </None>
     <None Include="config.ini">
       <Filter>Resource Files</Filter>

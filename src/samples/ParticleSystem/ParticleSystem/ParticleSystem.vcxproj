@@ -158,6 +158,7 @@
     <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="uiData.h" />
     <ClInclude Include="UpdaterColor.h" />
     <ClInclude Include="UpdaterEuler.h" />
     <ClInclude Include="UpdaterLife.h" />
@@ -167,7 +168,6 @@
   <ItemGroup>
     <None Include="config.ini" />
     <None Include="fs.glsl" />
-    <None Include="ParticleSystem.ini" />
     <None Include="vs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

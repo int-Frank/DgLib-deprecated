@@ -61,7 +61,7 @@ void Renderer::Update(Dg::ParticleData<float> * a_parData)
   int countMax = a_parData->GetCountMax();
 
   {
-    ImGui::Begin("Partice System");
+    ImGui::Begin("Stats");
     ImGui::Text("Live Particles: %i", m_nCurrentParticles);
     ImGui::End();
   }
