@@ -24,10 +24,14 @@ namespace Dg
     ParticleEmitter(): m_isOn(false), m_generators(32){}
     virtual ~ParticleEmitter() {}
 
-    ParticleEmitter(ParticleEmitter<Real> const & a_other): m_isOn(a_other.m_isOn) {}
+    ParticleEmitter(ParticleEmitter<Real> const & a_other)
+      : m_isOn(a_other.m_isOn)
+      , m_generators(a_other.m_generators){}
+
     ParticleEmitter<Real> & operator=(ParticleEmitter<Real> const & a_other) 
     { 
       m_isOn = a_other.m_isOn;
+      m_generators = a_other.m_generators;
       return *this; 
     }
 
@@ -35,11 +39,11 @@ namespace Dg
 
     //! Returns number new particles created. These will be at the
     //! end of the particle data. 
-    virtual int EmitParticles(Real dt, ParticleData<Real> & data) { return 0; }
+    virtual int EmitParticles(ParticleData<Real> & data, Real dt) { return 0; }
 
-    void Start() const { m_isOn = true; }
-    void Stop() const { m_isOn = false; }
-    void ToggleOn() const { m_isOn = !m_isOn; }
+    void Start() { m_isOn = true; }
+    void Stop() { m_isOn = false; }
+    void ToggleOn() { m_isOn = !m_isOn; }
     bool IsOn() const { return m_isOn; }
 
     void AddGenerator(ParMapKey, ParticleGenerator<Real> const &);
@@ -47,10 +51,11 @@ namespace Dg
 
     virtual ParticleEmitter<Real> * Clone() const { return new ParticleEmitter<Real>(*this); }
 
+  protected:
+    Dg::map<ParMapKey, ObjectWrapper<ParticleGenerator<Real>>>   m_generators;
+
   private:
     bool m_isOn;
-    Dg::map<ParMapKey, ObjectWrapper<ParticleGenerator<Real>>>   m_generators;
-  
   };
 
   template<typename Real>
@@ -64,7 +69,6 @@ namespace Dg
   ParticleGenerator<Real> * ParticleEmitter<Real>::GetGenerator(ParMapKey a_key) const
   {
     int index = 0;
-    auto it = m_generators.find(a_key);
     if (!m_generators.find(a_key, index))
     {
       return nullptr;

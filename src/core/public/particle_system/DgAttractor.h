@@ -48,10 +48,12 @@ namespace Dg
     //! Some attractors may pulse at some frequency.
     virtual void UpdateAttractor(Real dt) {}
 
-    virtual void Update(int start,
-                        int finish,
-                        Real dt,
-                        ParticleData<Real> & data) {}
+    virtual void Update(ParticleData<Real> & data
+				              , int start) {}
+
+    virtual void Update(ParticleData<Real> & data
+				              , int start
+                      , Real dt) {}
 
     //! Set the location and size (if applicable) of the attractor.
     virtual void SetTransformation(VQS<Real> const &) {}

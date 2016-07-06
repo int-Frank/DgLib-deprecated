@@ -24,109 +24,34 @@
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
 
-Application* Application::s_app(nullptr);
+#include "imgui/imgui.h"
+#include "imgui_impl_glfw_gl3.h"
 
-double Application::s_mouseX(0.0);
-double Application::s_mouseY(0.0);
-double Application::s_prevX(0.0);
-double Application::s_prevY(0.0);
+Application* Application::s_app(nullptr);
 
 typedef Dg::Matrix44<float> mat44;
 typedef Dg::Vector4<float>  vec4;
 
-
-
-/*
-Pre Condition: -None
-Post Condition:
--Returns the ID of a compiled shader of the specified
-type from the specified file
--Reports error to console if file could not be found or compiled
-Side Effects:
--None
-*/
-GLuint Application::LoadShaderFromFile(std::string path, GLenum shaderType)
-{
-  //Open file
-  GLuint shaderID = 0;
-  std::string shaderString;
-  std::ifstream sourceFile(path.c_str());
-
-  //Source file loaded
-  if (sourceFile)
-  {
-    //Get shader source
-    shaderString.assign((std::istreambuf_iterator< char >(sourceFile)), std::istreambuf_iterator< char >());
-
-    //Create shader ID
-    shaderID = glCreateShader(shaderType);
-
-    //Set shader source
-    const GLchar* shaderSource = shaderString.c_str();
-    glShaderSource(shaderID, 1, (const GLchar**)&shaderSource, nullptr);
-
-    //Compile shader source
-    glCompileShader(shaderID);
-
-    //Check shader for errors
-    GLint shaderCompiled = GL_FALSE;
-    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &shaderCompiled);
-    if (shaderCompiled != GL_TRUE)
-    {
-      printf("Unable to compile shader %d!\n\nSource:\n%s\n", shaderID, shaderSource);
-      glDeleteShader(shaderID);
-      shaderID = 0;
-    }
-  }
-  else
-  {
-    printf("Unable to open file %s\n", path.c_str());
-  }
-
-  return shaderID;
-}
-
-GLuint Application::CompileShaders()
-{
-  GLuint vs = LoadShaderFromFile("vs.glsl", GL_VERTEX_SHADER);
-
-  //Check for errors
-  if (vs == 0)
-    return 0;
-
-  GLuint fs = LoadShaderFromFile("fs.glsl", GL_FRAGMENT_SHADER);
-
-  //Check for errors
-  if (fs == 0)
-    return 0;
-
-  //GLuint gs = LoadShaderFromFile("test_gs.glsl", GL_GEOMETRY_SHADER);
-
-  ////Check for errors
-  //if (gs == 0)
-  //return 0;
-
-  //Create program, attach shaders to it and link it.
-  GLuint program = glCreateProgram();
-  glAttachShader(program, vs);
-  //glAttachShader(program, gs);
-  glAttachShader(program, fs);
-  glLinkProgram(program);
-
-  return program;
-}
-
-
+double Application::s_dZoom;
 
 bool Application::Init()
 {
   GetConfiguration();
+
   if (!InitGL())
   {
     return false;
   }
+
+  m_camRotZ = 0.0;
+  m_camRotX = Dg::PI * 0.5;
+  m_camZoom = 7.0;
+
   InitControls();
   InitParticleSystem();
+  m_renderer.Init(m_particleSystem.GetParticleData());
+  ImGui_ImplGlfwGL3_Init(m_window, true);
+
   return true;
 }
 
@@ -191,34 +116,75 @@ bool Application::InitGL()
   return true;
 }
 
+
 void Application::InitControls()
 {
-  glfwSetKeyCallback(m_window, OnKey);
-  glfwSetCursorPosCallback(m_window, OnMouseMove);
+  GLFWscrollfun res = glfwSetScrollCallback(m_window, OnMouseScroll);
+
+  s_dZoom = 7.0;
+  m_mouseSpeed = 0.01;
+  m_camZoom = 1.0;
+  m_canRotate = false;
+  glfwGetCursorPos(m_window, &m_mouseCurentX, &m_mouseCurentX);
+  m_mousePrevX = m_mouseCurentX;
+  m_mousePrevY = m_mouseCurentY;
 }
 
 
 void Application::Shutdown()
 {
-  glDeleteVertexArrays(1, &m_vao);
-  glDeleteProgram(m_renderingProgram);
-  glDeleteVertexArrays(1, &m_vao);
+  m_renderer.ShutDown();
 }
 
 
-void Application::Render(double currentTime)
+void Application::HandleInput()
+{
+  //Mouse
+  if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+  {
+    m_canRotate = true;
+  }
+  else if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+  {
+    m_canRotate = false;
+  }
+
+  m_mousePrevX = m_mouseCurentX;
+  m_mousePrevY = m_mouseCurentY; 
+  glfwGetCursorPos(m_window, &m_mouseCurentX, &m_mouseCurentY);
+
+}
+
+void Application::DoLogic()
+{
+  m_particleSystem.Update(m_dt);
+
+  //Camera
+  if (m_canRotate)
+  {
+    m_camRotZ += (m_mouseCurentX - m_mousePrevX) * m_mouseSpeed;
+    Dg::WrapAngle(m_camRotZ);
+
+    m_camRotX += (m_mouseCurentY - m_mousePrevY) * m_mouseSpeed;
+    Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
+
+    m_camZoom += s_dZoom;
+    Dg::ClampNumber(1.0, 20.0, m_camZoom);
+    s_dZoom = 0.0;
+  }
+}
+
+void Application::Render()
 {
   //Generate the cube transformation matrix
-  float f = float(currentTime);
 
   mat44 translate, rotate, scale;
-  translate.Translation(vec4(0.0f, 0.0f, -2.0f, 0.0f));
-  rotate.Rotation(0.0f,
-                  float(s_mouseX) / 100.0f,
-                  float(s_mouseY) / 100.0f,
-                  Dg::EulerOrder::XYZ);
-  scale.Scaling(1.0f);
-  mat44 mv_matrix = scale * rotate * translate;
+  translate.Translation(vec4(0.0f, -2.0f, -m_camZoom, 0.0f));
+  rotate.Rotation(float(Dg::PI_d + m_camRotX)
+                , 0.0f
+                , float(m_camRotZ)
+                , Dg::EulerOrder::ZYX);
+  mat44 mv_matrix = rotate * translate;
 
   //printf("%d, %d\n", mouseX, mouseY);
   //Set up the viewport
@@ -229,41 +195,19 @@ void Application::Render(double currentTime)
   ratio = width / (float)height;
 
   glViewport(0, 0, width, height);
-  glClear(GL_COLOR_BUFFER_BIT);
 
   //Set up the perspective matrix;
   mat44 proj_matrix;
   proj_matrix.Perspective(1.5f, ratio, 0.1f, 1000.0f);
 
-  glUseProgram(m_renderingProgram);
-
-  GLint mv_loc = glGetUniformLocation(m_renderingProgram, "mv_matrix");
-  GLint proj_loc = glGetUniformLocation(m_renderingProgram, "proj_matrix");
-
-  glUniformMatrix4fv(mv_loc, 1, GL_FALSE, mv_matrix.GetData());
-  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, proj_matrix.GetData());
-
-  //Clear the depth buffer
-  glClear(GL_DEPTH_BUFFER_BIT);
-
-  //Draw the triangle 
-  glDrawArrays(GL_POINTS, 0, 8);
-  //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
-
+  m_renderer.Update(m_particleSystem.GetParticleData());
+  m_renderer.Render(mv_matrix, proj_matrix);
 }
 
 
-void Application::OnKey(GLFWwindow* m_window, int key, int scancode, int action, int mods)
+void Application::OnMouseScroll(GLFWwindow* window, double xOffset, double yOffset)
 {
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    glfwSetWindowShouldClose(m_window, GL_TRUE);
-}
-
-
-void Application::OnMouseMove(GLFWwindow* m_window, double x, double y)
-{
-  s_mouseX = x;
-  s_mouseY = y;
+  s_dZoom += xOffset;
 
 }
 
@@ -303,7 +247,7 @@ void Application::GetConfiguration()
         m_info.windowWidth = val;
       }
     }
-    else if (parser.GetItems()[i] == "windowHeight")
+    else if (parser.GetItems().query_key(i) == "windowHeight")
     {
       int val = 0;
       if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
@@ -311,7 +255,7 @@ void Application::GetConfiguration()
         m_info.windowHeight = val;
       }
     }
-    else if (parser.GetItems()[i] == "glMajorVersion")
+    else if (parser.GetItems().query_key(i) == "glMajorVersion")
     {
       int val = 0;
       if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
@@ -319,7 +263,7 @@ void Application::GetConfiguration()
         m_info.majorVersion = val;
       }
     }
-    else if (parser.GetItems()[i] == "glMinorVersion")
+    else if (parser.GetItems().query_key(i) == "glMinorVersion")
     {
       int val = 0;
       if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
@@ -327,7 +271,7 @@ void Application::GetConfiguration()
         m_info.minorVersion = val;
       }
     }
-    else if (parser.GetItems()[i] == "glSamples")
+    else if (parser.GetItems().query_key(i) == "glSamples")
     {
       int val = 0;
       if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
@@ -335,7 +279,7 @@ void Application::GetConfiguration()
         m_info.samples = val;
       }
     }
-    else if (parser.GetItems()[i] == "fullscreen")
+    else if (parser.GetItems().query_key(i) == "fullscreen")
     {
       int val = 0;
       if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
@@ -357,53 +301,15 @@ void Application::Run(Application* the_app)
     return;
   }
 
-  //This should go in the Rendere 
-  m_renderingProgram = CompileShaders();
-  glGenVertexArrays(1, &m_vao);
-  glBindVertexArray(m_vao);
-
-  glEnable(GL_ALPHA_TEST);
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_POINT_SMOOTH);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_POINT_SPRITE);
-  glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-
-  glDepthFunc(GL_LESS);
-
-  ////Use this for inverse depth buffer
-  //glClearDepth(0.0f);
-  //glDepthFunc(GL_GREATER);
-
-
-  //Set up the cube geometry
-  const GLfloat v_pos[] = {
-    0.5, -0.5, -0.5, 1.0,
-    0.5, -0.5, 0.5, 1.0,
-    -0.5, -0.5, 0.5, 1.0,
-    -0.5, -0.5, -0.5, 1.0,
-    0.5, 0.5, -0.5, 1.0,
-    0.5, 0.5, 0.5, 1.0,
-    -0.5, 0.5, 0.5, 1.0,
-    -0.5, 0.5, -0.5, 1.0
-  };
-
-
-  //Generate some data and put it in a buffer object
-  glGenBuffers(1, &m_posBuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, m_posBuffer);
-  glBufferData(GL_ARRAY_BUFFER,
-    sizeof(v_pos),
-    v_pos,
-    GL_STATIC_DRAW);
-
-  //Set the vertex attribute
-  GLuint idPosition = glGetAttribLocation(m_renderingProgram, "position");
-  glVertexAttribPointer(idPosition, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
-  glEnableVertexAttribArray(0);
+  // Setup ImGui binding
+  bool show_test_window = false;
+  bool show_another_window = false;
+  ImVec4 clear_color = ImColor(114, 144, 154);
 
   //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+  double lastTick = glfwGetTime();
+  m_particleSystem.StartAllEmitters();
 
   do
   {
@@ -419,15 +325,59 @@ void Application::Run(Application* the_app)
     glfwGetCursorPos(m_window, &mouse_x, &mouse_y);
     glfwSetCursorPos(m_window, wc, hc);*/
 
-    Render(glfwGetTime());
 
-    glfwSwapBuffers(m_window);
-    glfwPollEvents();
+	glfwPollEvents();
+	ImGui_ImplGlfwGL3_NewFrame();
+
+	// 1. Show a simple window
+	// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
+	{
+    ImGui::Begin("Partice System");
+		//static float f = 0.0f;
+		//ImGui::Text("Hello, world!");
+		//ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+		//ImGui::ColorEdit3("clear color", (float*)&clear_color);
+		if (ImGui::Button("Test Window")) show_test_window ^= 1;
+		//if (ImGui::Button("Another Window")) show_another_window ^= 1;
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::End();
+  }
+
+  double thisTick = glfwGetTime();
+	double diff = thisTick - lastTick;
+  m_dt = static_cast<float>(thisTick - lastTick);
+  lastTick = thisTick;
+
+  HandleInput();
+  DoLogic();
+  Render();
+
+
+  // 2. Show another simple window, this time using an explicit Begin/End pair
+  if (show_another_window)
+  {
+    ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
+    ImGui::Begin("Another Window", &show_another_window);
+    ImGui::Text("Hello");
+    ImGui::End();
+  }
+
+  // 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
+  if (show_test_window)
+  {
+    ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+    ImGui::ShowTestWindow(&show_test_window);
+  }
+
+
+	ImGui::Render();
+  glfwSwapBuffers(m_window);
 
   } while (!glfwWindowShouldClose(m_window));
 
   Shutdown();
 
+  ImGui_ImplGlfwGL3_Shutdown();
   glfwDestroyWindow(m_window);
   glfwTerminate();
 }

@@ -27,7 +27,7 @@ namespace Dg
     //! Set the location and size (if applicable) of the attractor.
     virtual void SetTransformation(VQS<Real> const &) {}
 
-    virtual void Generate(int, int, ParticleData<Real> &) {}
+    virtual void Generate(ParticleData<Real> &, int, int) {}
     virtual ParticleGenerator<Real> * Clone() const { return new ParticleGenerator<Real>(*this); }
   };
 }

@@ -22,11 +22,16 @@ namespace Dg
 
     ParticleUpdater(ParticleUpdater<Real> const & a_other) {}
     ParticleUpdater<Real> & operator=(ParticleUpdater<Real> const & a_other) { return *this; }
+    
 
-    virtual void Update(int start,
-                        int finish,
-                        Real dt,
-                        ParticleData<Real> & data) {}
+    //This method typically will access a dt in each particle data element.
+    //Used to update newly emitted particles.
+    virtual void Update(ParticleData<Real> & data
+				              , int start) {}
+
+    virtual void Update(ParticleData<Real> & data
+				              , int start
+                      , Real dt) {}
 
     virtual ParticleUpdater<Real> * Clone() const { return new ParticleUpdater<Real>(*this); }
   };

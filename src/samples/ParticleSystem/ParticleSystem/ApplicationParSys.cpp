@@ -11,6 +11,7 @@
 #include "GenPosPoint.h"
 #include "GenVelCone.h"
 #include "GenColor.h"
+#include "GenLife.h"
 #include "UpdaterColor.h"
 #include "UpdaterEuler.h"
 #include "UpdaterLife.h"
@@ -31,7 +32,7 @@ static EmitterLinear<float> CreateEmitter_1()
 
   //Create Emitter 1
   GenPosPoint<float> genPos;
-  v.Set(1.0f, 1.0f, 0.0f, 0.0f);
+  v.Set(1.0f, 0.0f, 0.0f, 0.0f);
   vqs.SetV(v);
   genPos.SetTransformation(vqs);
   vqs.Identity();
@@ -43,13 +44,16 @@ static EmitterLinear<float> CreateEmitter_1()
   genVel.SetAngle(PI / 8.0f);
 
   GenColor<float> genColor;
-  genColor.SetColors(vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(1.0f, 0.1f, 0.1f, 0.5f));
+  genColor.SetColors(vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+  GenLife<float> genLife;
 
   EmitterLinear<float> emitter;
-  emitter.SetRate(100.0f);
+  emitter.SetRate(10.0f);
   emitter.AddGenerator(Application::E_GenPosPoint, genPos);
   emitter.AddGenerator(Application::E_GenVelCone, genVel);
   emitter.AddGenerator(Application::E_GenColor, genColor);
+  emitter.AddGenerator(Application::E_GenLife, genLife);
 
   return emitter;
 }
@@ -62,7 +66,7 @@ static EmitterLinear<float> CreateEmitter_2()
 
   //Create Emitter 1
   GenPosPoint<float> genPos;
-  v.Set(-1.0f, 1.0f, 0.0f, 0.0f);
+  v.Set(-0.5f, 0.866f, 0.0f, 0.0f);
   vqs.SetV(v);
   genPos.SetTransformation(vqs);
   vqs.Identity();
@@ -74,13 +78,16 @@ static EmitterLinear<float> CreateEmitter_2()
   genVel.SetAngle(PI / 8.0f);
 
   GenColor<float> genColor;
-  genColor.SetColors(vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(0.1f, 1.0f, 0.1f, 0.5f));
+  genColor.SetColors(vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+  GenLife<float> genLife;
 
   EmitterLinear<float> emitter;
-  emitter.SetRate(100.0f);
+  emitter.SetRate(10.0f);
   emitter.AddGenerator(Application::E_GenPosPoint, genPos);
   emitter.AddGenerator(Application::E_GenVelCone, genVel);
   emitter.AddGenerator(Application::E_GenColor, genColor);
+  emitter.AddGenerator(Application::E_GenLife, genLife);
 
   return emitter;
 }
@@ -93,7 +100,7 @@ static EmitterLinear<float> CreateEmitter_3()
 
   //Create Emitter 1
   GenPosPoint<float> genPos;
-  v.Set(0.0f, -1.0f, 0.0f, 0.0f);
+  v.Set(-0.5, -0.866f, 0.0f, 0.0f);
   vqs.SetV(v);
   genPos.SetTransformation(vqs);
   vqs.Identity();
@@ -105,13 +112,16 @@ static EmitterLinear<float> CreateEmitter_3()
   genVel.SetAngle(PI / 8.0f);
 
   GenColor<float> genColor;
-  genColor.SetColors(vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(0.1f, 0.1f, 1.0f, 0.5f));
+  genColor.SetColors(vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+  GenLife<float> genLife;
 
   EmitterLinear<float> emitter;
-  emitter.SetRate(100.0f);
+  emitter.SetRate(10.0f);
   emitter.AddGenerator(Application::E_GenPosPoint, genPos);
   emitter.AddGenerator(Application::E_GenVelCone, genVel);
   emitter.AddGenerator(Application::E_GenColor, genColor);
+  emitter.AddGenerator(Application::E_GenLife, genLife);
 
   return emitter;
 }
@@ -147,7 +157,18 @@ static Attractor<float, AttractorForce::InverseSquare> CreateAttractor_2()
 void Application::InitParticleSystem()
 {
   //Init Particle Data attributes
-  m_particleSystem.InitAllParticleAttr();
+  Dg::ParticleData<float> * pData = m_particleSystem.GetParticleData();
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::Position);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::Velocity);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::Acceleration);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::Size);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::Life);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::LifeMax);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::DLife);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::TimeSinceBirth);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::Color);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::StartColor);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::DColor);
 
   //Add emitters
   m_particleSystem.AddEmitter(E_Emitter_1, CreateEmitter_1());
@@ -157,8 +178,8 @@ void Application::InitParticleSystem()
   //Add Updaters
   m_particleSystem.AddUpdater(E_UpdaterLife, UpdaterLife<float>());
   m_particleSystem.AddUpdater(E_UpdaterZeroAccel, UpdaterZeroAccel<float>());
-  m_particleSystem.AddUpdater(E_UpdaterAttractor_1, CreateAttractor_1());
-  m_particleSystem.AddUpdater(E_UpdaterAttractor_2, CreateAttractor_2());
+  //m_particleSystem.AddUpdater(E_UpdaterAttractor_1, CreateAttractor_1());
+  //m_particleSystem.AddUpdater(E_UpdaterAttractor_2, CreateAttractor_2());
   m_particleSystem.AddUpdater(E_UpdaterEuler, UpdaterEuler<float>());
   m_particleSystem.AddUpdater(E_UpdaterColor, UpdaterColor<float>());
 

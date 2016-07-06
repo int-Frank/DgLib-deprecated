@@ -29,7 +29,7 @@
                    Life,                Real,\
                    LifeMax,             Real,\
                    DLife,               Real,\
-                   TimeSinceEmit,       Real,\
+                   TimeSinceBirth,      Real,\
                    Color,               Dg::Vector4<float>,\
                    StartColor,          Dg::Vector4<float>,\
                    DColor,              Dg::Vector4<float>
@@ -58,8 +58,12 @@ namespace Dg
     int GetCountAlive() const { return m_countAlive; }
     int GetCountMax() const { return m_countMax; }
 
-    void Kill(int);
-    int Wake();
+    bool HasUnusedParticles() const { return m_countAlive < m_countMax; }
+
+    int Kill(int);
+
+    //New particles are always added to the end of the list;
+    bool Wake(int &);
 
     void InitAttribute(Attr);
     void DeinitAttribute(Attr);
@@ -96,22 +100,29 @@ namespace Dg
   }
 
   template<typename Real>
-  int ParticleData<Real>::Wake()
+  bool ParticleData<Real>::Wake(int & a_index)
   {
-    return m_countAlive++;
+    if (m_countAlive == m_countMax)
+    {
+      return false;
+    }
+
+    ++m_countAlive;
+    a_index = m_countAlive;
+    return true;
   }
 
   template<typename Real>
-  void ParticleData<Real>::Kill(int a_index)
+  int ParticleData<Real>::Kill(int a_index)
   {
-    if (m_countAlive == 0)
+    if (m_countAlive > 0)
     {
-      return;
+      --m_countAlive;
+
+      ADD_KILL_CODE(ATTRIBUTES)
     }
 
-    --m_countAlive;
-
-    ADD_KILL_CODE(ATTRIBUTES)
+    return m_countAlive;
   }
 
   template<typename Real>
@@ -143,6 +154,7 @@ namespace Dg
   {
     ADD_DEINITALL_CODE(ATTRIBUTES)
   }
+
 }
 
 #endif // !PARTICLEDATA_H

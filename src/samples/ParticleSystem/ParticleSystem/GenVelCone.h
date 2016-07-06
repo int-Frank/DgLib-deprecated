@@ -10,34 +10,40 @@ template<typename Real>
 class GenVelCone : public Dg::ParticleGenerator<Real>
 {
 public:
-  GenVelCone() : m_axis(Dg::Vector4<Real>::xAxis()), 
-                 m_angle(static_cast<Real>(0.785)),
-                 Dg::ParticleGenerator<Real>() {}
+  GenVelCone() : Dg::ParticleGenerator<Real>()
+               , m_axis(Dg::Vector4<Real>::xAxis())
+               , m_angle(static_cast<Real>(0.785))
+               , m_velocity(static_cast<Real>(1.0))
+                  {}
   ~GenVelCone() {}
 
   GenVelCone(GenVelCone<Real> const & a_other) 
-    : Dg::ParticleGenerator<Real>(a_other),
-      m_axis(a_other.m_axis),
-      m_angle(a_other.m_angle) {}
+    : Dg::ParticleGenerator<Real>(a_other)
+    , m_axis(a_other.m_axis)
+    , m_angle(a_other.m_angle)
+    , m_velocity(a_other.m_velocity) {}
 
   GenVelCone<Real> & operator=(GenVelCone<Real> const & a_other)
   {
     Dg::ParticleGenerator<Real>::operator=(a_other);
     m_axis = a_other.m_axis;
     m_angle = a_other.m_angle;
+    m_velocity = a_other.m_velocity;
     return *this;
   }
 
   void SetTransformation(Dg::VQS<Real> const &);
   void SetAngle(Real);
+  void SetVelocity(Real a_vel) { m_velocity = a_vel; }
 
-  void Generate(int, int, Dg::ParticleData<Real> &);
+  void Generate(Dg::ParticleData<Real> &, int, int);
 
   GenVelCone<Real> * Clone() const { return new GenVelCone<Real>(*this); }
 
 private:
   Dg::Vector4<Real> m_axis;
   Real              m_angle;
+  Real              m_velocity;
 };
 
 template<typename Real>
@@ -54,7 +60,7 @@ void GenVelCone<Real>::SetAngle(Real a_ang)
 }
 
 template<typename Real>
-void GenVelCone<Real>::Generate(int a_start, int a_end, Dg::ParticleData<Real> & a_data)
+void GenVelCone<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
   Dg::Vector4<Real> * pVels = a_data.GetVelocity();
 
@@ -62,7 +68,7 @@ void GenVelCone<Real>::Generate(int a_start, int a_end, Dg::ParticleData<Real> &
   {
     for (int i = a_start; i <= a_end; ++i)
     {
-      pVels[i] = Dg::GetRandomVector(m_axis, m_angle);
+      pVels[i] = m_velocity * Dg::GetRandomVector(m_axis, m_angle);
     }
   }
 }

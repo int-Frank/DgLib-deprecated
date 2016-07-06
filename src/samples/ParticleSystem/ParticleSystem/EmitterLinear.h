@@ -31,7 +31,7 @@ public:
 
   void SetRate(Real a_rate) { if (a_rate >= static_cast<Real>(0.0)) { m_rate = a_rate; } }
 
-  int EmitParticles(Real dt, Dg::ParticleData<Real> & data);
+  int EmitParticles(Dg::ParticleData<Real> &, Real);
 
   EmitterLinear<Real> * Clone() const { return new EmitterLinear<Real>(*this); }
 
@@ -41,7 +41,7 @@ private:
 };
 
 template<typename Real>
-int EmitterLinear<Real>::EmitParticles(Real a_dt, Dg::ParticleData<Real> & a_data)
+int EmitterLinear<Real>::EmitParticles(Dg::ParticleData<Real> & a_data, Real a_dt)
 {
   if (Dg::IsZero(m_rate) || !IsOn())
   {
@@ -52,33 +52,42 @@ int EmitterLinear<Real>::EmitParticles(Real a_dt, Dg::ParticleData<Real> & a_dat
   Real totalTime = a_dt + m_residual;
   Real _nPar = m_rate * totalTime;
   Real nPar = std::floor(_nPar);
-  int nParInt = static_cast<int>(nPar);
   Real tSpacing = static_cast<Real>(1.0) / m_rate;
   m_residual = totalTime - nPar * tSpacing;
 
-  Real * pTimeSinceEmit = a_data.GetTimeSinceEmit();
+  Real * pTimeSinceBirth = a_data.GetTimeSinceBirth();
+  int parInd = 0;
+  int nNewParticles = 0;
+  int startIndex = a_data.GetCountAlive();
 
-  if (pTimeSinceEmit)
+  if (pTimeSinceBirth)
   {
     while (nPar != static_cast<Real>(0.0) &&
-           a_data.GetCountAlive() <= a_data.GetCountMax())
+           a_data.Wake(parInd))
     {
-      int parInd = a_data.Wake();
-      pTimeSinceEmit[parInd] = totalTime - nPar * tSpacing;
+      nNewParticles++;
+      pTimeSinceBirth[parInd] = totalTime - nPar * tSpacing;
       nPar -= static_cast<Real>(1.0);
     }
   }
   else
   {
     while (nPar != static_cast<Real>(0.0) &&
-      a_data.GetCountAlive() <= a_data.GetCountMax())
+           a_data.Wake(parInd))
     {
-      int parInd = a_data.Wake();
+      nNewParticles++;
       nPar -= static_cast<Real>(1.0);
     }
   }
 
-  return nParInt;
+
+  //Generate new particles
+  for (int g = 0; g < m_generators.size(); ++g)
+  {
+    m_generators[g]->Generate(a_data, startIndex, startIndex + nNewParticles);
+  }
+
+  return nNewParticles;
 }
 
 #endif

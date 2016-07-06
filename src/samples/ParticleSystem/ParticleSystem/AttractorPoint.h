@@ -23,10 +23,8 @@ public:
     return *this;
   }
 
-  void Update(int start,
-              int finish,
-              Real dt,
-              Dg::ParticleData<Real> & data);
+  void Update(Dg::ParticleData<Real> &, int);
+  void Update(Dg::ParticleData<Real> &, int, Real);
 
   void SetTransformation(Dg::VQS<Real> const &);
 
@@ -43,20 +41,37 @@ void AttractorPoint<Real, Force>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 }
 
 template<typename Real, unsigned Force>
-void AttractorPoint<Real, Force>::Update(int a_start,
-                                         int a_finish,
-                                         Real a_dt,
-                                         Dg::ParticleData<Real> & a_data)
+void AttractorPoint<Real, Force>::Update(Dg::ParticleData<Real> & a_data
+									                     , int a_start
+                                       , Real a_dt)
 {
   Dg::Vector4<Real> * pPos = a_data.GetPosition();
   Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+
   if (pPos && pAccels)
   {
-    for (int i = a_start; i <= a_finish; ++i)
+    for (int i = a_start; i < a_data.GetCountAlive(); ++i)
     {
       pAccels[i] += (_GetAccelBetweenPoints(pPos[i], m_point) * a_dt);
     }
   }
 }
 
+
+template<typename Real, unsigned Force>
+void AttractorPoint<Real, Force>::Update(Dg::ParticleData<Real> & a_data
+                                       , int a_start)
+{
+  Dg::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Real *              pTimeSiceBirth = a_data.GetTimeSinceBirth();
+
+  if (pPos && pAccels && pTimeSiceBirth)
+  {
+    for (int i = a_start; i < a_data.GetCountAlive(); ++i)
+    {
+      pAccels[i] += (_GetAccelBetweenPoints(pPos[i], m_point) * pTimeSiceBirth[i]);
+    }
+  }
+}
 #endif

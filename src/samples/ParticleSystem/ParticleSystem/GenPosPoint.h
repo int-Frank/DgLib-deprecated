@@ -27,7 +27,7 @@ public:
 
   void SetTransformation(Dg::VQS<Real> const &);
 
-  void Generate(int, int, Dg::ParticleData<Real> &);
+  void Generate(Dg::ParticleData<Real> &, int, int);
 
   GenPosPoint<Real> * Clone() const { return new GenPosPoint<Real>(*this); }
 
@@ -42,7 +42,7 @@ void GenPosPoint<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 }
 
 template<typename Real>
-void GenPosPoint<Real>::Generate(int a_start, int a_end, Dg::ParticleData<Real> & a_data)
+void GenPosPoint<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
   Dg::Vector4<Real> * pPos = a_data.GetPosition();
 

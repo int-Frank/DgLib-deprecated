@@ -38,6 +38,9 @@ namespace Dg
     void InitAllParticleAttr();
     void DeinitAllParticleAttr();
 
+    void StartAllEmitters();
+    void StopAllEmitters();
+
     ParticleEmitter<Real> * GetEmitter(ParMapKey) const;
 
     ParticleData<Real> * GetParticleData() { return &m_particleData; }
@@ -149,12 +152,30 @@ namespace Dg
   }
 
   template<typename Real>
+  void ParticleSystem<Real>::StartAllEmitters()
+  {
+    for (int i = 0; i < m_emitters.size(); ++i)
+    {
+      m_emitters[i]->Start();
+    }
+  }
+
+  template<typename Real>
+  void ParticleSystem<Real>::StopAllEmitters()
+  {
+    for (int i = 0; i < m_emitters.size(); ++i)
+    {
+      m_emitters[i]->Stop();
+    }
+  }
+
+  template<typename Real>
   void ParticleSystem<Real>::Update(Real a_dt)
   {
     //Update all particles
     for (int i = 0; i < m_updaters.size(); ++i)
     {
-      m_updaters[i]->Update(0, m_particleData.GetCountAlive(), a_dt, m_particleData);
+      m_updaters[i]->Update(m_particleData, 0,  a_dt);
     }
 
     //Emit new particles, keep tally of particles emitted
@@ -162,24 +183,16 @@ namespace Dg
     int nNewParticles = 0;
     for (int i = 0; i < m_emitters.size(); ++i)
     {
-      if (!m_emitters[i]->IsOn())
-      {
-        continue;
-      }
-
-      nNewParticles += m_emitters[i]->EmitParticles(a_dt, m_particleData);
+      nNewParticles += m_emitters[i]->EmitParticles(m_particleData, a_dt);
     }
 
-    //Update all newly emitted particles.
-    Real * pTimeSinceEmit = m_particleData.GetTimeSinceEmit();
-    if (pTimeSinceEmit)
+    //Update all newly emitted particles. Since new particles are added to the end of the 
+    //particle data, we simply update the last set of new particles.
+    if (nNewParticles)
     {
       for (int u = 0; u < m_updaters.size(); ++u)
       {
-        for (int i = m_particleData.GetCountAlive() - nNewParticles; i < m_particleData.GetCountAlive(); ++i)
-        {
-          m_updaters[u]->Update(i, i, pTimeSinceEmit[i], m_particleData);
-        }
+        m_updaters[u]->Update(m_particleData, m_particleData.GetCountAlive() - nNewParticles);
       }
     }
   }

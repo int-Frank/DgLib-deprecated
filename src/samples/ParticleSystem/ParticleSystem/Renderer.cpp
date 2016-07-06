@@ -5,6 +5,7 @@
 #include "particle_system/DgParticleData.h"
 #include "DgMatrix44.h"
 
+#include "imgui/imgui.h"
 
 bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 {
@@ -13,27 +14,32 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
     return false;
   }
 
-  int count = a_parData->GetCountMax();
+  int countMax = a_parData->GetCountMax();
 
   m_idShaderProgram = CompileShaders();
-
-  glEnable(GL_ALPHA_TEST);
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_POINT_SMOOTH);
-  glDepthFunc(GL_LESS);
 
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
 
+  glEnable(GL_ALPHA_TEST);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_POINT_SMOOTH);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_POINT_SPRITE);
+  glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+  glDepthFunc(GL_LESS);
+
   glGenBuffers(1, &m_idBufffer);
   glBindBuffer(GL_ARRAY_BUFFER, m_idBufffer);
-  glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 4 * count) * 2, nullptr, GL_DYNAMIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 4 * countMax) * 2, nullptr, GL_DYNAMIC_DRAW);
 
-  GLuint idPosition = glGetAttribLocation(m_idShaderProgram, "parPos");
-  GLuint idColor = glGetAttribLocation(m_idShaderProgram, "parCol");
+  GLuint idPosition = glGetAttribLocation(m_idShaderProgram, "position");
+  GLuint idColor = glGetAttribLocation(m_idShaderProgram, "color");
 
   glVertexAttribPointer(idPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
-  glVertexAttribPointer(idColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 4 * count));
+  glVertexAttribPointer(idColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 4 * countMax));
 
   glEnableVertexAttribArray(idPosition);
   glEnableVertexAttribArray(idColor);
@@ -48,9 +54,15 @@ void Renderer::Update(Dg::ParticleData<float> * a_parData)
 {
   glBindBuffer(GL_ARRAY_BUFFER, m_idBufffer);
 
-  int m_nCurrentParticles = a_parData->GetCountAlive();
+  m_nCurrentParticles = a_parData->GetCountAlive();
   int countMax = a_parData->GetCountMax();
 
+  {
+    ImGui::Begin("Partice System");
+    ImGui::Text("Live Particles: %i", m_nCurrentParticles);
+    ImGui::End();
+  }
+  
   float * ptr = (a_parData->GetPosition()[0].GetData());
   glBufferSubData(GL_ARRAY_BUFFER, 0, m_nCurrentParticles * 4 * sizeof(float), ptr);
 
@@ -74,8 +86,8 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
 
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-  //Draw the triangle 
+  
+  //Draw points 
   glDrawArrays(GL_POINTS, 0, m_nCurrentParticles);
 
   glBindVertexArray(0);

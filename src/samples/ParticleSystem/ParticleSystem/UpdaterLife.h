@@ -19,52 +19,42 @@ public:
     return *this;
   }
 
-  void Update(int start,
-              int finish,
-              Real dt,
-              Dg::ParticleData<Real> & data);
+  void Update(Dg::ParticleData<Real> &, int) {}
+  void Update(Dg::ParticleData<Real> &, int, Real);
 
   UpdaterLife<Real> * Clone() const { return new UpdaterLife<Real>(*this); }
 
 };
 
 template<typename Real>
-void UpdaterLife<Real>::Update(int a_start,
-                                int a_finish,
-                                Real a_dt,
-                                Dg::ParticleData<Real> & a_data)
+void UpdaterLife<Real>::Update(Dg::ParticleData<Real> & a_data
+                             , int a_start
+                             , Real a_dt)
 {
   Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
   Real * pLifes = a_data.GetLife();
   Real * pLifeMaxes = a_data.GetLifeMax();
   Real * pDLifes = a_data.GetDLife();
 
+  int maxParCount = a_data.GetCountAlive();
+
   if (pLifes && pLifeMaxes)
   {
-    for (int i = a_finish; i >= a_start; --i)
+    for (int i = maxParCount - 1; i >= a_start; --i)
     {
       pLifes[i] += a_dt;
       if (pLifes[i] >= pLifeMaxes[i])
       {
-        a_data.Kill(i);
-        a_finish--;
+        maxParCount = a_data.Kill(i);
       }
     }
 
     if (pDLifes)
     {
-      for (int i = a_start; i <= a_finish; ++i)
+      for (int i = a_start; i < maxParCount; ++i)
       {
         pDLifes[i] = pLifes[i] / pLifeMaxes[i];
       }
-    }
-  }
-
-  if (pAccels)
-  {
-    for (int i = a_start; i <= a_finish; ++i)
-    {
-      pAccels[i].Zero();
     }
   }
 }

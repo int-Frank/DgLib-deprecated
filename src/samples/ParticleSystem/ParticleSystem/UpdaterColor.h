@@ -19,31 +19,30 @@ public:
     return *this; 
   }
 
-  void Update(int start,
-              int finish,
-              Real dt,
-              Dg::ParticleData<Real> & data);
+  void Update(Dg::ParticleData<Real> &, int) {}
+  void Update(Dg::ParticleData<Real> &, int, Real);
 
   UpdaterColor<Real> * Clone() const { return new UpdaterColor<Real>(*this); }
 
 };
 
 template<typename Real>
-void UpdaterColor<Real>::Update(int a_start,
-                                int a_finish,
-                                Real a_dt,
-                                Dg::ParticleData<Real> & a_data)
+void UpdaterColor<Real>::Update(Dg::ParticleData<Real> & a_data
+                              , int a_start
+                              , Real a_dt)
 {
   Dg::Vector4<float> * pColors = a_data.GetColor();
   Dg::Vector4<float> * pStartColors = a_data.GetStartColor();
   Dg::Vector4<float> * pDColors = a_data.GetDColor();
   Real * pDLifes = a_data.GetDLife();
 
+  int maxParCount = a_data.GetCountAlive();
+
   if (pColors && pStartColors && pDColors)
   {
     if (pDLifes)
     {
-      for (int i = a_start; i <= a_finish; ++i)
+      for (int i = a_start; i < maxParCount; ++i)
       {
         pColors[i] = pStartColors[i] + pDLifes[i] * pDColors[i];
       }
@@ -55,7 +54,7 @@ void UpdaterColor<Real>::Update(int a_start,
       {
         if (pLifes && pLifeMaxes)
         {
-          for (int i = a_start; i <= a_finish; ++i)
+          for (int i = a_start; i < maxParCount; ++i)
           {
             pColors[i] = pStartColors[i] + (pLifes[i] / pLifeMaxes[i]) * pDColors[i];
           }

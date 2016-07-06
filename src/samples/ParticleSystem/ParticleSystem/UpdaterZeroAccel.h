@@ -19,26 +19,25 @@ public:
     return *this;
   }
 
-  void Update(int start,
-              int finish,
-              Real dt,
-              Dg::ParticleData<Real> & data);
+  void Update(Dg::ParticleData<Real> &, int) {}
+  void Update(Dg::ParticleData<Real> &, int, Real);
 
   UpdaterZeroAccel<Real> * Clone() const { return new UpdaterZeroAccel<Real>(*this); }
 
 };
 
 template<typename Real>
-void UpdaterZeroAccel<Real>::Update(int a_start,
-                                    int a_finish,
-                                    Real a_dt,
-                                    Dg::ParticleData<Real> & a_data)
+void UpdaterZeroAccel<Real>::Update(Dg::ParticleData<Real> & a_data
+                                  , int a_start
+                                  , Real a_dt)
 {
   Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
 
+  int maxParCount = a_data.GetCountAlive();
+
   if (pAccels)
   {
-    for (int i = a_start; i <= a_finish; ++i)
+    for (int i = a_start; i < maxParCount; ++i)
     {
       pAccels[i].Zero();
     }

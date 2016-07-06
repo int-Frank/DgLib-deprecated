@@ -27,6 +27,7 @@ public:
     E_GenPosPoint,
     E_GenVelCone,
     E_GenColor,
+    E_GenLife,
 
     //Emitters
     E_Emitter_1,
@@ -36,21 +37,18 @@ public:
   };
 public:
 
-  Application() : m_window(nullptr), m_particleSystem(4096) {}
+  Application() : m_window(nullptr)
+                , m_particleSystem(4096)
+                , m_canRotate(false){}
   ~Application() {}
 
   Application(const Application&);
   Application& operator= (const Application&);
 
   void Run(Application*);
-  void Render(double currentTime);
-  void OnResize(int w, int h);
-  void OnMouseButton(int button, int action);
-  void OnMouseWheel(int pos);
 
-  static void GetMousePosition(int& x, int& y);
-  static void OnMouseMove(GLFWwindow*, double x, double y);
-  static void OnKey(GLFWwindow* window, int key, int scancode, int action, int mods);
+  static void OnMouseScroll(GLFWwindow* window, double xOffset, double yOffset);
+  static double s_dZoom;
 
 public:
   struct APPINFO
@@ -73,11 +71,6 @@ public:
     } flags;
   };
 private:
-
-  static double       s_mouseX;
-  static double       s_mouseY;
-  static double       s_prevX;
-  static double       s_prevY;
 
   static Application* s_app;
 
@@ -103,7 +96,21 @@ private:
   GLuint              m_posBuffer;
   GLuint              m_indexBuffer;
 
-  //Renderer            m_renderer;
+  float               m_dt;
+
+  Renderer            m_renderer;
+
+  bool                m_canRotate;
+  double              m_mouseSpeed;
+  double              m_mouseCurentX;
+  double              m_mouseCurentY;
+  double              m_mousePrevX;
+  double              m_mousePrevY;
+
+  double              m_camRotX;
+  double              m_camRotZ;
+
+  double              m_camZoom;
 
   //Main initializer function. All others are called through here.
   bool Init();
@@ -113,9 +120,11 @@ private:
   void InitControls();
   void InitParticleSystem();
 
+  void HandleInput();
+  void DoLogic();
+  void Render();
+
   void Shutdown();
-  GLuint CompileShaders();
-  GLuint LoadShaderFromFile(std::string, GLenum shaderType);
 };
 
 #endif

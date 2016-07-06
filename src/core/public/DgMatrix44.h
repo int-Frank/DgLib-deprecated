@@ -10,6 +10,7 @@
 
 #include "DgMath.h"
 #include "DgMatrix.h"
+#include "DgVector4.h"
 #include "DgQuaternion.h"
 
 //--------------------------------------------------------------------------------
@@ -97,7 +98,7 @@ namespace Dg
     Matrix44& Translation(Matrix<1, 4, Real> const &);
 
     //! Sets the matrix to a rotation matrix (by Euler angles).
-    Matrix44& Rotation(Real zRotation, Real yRotation, Real xRotation, EulerOrder);
+    Matrix44& Rotation(Real xRotation, Real yRotation, Real zRotation, EulerOrder);
 
     //! Sets the matrix to a rotation matrix (by axis and angle).
     Matrix44& Rotation(Matrix<1, 4, Real> const & axis, Real angle);
@@ -119,6 +120,11 @@ namespace Dg
 
     //! Set as rotation matrix, rotating by 'angle' radians around z-axis.
     Matrix44& RotationZ(Real);
+
+    //! Set the matrix to look at a point in space
+    Matrix44& LookAt(Vector4<Real> const & origin
+                   , Vector4<Real> const & target
+                   , Vector4<Real> const & up);
 
     //! Set a perspective transformation matrix
     Matrix44& Perspective(Real a_fov, 
@@ -762,6 +768,35 @@ namespace Dg
     return *this;
 
   }   // End: Matrix44::RotationZ()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Matrix44::LookAt()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Matrix44<Real>& Matrix44<Real>::LookAt(Vector4<Real> const & a_origin
+                                       , Vector4<Real> const & a_target
+                                       , Vector4<Real> const & a_up)
+  {
+    Vector4<Real> forward = a_target - a_origin;
+    if (Dg::IsZero(forward.LengthSquared()))
+    {
+      forward = Vector4<Real>::xAxis();
+    }
+
+    Vector4<Real> right = Cross(forward, a_up);
+    if (Dg::IsZero(right.LengthSquared()))
+    {
+      right = Perpendicular(forward);
+    }
+
+    Vector4<Real> camUp = Cross(forward, right);
+
+    SetRows(right, up, forward, a_origin);
+
+    return *this;
+
+  }   // End: Matrix44::LookAt()
 
 
   //--------------------------------------------------------------------------------
