@@ -55,6 +55,13 @@ static AttractorPoint<float, AttractorForce::InverseSquare> CreateAttractor_2()
   return attr;
 }
 
+//Helper function to initiate Attractors
+template<typename AttractorType>
+static AttractorType CreateAttractor(EmitterData & a_data)
+{
+
+}
+
 //Helper function to initialise our emitters
 template<typename EmitterType>
 static EmitterType CreateEmitter(EmitterData & a_data)
@@ -68,10 +75,10 @@ static EmitterType CreateEmitter(EmitterData & a_data)
   else emitter.Stop();
 
   GenPosPoint<float> genPos;
-  vqs.SetV(vec4(a_data.pos[0], a_data.pos[1], a_data.pos[2], 0.0));
+  vqs.SetV(vec4(a_data.transform[0], a_data.transform[1], a_data.transform[2], 0.0));
   genPos.SetTransformation(vqs);
-  a_data.posGenMethod = a_data.prev_posGenMethod = Application::E_GenPosPoint;
-  emitter.AddGenerator(Application::E_GenPosPoint, genPos);
+  a_data.posGenMethod = E_GenPosPoint;
+  emitter.AddGenerator(E_GenPosPoint, genPos);
 
   GenVelCone<float>  genVel;
   qz.SetRotationZ(a_data.velRot[0]);
@@ -79,27 +86,27 @@ static EmitterType CreateEmitter(EmitterData & a_data)
   vqs.SetQ(qz * qx);
   genVel.SetTransformation(vqs);
   genVel.SetAngle(a_data.spread);
-  a_data.velGenMethod = a_data.prev_velGenMethod = Application::E_GenVelCone;
-  emitter.AddGenerator(Application::E_GenVelCone, genVel);
+  a_data.velGenMethod = E_GenVelCone;
+  emitter.AddGenerator(E_GenVelCone, genVel);
 
   GenColor<float> genColor;
-  genColor.SetColors(vec4(a_data.startColor[0]
-                        , a_data.startColor[1]
-                        , a_data.startColor[2]
-                        , a_data.startColor[3])
-                   , vec4(a_data.endColor[0]
-                        , a_data.endColor[1]
-                        , a_data.endColor[2]
-                        , a_data.endColor[3]));
-  emitter.AddGenerator(Application::E_GenColor, genColor);
+  genColor.SetColors(vec4(a_data.colors[0]
+                        , a_data.colors[1]
+                        , a_data.colors[2]
+                        , a_data.colors[3])
+                   , vec4(a_data.colors[4]
+                        , a_data.colors[5]
+                        , a_data.colors[6]
+                        , a_data.colors[7]));
+  emitter.AddGenerator(E_GenColor, genColor);
 
   GenLife<float> genLife;
   genLife.SetLife(a_data.life);
-  emitter.AddGenerator(Application::E_GenLife, genLife);
+  emitter.AddGenerator(E_GenLife, genLife);
 
   GenSize<float> genSize;
-  genSize.SetSizes(a_data.startSize, a_data.endSize);
-  emitter.AddGenerator(Application::E_GenSize, genSize);
+  genSize.SetSizes(a_data.sizes[0], a_data.sizes[1]);
+  emitter.AddGenerator(E_GenSize, genSize);
 
   emitter.SetRate(a_data.rate);
 
@@ -111,52 +118,49 @@ void Application::InitParticleSystem()
   //--------------------------------------------------------------------
   //  Set emitter 1 data
   //--------------------------------------------------------------------
-  m_eData[0].Init();
   m_eData[0].ID = E_Emitter_1;
-  m_eData[0].pos[0] = m_eData[0].prev_pos[0] = 1.0;
-  m_eData[0].pos[1] = m_eData[0].prev_pos[1] = 0.0;
-  m_eData[0].pos[2] = m_eData[0].prev_pos[2] = 0.0;
-  m_eData[0].velRot[1] = m_eData[0].prev_velRot[1] = PI_f * 0.5f;
-  m_eData[0].startSize = m_eData[0].prev_startSize = 0.1f;
-  m_eData[0].endSize = m_eData[0].prev_endSize = 0.3f;
-  m_eData[0].endColor[0] = m_eData[0].prev_endColor[0] = 1.0f;
-  m_eData[0].endColor[1] = m_eData[0].prev_endColor[1] = 0.0f;
-  m_eData[0].endColor[2] = m_eData[0].prev_endColor[2] = 0.0f;
-  m_eData[0].endColor[3] = m_eData[0].prev_endColor[3] = 0.0f;
+  m_eData[0].transform[0] = 1.0;
+  m_eData[0].transform[1] = 0.0;
+  m_eData[0].transform[2] = 0.0;
+  m_eData[0].velRot[1] = PI_f * 0.5f;
+  m_eData[0].sizes[0] = 0.1f;
+  m_eData[0].sizes[1] = 0.3f;
+  m_eData[0].colors[4] = 1.0f;
+  m_eData[0].colors[5] = 0.0f;
+  m_eData[0].colors[6] = 0.0f;
+  m_eData[0].colors[7] = 0.0f;
 
 
   //--------------------------------------------------------------------
   //  Set emitter 2 data
   //--------------------------------------------------------------------
-  m_eData[1].Init();
   m_eData[1].ID = E_Emitter_2;
-  m_eData[1].pos[0] = m_eData[1].prev_pos[0] = -0.5f;
-  m_eData[1].pos[1] = m_eData[1].prev_pos[1] = 0.866f;
-  m_eData[1].pos[2] = m_eData[1].prev_pos[2] = 0.0;
-  m_eData[1].velRot[1] = m_eData[1].prev_velRot[1] = PI_f * 0.5f;
-  m_eData[1].startSize = m_eData[1].prev_startSize = 0.1f;
-  m_eData[1].endSize = m_eData[1].prev_endSize = 0.3f;
-  m_eData[1].endColor[0] = m_eData[1].prev_endColor[0] = 0.0f;
-  m_eData[1].endColor[1] = m_eData[1].prev_endColor[1] = 1.0f;
-  m_eData[1].endColor[2] = m_eData[1].prev_endColor[2] = 0.0f;
-  m_eData[1].endColor[3] = m_eData[1].prev_endColor[3] = 0.0f;
+  m_eData[1].transform[0] = -0.5f;
+  m_eData[1].transform[1] = 0.866f;
+  m_eData[1].transform[2] = 0.0;
+  m_eData[1].velRot[1] = PI_f * 0.5f;
+  m_eData[1].sizes[0] = 0.1f;
+  m_eData[1].sizes[1] = 0.3f;
+  m_eData[1].colors[4] = 0.0f;
+  m_eData[1].colors[5] = 1.0f;
+  m_eData[1].colors[6] = 0.0f;
+  m_eData[1].colors[7] = 0.0f;
   
 
   //--------------------------------------------------------------------
   //  Set emitter 3 data
   //--------------------------------------------------------------------
-  m_eData[2].Init();
-  m_eData[2].ID = E_Emitter_3;
-  m_eData[2].pos[0] = m_eData[2].prev_pos[0] = -0.5;
-  m_eData[2].pos[1] = m_eData[2].prev_pos[1] = -0.866f;
-  m_eData[2].pos[2] = m_eData[2].prev_pos[2] = 0.0;
-  m_eData[2].velRot[1] = m_eData[2].prev_velRot[1] = PI_f * 0.5f;
-  m_eData[2].startSize = m_eData[2].prev_startSize = 0.1f;
-  m_eData[2].endSize = m_eData[2].prev_endSize = 0.3f;
-  m_eData[2].endColor[0] = m_eData[2].prev_endColor[0] = 0.0f;
-  m_eData[2].endColor[1] = m_eData[2].prev_endColor[1] = 0.0f;
-  m_eData[2].endColor[2] = m_eData[2].prev_endColor[2] = 1.0f;
-  m_eData[2].endColor[3] = m_eData[2].prev_endColor[3] = 0.0f;
+  m_eData[2].ID = E_Emitter_2;
+  m_eData[2].transform[0] = -0.5;
+  m_eData[2].transform[1] = -0.866f;
+  m_eData[2].transform[2] = 0.0;
+  m_eData[2].velRot[1] = PI_f * 0.5f;
+  m_eData[2].sizes[0] = 0.1f;
+  m_eData[2].sizes[1] = 0.3f;
+  m_eData[2].colors[4] = 0.0f;
+  m_eData[2].colors[5] = 0.0f;
+  m_eData[2].colors[6] = 1.0f;
+  m_eData[2].colors[7] = 0.0f;
   
 
   //Init Particle Data attributes
@@ -189,6 +193,9 @@ void Application::InitParticleSystem()
   m_particleSystem.AddUpdater(E_UpdaterColor, UpdaterColor<float>());
   m_particleSystem.AddUpdater(E_UpdaterSize, UpdaterSize<float>());
 
+  //copy current emitter data for ui callback checking
+  memcpy(m_eDataPrev, m_eData, sizeof(EmitterData) * s_nEmitters);
+
 }
 
 void Application::UpdateParSysAttr()
@@ -196,13 +203,14 @@ void Application::UpdateParSysAttr()
   for (int e = 0; e < s_nEmitters; ++e)
   {
     EmitterData & data = m_eData[e];
+    EmitterData & dataPrev = m_eDataPrev[e];
     int id = data.ID;
 
-    if (data.emitterType != data.prev_emitterType)
+    if (data.emitterType != dataPrev.emitterType)
     {
       //TODO Do work...
       //Here we have to remove the entire emitter and build a new one.
-      data.prev_emitterType = data.emitterType;
+      dataPrev.emitterType = data.emitterType;
     }
 
     //Subsequent checks will not require us to remove the emitter from the particle system
@@ -214,39 +222,36 @@ void Application::UpdateParSysAttr()
       continue;
     }
 
-    if (data.on != data.prev_on)
+    if (data.on != dataPrev.on)
     {
       if (data.on) ptr->Start();
       else ptr->Stop();
-      data.prev_on = data.on;
+      dataPrev.on = data.on;
     }
 
-    if (data.posGenMethod != data.prev_posGenMethod)
+    if (data.posGenMethod != dataPrev.posGenMethod)
     {
       //TODO DO work...
-      data.prev_posGenMethod = data.posGenMethod;
+      dataPrev.posGenMethod = data.posGenMethod;
     }
 
-    if (memcmp(data.pos, data.prev_pos, sizeof(float) * 3) != 0)
+    if (memcmp(data.transform, dataPrev.transform, sizeof(float) * 3) != 0)
     {
       Dg::ParticleGenerator<float> * pPosGen = ptr->GetGenerator(data.posGenMethod);
       if (pPosGen)
       {
         Vqs vqs;
-        vec4 v(data.pos[0], data.pos[1], data.pos[2], 0.0f);
+        vec4 v(data.transform[0], data.transform[1], data.transform[2], 0.0f);
+        quat q; q.SetRotation(data.transform[3], data.transform[4], data.transform[5], Dg::EulerOrder::ZXY);
         vqs.SetV(v);
+        vqs.SetQ(q);
+        vqs.SetS(data.transform[6]);
         pPosGen->SetTransformation(vqs);
       }
-      memcpy(data.prev_pos, data.pos, sizeof(float) * 3);
+      memcpy(dataPrev.transform, data.transform, sizeof(float) * 7);
     }
 
-    if (memcmp(data.rot, data.prev_rot, sizeof(float) * 2) != 0)
-    {
-      //TODO Do work...
-      memcpy(data.prev_rot, data.rot, sizeof(float) * 3);
-    }
-
-    if (data.spread != data.prev_spread)
+    if (data.spread != dataPrev.spread)
     {
       if (data.velGenMethod == E_GenVelCone)
       {
@@ -256,23 +261,23 @@ void Application::UpdateParSysAttr()
           pVelGen->SetAngle(data.spread);
         }
       }
-      data.prev_spread = data.spread;
+      dataPrev.spread = data.spread;
     }
 
-    if (memcmp(data.boxDim, data.prev_boxDim, sizeof(float) * 3) != 0)
+    if (memcmp(data.boxDim, dataPrev.boxDim, sizeof(float) * 3) != 0)
     {
       //TODO Do work...
-      memcpy(data.prev_boxDim, data.boxDim, sizeof(float) * 3);
+      memcpy(dataPrev.boxDim, data.boxDim, sizeof(float) * 3);
     }
 
-    if (data.repelFromCenter != data.prev_repelFromCenter)
+    if (data.velGenMethod != dataPrev.velGenMethod)
     {
       //TODO DO work... All pos generators should inherit a base
       // position gen with the RepelFromCenter method in the base.
-      data.prev_repelFromCenter = data.repelFromCenter;
+      dataPrev.velGenMethod = data.velGenMethod;
     }
 
-    if (memcmp(data.velRot, data.prev_velRot, sizeof(float) * 2) != 0)
+    if (memcmp(data.velRot, dataPrev.velRot, sizeof(float) * 2) != 0)
     {
       if (data.velGenMethod == E_GenVelCone)
       {
@@ -287,70 +292,66 @@ void Application::UpdateParSysAttr()
           pVelGen->SetTransformation(vqs);
         }
       }
-      memcpy(data.prev_velRot, data.velRot, sizeof(float) * 3);
+      memcpy(dataPrev.velRot, data.velRot, sizeof(float) * 3);
     }
 
-    if (data.sphereRadius != data.prev_sphereRadius)
+    if (data.sphereRadius != dataPrev.sphereRadius)
     {
       //TODO DO work...
-      data.prev_sphereRadius = data.sphereRadius;
+      dataPrev.sphereRadius = data.sphereRadius;
     }
 
-    if ( memcmp(data.startColor, data.prev_startColor, sizeof(float) * 4) != 0
-      || memcmp(data.endColor, data.prev_endColor, sizeof(float) * 4) != 0)
+    if ( memcmp(data.colors, dataPrev.colors, sizeof(float) * 8) != 0)
     {
       GenColor<float> * pColorGen = (GenColor<float> *)ptr->GetGenerator(E_GenColor);
       if (pColorGen)
       {
-        pColorGen->SetColors(vec4(data.startColor[0], data.startColor[1], data.startColor[2], data.startColor[3])
-                           , vec4(data.endColor[0], data.endColor[1], data.endColor[2], data.endColor[3]));
+        pColorGen->SetColors(vec4(data.colors[0], data.colors[1], data.colors[2], data.colors[3])
+                           , vec4(data.colors[4], data.colors[5], data.colors[6], data.colors[7]));
       }
-      memcpy(data.prev_startColor, data.startColor, sizeof(float) * 4);
-      memcpy(data.prev_endColor, data.endColor, sizeof(float) * 4);
+      memcpy(dataPrev.colors, data.colors, sizeof(float) * 8);
     }
 
-    if (data.rate != data.prev_rate)
+    if (data.rate != dataPrev.rate)
     {
       ptr->SetRate(data.rate);
-      data.prev_rate = data.rate;
+      dataPrev.rate = data.rate;
     }
 
-    if (data.velocity != data.prev_velocity)
+    if (data.velocity != dataPrev.velocity)
     {
       GenVelCone<float> * pVelGen = (GenVelCone<float> *)ptr->GetGenerator(data.velGenMethod);
       if (pVelGen)
       {
         pVelGen->SetVelocity(data.velocity);
       }
-      data.prev_velocity = data.velocity;
+      dataPrev.velocity = data.velocity;
     }
 
-    if (data.life != data.prev_life)
+    if (data.life != dataPrev.life)
     {
       GenLife<float> * pLifeGen = (GenLife<float> *)ptr->GetGenerator(E_GenLife);
       if (pLifeGen)
       {
         pLifeGen->SetLife(data.life);
       }
-      data.prev_life = data.life;
+      dataPrev.life = data.life;
     }
 
-    if (data.force!= data.prev_force)
+    if (data.force!= dataPrev.force)
     {
       //TODO Do work...
-      data.prev_force = data.force;
+      dataPrev.force = data.force;
     }
 
-    if ( data.startSize != data.prev_startSize
-      || data.endSize != data.prev_endSize)
+    if (memcmp(data.sizes, dataPrev.sizes, sizeof(float) * 2) != 0)
     {
       GenSize<float> * pSizeGen = (GenSize<float> *)ptr->GetGenerator(E_GenSize);
       if (pSizeGen)
       {
-        pSizeGen->SetSizes(data.startSize, data.endSize);
+        pSizeGen->SetSizes(data.sizes[0], data.sizes[1]);
       }
-      data.prev_startSize = data.startSize;
-      data.prev_endSize = data.endSize;
+      memcpy(dataPrev.sizes, data.sizes, sizeof(float) * 2);
     }
   }
 }

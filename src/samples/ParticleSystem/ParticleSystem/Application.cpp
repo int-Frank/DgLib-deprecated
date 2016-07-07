@@ -193,8 +193,6 @@ void Application::DoLogic()
       ImGui::SliderFloat("L", &m_eData[curEm].boxDim[0], 0.0f, 10.0f, "%.1f"); ImGui::SameLine();
       ImGui::SliderFloat("W", &m_eData[curEm].boxDim[1], 0.0f, 10.0f, "%.1f"); ImGui::SameLine();
       ImGui::SliderFloat("H", &m_eData[curEm].boxDim[2], 0.0f, 10.0f, "%.1f");
-      ImGui::SliderFloat("rx", &m_eData[curEm].rot[0], 0.0f, Dg::PI_f, "%.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("rz", &m_eData[curEm].rot[1], 0.0f, Dg::PI_f * 2.0f, "%.2f");
     }
 
     if (m_eData[curEm].posGenMethod == E_GenPosSphere)
@@ -206,14 +204,23 @@ void Application::DoLogic()
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Place Emitter");
-    ImGui::SliderFloat("X", &m_eData[curEm].pos[0], -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
-    ImGui::SliderFloat("Y", &m_eData[curEm].pos[1], -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
-    ImGui::SliderFloat("Z", &m_eData[curEm].pos[2], -5.0f, 5.0f, "%.1f");
+    ImGui::SliderFloat("X", &m_eData[curEm].transform[0], -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
+    ImGui::SliderFloat("Y", &m_eData[curEm].transform[1], -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
+    ImGui::SliderFloat("Z", &m_eData[curEm].transform[2], -5.0f, 5.0f, "%.1f");
     
+    if (m_eData[curEm].posGenMethod == E_GenPosBox)
+    { 
+      ImGui::SliderFloat("rx", &m_eData[curEm].transform[3], 0.0f, Dg::PI_f * 2.0f, "%.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("ry", &m_eData[curEm].transform[4], 0.0f, Dg::PI_f * 2.0f, "%.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("rz", &m_eData[curEm].transform[5], 0.0f, Dg::PI_f * 2.0f, "%.2f");
+    }
+
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Define Initial velocity vector");
-    ImGui::Checkbox("Repel from Center", &m_eData[curEm].repelFromCenter);
-    if (!m_eData[curEm].repelFromCenter)
+    ImGui::RadioButton("Direction", &m_eData[curEm].velGenMethod, E_GenVelCone); ImGui::SameLine();
+    ImGui::RadioButton("Outwards", &m_eData[curEm].velGenMethod, E_GenVelOutwards);
+    
+    if (m_eData[curEm].velGenMethod == E_GenVelCone)
     {
       ImGui::SliderFloat("rz", &m_eData[curEm].velRot[0], 0.0f, Dg::PI_f * 2.0f, "%.2f"); ImGui::SameLine();
       ImGui::SliderFloat("rx", &m_eData[curEm].velRot[1], 0.0f, Dg::PI_f, "%.2f");
@@ -224,14 +231,14 @@ void Application::DoLogic()
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Other attributes");
-    ImGui::ColorEdit4("Start color", m_eData[curEm].startColor);
-    ImGui::ColorEdit4("End color", m_eData[curEm].endColor);
+    ImGui::ColorEdit4("Start color", m_eData[curEm].colors);
+    ImGui::ColorEdit4("End color", &m_eData[curEm].colors[4]);
     ImGui::SliderFloat("Rate (par/s)", &m_eData[curEm].rate, 0.0f, 200.0f, "%.2f");
     ImGui::SliderFloat("Velocity (m/s)", &m_eData[curEm].velocity, 0.0f, 10.0f, "%.2f");
     ImGui::SliderFloat("Life (s)", &m_eData[curEm].life, 0.0f, 60.0f, "%.2f");
     ImGui::SliderFloat("Force (m/s/s)", &m_eData[curEm].force, -100.0f, 100.0f, "%.2f");
-    ImGui::SliderFloat("Start size (m)", &m_eData[curEm].startSize, 0.0f, 1.0f, "%.2f");
-    ImGui::SliderFloat("End size (m)", &m_eData[curEm].endSize, 0.0f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Start size (m)", m_eData[curEm].sizes, 0.0f, 1.0f, "%.2f");
+    ImGui::SliderFloat("End size (m)", &m_eData[curEm].sizes[1], 0.0f, 1.0f, "%.2f");
 
     ImGui::EndChild();
     ImGui::End();
@@ -286,9 +293,9 @@ void Application::Render()
 }
 
 
-void Application::OnMouseScroll(GLFWwindow* window, double xOffset, double yOffset)
+void Application::OnMouseScroll(GLFWwindow* window, double /* xOffset */, double yOffset)
 {
-  s_dZoom += xOffset;
+  s_dZoom += yOffset;
 }
 
 void Application::GetConfiguration()
@@ -391,41 +398,41 @@ void Application::Run(Application* the_app)
   do
   {
 
-	glfwPollEvents();
-	ImGui_ImplGlfwGL3_NewFrame();
+	  glfwPollEvents();
+	  ImGui_ImplGlfwGL3_NewFrame();
 
-	{
-    ImGui::Begin("Partice System");
-    if (ImGui::Button("Blending")) UI::showAlphaBlendingWindow ^= 1; ImGui::SameLine();
-    if (ImGui::Button("Example UI")) show_test_window ^= 1;
-    ImGui::Spacing(); ImGui::Spacing();
-    ImGui::End();
-  }
+	  {
+      ImGui::Begin("Partice System");
+      if (ImGui::Button("Blending")) UI::showAlphaBlendingWindow ^= 1; ImGui::SameLine();
+      if (ImGui::Button("Example UI")) show_test_window ^= 1;
+      ImGui::Spacing(); ImGui::Spacing();
+      ImGui::End();
+    }
 
-  {
-    ImGui::Begin("Stats");
-    ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
-    ImGui::End();
-  }
+    {
+      ImGui::Begin("Stats");
+      ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
+      ImGui::End();
+    }
 
-  double thisTick = glfwGetTime();
-	double diff = thisTick - lastTick;
-  m_dt = static_cast<float>(thisTick - lastTick);
-  lastTick = thisTick;
+    double thisTick = glfwGetTime();
+	  double diff = thisTick - lastTick;
+    m_dt = static_cast<float>(thisTick - lastTick);
+    lastTick = thisTick;
 
-  HandleInput();
-  DoLogic();
-  Render();
+    HandleInput();
+    DoLogic();
+    Render();
 
-  // 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-  if (show_test_window)
-  {
-    ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-    ImGui::ShowTestWindow(&show_test_window);
-  }
+    // 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
+    if (show_test_window)
+    {
+      ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+      ImGui::ShowTestWindow(&show_test_window);
+    }
 
-	ImGui::Render();
-  glfwSwapBuffers(m_window);
+	  ImGui::Render();
+    glfwSwapBuffers(m_window);
 
   } while (!glfwWindowShouldClose(m_window));
 
