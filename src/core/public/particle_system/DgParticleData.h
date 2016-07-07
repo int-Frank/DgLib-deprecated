@@ -107,8 +107,8 @@ namespace Dg
       return false;
     }
 
-    ++m_countAlive;
     a_index = m_countAlive;
+    ++m_countAlive;
     return true;
   }
 

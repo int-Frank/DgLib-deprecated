@@ -84,7 +84,7 @@ int EmitterLinear<Real>::EmitParticles(Dg::ParticleData<Real> & a_data, Real a_d
   //Generate new particles
   for (int g = 0; g < m_generators.size(); ++g)
   {
-    m_generators[g]->Generate(a_data, startIndex, startIndex + nNewParticles);
+    m_generators[g]->Generate(a_data, startIndex, startIndex + nNewParticles - 1);
   }
 
   return nNewParticles;

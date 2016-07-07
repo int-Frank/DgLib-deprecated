@@ -352,7 +352,5 @@ void Application::UpdateParSysAttr()
       data.prev_startSize = data.startSize;
       data.prev_endSize = data.endSize;
     }
-
-    //TODO Crash when closing window while lotsof particles active
   }
 }
