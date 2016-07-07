@@ -77,7 +77,7 @@
       <AdditionalIncludeDirectories>C:\dev\lib\glew-1.13.0\include;C:\dev\lib\glfw-3.2\include;C:\dev\projects\DgLib\src\core\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\dev\lib\glfw-3.2\lib\$(Platform);C:\dev\lib\glew-1.13.0\lib\Release\$(Platform);..\..\..\..\bin\$(Platform)\\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\dev\lib\glfw-3.2\lib\$(Platform)\Debug;C:\dev\lib\glew-1.13.0\lib\Release\$(Platform);..\..\..\..\bin\$(Platform)\\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;Math.lib;Utility.lib;glfw3.lib;glew32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

@@ -47,7 +47,6 @@ bool Application::Init()
 
   m_camRotZ = 0.0;
   m_camRotX = Dg::PI * 0.5;
-  m_camZoom = 7.0;
 
   InitControls();
   InitParticleSystem();
@@ -121,11 +120,10 @@ bool Application::InitGL()
 
 void Application::InitControls()
 {
-  GLFWscrollfun res = glfwSetScrollCallback(m_window, OnMouseScroll);
-
   s_dZoom = 0.0;
   m_mouseSpeed = 0.01;
   m_camZoom = 5.0;
+  m_camZoomTarget = 5.0;
   m_canRotate = false;
   glfwGetCursorPos(m_window, &m_mouseCurentX, &m_mouseCurentX);
   m_mousePrevX = m_mouseCurentX;
@@ -161,9 +159,7 @@ void Application::DoLogic()
 {
   {
     ImVec4 headingClr(1.0f, 0.0f, 1.0f, 1.0f);
-
     ImGui::Begin("Partice System");
-    
     ImGui::BeginChild("Emitter attributes", ImVec2(ImGui::GetWindowWidth() - 40.0f, 700.0f), true);
 
     static int curEm = 0;
@@ -255,10 +251,20 @@ void Application::DoLogic()
 
     m_camRotX += (m_mouseCurentY - m_mousePrevY) * m_mouseSpeed;
     Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
+  }
 
-    m_camZoom += s_dZoom;
-    Dg::ClampNumber(1.0, 20.0, m_camZoom);
-    s_dZoom = 0.0;
+  m_camZoomTarget -= s_dZoom;
+  Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
+  s_dZoom = 0.0;
+
+  if (!Dg::IsZero(m_camZoomTarget - m_camZoom))
+  {
+    double dist = m_camZoomTarget - m_camZoom;
+    double camSpd = 3.0 * dist;
+    double vec = (dist < 0.0) ? -1.0 : 1.0;
+    double mag = vec * dist;
+    double vel = 18.0 * pow(mag, 0.3);
+    m_camZoom += vec * vel * m_dt;
   }
 }
 
@@ -293,9 +299,9 @@ void Application::Render()
 }
 
 
-void Application::OnMouseScroll(GLFWwindow* window, double /* xOffset */, double yOffset)
+void AppOnMouseScroll(double yOffset)
 {
-  s_dZoom += yOffset;
+  Application::s_dZoom += yOffset;
 }
 
 void Application::GetConfiguration()

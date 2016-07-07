@@ -292,7 +292,7 @@ void Application::UpdateParSysAttr()
           pVelGen->SetTransformation(vqs);
         }
       }
-      memcpy(dataPrev.velRot, data.velRot, sizeof(float) * 3);
+      memcpy(dataPrev.velRot, data.velRot, sizeof(float) * 2);
     }
 
     if (data.sphereRadius != dataPrev.sphereRadius)

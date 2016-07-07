@@ -19,6 +19,8 @@
 #include <GLFW/glfw3native.h>
 #endif
 
+void AppOnMouseScroll(double);
+
 // Data
 static GLFWwindow*  g_Window = NULL;
 static double       g_Time = 0.0f;
@@ -144,6 +146,7 @@ void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow*, int button, int action, 
 
 void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow*, double /*xoffset*/, double yoffset)
 {
+    AppOnMouseScroll(yoffset);
     g_MouseWheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
 }
 

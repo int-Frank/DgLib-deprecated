@@ -66,6 +66,8 @@ public:
     , transform{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}
     , spread(Dg::PI_f / 8.0f)
     , boxDim{0.5f, 0.5f, 0.5f}
+    , velRot{0.0f, 0.0f}
+    , velocity(1.0f)
     , sphereRadius(1.0f)
     , colors{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f}
     , rate(10.0f)
@@ -106,7 +108,6 @@ public:
 
   void Run(Application*);
 
-  static void OnMouseScroll(GLFWwindow* window, double xOffset, double yOffset);
   static double s_dZoom;
 
 public:
@@ -166,6 +167,7 @@ private:
   double              m_camRotZ;
 
   double              m_camZoom;
+  double              m_camZoomTarget;
 
   EmitterData         m_eData[s_nEmitters];
   EmitterData         m_eDataPrev[s_nEmitters];
