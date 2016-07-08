@@ -6626,6 +6626,35 @@ bool ImGui::VSliderInt(const char* label, const ImVec2& size, int* v, int v_min,
 }
 
 // Add multiple sliders on 1 line for compact edition of multiple components
+// Different min, max, display_format and power for each item.
+bool ImGui::SliderFloatNi(const char* label, float* v, int components, float const * v_min, float const * v_max, char const * const * display_format, float const * power)
+{
+  ImGuiWindow* window = GetCurrentWindow();
+  if (window->SkipItems)
+    return false;
+
+  ImGuiContext& g = *GImGui;
+  bool value_changed = false;
+  BeginGroup();
+  PushID(label);
+  PushMultiItemsWidths(components);
+  for (int i = 0; i < components; i++)
+  {
+    PushID(i);
+    value_changed |= SliderFloat("##v", &v[i], v_min[i], v_max[i], display_format[i], power[i]);
+    SameLine(0, g.Style.ItemInnerSpacing.x);
+    PopID();
+    PopItemWidth();
+  }
+  PopID();
+
+  TextUnformatted(label, FindRenderedTextEnd(label));
+  EndGroup();
+
+  return value_changed;
+}
+
+// Add multiple sliders on 1 line for compact edition of multiple components
 bool ImGui::SliderFloatN(const char* label, float* v, int components, float v_min, float v_max, const char* display_format, float power)
 {
     ImGuiWindow* window = GetCurrentWindow();

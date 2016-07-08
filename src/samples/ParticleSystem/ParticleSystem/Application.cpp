@@ -171,6 +171,7 @@ void Application::DoLogic()
 
     static int curEm = 0;
     float sliderOffset = -90.0f;
+    static float text3Mul = 4.0f / 3.0f;
 
     ImGui::RadioButton("Emitter 1", &curEm, 0); ImGui::SameLine();
     ImGui::RadioButton("Emitter 2", &curEm, 1); ImGui::SameLine();
@@ -192,10 +193,12 @@ void Application::DoLogic()
 
     if (m_eData[curEm].posGenMethod == E_GenPosBox)
     {
-      ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
-      ImGui::TextColored(headingClr, "Define box geometry");
+      float mins[3] = { 0.0f, 0.0f, 0.0f };
+      float maxs[3] = { 10.0f, 10.0f, 10.0f };
+      char const * formats[3] = { "l = %.2f", "w = %.2f", "h = %.2f" };
+      float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloat3("Dimensions", &m_eData[curEm].boxDim[0], 0.0f, 10.0f, "%.2f");
+      ImGui::SliderFloatNi("Dimensions", &m_eData[curEm].boxDim[0], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
 
@@ -208,8 +211,18 @@ void Application::DoLogic()
       ImGui::PopItemWidth();
     }
 
-    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
-    ImGui::TextColored(headingClr, "Place Emitter");
+    {
+      ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+      ImGui::TextColored(headingClr, "Place Emitter");
+
+      float mins[3] = { -10.0f, -10.0f, -10.0f };
+      float maxs[3] = { 10.0f, 10.0f, 10.0f };
+      char const * formats[3] = { "x = %.2f", "y = %.2f", "z = %.2f" };
+      float powers[3] = { 1.0f, 1.0f, 1.0f };
+      ImGui::PushItemWidth(sliderOffset);
+      ImGui::SliderFloatNi("Position", &m_eData[curEm].transform[0], 3, mins, maxs, formats, powers);
+      ImGui::PopItemWidth();
+    }
     
     //ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
     //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
@@ -229,14 +242,15 @@ void Application::DoLogic()
     //  ImGui::SameLine(); ImGui::Text("Raw (%.1f, %.1f), WithLockThresold (%.1f, %.1f), MouseDelta (%.1f, %.1f)", value_raw.x, value_raw.y, value_with_lock_threshold.x, value_with_lock_threshold.y, mouse_delta.x, mouse_delta.y);
     //}
     
-    ImGui::PushItemWidth(sliderOffset);
-    ImGui::SliderFloat3("Position", &m_eData[curEm].transform[0], -10.0f, 10.0f, "%.2f");
-    ImGui::PopItemWidth();
 
     if (m_eData[curEm].posGenMethod == E_GenPosBox)
     {
+      float mins[3] = { 0.0f, 0.0f, 0.0f };
+      float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f * 2.0f, Dg::PI_f * 2.0f };
+      char const * formats[3] = { "rz = %.2f", "ry = %.2f", "rx = %.2f" };
+      float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloat3("Rotation", &m_eData[curEm].transform[3], 0.0f, Dg::PI_f * 2.0f, "%.2f");
+      ImGui::SliderFloatNi("Rotation", &m_eData[curEm].transform[3], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
 
@@ -247,11 +261,14 @@ void Application::DoLogic()
     
     if (m_eData[curEm].velGenMethod == E_GenVelCone)
     {
+      float mins[3] = { 0.0f, 0.0f, 0.0f };
+      float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f, Dg::PI_f };
+      char const * formats[3] = { "rz = %.2f", "rx = %.2f", "spread = %.2f"};
+      float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloat3("rz, rx, angle", &m_eData[curEm].velCone[0], 0.0f, Dg::PI_f * 2.0f, "%.2f");
+      ImGui::SliderFloatNi("rz, rx, sprd", &m_eData[curEm].velCone[0], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
-
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Other attributes");
@@ -286,8 +303,10 @@ void Application::DoLogic()
     double vec = (dist < 0.0) ? -1.0 : 1.0;
     double mag = vec * dist;
     double vel = 18.0 * pow(mag, 0.3);
-    m_camZoom += vec * vel * m_dt;
+    double dx = vec * vel * m_dt;
+    m_camZoom += dx;
   }
+  //m_camZoomTarget = m_camZoom;
 }
 
 void Application::Render()

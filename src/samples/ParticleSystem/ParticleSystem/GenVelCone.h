@@ -49,7 +49,7 @@ private:
 template<typename Real>
 void GenVelCone<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 {
-  m_axis = a_vqs.Rotate(Dg::Vector4<Real>::yAxis());
+  m_axis = a_vqs.Rotate(Dg::Vector4<Real>::xAxis());
 }
 
 

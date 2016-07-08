@@ -68,7 +68,7 @@ static EmitterType CreateEmitter(EmitterData & a_data)
 {
   EmitterType emitter;
   Vqs vqs;
-  quat qx, qz;
+  quat qy, qz;
   vec4 v;
 
   if (a_data.on) emitter.Start();
@@ -82,8 +82,8 @@ static EmitterType CreateEmitter(EmitterData & a_data)
 
   GenVelCone<float>  genVel;
   qz.SetRotationZ(a_data.velCone[0]);
-  qx.SetRotationX(a_data.velCone[1]);
-  vqs.SetQ(qz * qx);
+  qy.SetRotationY(a_data.velCone[1] - Dg::PI_f / 2.0f);
+  vqs.SetQ(qy * qz);
   genVel.SetTransformation(vqs);
   genVel.SetAngle(a_data.velCone[2]);
   a_data.velGenMethod = E_GenVelCone;
@@ -124,7 +124,6 @@ void Application::InitParticleSystem()
   m_eData[0].transform[0] = 1.0;
   m_eData[0].transform[1] = 0.0;
   m_eData[0].transform[2] = 0.0;
-  m_eData[0].velCone[1] = PI_f * 0.5f;
   m_eData[0].sizes[0] = 0.1f;
   m_eData[0].sizes[1] = 0.3f;
   m_eData[0].colors[4] = 1.0f;
@@ -140,7 +139,6 @@ void Application::InitParticleSystem()
   m_eData[1].transform[0] = -0.5f;
   m_eData[1].transform[1] = 0.866f;
   m_eData[1].transform[2] = 0.0;
-  m_eData[1].velCone[1] = PI_f * 0.5f;
   m_eData[1].sizes[0] = 0.1f;
   m_eData[1].sizes[1] = 0.3f;
   m_eData[1].colors[4] = 0.0f;
@@ -156,7 +154,6 @@ void Application::InitParticleSystem()
   m_eData[2].transform[0] = -0.5;
   m_eData[2].transform[1] = -0.866f;
   m_eData[2].transform[2] = 0.0;
-  m_eData[2].velCone[1] = PI_f * 0.5f;
   m_eData[2].sizes[0] = 0.1f;
   m_eData[2].sizes[1] = 0.3f;
   m_eData[2].colors[4] = 0.0f;
@@ -286,11 +283,11 @@ void Application::UpdateParSysAttr()
         Dg::ParticleGenerator<float> * pVelGen = ptr->GetGenerator(data.velGenMethod);
         if (pVelGen)
         {
-          quat qz, qx;
+          quat qz, qy;
           Vqs vqs;
           qz.SetRotationZ(data.velCone[0]);
-          qx.SetRotationX(data.velCone[1]);
-          vqs.SetQ(qz * qx);
+          qy.SetRotationY(-Dg::PI_f / 2.0f + data.velCone[1]);
+          vqs.SetQ(qy * qz);
           pVelGen->SetTransformation(vqs);
         }
       }
