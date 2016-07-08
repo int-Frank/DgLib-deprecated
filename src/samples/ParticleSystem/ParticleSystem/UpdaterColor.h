@@ -19,17 +19,20 @@ public:
     return *this; 
   }
 
-  void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
-  void Update(Dg::ParticleData<Real> &, int, Real);
+  void UpdateNew(Dg::ParticleData<Real> & data, int start, Real dt) { implUpdate(data, start, dt); }
+  void Update(Dg::ParticleData<Real> & data, int start, Real dt) { implUpdate(data, start, dt); }
 
   UpdaterColor<Real> * Clone() const { return new UpdaterColor<Real>(*this); }
 
+private:
+  void implUpdate(Dg::ParticleData<Real> &, int, Real);
 };
 
+
 template<typename Real>
-void UpdaterColor<Real>::Update(Dg::ParticleData<Real> & a_data
-                              , int a_start
-                              , Real a_dt)
+void UpdaterColor<Real>::implUpdate(Dg::ParticleData<Real> & a_data
+                                  , int a_start
+                                  , Real a_dt)
 {
   Dg::Vector4<float> * pColors = a_data.GetColor();
   Dg::Vector4<float> * pStartColors = a_data.GetStartColor();

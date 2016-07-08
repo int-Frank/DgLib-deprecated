@@ -21,12 +21,64 @@ public:
     return *this; 
   }
 
-  void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
+  void UpdateNew(Dg::ParticleData<Real> &, int, Real);
   void Update(Dg::ParticleData<Real> &, int, Real);
 
   UpdaterEuler<Real> * Clone() const { return new UpdaterEuler<Real>(*this); }
 
 };
+
+
+template<typename Real>
+void UpdaterEuler<Real>::UpdateNew(Dg::ParticleData<Real> & a_data
+                                 , int a_start
+                                 , Real a_dt)
+{
+  Dg::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::Vector4<Real> * pVels = a_data.GetVelocity();
+  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Real * pForces = a_data.GetForce();
+  Real * ptimeSinceBirth = a_data.GetTimeSinceBirth();
+
+  if (ptimeSinceBirth == nullptr)
+  {
+    return;
+  }
+
+  int maxParCount = a_data.GetCountAlive();
+
+  if (pVels)
+  {
+    if (pAccels && pForces)
+    {
+      for (int i = a_start; i < maxParCount; ++i)
+      {
+        pVels[i] = (pVels[i] + pAccels[i] * ptimeSinceBirth[i]) * std::pow(pForces[i], a_dt);
+      }
+    }
+    else if (pAccels)
+    {
+      for (int i = a_start; i < maxParCount; ++i)
+      {
+        pVels[i] += (pAccels[i] * ptimeSinceBirth[i]);
+      }
+    }
+    else if (pForces)
+    {
+      for (int i = a_start; i < maxParCount; ++i)
+      {
+        pVels[i] *= std::pow(pForces[i], ptimeSinceBirth[i]);
+      }
+    }
+
+    for (int i = a_start; i < maxParCount; ++i)
+    {
+      pPos[i] += pVels[i] * ptimeSinceBirth[i];
+    }
+
+  }
+}
+
 
 template<typename Real>
 void UpdaterEuler<Real>::Update(Dg::ParticleData<Real> & a_data

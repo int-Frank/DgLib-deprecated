@@ -275,7 +275,7 @@ void Application::DoLogic()
     ImGui::PushItemWidth(sliderOffset);
     ImGui::ColorEdit4("Start color", m_eData[curEm].colors);
     ImGui::ColorEdit4("End color", &m_eData[curEm].colors[4]);
-    ImGui::SliderFloat("Rate", &m_eData[curEm].rate, 0.0f, 1000.0f, "%.2f par/s");
+    ImGui::SliderFloat("Rate", &m_eData[curEm].rate, 0.0f, 500.0f, "%.2f par/s");
     ImGui::SliderFloat("Velocity", &m_eData[curEm].velocity, 0.0f, 10.0f, "%.2f m/s");
     ImGui::SliderFloat("Life", &m_eData[curEm].life, 0.0f, 60.0f, "%.2f s");
     ImGui::SliderFloat("Force", &m_eData[curEm].force, -100.0f, 100.0f, "%.2f m/s/s");

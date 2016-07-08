@@ -19,12 +19,51 @@ public:
     return *this;
   }
 
-  void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
+  void UpdateNew(Dg::ParticleData<Real> &, int, Real);
   void Update(Dg::ParticleData<Real> &, int, Real);
 
   UpdaterLife<Real> * Clone() const { return new UpdaterLife<Real>(*this); }
 
 };
+
+template<typename Real>
+void UpdaterLife<Real>::UpdateNew(Dg::ParticleData<Real> & a_data
+                                , int a_start
+                                , Real a_dt)
+{
+  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Real * pLifes = a_data.GetLife();
+  Real * pLifeMaxes = a_data.GetLifeMax();
+  Real * pDLifes = a_data.GetDLife();
+  Real * ptimeSinceBirth = a_data.GetTimeSinceBirth();
+
+  if (ptimeSinceBirth == nullptr)
+  {
+    return;
+  }
+
+  int maxParCount = a_data.GetCountAlive();
+
+  if (pLifes && pLifeMaxes)
+  {
+    for (int i = maxParCount - 1; i >= a_start; --i)
+    {
+      pLifes[i] += ptimeSinceBirth[i];
+      if (pLifes[i] >= pLifeMaxes[i])
+      {
+        maxParCount = a_data.Kill(i);
+      }
+    }
+
+    if (pDLifes)
+    {
+      for (int i = a_start; i < maxParCount; ++i)
+      {
+        pDLifes[i] = pLifes[i] / pLifeMaxes[i];
+      }
+    }
+  }
+}
 
 template<typename Real>
 void UpdaterLife<Real>::Update(Dg::ParticleData<Real> & a_data
