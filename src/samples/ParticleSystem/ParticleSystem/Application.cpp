@@ -1,4 +1,4 @@
-/*!
+﻿/*!
 * @file Application.cpp
 *
 * @author Frank Hart
@@ -34,7 +34,7 @@ Application* Application::s_app(nullptr);
 typedef Dg::Matrix44<float> mat44;
 typedef Dg::Vector4<float>  vec4;
 
-double Application::s_dZoom;
+double Application::s_scrollOffset;
 
 bool Application::Init()
 {
@@ -44,9 +44,6 @@ bool Application::Init()
   {
     return false;
   }
-
-  m_camRotZ = 0.0;
-  m_camRotX = Dg::PI * 0.5;
 
   InitControls();
   InitParticleSystem();
@@ -120,11 +117,12 @@ bool Application::InitGL()
 
 void Application::InitControls()
 {
-  s_dZoom = 0.0;
+  s_scrollOffset = 0.0;
   m_mouseSpeed = 0.01;
+  m_camRotZ = 0.0;
+  m_camRotX = Dg::PI * 0.5;
   m_camZoom = 5.0;
   m_camZoomTarget = 5.0;
-  m_canRotate = false;
   glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentX);
   m_mousePrevX = m_mouseCurrentX;
   m_mousePrevY = m_mouseCurrentY;
@@ -156,11 +154,11 @@ void Application::HandleInput()
     }
 
     //Handle mouse zoom
-    m_camZoomTarget -= s_dZoom;
+    m_camZoomTarget -= s_scrollOffset;
     Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
   }
 
-  s_dZoom = 0.0;
+  s_scrollOffset = 0.0;
 }
 
 void Application::DoLogic()
@@ -169,7 +167,7 @@ void Application::DoLogic()
   {
     ImVec4 headingClr(1.0f, 0.0f, 1.0f, 1.0f);
     ImGui::Begin("Partice System");
-    ImGui::BeginChild("Emitter attributes", ImVec2(ImGui::GetWindowWidth() - 40.0f, 700.0f), true);
+    ImGui::Separator();
 
     static int curEm = 0;
     ImGui::RadioButton("Emitter 1", &curEm, 0); ImGui::SameLine();
@@ -190,14 +188,17 @@ void Application::DoLogic()
     ImGui::RadioButton("Box", &m_eData[curEm].posGenMethod, E_GenPosBox); ImGui::SameLine();
     ImGui::RadioButton("Sphere", &m_eData[curEm].posGenMethod, E_GenPosSphere);
 
-    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.27f);
+    float mul3Slider = 0.31f;
+
     if (m_eData[curEm].posGenMethod == E_GenPosBox)
     {
       ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
       ImGui::TextColored(headingClr, "Define box geometry");
-      ImGui::SliderFloat("L", &m_eData[curEm].boxDim[0], 0.0f, 10.0f, "%.1f"); ImGui::SameLine();
-      ImGui::SliderFloat("W", &m_eData[curEm].boxDim[1], 0.0f, 10.0f, "%.1f"); ImGui::SameLine();
-      ImGui::SliderFloat("H", &m_eData[curEm].boxDim[2], 0.0f, 10.0f, "%.1f");
+      ImGui::PushItemWidth(ImGui::GetWindowWidth() * mul3Slider);
+      ImGui::SliderFloat("##L", &m_eData[curEm].boxDim[0], 0.0f, 10.0f, "Length = %.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("##W", &m_eData[curEm].boxDim[1], 0.0f, 10.0f, "Width = %.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("##H", &m_eData[curEm].boxDim[2], 0.0f, 10.0f, "Height = %.2f");
+      ImGui::PopItemWidth();
     }
 
     if (m_eData[curEm].posGenMethod == E_GenPosSphere)
@@ -209,15 +210,19 @@ void Application::DoLogic()
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Place Emitter");
-    ImGui::SliderFloat("X", &m_eData[curEm].transform[0], -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
-    ImGui::SliderFloat("Y", &m_eData[curEm].transform[1], -5.0f, 5.0f, "%.1f"); ImGui::SameLine();
-    ImGui::SliderFloat("Z", &m_eData[curEm].transform[2], -5.0f, 5.0f, "%.1f");
-    
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() * mul3Slider);
+    ImGui::SliderFloat("##X", &m_eData[curEm].transform[0], -5.0f, 5.0f, "x = %.1f"); ImGui::SameLine();
+    ImGui::SliderFloat("##Y", &m_eData[curEm].transform[1], -5.0f, 5.0f, "y = %.1f"); ImGui::SameLine();
+    ImGui::SliderFloat("##Z", &m_eData[curEm].transform[2], -5.0f, 5.0f, "z = %.1f");
+    ImGui::PopItemWidth();
+
     if (m_eData[curEm].posGenMethod == E_GenPosBox)
-    { 
-      ImGui::SliderFloat("rx", &m_eData[curEm].transform[3], 0.0f, Dg::PI_f * 2.0f, "%.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("ry", &m_eData[curEm].transform[4], 0.0f, Dg::PI_f * 2.0f, "%.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("rz", &m_eData[curEm].transform[5], 0.0f, Dg::PI_f * 2.0f, "%.2f");
+    {
+      ImGui::PushItemWidth(ImGui::GetWindowWidth() * mul3Slider);
+      ImGui::SliderFloat("##rx", &m_eData[curEm].transform[3], 0.0f, Dg::PI_f * 2.0f, "rx = %.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("##ry", &m_eData[curEm].transform[4], 0.0f, Dg::PI_f * 2.0f, "ry = %.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("##rz", &m_eData[curEm].transform[5], 0.0f, Dg::PI_f * 2.0f, "rz = %.2f");
+      ImGui::PopItemWidth();
     }
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
@@ -227,31 +232,39 @@ void Application::DoLogic()
     
     if (m_eData[curEm].velGenMethod == E_GenVelCone)
     {
-      ImGui::SliderFloat("rz", &m_eData[curEm].velRot[0], 0.0f, Dg::PI_f * 2.0f, "%.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("rx", &m_eData[curEm].velRot[1], 0.0f, Dg::PI_f, "%.2f");
-      ImGui::SliderFloat("Spread", &m_eData[curEm].spread, 0.0f, Dg::PI_f, "%.2f");
+      ImGui::PushItemWidth(ImGui::GetWindowWidth() * mul3Slider);
+      ImGui::SliderFloat("##rz", &m_eData[curEm].velRot[0], 0.0f, Dg::PI_f * 2.0f, "rx = %.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("##rx", &m_eData[curEm].velRot[1], 0.0f, Dg::PI_f, "rz = %.2f"); ImGui::SameLine();
+      ImGui::SliderFloat("##Angle", &m_eData[curEm].spread, 0.0f, Dg::PI_f, "angle = %.2f");
+      ImGui::PopItemWidth();
     }
 
-    ImGui::PopItemWidth();
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Other attributes");
+    ImGui::PushItemWidth(-90);
     ImGui::ColorEdit4("Start color", m_eData[curEm].colors);
     ImGui::ColorEdit4("End color", &m_eData[curEm].colors[4]);
-    ImGui::SliderFloat("Rate (par/s)", &m_eData[curEm].rate, 0.0f, 200.0f, "%.2f");
-    ImGui::SliderFloat("Velocity (m/s)", &m_eData[curEm].velocity, 0.0f, 10.0f, "%.2f");
-    ImGui::SliderFloat("Life (s)", &m_eData[curEm].life, 0.0f, 60.0f, "%.2f");
-    ImGui::SliderFloat("Force (m/s/s)", &m_eData[curEm].force, -100.0f, 100.0f, "%.2f");
-    ImGui::SliderFloat("Start size (m)", m_eData[curEm].sizes, 0.0f, 1.0f, "%.2f");
-    ImGui::SliderFloat("End size (m)", &m_eData[curEm].sizes[1], 0.0f, 1.0f, "%.2f");
-
-    ImGui::EndChild();
+    ImGui::SliderFloat("Rate", &m_eData[curEm].rate, 0.0f, 200.0f, "%.2f par/s");
+    ImGui::SliderFloat("Velocity", &m_eData[curEm].velocity, 0.0f, 10.0f, "%.2f m/s");
+    ImGui::SliderFloat("Life", &m_eData[curEm].life, 0.0f, 60.0f, "%.2f s");
+    ImGui::SliderFloat("Force", &m_eData[curEm].force, -100.0f, 100.0f, "%.2f m/s/s");
+    ImGui::SliderFloat("Start size", m_eData[curEm].sizes, 0.0f, 1.0f, "%.2f m");
+    ImGui::SliderFloat("End size", &m_eData[curEm].sizes[1], 0.0f, 1.0f, "%.2f m");
+    ImGui::PopItemWidth();
     ImGui::End();
   }
 
   //Update particle system
   UpdateParSysAttr();
   m_particleSystem.Update(m_dt);
+
+  //Add current particles
+  {
+    ImGui::Begin("Stats");
+    ImGui::Text("Live Particles: %i", m_particleSystem.GetParticleData()->GetCountAlive());
+    ImGui::End();
+  }
 
   //Zoom the camera
   if (!Dg::IsZero(m_camZoomTarget - m_camZoom))
@@ -296,7 +309,7 @@ void Application::Render()
 
 void AppOnMouseScroll(double yOffset)
 {
-  Application::s_dZoom += yOffset;
+  Application::s_scrollOffset += yOffset;
 }
 
 void Application::GetConfiguration()

@@ -61,12 +61,6 @@ void Renderer::Update(Dg::ParticleData<float> * a_parData)
   m_nCurrentParticles = a_parData->GetCountAlive();
   int countMax = a_parData->GetCountMax();
 
-  {
-    ImGui::Begin("Stats");
-    ImGui::Text("Live Particles: %i", m_nCurrentParticles);
-    ImGui::End();
-  }
-  
   float * ptr = (a_parData->GetPosition()[0].GetData());
   glBufferSubData(GL_ARRAY_BUFFER, 0, m_nCurrentParticles * 4 * sizeof(float), ptr);
 

@@ -119,7 +119,7 @@ namespace Dg
       invDist = static_cast<Real>(1.0) / dist;
     }
 
-    Real accelMag = m_strength; //AttractorForce::Constant
+    Real accelMag(m_strength); //AttractorForce::Constant
     if (Force == AttractorForce::Linear)
     {
       accelMag *= invDist;

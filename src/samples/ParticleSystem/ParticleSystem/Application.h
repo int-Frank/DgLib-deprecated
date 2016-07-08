@@ -99,8 +99,7 @@ class Application
 public:
 
   Application() : m_window(nullptr)
-                , m_particleSystem(4096)
-                , m_canRotate(false){}
+                , m_particleSystem(4096){}
   ~Application() {}
 
   Application(const Application&);
@@ -108,7 +107,7 @@ public:
 
   void Run(Application*);
 
-  static double s_dZoom;
+  static double s_scrollOffset;
 
 public:
   struct APPINFO
@@ -153,7 +152,6 @@ private:
 
   float               m_dt;
 
-  bool                m_canRotate;
   double              m_mouseSpeed;
   double              m_mouseCurrentX;
   double              m_mouseCurrentY;

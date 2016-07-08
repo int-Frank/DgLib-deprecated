@@ -56,22 +56,4 @@ void AttractorPoint<Real, Force>::Update(Dg::ParticleData<Real> & a_data
     }
   }
 }
-
-
-//template<typename Real, unsigned Force>
-//void AttractorPoint<Real, Force>::Update(Dg::ParticleData<Real> & a_data
-//                                       , int a_start)
-//{
-//  Dg::Vector4<Real> * pPos = a_data.GetPosition();
-//  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
-//  Real *              pTimeSiceBirth = a_data.GetTimeSinceBirth();
-//
-//  if (pPos && pAccels && pTimeSiceBirth)
-//  {
-//    for (int i = a_start; i < a_data.GetCountAlive(); ++i)
-//    {
-//      pAccels[i] += (_GetAccelBetweenPoints(pPos[i], m_point) * pTimeSiceBirth[i]);
-//    }
-//  }
-//}
 #endif
