@@ -125,9 +125,9 @@ void Application::InitControls()
   m_camZoom = 5.0;
   m_camZoomTarget = 5.0;
   m_canRotate = false;
-  glfwGetCursorPos(m_window, &m_mouseCurentX, &m_mouseCurentX);
-  m_mousePrevX = m_mouseCurentX;
-  m_mousePrevY = m_mouseCurentY;
+  glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentX);
+  m_mousePrevX = m_mouseCurrentX;
+  m_mousePrevY = m_mouseCurrentY;
 }
 
 
@@ -149,14 +149,15 @@ void Application::HandleInput()
     m_canRotate = false;
   }
 
-  m_mousePrevX = m_mouseCurentX;
-  m_mousePrevY = m_mouseCurentY; 
-  glfwGetCursorPos(m_window, &m_mouseCurentX, &m_mouseCurentY);
+  m_mousePrevX = m_mouseCurrentX;
+  m_mousePrevY = m_mouseCurrentY; 
+  glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentY);
 
 }
 
 void Application::DoLogic()
 {
+  //Set up the UI
   {
     ImVec4 headingClr(1.0f, 0.0f, 1.0f, 1.0f);
     ImGui::Begin("Partice System");
@@ -172,8 +173,8 @@ void Application::DoLogic()
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Emission method");
-    ImGui::RadioButton("Linear", &m_eData[curEm].emitterType, 0); ImGui::SameLine();
-    ImGui::RadioButton("Poisson", &m_eData[curEm].emitterType, 1);
+    ImGui::RadioButton("Linear", &m_eData[curEm].emitterType, E_Emitter_Linear); ImGui::SameLine();
+    ImGui::RadioButton("Poisson", &m_eData[curEm].emitterType, E_Emitter_Poisson);
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Define emitter shape");
@@ -246,10 +247,10 @@ void Application::DoLogic()
   //Camera
   if (m_canRotate)
   {
-    m_camRotZ += (m_mouseCurentX - m_mousePrevX) * m_mouseSpeed;
+    m_camRotZ += (m_mouseCurrentX - m_mousePrevX) * m_mouseSpeed;
     Dg::WrapAngle(m_camRotZ);
 
-    m_camRotX += (m_mouseCurentY - m_mousePrevY) * m_mouseSpeed;
+    m_camRotX += (m_mouseCurrentY - m_mousePrevY) * m_mouseSpeed;
     Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
   }
 
@@ -260,7 +261,6 @@ void Application::DoLogic()
   if (!Dg::IsZero(m_camZoomTarget - m_camZoom))
   {
     double dist = m_camZoomTarget - m_camZoom;
-    double camSpd = 3.0 * dist;
     double vec = (dist < 0.0) ? -1.0 : 1.0;
     double mag = vec * dist;
     double vel = 18.0 * pow(mag, 0.3);
@@ -297,7 +297,6 @@ void Application::Render()
   m_renderer.Update(m_particleSystem.GetParticleData());
   m_renderer.Render(mv_matrix, proj_matrix, parScale);
 }
-
 
 void AppOnMouseScroll(double yOffset)
 {

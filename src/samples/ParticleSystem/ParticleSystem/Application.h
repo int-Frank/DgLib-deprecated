@@ -149,17 +149,14 @@ private:
   GLFWwindow*         m_window;
   GLuint              m_renderingProgram;
   GLuint              m_vao;
-  GLuint              m_posBuffer;
-  GLuint              m_indexBuffer;
+  Renderer            m_renderer;
 
   float               m_dt;
 
-  Renderer            m_renderer;
-
   bool                m_canRotate;
   double              m_mouseSpeed;
-  double              m_mouseCurentX;
-  double              m_mouseCurentY;
+  double              m_mouseCurrentX;
+  double              m_mouseCurrentY;
   double              m_mousePrevX;
   double              m_mousePrevY;
 

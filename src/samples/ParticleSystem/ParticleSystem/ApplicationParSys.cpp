@@ -108,7 +108,9 @@ static EmitterType CreateEmitter(EmitterData & a_data)
   genSize.SetSizes(a_data.sizes[0], a_data.sizes[1]);
   emitter.AddGenerator(E_GenSize, genSize);
 
+  a_data.emitterType = E_Emitter_Linear;
   emitter.SetRate(a_data.rate);
+
 
   return emitter;
 }
@@ -150,7 +152,7 @@ void Application::InitParticleSystem()
   //--------------------------------------------------------------------
   //  Set emitter 3 data
   //--------------------------------------------------------------------
-  m_eData[2].ID = E_Emitter_2;
+  m_eData[2].ID = E_Emitter_3;
   m_eData[2].transform[0] = -0.5;
   m_eData[2].transform[1] = -0.866f;
   m_eData[2].transform[2] = 0.0;
