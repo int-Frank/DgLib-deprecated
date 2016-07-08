@@ -139,20 +139,28 @@ void Application::Shutdown()
 
 void Application::HandleInput()
 {
-  //Mouse
-  if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-  {
-    m_canRotate = true;
-  }
-  else if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-  {
-    m_canRotate = false;
-  }
-
   m_mousePrevX = m_mouseCurrentX;
-  m_mousePrevY = m_mouseCurrentY; 
+  m_mousePrevY = m_mouseCurrentY;
   glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentY);
 
+  //Mouse
+  if (!ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard)
+  {
+    if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+      //Handle mouse rotation
+      m_camRotZ += (m_mouseCurrentX - m_mousePrevX) * m_mouseSpeed;
+      Dg::WrapAngle(m_camRotZ);
+      m_camRotX += (m_mouseCurrentY - m_mousePrevY) * m_mouseSpeed;
+      Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
+    }
+
+    //Handle mouse zoom
+    m_camZoomTarget -= s_dZoom;
+    Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
+  }
+
+  s_dZoom = 0.0;
 }
 
 void Application::DoLogic()
@@ -241,23 +249,11 @@ void Application::DoLogic()
     ImGui::End();
   }
 
+  //Update particle system
   UpdateParSysAttr();
   m_particleSystem.Update(m_dt);
 
-  //Camera
-  if (m_canRotate)
-  {
-    m_camRotZ += (m_mouseCurrentX - m_mousePrevX) * m_mouseSpeed;
-    Dg::WrapAngle(m_camRotZ);
-
-    m_camRotX += (m_mouseCurrentY - m_mousePrevY) * m_mouseSpeed;
-    Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
-  }
-
-  m_camZoomTarget -= s_dZoom;
-  Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
-  s_dZoom = 0.0;
-
+  //Zoom the camera
   if (!Dg::IsZero(m_camZoomTarget - m_camZoom))
   {
     double dist = m_camZoomTarget - m_camZoom;
@@ -399,13 +395,12 @@ void Application::Run(Application* the_app)
   double lastTick = glfwGetTime();
   m_particleSystem.StartAllEmitters();
 
-
   do
   {
-
 	  glfwPollEvents();
 	  ImGui_ImplGlfwGL3_NewFrame();
 
+    //Main window
 	  {
       ImGui::Begin("Partice System");
       if (ImGui::Button("Blending")) UI::showAlphaBlendingWindow ^= 1; ImGui::SameLine();
@@ -414,6 +409,7 @@ void Application::Run(Application* the_app)
       ImGui::End();
     }
 
+    //FPS
     {
       ImGui::Begin("Stats");
       ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
