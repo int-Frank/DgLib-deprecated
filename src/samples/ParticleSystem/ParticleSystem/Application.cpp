@@ -170,6 +170,8 @@ void Application::DoLogic()
     ImGui::Separator();
 
     static int curEm = 0;
+    float sliderOffset = -90.0f;
+
     ImGui::RadioButton("Emitter 1", &curEm, 0); ImGui::SameLine();
     ImGui::RadioButton("Emitter 2", &curEm, 1); ImGui::SameLine();
     ImGui::RadioButton("Emitter 3", &curEm, 2);
@@ -188,16 +190,12 @@ void Application::DoLogic()
     ImGui::RadioButton("Box", &m_eData[curEm].posGenMethod, E_GenPosBox); ImGui::SameLine();
     ImGui::RadioButton("Sphere", &m_eData[curEm].posGenMethod, E_GenPosSphere);
 
-    float mul3Slider = 0.31f;
-
     if (m_eData[curEm].posGenMethod == E_GenPosBox)
     {
       ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
       ImGui::TextColored(headingClr, "Define box geometry");
-      ImGui::PushItemWidth(ImGui::GetWindowWidth() * mul3Slider);
-      ImGui::SliderFloat("##L", &m_eData[curEm].boxDim[0], 0.0f, 10.0f, "Length = %.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("##W", &m_eData[curEm].boxDim[1], 0.0f, 10.0f, "Width = %.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("##H", &m_eData[curEm].boxDim[2], 0.0f, 10.0f, "Height = %.2f");
+      ImGui::PushItemWidth(sliderOffset);
+      ImGui::SliderFloat3("Dimensions", &m_eData[curEm].boxDim[0], 0.0f, 10.0f, "%.2f");
       ImGui::PopItemWidth();
     }
 
@@ -205,23 +203,40 @@ void Application::DoLogic()
     {
       ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
       ImGui::TextColored(headingClr, "Define sphere geometry");
+      ImGui::PushItemWidth(sliderOffset);
       ImGui::SliderFloat("Radius", &m_eData[curEm].sphereRadius, 0.0f, 10.0f, "%.1f");
+      ImGui::PopItemWidth();
     }
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Place Emitter");
-    ImGui::PushItemWidth(ImGui::GetWindowWidth() * mul3Slider);
-    ImGui::SliderFloat("##X", &m_eData[curEm].transform[0], -5.0f, 5.0f, "x = %.1f"); ImGui::SameLine();
-    ImGui::SliderFloat("##Y", &m_eData[curEm].transform[1], -5.0f, 5.0f, "y = %.1f"); ImGui::SameLine();
-    ImGui::SliderFloat("##Z", &m_eData[curEm].transform[2], -5.0f, 5.0f, "z = %.1f");
+    
+    //ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
+    //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
+    //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+    //ImGui::Button("Drag Me", ImVec2(100.0f, 100.0f));
+    //ImGui::PopStyleColor(3);
+    //if (ImGui::IsItemActive())
+    //{
+    //  // Draw a line between the button and the mouse cursor
+    //  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    //  draw_list->PushClipRectFullScreen();
+    //  draw_list->AddLine(ImGui::CalcItemRectClosestPoint(ImGui::GetIO().MousePos, true, -2.0f), ImGui::GetIO().MousePos, ImColor(ImGui::GetStyle().Colors[ImGuiCol_Button]), 4.0f);
+    //  draw_list->PopClipRect();
+    //  ImVec2 value_raw = ImGui::GetMouseDragDelta(0, 0.0f);
+    //  ImVec2 value_with_lock_threshold = ImGui::GetMouseDragDelta(0);
+    //  ImVec2 mouse_delta = ImGui::GetIO().MouseDelta;
+    //  ImGui::SameLine(); ImGui::Text("Raw (%.1f, %.1f), WithLockThresold (%.1f, %.1f), MouseDelta (%.1f, %.1f)", value_raw.x, value_raw.y, value_with_lock_threshold.x, value_with_lock_threshold.y, mouse_delta.x, mouse_delta.y);
+    //}
+    
+    ImGui::PushItemWidth(sliderOffset);
+    ImGui::SliderFloat3("Position", &m_eData[curEm].transform[0], -10.0f, 10.0f, "%.2f");
     ImGui::PopItemWidth();
 
     if (m_eData[curEm].posGenMethod == E_GenPosBox)
     {
-      ImGui::PushItemWidth(ImGui::GetWindowWidth() * mul3Slider);
-      ImGui::SliderFloat("##rx", &m_eData[curEm].transform[3], 0.0f, Dg::PI_f * 2.0f, "rx = %.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("##ry", &m_eData[curEm].transform[4], 0.0f, Dg::PI_f * 2.0f, "ry = %.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("##rz", &m_eData[curEm].transform[5], 0.0f, Dg::PI_f * 2.0f, "rz = %.2f");
+      ImGui::PushItemWidth(sliderOffset);
+      ImGui::SliderFloat3("Rotation", &m_eData[curEm].transform[3], 0.0f, Dg::PI_f * 2.0f, "%.2f");
       ImGui::PopItemWidth();
     }
 
@@ -232,20 +247,18 @@ void Application::DoLogic()
     
     if (m_eData[curEm].velGenMethod == E_GenVelCone)
     {
-      ImGui::PushItemWidth(ImGui::GetWindowWidth() * mul3Slider);
-      ImGui::SliderFloat("##rz", &m_eData[curEm].velRot[0], 0.0f, Dg::PI_f * 2.0f, "rx = %.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("##rx", &m_eData[curEm].velRot[1], 0.0f, Dg::PI_f, "rz = %.2f"); ImGui::SameLine();
-      ImGui::SliderFloat("##Angle", &m_eData[curEm].spread, 0.0f, Dg::PI_f, "angle = %.2f");
+      ImGui::PushItemWidth(sliderOffset);
+      ImGui::SliderFloat3("rz, rx, angle", &m_eData[curEm].velCone[0], 0.0f, Dg::PI_f * 2.0f, "%.2f");
       ImGui::PopItemWidth();
     }
 
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Other attributes");
-    ImGui::PushItemWidth(-90);
+    ImGui::PushItemWidth(sliderOffset);
     ImGui::ColorEdit4("Start color", m_eData[curEm].colors);
     ImGui::ColorEdit4("End color", &m_eData[curEm].colors[4]);
-    ImGui::SliderFloat("Rate", &m_eData[curEm].rate, 0.0f, 200.0f, "%.2f par/s");
+    ImGui::SliderFloat("Rate", &m_eData[curEm].rate, 0.0f, 1000.0f, "%.2f par/s");
     ImGui::SliderFloat("Velocity", &m_eData[curEm].velocity, 0.0f, 10.0f, "%.2f m/s");
     ImGui::SliderFloat("Life", &m_eData[curEm].life, 0.0f, 60.0f, "%.2f s");
     ImGui::SliderFloat("Force", &m_eData[curEm].force, -100.0f, 100.0f, "%.2f m/s/s");

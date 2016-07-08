@@ -81,11 +81,11 @@ static EmitterType CreateEmitter(EmitterData & a_data)
   emitter.AddGenerator(E_GenPosPoint, genPos);
 
   GenVelCone<float>  genVel;
-  qz.SetRotationZ(a_data.velRot[0]);
-  qx.SetRotationX(a_data.velRot[1]);
+  qz.SetRotationZ(a_data.velCone[0]);
+  qx.SetRotationX(a_data.velCone[1]);
   vqs.SetQ(qz * qx);
   genVel.SetTransformation(vqs);
-  genVel.SetAngle(a_data.spread);
+  genVel.SetAngle(a_data.velCone[2]);
   a_data.velGenMethod = E_GenVelCone;
   emitter.AddGenerator(E_GenVelCone, genVel);
 
@@ -124,7 +124,7 @@ void Application::InitParticleSystem()
   m_eData[0].transform[0] = 1.0;
   m_eData[0].transform[1] = 0.0;
   m_eData[0].transform[2] = 0.0;
-  m_eData[0].velRot[1] = PI_f * 0.5f;
+  m_eData[0].velCone[1] = PI_f * 0.5f;
   m_eData[0].sizes[0] = 0.1f;
   m_eData[0].sizes[1] = 0.3f;
   m_eData[0].colors[4] = 1.0f;
@@ -140,7 +140,7 @@ void Application::InitParticleSystem()
   m_eData[1].transform[0] = -0.5f;
   m_eData[1].transform[1] = 0.866f;
   m_eData[1].transform[2] = 0.0;
-  m_eData[1].velRot[1] = PI_f * 0.5f;
+  m_eData[1].velCone[1] = PI_f * 0.5f;
   m_eData[1].sizes[0] = 0.1f;
   m_eData[1].sizes[1] = 0.3f;
   m_eData[1].colors[4] = 0.0f;
@@ -156,7 +156,7 @@ void Application::InitParticleSystem()
   m_eData[2].transform[0] = -0.5;
   m_eData[2].transform[1] = -0.866f;
   m_eData[2].transform[2] = 0.0;
-  m_eData[2].velRot[1] = PI_f * 0.5f;
+  m_eData[2].velCone[1] = PI_f * 0.5f;
   m_eData[2].sizes[0] = 0.1f;
   m_eData[2].sizes[1] = 0.3f;
   m_eData[2].colors[4] = 0.0f;
@@ -253,17 +253,17 @@ void Application::UpdateParSysAttr()
       memcpy(dataPrev.transform, data.transform, sizeof(float) * 7);
     }
 
-    if (data.spread != dataPrev.spread)
+    if (data.velCone[2] != dataPrev.velCone[2])
     {
       if (data.velGenMethod == E_GenVelCone)
       {
         GenVelCone<float> * pVelGen = (GenVelCone<float> *)ptr->GetGenerator(data.velGenMethod);
         if (pVelGen)
         {
-          pVelGen->SetAngle(data.spread);
+          pVelGen->SetAngle(data.velCone[2]);
         }
       }
-      dataPrev.spread = data.spread;
+      dataPrev.velCone[2] = data.velCone[2];
     }
 
     if (memcmp(data.boxDim, dataPrev.boxDim, sizeof(float) * 3) != 0)
@@ -279,7 +279,7 @@ void Application::UpdateParSysAttr()
       dataPrev.velGenMethod = data.velGenMethod;
     }
 
-    if (memcmp(data.velRot, dataPrev.velRot, sizeof(float) * 2) != 0)
+    if (memcmp(data.velCone, dataPrev.velCone, sizeof(float) * 2) != 0)
     {
       if (data.velGenMethod == E_GenVelCone)
       {
@@ -288,13 +288,13 @@ void Application::UpdateParSysAttr()
         {
           quat qz, qx;
           Vqs vqs;
-          qz.SetRotationZ(data.velRot[0]);
-          qx.SetRotationX(data.velRot[1]);
+          qz.SetRotationZ(data.velCone[0]);
+          qx.SetRotationX(data.velCone[1]);
           vqs.SetQ(qz * qx);
           pVelGen->SetTransformation(vqs);
         }
       }
-      memcpy(dataPrev.velRot, data.velRot, sizeof(float) * 2);
+      memcpy(dataPrev.velCone, data.velCone, sizeof(float) * 2);
     }
 
     if (data.sphereRadius != dataPrev.sphereRadius)

@@ -64,9 +64,8 @@ public:
     , posGenMethod(E_GenPosPoint)
     , velGenMethod(E_GenVelCone)
     , transform{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}
-    , spread(Dg::PI_f / 8.0f)
     , boxDim{0.5f, 0.5f, 0.5f}
-    , velRot{0.0f, 0.0f}
+    , velCone{0.0f, 0.0f, Dg::PI_f / 8.0f }
     , velocity(1.0f)
     , sphereRadius(1.0f)
     , colors{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f}
@@ -81,10 +80,9 @@ public:
   bool on;               
   int posGenMethod; // point, box, sphere
   int velGenMethod; // direction, repel from center     
-  float transform[7]; // [x, y, z, rx, ry, rz, scale]          
-  float spread;          
+  float transform[7]; // [x, y, z, rx, ry, rz, scale]         
   float boxDim[3];       
-  float velRot[2]; // for direction velGenMethod      
+  float velCone[3]; // [rz, rx, angle]    
   float velocity;        
   float sphereRadius;    
   float colors[8]; //[sr, sg, sb, sa, er, eg, eb, ea]
@@ -99,7 +97,7 @@ class Application
 public:
 
   Application() : m_window(nullptr)
-                , m_particleSystem(4096){}
+                , m_particleSystem(65536){}
   ~Application() {}
 
   Application(const Application&);
