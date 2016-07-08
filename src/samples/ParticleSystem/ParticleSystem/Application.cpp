@@ -297,7 +297,7 @@ void Application::DoLogic()
   }
 
   //Zoom the camera
-  if (!Dg::IsZero(m_camZoomTarget - m_camZoom))
+  if (abs(m_camZoomTarget - m_camZoom) > 0.5)
   {
     double dist = m_camZoomTarget - m_camZoom;
     double vec = (dist < 0.0) ? -1.0 : 1.0;
