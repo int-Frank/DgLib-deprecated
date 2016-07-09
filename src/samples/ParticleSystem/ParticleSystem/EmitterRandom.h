@@ -84,7 +84,7 @@ int EmitterRandom<Real>::EmitParticles(Dg::ParticleData<Real> & a_data, Real a_d
     
     //This function gives us a Gaussian-like distribution of samples, ranging from
     //0 to 2*m_mean.
-    Real timeToNext = m_mean * (acos(rnd - static_cast<Real>(1.0)) / static_cast<Real>(Dg::PI_d * 0.5));
+    Real timeToNext = m_mean * acos(rnd - static_cast<Real>(1.0)) / static_cast<Real>(Dg::PI_d * 0.5);
     m_nextEmitTime += timeToNext;
   }
   m_nextEmitTime -= a_dt;

@@ -297,7 +297,7 @@ void Application::DoLogic()
   }
 
   //Zoom the camera
-  if (abs(m_camZoomTarget - m_camZoom) > 0.5)
+  if (abs(m_camZoomTarget - m_camZoom) > 0.2)
   {
     double dist = m_camZoomTarget - m_camZoom;
     double vec = (dist < 0.0) ? -1.0 : 1.0;
@@ -306,7 +306,6 @@ void Application::DoLogic()
     double dx = vec * vel * m_dt;
     m_camZoom += dx;
   }
-  //m_camZoomTarget = m_camZoom;
 }
 
 void Application::Render()
