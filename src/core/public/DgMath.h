@@ -41,7 +41,7 @@ namespace Dg
 
   float const PI_f            = 3.141592653589793238462643383279f;
   float const INVPI_f         = 0.31830988618379067153776752674503f;
-  float const EPSILON_f       = 1.0e-4f;
+  float const EPSILON_f       = 1.0e-5f;
   float const SQRT2_f         = 1.4142135623730950488016887242097f;
   float const INVSQRT2_f      = 0.70710678118654752440084436210485f;
 

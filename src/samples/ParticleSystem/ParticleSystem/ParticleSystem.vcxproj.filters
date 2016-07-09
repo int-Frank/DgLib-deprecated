@@ -95,9 +95,6 @@
     <ClInclude Include="EmitterLinear.h">
       <Filter>Emitters</Filter>
     </ClInclude>
-    <ClInclude Include="EmitterPoisson.h">
-      <Filter>Emitters</Filter>
-    </ClInclude>
     <ClInclude Include="GenVelCone.h">
       <Filter>Generators</Filter>
     </ClInclude>
@@ -145,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="UI.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EmitterRandom.h">
+      <Filter>Emitters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

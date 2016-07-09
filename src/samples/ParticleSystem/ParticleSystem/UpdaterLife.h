@@ -51,10 +51,11 @@ void UpdaterLife<Real>::UpdateNew(Dg::ParticleData<Real> & a_data
       pLifes[i] += ptimeSinceBirth[i];
       if (pLifes[i] >= pLifeMaxes[i])
       {
-        maxParCount = a_data.Kill(i);
+        a_data.Kill(i);
       }
     }
 
+    maxParCount = a_data.GetCountAlive();
     if (pDLifes)
     {
       for (int i = a_start; i < maxParCount; ++i)

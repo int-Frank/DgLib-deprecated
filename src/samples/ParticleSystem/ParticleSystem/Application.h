@@ -34,7 +34,7 @@ enum
 
   //Emitter types
   E_Emitter_Linear,
-  E_Emitter_Poisson,
+  E_Emitter_Random,
 
   //Emitters
   E_Emitter_1,

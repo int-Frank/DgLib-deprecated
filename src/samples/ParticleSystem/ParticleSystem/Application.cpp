@@ -183,7 +183,7 @@ void Application::DoLogic()
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Emission method");
     ImGui::RadioButton("Linear", &m_eData[curEm].emitterType, E_Emitter_Linear); ImGui::SameLine();
-    ImGui::RadioButton("Poisson", &m_eData[curEm].emitterType, E_Emitter_Poisson);
+    ImGui::RadioButton("Random", &m_eData[curEm].emitterType, E_Emitter_Random);
 
     ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
     ImGui::TextColored(headingClr, "Define emitter shape");

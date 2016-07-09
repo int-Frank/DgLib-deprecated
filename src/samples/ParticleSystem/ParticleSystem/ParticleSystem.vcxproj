@@ -145,7 +145,7 @@
     <ClInclude Include="AttractorPoint.h" />
     <ClInclude Include="AttractorPointPulse.h" />
     <ClInclude Include="EmitterLinear.h" />
-    <ClInclude Include="EmitterPoisson.h" />
+    <ClInclude Include="EmitterRandom.h" />
     <ClInclude Include="GenColor.h" />
     <ClInclude Include="GenLife.h" />
     <ClInclude Include="GenPosPoint.h" />

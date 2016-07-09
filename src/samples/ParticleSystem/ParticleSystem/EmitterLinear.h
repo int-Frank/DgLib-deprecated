@@ -21,6 +21,11 @@ public:
       m_rate(a_other.m_rate),
       m_residual(a_other.m_residual) {}
 
+  EmitterLinear(Dg::ParticleEmitter<Real> const & a_other) 
+    : Dg::ParticleEmitter<Real>(a_other),
+      m_rate(static_cast<Real>(1.0)),
+      m_residual(static_cast<Real>(0.0)) {}
+
   EmitterLinear<Real> & operator=(EmitterLinear<Real> const & a_other)
   {
     Dg::ParticleEmitter<Real>::operator=(a_other);

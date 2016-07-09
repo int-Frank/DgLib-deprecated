@@ -9,7 +9,7 @@
 #include "AttractorPlaneRepel.h"
 #include "AttractorGlobal.h"
 #include "EmitterLinear.h"
-#include "EmitterPoisson.h"
+#include "EmitterRandom.h"
 #include "GenPosPoint.h"
 #include "GenVelCone.h"
 #include "GenColor.h"
@@ -207,8 +207,28 @@ void Application::UpdateParSysAttr()
 
     if (data.emitterType != dataPrev.emitterType)
     {
-      //TODO Do work...
-      //Here we have to remove the entire emitter and build a new one.
+      Dg::ParticleEmitter<float> * pOldEmitter = m_particleSystem.GetEmitter(dataPrev.ID);
+      if (pOldEmitter)
+      {
+        ParticleEmitter<float> * pNewEmitter(nullptr);
+        switch (data.emitterType)
+        {
+        case E_Emitter_Linear:
+        {
+          pNewEmitter = new EmitterLinear<float>(*pOldEmitter);
+          break;
+        }
+        case E_Emitter_Random:
+        {
+          pNewEmitter = new EmitterRandom<float>(*pOldEmitter);
+          break;
+        }
+        }
+        pNewEmitter->SetRate(data.rate);
+        m_particleSystem.RemoveEmitter(dataPrev.ID);
+        m_particleSystem.AddEmitter(data.ID, *pNewEmitter);
+        delete pNewEmitter;
+      }
       dataPrev.emitterType = data.emitterType;
     }
 

@@ -188,11 +188,12 @@ namespace Dg
 
     //Update all newly emitted particles. Since new particles are added to the end of the 
     //particle data, we simply update the last set of new particles.
+    int startIndex = m_particleData.GetCountAlive() - nNewParticles;
     if (nNewParticles)
     {
       for (int u = 0; u < m_updaters.size(); ++u)
       {
-        m_updaters[u]->UpdateNew(m_particleData, m_particleData.GetCountAlive() - nNewParticles, a_dt);
+        m_updaters[u]->UpdateNew(m_particleData, startIndex, a_dt);
       }
     }
   }

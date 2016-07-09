@@ -130,7 +130,7 @@ namespace Dg
 	template<class Real>
 	Real RNG::GetNormal(Real mean, Real std)
 	{
-		if (standardDeviation <= Real(0.0))
+		if (std <= Real(0.0))
 		{
 			return mean;
 		}
