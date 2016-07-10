@@ -6,7 +6,6 @@
 #include "AttractorPointPulse.h"
 #include "AttractorLine.h"
 #include "AttractorPlane.h"
-#include "AttractorPlaneRepel.h"
 #include "AttractorGlobal.h"
 #include "EmitterLinear.h"
 #include "EmitterRandom.h"

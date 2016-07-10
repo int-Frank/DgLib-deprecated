@@ -161,58 +161,71 @@ void Application::HandleInput()
   s_scrollOffset = 0.0;
 }
 
-void Application::DoLogic()
+static void CreateSpacing(int a_n)
 {
-  //Set up the UI
+  for (int i = 0; i < a_n; ++i) { ImGui::Spacing(); }
+}
+
+void Application::BuildMainUI()
+{
+  ImVec4 headingClr(1.0f, 0.0f, 1.0f, 1.0f);
+  static int curEm = 0;
+  float sliderOffset = -90.0f;
+  int nSpacing = 3;
+
+  ImGui::Begin("Partice System");
+  ImGui::Separator();
+  if (ImGui::CollapsingHeader("Emitters"))
   {
-    ImVec4 headingClr(1.0f, 0.0f, 1.0f, 1.0f);
-    ImGui::Begin("Partice System");
-    ImGui::Separator();
+    if (s_nEmitters > 1)
+    {
+      for (int i = 0; i < s_nEmitters; ++i)
+      {
+        char buf[16];
+        sprintf_s(buf, 16, "Emitter %i", i + 1);
+        ImGui::RadioButton(buf, &curEm, i);
+        if (i != s_nEmitters - 1) ImGui::SameLine();
+      }
+    }
 
-    static int curEm = 0;
-    float sliderOffset = -90.0f;
-    static float text3Mul = 4.0f / 3.0f;
+    EmitterData & curEmData = m_eData[curEm];
 
-    ImGui::RadioButton("Emitter 1", &curEm, 0); ImGui::SameLine();
-    ImGui::RadioButton("Emitter 2", &curEm, 1); ImGui::SameLine();
-    ImGui::RadioButton("Emitter 3", &curEm, 2);
-    
-    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
-    ImGui::Checkbox("Turn emitter off/on", &m_eData[curEm].on);
+    CreateSpacing(nSpacing);
+    ImGui::Checkbox("Turn emitter off/on", &curEmData.on);
 
-    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Emission method");
-    ImGui::RadioButton("Linear", &m_eData[curEm].emitterType, E_Emitter_Linear); ImGui::SameLine();
-    ImGui::RadioButton("Random", &m_eData[curEm].emitterType, E_Emitter_Random);
+    ImGui::RadioButton("Linear", &curEmData.emitterType, E_Emitter_Linear); ImGui::SameLine();
+    ImGui::RadioButton("Random", &curEmData.emitterType, E_Emitter_Random);
 
-    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Define emitter shape");
-    ImGui::RadioButton("Point", &m_eData[curEm].posGenMethod, E_GenPosPoint); ImGui::SameLine();
-    ImGui::RadioButton("Box", &m_eData[curEm].posGenMethod, E_GenPosBox); ImGui::SameLine();
-    ImGui::RadioButton("Sphere", &m_eData[curEm].posGenMethod, E_GenPosSphere);
+    ImGui::RadioButton("Point", &curEmData.posGenMethod, E_GenPosPoint); ImGui::SameLine();
+    ImGui::RadioButton("Box", &curEmData.posGenMethod, E_GenPosBox); ImGui::SameLine();
+    ImGui::RadioButton("Sphere", &curEmData.posGenMethod, E_GenPosSphere);
 
-    if (m_eData[curEm].posGenMethod == E_GenPosBox)
+    if (curEmData.posGenMethod == E_GenPosBox)
     {
       float mins[3] = { 0.0f, 0.0f, 0.0f };
       float maxs[3] = { 10.0f, 10.0f, 10.0f };
       char const * formats[3] = { "l = %.2f", "w = %.2f", "h = %.2f" };
       float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Dimensions", &m_eData[curEm].boxDim[0], 3, mins, maxs, formats, powers);
+      ImGui::SliderFloatNi("Dimensions", &curEmData.boxDim[0], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
 
-    if (m_eData[curEm].posGenMethod == E_GenPosSphere)
+    if (curEmData.posGenMethod == E_GenPosSphere)
     {
-      ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+      CreateSpacing(nSpacing);
       ImGui::TextColored(headingClr, "Define sphere geometry");
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloat("Radius", &m_eData[curEm].sphereRadius, 0.0f, 10.0f, "%.1f");
+      ImGui::SliderFloat("Radius", &curEmData.sphereRadius, 0.0f, 10.0f, "%.1f");
       ImGui::PopItemWidth();
     }
 
     {
-      ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+      CreateSpacing(nSpacing);
       ImGui::TextColored(headingClr, "Place Emitter");
 
       float mins[3] = { -10.0f, -10.0f, -10.0f };
@@ -220,10 +233,10 @@ void Application::DoLogic()
       char const * formats[3] = { "x = %.2f", "y = %.2f", "z = %.2f" };
       float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Position", &m_eData[curEm].transform[0], 3, mins, maxs, formats, powers);
+      ImGui::SliderFloatNi("Position", &curEmData.transform[0], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
-    
+
     //ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
     //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
     //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
@@ -241,49 +254,95 @@ void Application::DoLogic()
     //  ImVec2 mouse_delta = ImGui::GetIO().MouseDelta;
     //  ImGui::SameLine(); ImGui::Text("Raw (%.1f, %.1f), WithLockThresold (%.1f, %.1f), MouseDelta (%.1f, %.1f)", value_raw.x, value_raw.y, value_with_lock_threshold.x, value_with_lock_threshold.y, mouse_delta.x, mouse_delta.y);
     //}
-    
 
-    if (m_eData[curEm].posGenMethod == E_GenPosBox)
+
+    if (curEmData.posGenMethod == E_GenPosBox)
     {
       float mins[3] = { 0.0f, 0.0f, 0.0f };
       float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f * 2.0f, Dg::PI_f * 2.0f };
       char const * formats[3] = { "rz = %.2f", "ry = %.2f", "rx = %.2f" };
       float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Rotation", &m_eData[curEm].transform[3], 3, mins, maxs, formats, powers);
+      ImGui::SliderFloatNi("Rotation", &curEmData.transform[3], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
 
-    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Define Initial velocity vector");
-    ImGui::RadioButton("Direction", &m_eData[curEm].velGenMethod, E_GenVelCone); ImGui::SameLine();
-    ImGui::RadioButton("Outwards", &m_eData[curEm].velGenMethod, E_GenVelOutwards);
-    
-    if (m_eData[curEm].velGenMethod == E_GenVelCone)
+    ImGui::RadioButton("Direction", &curEmData.velGenMethod, E_GenVelCone); ImGui::SameLine();
+    ImGui::RadioButton("Outwards", &curEmData.velGenMethod, E_GenVelOutwards);
+
+    if (curEmData.velGenMethod == E_GenVelCone)
     {
       float mins[3] = { 0.0f, 0.0f, 0.0f };
       float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f, Dg::PI_f };
-      char const * formats[3] = { "rz = %.2f", "rx = %.2f", "spread = %.2f"};
+      char const * formats[3] = { "rz = %.2f", "rx = %.2f", "spread = %.2f" };
       float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("rz, rx, sprd", &m_eData[curEm].velCone[0], 3, mins, maxs, formats, powers);
+      ImGui::SliderFloatNi("rz, rx, sprd", &curEmData.velCone[0], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
 
-    ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+    CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Other attributes");
     ImGui::PushItemWidth(sliderOffset);
-    ImGui::ColorEdit4("Start color", m_eData[curEm].colors);
-    ImGui::ColorEdit4("End color", &m_eData[curEm].colors[4]);
-    ImGui::SliderFloat("Rate", &m_eData[curEm].rate, 0.0f, 500.0f, "%.2f par/s");
-    ImGui::SliderFloat("Velocity", &m_eData[curEm].velocity, 0.0f, 10.0f, "%.2f m/s");
-    ImGui::SliderFloat("Life", &m_eData[curEm].life, 0.0f, 60.0f, "%.2f s");
-    ImGui::SliderFloat("Force", &m_eData[curEm].force, -100.0f, 100.0f, "%.2f m/s/s");
-    ImGui::SliderFloat("Start size", m_eData[curEm].sizes, 0.0f, 1.0f, "%.2f m");
-    ImGui::SliderFloat("End size", &m_eData[curEm].sizes[1], 0.0f, 1.0f, "%.2f m");
+    ImGui::ColorEdit4("Start color", curEmData.colors);
+    ImGui::ColorEdit4("End color", &curEmData.colors[4]);
+    ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s");
+    ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
+    ImGui::SliderFloat("Life", &curEmData.life, 0.0f, 60.0f, "%.2f s");
+    ImGui::SliderFloat("Force", &curEmData.force, -100.0f, 100.0f, "%.2f m/s/s");
+    ImGui::SliderFloat("Start size", curEmData.sizes, 0.0f, 1.0f, "%.2f m");
+    ImGui::SliderFloat("End size", &curEmData.sizes[1], 0.0f, 1.0f, "%.2f m");
     ImGui::PopItemWidth();
-    ImGui::End();
   }
+  
+
+  //Attractors
+  if (ImGui::CollapsingHeader("Attractors"))
+  {
+    static int curAtt = 0;
+    for (int i = 0; i < s_nAttractors; ++i)
+    {
+      char buf[16];
+      sprintf_s(buf, 16, "Attractor %i", i + 1);
+      ImGui::RadioButton(buf, &curAtt, i);
+      if (i != s_nAttractors - 1) ImGui::SameLine();
+    }
+    CreateSpacing(nSpacing);
+    
+    AttractorData & curAttData = m_aData[curAtt];
+    ImGui::TextColored(headingClr, "Attractor type");
+    const char* attrItems[] = { "None", "Global", "Point", "Line", "Plane" };
+    ImGui::PushItemWidth(sliderOffset);
+    ImGui::ListBox("##Type", &curAttData.type, attrItems, ((int)(sizeof(attrItems) / sizeof(*attrItems))), 5);
+    
+    CreateSpacing(nSpacing);
+    ImGui::TextColored(headingClr, "Strength");
+    ImGui::SliderFloat("Strength", &curAttData.strength, -10.0f, 10.0f, "%.2f m/s");
+    ImGui::SliderFloat("Max accel", &curAttData.maxAccelMag, 0.0f, 10.0f, "%.2f m/s");
+    ImGui::PopItemWidth();
+
+    CreateSpacing(nSpacing);
+    ImGui::TextColored(headingClr, "Other attributes");
+    ImGui::Checkbox("Pulse", &curAttData.pulse);
+    if (curAttData.pulse)
+    {
+      float mins[2] = { 0.0f, 0.0f };
+      float maxs[2] = { 10.0f, 10.0f };
+      char const * formats[2] = { "ampl = %.2f", "freq = %.2f" };
+      float powers[2] = { 1.0f, 1.0f };
+      ImGui::PushItemWidth(sliderOffset);
+      ImGui::SliderFloatNi("Pulse data", &curAttData.pulseData[0], 2, mins, maxs, formats, powers);
+      ImGui::PopItemWidth();
+    }
+  }
+  ImGui::End();
+}
+
+void Application::DoLogic()
+{
+  BuildMainUI();
 
   //Update particle system
   UpdateParSysAttr();
@@ -297,7 +356,7 @@ void Application::DoLogic()
   }
 
   //Zoom the camera
-  if (abs(m_camZoomTarget - m_camZoom) > 0.2)
+  if (abs(m_camZoomTarget - m_camZoom) > 0.01)
   {
     double dist = m_camZoomTarget - m_camZoom;
     double vec = (dist < 0.0) ? -1.0 : 1.0;

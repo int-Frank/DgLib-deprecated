@@ -74,9 +74,6 @@
     <ClInclude Include="AttractorPoint.h">
       <Filter>Attractors</Filter>
     </ClInclude>
-    <ClInclude Include="AttractorPlaneRepel.h">
-      <Filter>Attractors</Filter>
-    </ClInclude>
     <ClInclude Include="AttractorPlane.h">
       <Filter>Attractors</Filter>
     </ClInclude>

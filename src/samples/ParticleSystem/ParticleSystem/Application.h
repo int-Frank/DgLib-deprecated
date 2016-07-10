@@ -47,10 +47,22 @@ enum
 class AttractorData
 {
 public:
+
+  AttractorData()
+    : ID(0)
+    , type(0)
+    , strength(1.0f)
+    , maxAccelMag(10.0f)
+    , pulse(false)
+    , pulseData{ 1.0f, 1.0f }
+  {}
+
   int ID;
-  int strength;           int prev_strength;
-  int maxAccelMag;        int prev_maxAccelMag;
-  float transform[6];     float prev_transform[6]; //[x, y, z, rz, rx, scale]
+  int type; //0: None, 1: Global, 2: Point, 3: Line, 4: Plane
+  float strength;       
+  float maxAccelMag;    
+  bool pulse;
+  float pulseData[2]; //[amplitute, frequency]
 };
 
 class EmitterData
@@ -136,7 +148,7 @@ private:
   Dg::ParticleSystem<float>   m_particleSystem;
 
   static int const    s_nEmitters = 3;
-  static int const    s_nAttractors = 2;
+  static int const    s_nAttractors = 1;
 
 private:
 
@@ -165,6 +177,9 @@ private:
   EmitterData         m_eData[s_nEmitters];
   EmitterData         m_eDataPrev[s_nEmitters];
 
+  AttractorData       m_aData[s_nAttractors];
+  AttractorData       m_aDataPrev[s_nAttractors];
+
   //Main initializer function. All others are called through here.
   bool Init();
 
@@ -178,6 +193,8 @@ private:
   void HandleInput();
   void DoLogic();
   void Render();
+
+  void BuildMainUI();
 
   void Shutdown();
 };

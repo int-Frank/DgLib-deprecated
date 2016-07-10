@@ -141,7 +141,6 @@
     <ClInclude Include="AttractorGlobal.h" />
     <ClInclude Include="AttractorLine.h" />
     <ClInclude Include="AttractorPlane.h" />
-    <ClInclude Include="AttractorPlaneRepel.h" />
     <ClInclude Include="AttractorPoint.h" />
     <ClInclude Include="AttractorPointPulse.h" />
     <ClInclude Include="EmitterLinear.h" />

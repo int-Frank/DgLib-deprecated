@@ -1,1 +1,2 @@
-There were no test failures
+Failure: "m2 == m0" line 99 in TEST_Matrix44.cpp
+There were 1 failures
