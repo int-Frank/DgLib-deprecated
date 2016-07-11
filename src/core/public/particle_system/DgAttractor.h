@@ -65,13 +65,14 @@ namespace Dg
     virtual Real GetStrength() const { return m_strength; }
 
     //! Set the maximum allowed magnitue of the acceleration vector this attractor applies to a particle.
-    virtual void SetMaxAccelMagnitude(Real a_val) { m_maxAccelMag = a_val; }
+    virtual void SetMaxAccelMagnitude(Real a_val);
 
     virtual Attractor<Real, Force> * Clone() const { return new Attractor<Real, Force>(*this); }
   
   protected:
 
-    Vector4<Real> _GetAccelBetweenPoints(Vector4<Real> const & p0, Vector4<Real> const & p1) const;
+    Vector4<Real> GetAccelBetweenPoints(Vector4<Real> const & p0
+                                      , Vector4<Real> const & p1) const;
 
   protected:
 
@@ -103,38 +104,75 @@ namespace Dg
   }
 
   template<typename Real, unsigned Force>
-  Vector4<Real> Attractor<Real, Force>::_GetAccelBetweenPoints(Vector4<Real> const & p0, Vector4<Real> const & p1) const
+  void Attractor<Real, Force>::SetMaxAccelMagnitude(Real a_val)
   {
-    Vector4<Real> v(p0 - p1);
-    Real dist = v.Length();
+    m_maxAccelMag = (a_val < static_cast<Real>(0.0)) ? static_cast<Real>(0.0) : a_val;
+  }
 
-    Real invDist;
-    if (Dg::IsZero(dist))
+  template<typename Real, unsigned Force>
+  Vector4<Real> Attractor<Real, Force>::GetAccelBetweenPoints(Vector4<Real> const & a_p0
+                                                            , Vector4<Real> const & a_p1) const
+  {
+    Vector4<Real> v(a_p1 - a_p0);
+
+    if (Force == AttractorForce::Constant)
     {
-      v = GetRandomVector<Real>();
-      invDist = static_cast<Real>(999999999999999.0);
+      Real dist = v.Length();
+      if (Dg::IsZero(dist))
+      {
+        v = GetRandomVector<Real>();
+      }
+      v = v / dist * m_strength;
+    }
+    else if (Force == AttractorForce::Linear)
+    {
+      Real sqDist = v.LengthSquared();
+      Real invSqDist;
+      if (Dg::IsZero(sqDist))
+      {
+        v = GetRandomVector<Real>();
+        invSqDist = static_cast<Real>(999999999999999.0);
+      }
+      else
+      {
+        invSqDist = static_cast<Real>(1.0) / invSqDist;
+      }
+
+      v *= invSqDist * m_strength;
+      if (v.LengthSquared() > m_maxAccelMag * m_maxAccelMag)
+      {
+        v.Normalize();
+        v *= m_maxAccelMag;
+      }
     }
     else
     {
-      invDist = static_cast<Real>(1.0) / dist;
+      Real dist = v.Length();
+      if (Dg::IsZero(dist))
+      {
+        v = GetRandomVector<Real>();
+      }
+
+      Real invDist;
+      if (Dg::IsZero(dist))
+      {
+        v = GetRandomVector<Real>();
+        invDist = static_cast<Real>(999999999999999.0);
+      }
+      else
+      {
+        invDist = static_cast<Real>(1.0) / dist;
+      }
+
+      Real mag = m_strength * invDist * invDist;
+      if (mag > m_maxAccelMag)
+      {
+        mag = m_maxAccelMag;
+      }
+      v = v * invDist * mag;
     }
 
-    Real accelMag(m_strength); //AttractorForce::Constant
-    if (Force == AttractorForce::Linear)
-    {
-      accelMag *= invDist;
-    }
-    else //AttractorForce::InverseSquare
-    {
-      accelMag *= (invDist * invDist);
-    }
-
-    if (accelMag > m_maxAccelMag)
-    {
-      accelMag = m_maxAccelMag;
-    }
-
-    return v * (invDist * accelMag);
+    return v;
   }
 }
 

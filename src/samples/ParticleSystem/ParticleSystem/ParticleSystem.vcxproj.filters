@@ -68,9 +68,6 @@
     <ClInclude Include="UpdaterLife.h">
       <Filter>Updaters</Filter>
     </ClInclude>
-    <ClInclude Include="AttractorPointPulse.h">
-      <Filter>Attractors</Filter>
-    </ClInclude>
     <ClInclude Include="AttractorPoint.h">
       <Filter>Attractors</Filter>
     </ClInclude>
@@ -142,6 +139,12 @@
     </ClInclude>
     <ClInclude Include="EmitterRandom.h">
       <Filter>Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="Pulse.h">
+      <Filter>Attractors</Filter>
+    </ClInclude>
+    <ClInclude Include="AttractorPointPulse.h">
+      <Filter>Attractors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -10,29 +10,42 @@ class AttractorPoint : public Dg::Attractor<Real, Force>
 {
 public:
 
-  AttractorPoint() : Dg::Attractor<Real, Force>(), m_point(Dg::Vector4<Real>::Origin()) {}
-  ~AttractorPoint() {}
+  AttractorPoint() 
+    : Dg::Attractor<Real, Force>()
+    , m_point(Dg::Vector4<Real>::Origin())
+  {}
 
-  AttractorPoint(AttractorPoint<Real, Force> const & a_other) 
-    : Dg::Attractor<Real, Force>(a_other), m_point(a_other.m_point) {}
+  virtual ~AttractorPoint() {}
+
+  AttractorPoint(AttractorPoint<Real, Force> const &);
   
-  AttractorPoint<Real, Force> & operator=(AttractorPoint<Real, Force> const & a_other)
-  {
-    Dg::Attractor<Real, Force>::operator=(a_other);
-    m_point = a_other.m_point;
-    return *this;
-  }
+  AttractorPoint<Real, Force> & operator=(AttractorPoint<Real, Force> const &);
 
-  void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
-  void Update(Dg::ParticleData<Real> &, int, Real);
+  virtual void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
+  virtual void Update(Dg::ParticleData<Real> &, int, Real);
 
-  void SetTransformation(Dg::VQS<Real> const &);
+  virtual void SetTransformation(Dg::VQS<Real> const &);
 
-  AttractorPoint<Real, Force> * Clone() const { return new AttractorPoint<Real, Force>(*this); }
+  virtual AttractorPoint<Real, Force> * Clone() const { return new AttractorPoint<Real, Force>(*this); }
 
-private:
+protected:
   Dg::Vector4<Real> m_point;
 };
+
+template<typename Real, unsigned Force>
+AttractorPoint<Real, Force>::AttractorPoint(AttractorPoint<Real, Force> const & a_other)
+  : Dg::Attractor<Real, Force>(a_other)
+  , m_point(a_other.m_point)
+{
+}
+
+template<typename Real, unsigned Force>
+AttractorPoint<Real, Force> & AttractorPoint<Real, Force>::operator=(AttractorPoint<Real, Force> const & a_other)
+{
+  Dg::Attractor<Real, Force>::operator=(a_other);
+  m_point = a_other.m_point;
+  return *this;
+}
 
 template<typename Real, unsigned Force>
 void AttractorPoint<Real, Force>::SetTransformation(Dg::VQS<Real> const & a_vqs)
@@ -52,7 +65,7 @@ void AttractorPoint<Real, Force>::Update(Dg::ParticleData<Real> & a_data
   {
     for (int i = a_start; i < a_data.GetCountAlive(); ++i)
     {
-      pAccels[i] += (_GetAccelBetweenPoints(pPos[i], m_point));
+      pAccels[i] += (GetAccelBetweenPoints(m_point, pPos[i]));
     }
   }
 }
