@@ -146,6 +146,12 @@
     <ClInclude Include="AttractorPointPulse.h">
       <Filter>Attractors</Filter>
     </ClInclude>
+    <ClInclude Include="GenPosSphere.h">
+      <Filter>Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="GenVelOutwards.h">
+      <Filter>Generators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fs.glsl">

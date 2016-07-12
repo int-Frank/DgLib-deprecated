@@ -26,6 +26,7 @@ public:
   }
 
   void SetTransformation(Dg::VQS<Real> const &);
+  void SetOrigin(Dg::Vector4<Real> const &);
 
   void Generate(Dg::ParticleData<Real> &, int, int);
 
@@ -39,6 +40,13 @@ template<typename Real>
 void GenPosPoint<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 {
   m_origin = a_vqs.Translate(Dg::Vector4<Real>::Origin());
+}
+
+template<typename Real>
+void GenPosPoint<Real>::SetOrigin(Dg::Vector4<Real> const & a_pos)
+{
+  m_origin = a_pos;
+  m_origin.w() = static_cast<Real>(1.0);
 }
 
 template<typename Real>

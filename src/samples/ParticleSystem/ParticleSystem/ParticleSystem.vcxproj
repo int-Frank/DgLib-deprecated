@@ -148,8 +148,10 @@
     <ClInclude Include="GenColor.h" />
     <ClInclude Include="GenLife.h" />
     <ClInclude Include="GenPosPoint.h" />
+    <ClInclude Include="GenPosSphere.h" />
     <ClInclude Include="GenSize.h" />
     <ClInclude Include="GenVelCone.h" />
+    <ClInclude Include="GenVelOutwards.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_internal.h" />

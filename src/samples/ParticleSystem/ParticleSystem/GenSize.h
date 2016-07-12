@@ -1,5 +1,5 @@
-#ifndef GENSize_H
-#define GENSize_H
+#ifndef GENSIZE_H
+#define GENSIZE_H
 
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleGenerator.h"

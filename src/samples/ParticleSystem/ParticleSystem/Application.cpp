@@ -220,7 +220,7 @@ void Application::BuildMainUI()
       CreateSpacing(nSpacing);
       ImGui::TextColored(headingClr, "Define sphere geometry");
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloat("Radius", &curEmData.sphereRadius, 0.0f, 10.0f, "%.1f");
+      ImGui::SliderFloat("Radius", &curEmData.transform[6], 0.0f, 10.0f, "%.1f");
       ImGui::PopItemWidth();
     }
 
@@ -291,9 +291,9 @@ void Application::BuildMainUI()
     ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s");
     ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
     ImGui::SliderFloat("Life", &curEmData.life, 0.0f, 60.0f, "%.2f s");
-    ImGui::SliderFloat("Force", &curEmData.force, -100.0f, 100.0f, "%.2f m/s/s");
     ImGui::SliderFloat("Start size", curEmData.sizes, 0.0f, 1.0f, "%.2f m");
     ImGui::SliderFloat("End size", &curEmData.sizes[1], 0.0f, 1.0f, "%.2f m");
+    
     ImGui::PopItemWidth();
   }
   
@@ -313,14 +313,18 @@ void Application::BuildMainUI()
     
     AttractorData & curAttData = m_aData[curAtt];
     ImGui::TextColored(headingClr, "Attractor type");
-    const char* attrItems[] = { "None", "Global", "Point", "Line", "Plane" };
     ImGui::PushItemWidth(sliderOffset);
-    ImGui::ListBox("##Type", &curAttData.type, attrItems, ((int)(sizeof(attrItems) / sizeof(*attrItems))), 5);
+
+    const char* attrForces[] = { "Force is constant", "Force is a function of distance", "Force is a function of sq distance"};
+    ImGui::ListBox("Force", &curAttData.type[1], attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
+
+    const char* attrShapes[] = { "None", "Global", "Point", "Line", "Plane" };
+    ImGui::ListBox("Shape", &curAttData.type[0], attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
     
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Strength");
-    ImGui::SliderFloat("Strength", &curAttData.strength, -10.0f, 10.0f, "%.2f m/s");
-    ImGui::SliderFloat("Max accel", &curAttData.maxAccelMag, 0.0f, 10.0f, "%.2f m/s");
+    ImGui::SliderFloat("Strength", &curAttData.strength, -100.0f, 100.0f, "%.2f m/s");
+    ImGui::SliderFloat("Max accel", &curAttData.maxAccelMag, 0.0f, 500.0f, "%.2f m/s");
     ImGui::PopItemWidth();
 
     CreateSpacing(nSpacing);
@@ -356,7 +360,7 @@ void Application::DoLogic()
   }
 
   //Zoom the camera
-  if (abs(m_camZoomTarget - m_camZoom) > 0.01)
+  if (abs(m_camZoomTarget - m_camZoom) > 0.1)
   {
     double dist = m_camZoomTarget - m_camZoom;
     double vec = (dist < 0.0) ? -1.0 : 1.0;

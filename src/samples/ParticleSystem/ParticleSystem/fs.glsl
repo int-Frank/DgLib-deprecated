@@ -9,7 +9,7 @@ in VS_OUT
 
 void main(void)
 {
-  float distSqrd = dot(gl_PointCoord-0.5,gl_PointCoord-0.5);
+  float distSqrd = dot(gl_PointCoord-0.5, gl_PointCoord-0.5);
   if(distSqrd > 0.25) 
   {
     discard;

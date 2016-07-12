@@ -50,7 +50,7 @@ public:
 
   AttractorData()
     : ID(0)
-    , type(0)
+    , type{0, 0}
     , strength(1.0f)
     , maxAccelMag(10.0f)
     , pulse(false)
@@ -58,7 +58,11 @@ public:
   {}
 
   int ID;
-  int type; //0: None, 1: Global, 2: Point, 3: Line, 4: Plane
+
+  //type: [shape, pull type] 
+  //shape: 0: None, 1: Global, 2: Point, 3: Line, 4: Plane
+  //pull type: 0: constant , 1: linear, 2: inverse square
+  int type[2]; 
   float strength;       
   float maxAccelMag;    
   bool pulse;
@@ -75,13 +79,13 @@ public:
     , on(true)
     , posGenMethod(E_GenPosPoint)
     , velGenMethod(E_GenVelCone)
-    , transform{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}
+    , transform{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}
     , boxDim{0.5f, 0.5f, 0.5f}
     , velCone{0.0f, 0.0f, Dg::PI_f / 8.0f }
     , velocity(1.0f)
-    , sphereRadius(1.0f)
     , colors{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f}
     , rate(10.0f)
+    , life(5.0f)
     , sizes{0.1f, 0.1f}
   {}
 
@@ -94,11 +98,9 @@ public:
   float boxDim[3];       
   float velCone[3]; // [rz, rx, angle]    
   float velocity;        
-  float sphereRadius;    
   float colors[8]; //[sr, sg, sb, sa, er, eg, eb, ea]
   float rate;            
-  float life;            
-  float force;           
+  float life;          
   float sizes[2]; //[start, end]
 };
 

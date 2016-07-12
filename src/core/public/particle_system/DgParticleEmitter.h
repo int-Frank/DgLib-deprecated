@@ -47,6 +47,7 @@ namespace Dg
     bool IsOn() const { return m_isOn; }
 
     void AddGenerator(ParMapKey, ParticleGenerator<Real> const &);
+    void RemoveGenerator(ParMapKey);
     ParticleGenerator<Real> * GetGenerator(ParMapKey);
 
     virtual ParticleEmitter<Real> * Clone() const { return new ParticleEmitter<Real>(*this); }
@@ -63,6 +64,12 @@ namespace Dg
   {
     ObjectWrapper<ParticleGenerator<Real>> newGenerator(a_gen);
     m_generators.insert(a_key, newGenerator);
+  }
+
+  template<typename Real>
+  void ParticleEmitter<Real>::RemoveGenerator(ParMapKey a_key)
+  {
+    m_generators.erase(a_key);
   }
 
   template<typename Real>

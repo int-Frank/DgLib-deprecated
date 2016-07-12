@@ -10,6 +10,7 @@
 #include "EmitterLinear.h"
 #include "EmitterRandom.h"
 #include "GenPosPoint.h"
+#include "GenPosSphere.h"
 #include "GenVelCone.h"
 #include "GenColor.h"
 #include "GenLife.h"
@@ -44,7 +45,7 @@ static AttractorPoint<float, AttractorForce::InverseSquare> CreateAttractor_2()
   Vqs vqs;
   vec4 v;
 
-  v.Set(2.0f, 2.0f, 2.0f, 0.0f);
+  v.Set(0.0f, 0.0f, 0.0f, 1.0f);
   vqs.SetV(v);
   AttractorPoint<float, AttractorForce::InverseSquare> attr;
   attr.SetTransformation(vqs);
@@ -55,10 +56,68 @@ static AttractorPoint<float, AttractorForce::InverseSquare> CreateAttractor_2()
 }
 
 //Helper function to initiate Attractors
-template<typename AttractorType>
-static AttractorType CreateAttractor(EmitterData & a_data)
+template<unsigned Force>
+static Attractor<float, Force> * CreateAttractor(AttractorData & a_data)
 {
 
+  unsigned attType = (a_data.type[1] << 16) 
+                   | (a_data.pulse);
+  
+  Attractor<float, Force> * pAttractor(nullptr);
+  switch (attType)
+  {
+  case (1 << 16 | false):
+  {
+    pAttractor = new AttractorGlobal<float, Force>();
+    break;
+  }
+  case (2 << 16 | false):
+  {
+    Vqs vqs;
+    vec4 v(0.0, 0.0, 5.0, 0.0);
+    vqs.SetV(v);
+    pAttractor = new AttractorPoint<float, Force>();
+    pAttractor->SetTransformation(vqs);
+    break;
+  }
+  case (3 << 16 | false):
+  {
+    break;
+  }
+  case (4 << 16 | false):
+  {
+    break;
+  }
+  case (0 << 16 | true):
+  {
+    break;
+  }
+  case (1 << 16 | true):
+  {
+    //pAttractor = new AttractorPointPulse<float, Force>();
+    break;
+  }
+  case (2 << 16 | true):
+  {
+    break;
+  }
+  case (3 << 16 | true):
+  {
+    break;
+  }
+  case (4 << 16 | true):
+  {
+    break;
+  }
+  }
+
+  if (pAttractor)
+  {
+    pAttractor->SetMaxAccelMagnitude(a_data.maxAccelMag);
+    pAttractor->SetStrength(a_data.strength);
+  }
+
+  return pAttractor;
 }
 
 //Helper function to initialise our emitters
@@ -120,7 +179,7 @@ void Application::InitParticleSystem()
   //  Set emitter 1 data
   //--------------------------------------------------------------------
   m_eData[0].ID = E_Emitter_1;
-  m_eData[0].transform[0] = 1.0;
+  m_eData[0].transform[0] = 1.0f * 2.5f;
   m_eData[0].transform[1] = 0.0;
   m_eData[0].transform[2] = 0.0;
   m_eData[0].sizes[0] = 0.1f;
@@ -135,8 +194,8 @@ void Application::InitParticleSystem()
   //  Set emitter 2 data
   //--------------------------------------------------------------------
   m_eData[1].ID = E_Emitter_2;
-  m_eData[1].transform[0] = -0.5f;
-  m_eData[1].transform[1] = 0.866f;
+  m_eData[1].transform[0] = -0.5f * 2.5f;
+  m_eData[1].transform[1] = 0.866f * 2.5f;
   m_eData[1].transform[2] = 0.0;
   m_eData[1].sizes[0] = 0.1f;
   m_eData[1].sizes[1] = 0.3f;
@@ -150,8 +209,8 @@ void Application::InitParticleSystem()
   //  Set emitter 3 data
   //--------------------------------------------------------------------
   m_eData[2].ID = E_Emitter_3;
-  m_eData[2].transform[0] = -0.5;
-  m_eData[2].transform[1] = -0.866f;
+  m_eData[2].transform[0] = -0.5 * 2.5f;
+  m_eData[2].transform[1] = -0.866f * 2.5f;
   m_eData[2].transform[2] = 0.0;
   m_eData[2].sizes[0] = 0.1f;
   m_eData[2].sizes[1] = 0.3f;
@@ -249,11 +308,47 @@ void Application::UpdateParSysAttr()
 
     if (data.posGenMethod != dataPrev.posGenMethod)
     {
-      //TODO DO work...
+      switch (data.posGenMethod)
+      {
+      case E_GenPosPoint:
+      {
+        ptr->RemoveGenerator(E_GenPosBox);
+        ptr->RemoveGenerator(E_GenPosSphere);
+        GenPosPoint<float> gen;
+        gen.SetOrigin(Dg::Vector4<float>(data.transform[0]
+                                       , data.transform[1]
+                                       , data.transform[2]
+                                       , 0.0f));
+        ptr->AddGenerator(E_GenPosPoint, gen);
+        break;
+      }
+      case E_GenPosSphere:
+      {
+        ptr->RemoveGenerator(E_GenPosBox);
+        ptr->RemoveGenerator(E_GenPosPoint);
+        Dg::Vector4<float>(data.transform[0]
+                           , data.transform[1]
+                           , data.transform[2]
+                           , 0.0f);
+        GenPosSphere<float> gen;
+        gen.SetOrigin(Dg::Vector4<float>(data.transform[0]
+                                       , data.transform[1]
+                                       , data.transform[2]
+                                       , 0.0f));
+        gen.SetRadius(data.transform[6]);
+        ptr->AddGenerator(E_GenPosSphere, gen);
+        break;
+      }
+      case E_GenPosBox:
+      {
+        break;
+      }
+      }
+
       dataPrev.posGenMethod = data.posGenMethod;
     }
 
-    if (memcmp(data.transform, dataPrev.transform, sizeof(float) * 3) != 0)
+    if (memcmp(data.transform, dataPrev.transform, sizeof(float) * 7) != 0)
     {
       Dg::ParticleGenerator<float> * pPosGen = ptr->GetGenerator(data.posGenMethod);
       if (pPosGen)
@@ -313,12 +408,6 @@ void Application::UpdateParSysAttr()
       memcpy(dataPrev.velCone, data.velCone, sizeof(float) * 2);
     }
 
-    if (data.sphereRadius != dataPrev.sphereRadius)
-    {
-      //TODO DO work...
-      dataPrev.sphereRadius = data.sphereRadius;
-    }
-
     if ( memcmp(data.colors, dataPrev.colors, sizeof(float) * 8) != 0)
     {
       GenColor<float> * pColorGen = (GenColor<float> *)ptr->GetGenerator(E_GenColor);
@@ -354,12 +443,6 @@ void Application::UpdateParSysAttr()
         pLifeGen->SetLife(data.life);
       }
       dataPrev.life = data.life;
-    }
-
-    if (data.force!= dataPrev.force)
-    {
-      //TODO Do work...
-      dataPrev.force = data.force;
     }
 
     if (memcmp(data.sizes, dataPrev.sizes, sizeof(float) * 2) != 0)

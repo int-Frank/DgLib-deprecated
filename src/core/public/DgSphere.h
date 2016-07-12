@@ -9,9 +9,9 @@
 #define DGSPHERE_H
 
 #include "DgVector4.h"
-#include "DgMatrix44.h"
 #include "DgVQS.h"
 #include "dgmath.h"
+#include "DgRNG.h"
 
 namespace Dg
 {
@@ -30,7 +30,7 @@ namespace Dg
   {
   public:
     //! Default constructor.
-    Sphere() : m_center(Vector4<Real>::Origin()),
+    Sphere() : m_origin(Vector4<Real>::Origin()),
                m_radius(static_cast<Real>(1.0)) {}
 
     //! Construct sphere from origin and radius
@@ -39,13 +39,13 @@ namespace Dg
 
     //! Copy constructor
     Sphere(Sphere const & a_other)
-      : m_center(a_other.m_center), m_radius(a_other.m_radius) {}
+      : m_origin(a_other.m_origin), m_radius(a_other.m_radius) {}
 
     //! Assignment
     Sphere& operator= (Sphere const &);
 
     //! Get the sphere center.
-    Vector4<Real> const & Center() const { return m_center; }
+    Vector4<Real> const & Center() const { return m_origin; }
 
     //! Get the sphere radius.
     Real Radius() const { return m_radius; }
@@ -68,8 +68,17 @@ namespace Dg
     //! Set the center and radius.
     void Set(Vector4<Real> const & n, Real);
 
+    //! Transform the line
+    Sphere GetTransformed(VQS<Real> const &) const;
+
+    //! Transform the line, assign to self
+    Sphere & TransformSelf(VQS<Real> const &);
+
+    //! Get a random point inside the sphere
+    Vector4<Real> GetRandomPointInside() const;
+
   private:
-    Vector4<Real>   m_center;
+    Vector4<Real>   m_origin;
     Real            m_radius;
   };
 
@@ -90,7 +99,7 @@ namespace Dg
   template<typename Real>
   Sphere<Real> & Sphere<Real>::operator=(Sphere<Real> const & a_other)
   {
-    m_center = a_other.m_center;
+    m_origin = a_other.m_origin;
     m_radius = a_other.m_radius;
   }	//End: Sphere::operator=()
 
@@ -101,8 +110,8 @@ namespace Dg
   template<typename Real>
   void Sphere<Real>::Set(Vector4<Real> const & a_center, Real a_radius)
   {
-    m_center = a_center;
-    m_center.w() = static_cast<Real>(1.0);
+    m_origin = a_center;
+    m_origin.w() = static_cast<Real>(1.0);
 
     if (a_radius < static_cast<Real>(0.0))
     {
@@ -121,7 +130,7 @@ namespace Dg
   template<typename Real>
   bool Sphere<Real>::operator==(Sphere<Real> const & a_other) const
   {
-    return (m_center == a_other.m_center &&
+    return (m_origin == a_other.m_origin &&
             Dg::AreEqual(m_radius, a_other.m_radius));
   }	//End: Sphere::operator==()
 
@@ -132,7 +141,7 @@ namespace Dg
   template<typename Real>
   bool Sphere<Real>::operator!=(Sphere<Real> const & a_other) const
   {
-    return (m_center != a_other.m_center ||
+    return (m_origin != a_other.m_origin ||
             !Dg::AreEqual(m_radius, a_other.m_radius));
   }	//End: Sphere::operator!=()
 
@@ -143,8 +152,8 @@ namespace Dg
   template<typename Real>
   void Sphere<Real>::SetCenter(Vector4<Real> const & a_center)
   {
-    m_center = a_center;
-    m_center.w() = static_cast<Real>(1.0);
+    m_origin = a_center;
+    m_origin.w() = static_cast<Real>(1.0);
   }	//End: Sphere::SetCenter()
 
 
@@ -164,9 +173,54 @@ namespace Dg
   template<typename Real>
   void Sphere<Real>::Get(Vector4<Real> & a_center, Real & a_radius) const
   {
-    a_center = m_center;
+    a_center = m_origin;
     a_radius = m_radius;
   }	//End: Sphere::Get()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Sphere::GetTransformed()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Sphere<Real> Sphere<Real>::GetTransformed(VQS<Real> const & a_vqs) const
+  {
+    return Sphere<Real>(a_vqs.TransformPoint(m_origin), a_vqs.S() * m_radius);
+  }	//End: Sphere::GetTransformed()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Sphere::TransformSelf()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Sphere<Real>& Sphere<Real>::TransformSelf(VQS<Real> const & a_vqs)
+  {
+    Set(a_vqs.TransformPoint(m_origin), a_vqs.S() * m_radius);
+    return *this;
+  }	//End: Sphere::TransformSelf()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	Sphere::GetRandomPointInside()
+  //--------------------------------------------------------------------------------
+  template<typename Real>
+  Vector4<Real> Sphere<Real>::GetRandomPointInside() const
+  {
+    Vector4<Real> result(m_origin);
+    if (!Dg::IsZero(m_radius))
+    {
+      Vector4<Real> diff;
+      RNG rng;
+      do
+      {
+        Real x = rng.GetUniform(m_origin.x() - m_radius, m_origin.x() + m_radius);
+        Real y = rng.GetUniform(m_origin.y() - m_radius, m_origin.y() + m_radius);
+        Real z = rng.GetUniform(m_origin.z() - m_radius, m_origin.z() + m_radius);
+        result.Set(x, y, z, static_cast<Real>(1.0));
+        diff = (result - m_origin);
+      } while (diff.Dot(diff) > m_radius * m_radius);
+    }
+    return result;
+  }	//End: Sphere::GetRandomPointInside()
 }
 
 #endif
