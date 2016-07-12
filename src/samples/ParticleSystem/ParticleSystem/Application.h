@@ -82,8 +82,6 @@ public:
     , sphereRadius(1.0f)
     , colors{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f}
     , rate(10.0f)
-    , life(5.0f)
-    , force(1.0f)
     , sizes{0.1f, 0.1f}
   {}
 
