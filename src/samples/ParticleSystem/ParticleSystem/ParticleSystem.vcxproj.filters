@@ -143,25 +143,31 @@
     <ClInclude Include="Pulse.h">
       <Filter>Attractors</Filter>
     </ClInclude>
-    <ClInclude Include="AttractorPointPulse.h">
-      <Filter>Attractors</Filter>
-    </ClInclude>
     <ClInclude Include="GenPosSphere.h">
       <Filter>Generators</Filter>
     </ClInclude>
     <ClInclude Include="GenVelOutwards.h">
       <Filter>Generators</Filter>
     </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="fs.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="vs.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="config.ini">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="pt_fs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ln_fs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="pt_vs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ln_vs.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

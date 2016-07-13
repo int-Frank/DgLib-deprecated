@@ -173,6 +173,16 @@ void Application::BuildMainUI()
   float sliderOffset = -90.0f;
   int nSpacing = 3;
 
+  //Common values
+  float vRotMins[2] = { 0.0f, 0.0f };
+  float vRotMaxs[2] = { Dg::PI_f * 2.0f, Dg::PI_f };
+  char const * vRotformats[2] = { "rz = %.2f", "rx = %.2f" };
+  float powers2[2] = { 1.0f, 1.0f };
+  float posMins[3] = { -10.0f, -10.0f, -10.0f };
+  float posMaxs[3] = { 10.0f, 10.0f, 10.0f };
+  char const * posFormats[3] = { "x = %.2f", "y = %.2f", "z = %.2f" };
+  float powers3[3] = { 1.0f, 1.0f, 1.0f };
+
   ImGui::Begin("Partice System");
   ImGui::Separator();
   if (ImGui::CollapsingHeader("Emitters"))
@@ -209,9 +219,8 @@ void Application::BuildMainUI()
       float mins[3] = { 0.0f, 0.0f, 0.0f };
       float maxs[3] = { 10.0f, 10.0f, 10.0f };
       char const * formats[3] = { "l = %.2f", "w = %.2f", "h = %.2f" };
-      float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Dimensions", &curEmData.boxDim[0], 3, mins, maxs, formats, powers);
+      ImGui::SliderFloatNi("Dimensions", &curEmData.boxDim[0], 3, mins, maxs, formats, powers3);
       ImGui::PopItemWidth();
     }
 
@@ -227,13 +236,8 @@ void Application::BuildMainUI()
     {
       CreateSpacing(nSpacing);
       ImGui::TextColored(headingClr, "Place Emitter");
-
-      float mins[3] = { -10.0f, -10.0f, -10.0f };
-      float maxs[3] = { 10.0f, 10.0f, 10.0f };
-      char const * formats[3] = { "x = %.2f", "y = %.2f", "z = %.2f" };
-      float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Position", &curEmData.transform[0], 3, mins, maxs, formats, powers);
+      ImGui::SliderFloatNi("Position", &curEmData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
       ImGui::PopItemWidth();
     }
 
@@ -312,6 +316,9 @@ void Application::BuildMainUI()
     CreateSpacing(nSpacing);
     
     AttractorData & curAttData = m_aData[curAtt];
+
+    ImGui::Checkbox("Show attractor", &curAttData.show);
+
     ImGui::TextColored(headingClr, "Attractor type");
     ImGui::PushItemWidth(sliderOffset);
 
@@ -319,40 +326,71 @@ void Application::BuildMainUI()
     ImGui::ListBox("Force", &curAttData.type[1], attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
 
     const char* attrShapes[] = { "None", "Global", "Point", "Line", "Plane" };
-    ImGui::ListBox("Shape", &curAttData.type[0], attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
-    
+    static int attShapeVal;
+    ImGui::ListBox("Shape", &attShapeVal, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
+    switch (attShapeVal)
+    {
+    case 0: {curAttData.type[1] = E_AttNone; break; }
+    case 1: {curAttData.type[1] = E_AttGlobal; break; }
+    case 2: {curAttData.type[1] = E_AttPoint; break; }
+    case 3: {curAttData.type[1] = E_AttLine; break; }
+    case 4: {curAttData.type[1] = E_AttPlane; break; }
+    }
+
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Strength");
     ImGui::SliderFloat("Strength", &curAttData.strength, -100.0f, 100.0f, "%.2f m/s");
     ImGui::SliderFloat("Max accel", &curAttData.maxAccelMag, 0.0f, 500.0f, "%.2f m/s");
-    ImGui::PopItemWidth();
-
+    
     CreateSpacing(nSpacing);
-    ImGui::TextColored(headingClr, "Other attributes");
-    ImGui::Checkbox("Pulse", &curAttData.pulse);
-    if (curAttData.pulse)
+    ImGui::TextColored(headingClr, "Position Attractor");
+    switch (curAttData.type[1])
     {
-      float mins[2] = { 0.0f, 0.0f };
-      float maxs[2] = { 10.0f, 10.0f };
-      char const * formats[2] = { "ampl = %.2f", "freq = %.2f" };
-      float powers[2] = { 1.0f, 1.0f };
-      ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Pulse data", &curAttData.pulseData[0], 2, mins, maxs, formats, powers);
-      ImGui::PopItemWidth();
+    default:
+    case E_AttNone:
+    {
+      break;
     }
+    case E_AttGlobal:
+    {
+      ImGui::SliderFloatNi("Accel dir", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
+      break;
+    }
+    case E_AttPoint:
+    {
+      ImGui::SliderFloatNi("Att Pos", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
+      break;
+    }
+    case E_AttLine:
+    {
+      ImGui::SliderFloatNi("Line origin", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
+      ImGui::SliderFloatNi("Line dir", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
+      break;
+    }
+    case E_AttPlane:
+    {
+
+      ImGui::SliderFloatNi("Normal", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
+      ImGui::SliderFloat("Offset", &curAttData.transform[5], 0.0f, 10.0f, "offset = %.2f", 1.0f);
+      break;
+    }
+    }
+    
+    ImGui::PopItemWidth();
   }
   ImGui::End();
 }
 
 void Application::DoLogic()
 {
+  //Get user input
   BuildMainUI();
 
   //Update particle system
   UpdateParSysAttr();
   m_particleSystem.Update(m_dt);
 
-  //Add current particles
+  //Update stats
   {
     ImGui::Begin("Stats");
     ImGui::Text("Live Particles: %i", m_particleSystem.GetParticleData()->GetCountAlive());
@@ -397,8 +435,21 @@ void Application::Render()
 
   float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
 
-  m_renderer.Update(m_particleSystem.GetParticleData());
+  int * pShowAttrTypes = (int *)malloc(s_nAttractors * sizeof(int));
+  int nShowAttr = 0;
+  for (int i = 0; i < s_nAttractors; ++i)
+  {
+    if (m_aData[i].show)
+    {
+      pShowAttrTypes[i] = m_aData[i].type[1];
+      nShowAttr++;
+    }
+  }
+  
+  m_renderer.Update(m_particleSystem.GetParticleData(), nShowAttr, pShowAttrTypes);
   m_renderer.Render(mv_matrix, proj_matrix, parScale);
+
+  free(pShowAttrTypes);
 }
 
 void AppOnMouseScroll(double yOffset)

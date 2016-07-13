@@ -12,23 +12,22 @@ class GenVelOutwards : public Dg::ParticleGenerator<Real>
 public:
   GenVelOutwards() 
     : Dg::ParticleGenerator<Real>()
-    , m_axis(Dg::Vector4<Real>::yAxis())
-    , m_angle(static_cast<Real>(0.785))
+    , m_origin(Dg::Vector4<Real>::yAxis())
     , m_velocity(static_cast<Real>(1.0))
   {}
+
   ~GenVelOutwards() {}
 
   GenVelOutwards(GenVelOutwards<Real> const & a_other)
     : Dg::ParticleGenerator<Real>(a_other)
-    , m_axis(a_other.m_axis)
-    , m_angle(a_other.m_angle)
-    , m_velocity(a_other.m_velocity) {}
+    , m_origin(a_other.m_origin)
+    , m_velocity(a_other.m_velocity) 
+  {}
 
   GenVelOutwards<Real> & operator=(GenVelOutwards<Real> const & a_other)
   {
     Dg::ParticleGenerator<Real>::operator=(a_other);
-    m_axis = a_other.m_axis;
-    m_angle = a_other.m_angle;
+    m_origin = a_other.m_origin;
     m_velocity = a_other.m_velocity;
     return *this;
   }
@@ -42,15 +41,14 @@ public:
   GenVelOutwards<Real> * Clone() const { return new GenVelOutwards<Real>(*this); }
 
 private:
-  Dg::Vector4<Real> m_axis;
-  Real              m_angle;
+  Dg::Vector4<Real> m_origin;
   Real              m_velocity;
 };
 
 template<typename Real>
 void GenVelOutwards<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 {
-  m_axis = a_vqs.Rotate(Dg::Vector4<Real>::xAxis());
+  m_origin = a_vqs.Rotate(Dg::Vector4<Real>::xAxis());
 }
 
 
@@ -70,7 +68,7 @@ void GenVelOutwards<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start
   {
     for (int i = a_start; i <= a_end; ++i)
     {
-      pVels[i] = m_velocity * Dg::GetRandomVector(m_axis, m_angle);
+      pVels[i] = m_velocity * Dg::GetRandomVector(m_origin, m_angle);
     }
   }
   if (pAccel)

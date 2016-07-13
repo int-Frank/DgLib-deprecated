@@ -3,7 +3,6 @@
 #include "Application.h"
 
 #include "AttractorPoint.h"
-#include "AttractorPointPulse.h"
 #include "AttractorLine.h"
 #include "AttractorPlane.h"
 #include "AttractorGlobal.h"

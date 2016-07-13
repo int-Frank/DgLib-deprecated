@@ -4,9 +4,12 @@
 #include "Renderer.h"
 #include "particle_system/DgParticleData.h"
 #include "DgMatrix44.h"
-
+#include "DgMakeGrid.h"
 #include "imgui/imgui.h"
 #include "UI.h"
+#include "Types.h"
+
+float const Renderer::s_lineColor[4] = { 1.0f, 0.4588f, 0.102f, 1.0f };
 
 bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 {
@@ -17,10 +20,103 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 
   int countMax = a_parData->GetCountMax();
 
-  m_idShaderProgram = CompileShaders();
+  glGenBuffers(s_nBuffers, m_buffers);
+  glGenVertexArrays(1, &m_pt_vao);
+  glBindVertexArray(m_pt_vao);
 
-  glGenVertexArrays(1, &m_vao);
-  glBindVertexArray(m_vao);
+  //--------------------------------------------------------------------------------
+  //  Set up point rendering
+  //--------------------------------------------------------------------------------
+  
+  m_pt_shaderProgram = CompileShaders("pt_vs.glsl", "pt_fs.glsl");
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[0]);
+  glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * (4 + 4 + 1) * countMax), nullptr, GL_DYNAMIC_DRAW);
+
+  GLuint ptPosition = glGetAttribLocation(m_pt_shaderProgram, "position");
+  GLuint ptColor = glGetAttribLocation(m_pt_shaderProgram, "color");
+  GLuint ptSize = glGetAttribLocation(m_pt_shaderProgram, "pointSize");
+
+  glVertexAttribPointer(ptPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(ptColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 4 * countMax));
+  glVertexAttribPointer(ptSize, 1, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 8 * countMax));
+
+  glEnableVertexAttribArray(ptPosition);
+  glEnableVertexAttribArray(ptColor);
+  glEnableVertexAttribArray(ptSize);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
+
+  //--------------------------------------------------------------------------------
+  //  Set up line rendering
+  //--------------------------------------------------------------------------------
+  
+  glGenVertexArrays(1, &m_ln_vao);
+  glBindVertexArray(m_ln_vao);
+  
+  int const nLines = s_nLinesGlobal + s_nLinesPoint + s_nLinesLine + s_nLinesPlane;
+  m_ln_shaderProgram = CompileShaders("ln_vs.glsl", "ln_fs.glsl");
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[1]);
+  float lines[nLines * 3 * 2] =
+  {
+    //Global - arrow
+    0.0f , 0.0f, 0.0f,
+    1.0f , 0.0f, 0.0f,
+    1.0f , 0.0f, 0.0f,
+    0.8f , 0.0f, 0.2f,
+    1.0f , 0.0f, 0.0f,
+    0.8f , 0.0f, -0.2f,
+
+    //Point lines
+    -1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, 1.0f,
+
+    //Line lines
+    -30.0f, 0.0f, 0.0f,
+    30.0f, 0.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, 1.0f,
+
+    //Grid lines
+    0.0f , 0.0f, 0.0f,
+    1.0f , 0.0f, 0.0f,
+    1.0f , 0.0f, 0.0f,
+    0.8f , 0.0f, 0.2f,
+    1.0f , 0.0f, 0.0f,
+    0.8f , 0.0f, -0.2f
+  };
+  
+  float const bounds[12] = 
+  {
+    0.0f, -1.0f,  1.0f,
+    0.0f, 1.0f,  1.0f,
+    0.0f, -1.0f,  -1.0f,
+    0.0f, 1.0f,  -1.0f
+  };
+  Dg::MakeGrid<float, 3>(&lines[(s_nLinesGlobal + s_nLinesPoint + s_nLinesLine + 3) * 3 * 2], s_gridDim, bounds);
+
+
+  glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * nLines * 3 * 2), lines, GL_STATIC_DRAW);
+  
+  GLuint lnPosition = glGetAttribLocation(m_ln_shaderProgram, "position");
+  glVertexAttribPointer(lnPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(lnPosition);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
+
+
+  //--------------------------------------------------------------------------------
+  //  Other
+  //--------------------------------------------------------------------------------
 
   glEnable(GL_ALPHA_TEST);
   glEnable(GL_DEPTH_TEST);
@@ -29,34 +125,20 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_POINT_SPRITE);
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-
   glDepthFunc(GL_LESS);
-
-  glGenBuffers(1, &m_idBufffer);
-  glBindBuffer(GL_ARRAY_BUFFER, m_idBufffer);
-  glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * (4 + 4 + 1) * countMax), nullptr, GL_DYNAMIC_DRAW);
-
-  GLuint idPosition = glGetAttribLocation(m_idShaderProgram, "position");
-  GLuint idColor = glGetAttribLocation(m_idShaderProgram, "color");
-  GLuint idSize = glGetAttribLocation(m_idShaderProgram, "pointSize");
-
-  glVertexAttribPointer(idPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
-  glVertexAttribPointer(idColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 4 * countMax));
-  glVertexAttribPointer(idSize, 1, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(float) * 8 * countMax));
-
-  glEnableVertexAttribArray(idPosition);
-  glEnableVertexAttribArray(idColor);
-  glEnableVertexAttribArray(idSize);
-
-  glBindVertexArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   return true;
 }
 
-void Renderer::Update(Dg::ParticleData<float> * a_parData)
+void Renderer::Update(Dg::ParticleData<float> * a_parData
+                    , int a_nAttractors
+                    , int * a_pAttractorTypes)
 {
-  glBindBuffer(GL_ARRAY_BUFFER, m_idBufffer);
+  m_nCurrentAttractors = a_nAttractors;
+  m_pAttractorTypes = (int*)realloc(m_pAttractorTypes, a_nAttractors * sizeof(int));
+  memcpy(m_pAttractorTypes, a_pAttractorTypes, a_nAttractors * sizeof(int));
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[0]);
 
   m_nCurrentParticles = a_parData->GetCountAlive();
   int countMax = a_parData->GetCountMax();
@@ -100,8 +182,6 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
                     , Dg::Matrix44<float> const & a_proj
                     , float a_parScale)
 {
-  glBindVertexArray(m_vao);
-
   static int sfactor_ind(6);
   static int dfactor_ind(7);
 
@@ -158,35 +238,76 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
     glBlendFunc(GetEnumFromListVal(sfactor_ind), GetEnumFromListVal(dfactor_ind));
   }
 
-  glUseProgram(m_idShaderProgram);
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-  GLint mv_loc = glGetUniformLocation(m_idShaderProgram, "mv_matrix");
-  GLint proj_loc = glGetUniformLocation(m_idShaderProgram, "proj_matrix");
-  GLint parScale_loc = glGetUniformLocation(m_idShaderProgram, "parScale");
+  glBindVertexArray(m_pt_vao);
+  glUseProgram(m_pt_shaderProgram);
+
+  GLint mv_loc = glGetUniformLocation(m_pt_shaderProgram, "mv_matrix");
+  GLint proj_loc = glGetUniformLocation(m_pt_shaderProgram, "proj_matrix");
+  GLint parScale_loc = glGetUniformLocation(m_pt_shaderProgram, "parScale");
 
   glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_modelView.GetData());
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
   glUniform1f(parScale_loc, a_parScale);
 
-  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-  
-  //Draw points 
   glDrawArrays(GL_POINTS, 0, m_nCurrentParticles);
 
+  glBindVertexArray(m_ln_vao);
+  glUseProgram(m_ln_shaderProgram);
+
+  mv_loc = glGetUniformLocation(m_ln_shaderProgram, "mv_matrix");
+  proj_loc = glGetUniformLocation(m_ln_shaderProgram, "proj_matrix");
+  GLuint lineColor_loc = glGetUniformLocation(m_ln_shaderProgram, "lineColor");
+
+  glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_modelView.GetData());
+  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
+  glUniform4fv(lineColor_loc, 1, s_lineColor);
+
+  for (int i = 0; i < m_nCurrentAttractors; ++i)
+  {
+    switch (m_pAttractorTypes[i])
+    {
+    case E_AttGlobal:
+    {
+      glDrawArrays(GL_LINES, 0, 3 * 2);
+      break;
+    }
+    case E_AttPoint:
+    {
+      glDrawArrays(GL_LINES, s_nLinesGlobal * 2, 3 * 2);
+      break;
+    }
+    case E_AttLine:
+    {
+      glDrawArrays(GL_LINES, (s_nLinesGlobal + s_nLinesPoint) * 2, 3 * 2);
+      break;
+    }
+    case E_AttPlane:
+    {
+      glDrawArrays(GL_LINES, (s_nLinesGlobal + s_nLinesPoint + s_nLinesLine ) * 2, s_nLinesPlane * 2);
+      break;
+    }
+    }
+  }
   glBindVertexArray(0);
 }
 
 void Renderer::ShutDown()
 {
-  if (m_idBufffer != 0)
+  for (int i = 0; i < s_nBuffers; ++i)
   {
-    glDeleteBuffers(1, &m_idBufffer);
-    m_idBufffer = 0;
-    glDeleteProgram(m_idShaderProgram);
+    if (m_buffers[i] != 0)
+    {
+      glDeleteBuffers(1, &m_buffers[i]);
+      m_buffers[i] = 0;
+    }
   }
 
-  glDeleteVertexArrays(1, &m_vao);
-  glDeleteProgram(m_idShaderProgram);
+  glDeleteVertexArrays(1, &m_pt_vao);
+  glDeleteProgram(m_pt_shaderProgram);
+  glDeleteProgram(m_ln_shaderProgram);
+  free(m_pAttractorTypes);
 }
 
 GLuint Renderer::LoadShaderFromFile(std::string path, GLenum shaderType)
@@ -230,15 +351,15 @@ GLuint Renderer::LoadShaderFromFile(std::string path, GLenum shaderType)
   return shaderID;
 }
 
-GLuint Renderer::CompileShaders()
+GLuint Renderer::CompileShaders(char const * a_vs, char const * a_fs)
 {
-  GLuint vs = LoadShaderFromFile("vs.glsl", GL_VERTEX_SHADER);
+  GLuint vs = LoadShaderFromFile(a_vs, GL_VERTEX_SHADER);
 
   //Check for errors
   if (vs == 0)
     return 0;
 
-  GLuint fs = LoadShaderFromFile("fs.glsl", GL_FRAGMENT_SHADER);
+  GLuint fs = LoadShaderFromFile(a_fs, GL_FRAGMENT_SHADER);
 
   //Check for errors
   if (fs == 0)
@@ -250,5 +371,10 @@ GLuint Renderer::CompileShaders()
   glAttachShader(program, fs);
   glLinkProgram(program);
 
+  //Detach and delete shaders afer we have successfully linked the program.
+  glDetachShader(program, vs);
+  glDetachShader(program, fs);
+  glDeleteShader(vs);
+  glDeleteShader(fs);
   return program;
 }

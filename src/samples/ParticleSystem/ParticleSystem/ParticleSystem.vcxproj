@@ -142,7 +142,6 @@
     <ClInclude Include="AttractorLine.h" />
     <ClInclude Include="AttractorPlane.h" />
     <ClInclude Include="AttractorPoint.h" />
-    <ClInclude Include="AttractorPointPulse.h" />
     <ClInclude Include="EmitterLinear.h" />
     <ClInclude Include="EmitterRandom.h" />
     <ClInclude Include="GenColor.h" />
@@ -161,6 +160,7 @@
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
     <ClInclude Include="Pulse.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Types.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="UpdaterColor.h" />
     <ClInclude Include="UpdaterEuler.h" />
@@ -170,8 +170,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />
-    <None Include="fs.glsl" />
-    <None Include="vs.glsl" />
+    <None Include="pt_fs.glsl" />
+    <None Include="ln_fs.glsl" />
+    <None Include="pt_vs.glsl" />
+    <None Include="ln_vs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

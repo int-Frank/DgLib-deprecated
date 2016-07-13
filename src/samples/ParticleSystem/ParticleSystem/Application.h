@@ -7,42 +7,9 @@
 
 #include "particle_system/DgParticleSystem.h"
 #include "Renderer.h"
+#include "Types.h"
 
 struct GLFWwindow;
-
-enum
-{
-  //Updaters 
-  E_UpdaterLife,
-  E_UpdaterZeroAccel,
-  E_UpdaterAttractor_1,
-  E_UpdaterAttractor_2,
-  E_UpdaterEuler,
-  E_UpdaterColor,
-  E_UpdaterSize,
-
-  //Generators
-  E_GenPosPoint,
-  E_GenPosBox,
-  E_GenPosSphere,
-  E_GenVelCone,
-  E_GenVelOutwards,
-  E_GenColor,
-  E_GenLife,
-  E_GenSize,
-  E_GenForce,
-
-  //Emitter types
-  E_Emitter_Linear,
-  E_Emitter_Random,
-
-  //Emitters
-  E_Emitter_1,
-  E_Emitter_2,
-  E_Emitter_3,
-
-  E_NULL
-};
 
 class AttractorData
 {
@@ -53,20 +20,20 @@ public:
     , type{0, 0}
     , strength(1.0f)
     , maxAccelMag(10.0f)
-    , pulse(false)
-    , pulseData{ 1.0f, 1.0f }
+    , transform{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
+    , show(false)
   {}
 
   int ID;
 
   //type: [shape, pull type] 
-  //shape: 0: None, 1: Global, 2: Point, 3: Line, 4: Plane
+  //shape: None, Global, Point, Line, Plane
   //pull type: 0: constant , 1: linear, 2: inverse square
   int type[2]; 
   float strength;       
-  float maxAccelMag;    
-  bool pulse;
-  float pulseData[2]; //[amplitute, frequency]
+  float maxAccelMag;
+  float transform[6]; // [x, y, z, rz, rx, scale] 
+  bool show;
 };
 
 class EmitterData
