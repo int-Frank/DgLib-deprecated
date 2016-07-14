@@ -42,6 +42,17 @@ Dg::ParticleEmitter<float> * EmitterFactory::Create(EmitterData const & a_data) 
     case E_GenVelCone: pEmitter->AddGenerator(E_GenVelCone, CreateGenVelCone(a_data)); break;
     case E_GenVelOutwards: pEmitter->AddGenerator(E_GenVelOutwards, CreateGenVelOutwards(a_data)); break;
     }
+
+    //Other attributes
+    pEmitter->SetRate(a_data.rate);
+    if (a_data.on)
+    {
+      pEmitter->Start();
+    }
+    else
+    {
+      pEmitter->Stop();
+    }
   }
 
   return pEmitter;
@@ -104,6 +115,7 @@ Dg::ParticleGenerator<float> * EmitterFactory::CreateGenVelCone(EmitterData cons
   vqs.SetQ(qy * qz);
   pGen->SetTransformation(vqs);
   pGen->SetAngle(a_data.velCone[2]);
+  pGen->SetVelocity(a_data.velocity);
   return pGen;
 }
 

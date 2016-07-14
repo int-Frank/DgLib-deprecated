@@ -239,15 +239,12 @@ void Application::UpdateParSysAttr()
       memcpy(dataPrev.transform, data.transform, sizeof(float) * 7);
     }
 
-    if (data.velCone[2] != dataPrev.velCone[2])
+    if (data.velCone[2] != dataPrev.velCone[2] && data.velGenMethod == E_GenVelCone)
     {
-      if (data.velGenMethod == E_GenVelCone)
+      GenVelCone<float> * pVelGen = (GenVelCone<float> *)ptr->GetGenerator(data.velGenMethod);
+      if (pVelGen)
       {
-        GenVelCone<float> * pVelGen = (GenVelCone<float> *)ptr->GetGenerator(data.velGenMethod);
-        if (pVelGen)
-        {
-          pVelGen->SetAngle(data.velCone[2]);
-        }
+        pVelGen->SetAngle(data.velCone[2]);
       }
       dataPrev.velCone[2] = data.velCone[2];
     }
@@ -265,20 +262,18 @@ void Application::UpdateParSysAttr()
       dataPrev.velGenMethod = data.velGenMethod;
     }
 
-    if (memcmp(data.velCone, dataPrev.velCone, sizeof(float) * 2) != 0)
+    if (memcmp(data.velCone, dataPrev.velCone, sizeof(float) * 2) != 0
+      && data.velGenMethod == E_GenVelCone)
     {
-      if (data.velGenMethod == E_GenVelCone)
+      Dg::ParticleGenerator<float> * pVelGen = ptr->GetGenerator(data.velGenMethod);
+      if (pVelGen)
       {
-        Dg::ParticleGenerator<float> * pVelGen = ptr->GetGenerator(data.velGenMethod);
-        if (pVelGen)
-        {
-          quat qz, qy;
-          Vqs vqs;
-          qz.SetRotationZ(data.velCone[0]);
-          qy.SetRotationY(-Dg::PI_f / 2.0f + data.velCone[1]);
-          vqs.SetQ(qy * qz);
-          pVelGen->SetTransformation(vqs);
-        }
+        quat qz, qy;
+        Vqs vqs;
+        qz.SetRotationZ(data.velCone[0]);
+        qy.SetRotationY(-Dg::PI_f / 2.0f + data.velCone[1]);
+        vqs.SetQ(qy * qz);
+        pVelGen->SetTransformation(vqs);
       }
       memcpy(dataPrev.velCone, data.velCone, sizeof(float) * 2);
     }

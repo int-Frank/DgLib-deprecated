@@ -91,12 +91,12 @@ private:
   //Main initializer function. All others are called through here.
   bool Init();
 
-  void UpdateParSysAttr();
-
   void GetConfiguration();
   bool InitGL();
   void InitControls();
   void InitParticleSystem();
+
+  void UpdateParSysAttr();
 
   void HandleInput();
   void DoLogic();
