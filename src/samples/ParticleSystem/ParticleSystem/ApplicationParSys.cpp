@@ -137,6 +137,9 @@ void Application::UpdateParSysAttr()
 {
   for (int e = 0; e < s_nEmitters; ++e)
   {
+    //We just do a dumb check to see if any of the data has changed,
+    //and just remove the emitter and build a new one with the new data,
+    //but it's very slow; there are noticable delays.
     EmitterData & data = m_eData[e];
     EmitterData & dataPrev = m_eDataPrev[e];
     int id = data.ID;

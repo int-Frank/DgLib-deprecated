@@ -5,19 +5,21 @@
 
 enum
 {
+  //------------------------------------------------------------------------------------------
   //Updaters. Number these in the order you want them to run - ie lowest first, highest last.
-  E_UpdaterLife             = -1,
-  E_UpdaterZeroAccel        = 0,
+  E_UpdaterLife             = 0,
+  E_UpdaterZeroAccel        = 1,
 
   //We need to keep any attractor id's in this range, so they will
   //update after the life and zero accel updaters, but before the Euler.
-  E_UpdaterGeneric_begin  = 1,
+  E_UpdaterGeneric_begin  = 2,
   E_UpdaterGeneric_end    = 64,
 
   E_UpdaterEuler,
   E_UpdaterColor,
   E_UpdaterSize,
-
+  //------------------------------------------------------------------------------------------
+  
   //Generators. Number these in the order you want them to run - ie lowest first, highest last.
   E_GenPosPoint,
   E_GenPosBox,
@@ -42,7 +44,6 @@ enum
 
   E_NULL
 };
-
 
 class AttractorData
 {
