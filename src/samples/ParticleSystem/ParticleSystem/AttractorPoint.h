@@ -5,56 +5,56 @@
 #include "particle_system/DgParticleData.h"
 #include "DgVQS.h"
 
-template<typename Real, unsigned Force>
-class AttractorPoint : public Dg::Attractor<Real, Force>
+template<typename Real>
+class AttractorPoint : public Dg::Attractor<Real>
 {
 public:
 
   AttractorPoint() 
-    : Dg::Attractor<Real, Force>()
+    : Dg::Attractor<Real>()
     , m_point(Dg::Vector4<Real>::Origin())
   {}
 
   virtual ~AttractorPoint() {}
 
-  AttractorPoint(AttractorPoint<Real, Force> const &);
+  AttractorPoint(AttractorPoint<Real> const &);
   
-  AttractorPoint<Real, Force> & operator=(AttractorPoint<Real, Force> const &);
+  AttractorPoint<Real> & operator=(AttractorPoint<Real> const &);
 
   virtual void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
   virtual void Update(Dg::ParticleData<Real> &, int, Real);
 
   virtual void SetTransformation(Dg::VQS<Real> const &);
 
-  virtual AttractorPoint<Real, Force> * Clone() const { return new AttractorPoint<Real, Force>(*this); }
+  virtual AttractorPoint<Real> * Clone() const { return new AttractorPoint<Real>(*this); }
 
 protected:
   Dg::Vector4<Real> m_point;
 };
 
-template<typename Real, unsigned Force>
-AttractorPoint<Real, Force>::AttractorPoint(AttractorPoint<Real, Force> const & a_other)
-  : Dg::Attractor<Real, Force>(a_other)
+template<typename Real>
+AttractorPoint<Real>::AttractorPoint(AttractorPoint<Real> const & a_other)
+  : Dg::Attractor<Real>(a_other)
   , m_point(a_other.m_point)
 {
 }
 
-template<typename Real, unsigned Force>
-AttractorPoint<Real, Force> & AttractorPoint<Real, Force>::operator=(AttractorPoint<Real, Force> const & a_other)
+template<typename Real>
+AttractorPoint<Real> & AttractorPoint<Real>::operator=(AttractorPoint<Real> const & a_other)
 {
-  Dg::Attractor<Real, Force>::operator=(a_other);
+  Dg::Attractor<Real>::operator=(a_other);
   m_point = a_other.m_point;
   return *this;
 }
 
-template<typename Real, unsigned Force>
-void AttractorPoint<Real, Force>::SetTransformation(Dg::VQS<Real> const & a_vqs)
+template<typename Real>
+void AttractorPoint<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 {
   m_point = a_vqs.Translate(Dg::Vector4<Real>::Origin());
 }
 
-template<typename Real, unsigned Force>
-void AttractorPoint<Real, Force>::Update(Dg::ParticleData<Real> & a_data
+template<typename Real>
+void AttractorPoint<Real>::Update(Dg::ParticleData<Real> & a_data
 									                     , int a_start
                                        , Real a_dt)
 {
@@ -63,9 +63,32 @@ void AttractorPoint<Real, Force>::Update(Dg::ParticleData<Real> & a_data
 
   if (pPos && pAccels)
   {
-    for (int i = a_start; i < a_data.GetCountAlive(); ++i)
+    switch (GetAccelType())
     {
-      pAccels[i] += (GetAccelBetweenPoints(m_point, pPos[i]));
+    case Constant:
+    {
+      for (int i = a_start; i < a_data.GetCountAlive(); ++i)
+      {
+        pAccels[i] += (GetAccel_Constant(m_point, pPos[i]));
+      }
+      break;
+    }
+    case Linear:
+    {
+      for (int i = a_start; i < a_data.GetCountAlive(); ++i)
+      {
+        pAccels[i] += (GetAccel_Linear(m_point, pPos[i]));
+      }
+      break;
+    }
+    case InvSq:
+    {
+      for (int i = a_start; i < a_data.GetCountAlive(); ++i)
+      {
+        pAccels[i] += (GetAccel_InvSq(m_point, pPos[i]));
+      }
+      break;
+    }
     }
   }
 }

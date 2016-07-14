@@ -1,7 +1,7 @@
 #ifndef PULSE_H
 #define PULSE_H
 
-#include <math.h>
+#include <cmath>
 #include "DgMath.h"
 
 template<typename Real>

@@ -1,7 +1,7 @@
 #ifndef UPDATEREULER_H
 #define UPDATEREULER_H
 
-#include <math.h>
+#include <cmath>
 
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleUpdater.h"

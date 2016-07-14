@@ -46,7 +46,8 @@ namespace Dg
     void ToggleOn() { m_isOn = !m_isOn; }
     bool IsOn() const { return m_isOn; }
 
-    void AddGenerator(ParMapKey, ParticleGenerator<Real> const &);
+    //! This method deletes the input generator
+    void AddGenerator(ParMapKey, ParticleGenerator<Real> *);
     void RemoveGenerator(ParMapKey);
     ParticleGenerator<Real> * GetGenerator(ParMapKey);
 
@@ -60,10 +61,13 @@ namespace Dg
   };
 
   template<typename Real>
-  void ParticleEmitter<Real>::AddGenerator(ParMapKey a_key, ParticleGenerator<Real> const & a_gen)
+  void ParticleEmitter<Real>::AddGenerator(ParMapKey a_key, ParticleGenerator<Real> * a_pGen)
   {
-    ObjectWrapper<ParticleGenerator<Real>> newGenerator(a_gen);
-    m_generators.insert(a_key, newGenerator);
+    if (a_pGen)
+    {
+      ObjectWrapper<ParticleGenerator<Real>> newGenerator(a_pGen, true);
+      m_generators.insert(a_key, newGenerator);
+    }
   }
 
   template<typename Real>

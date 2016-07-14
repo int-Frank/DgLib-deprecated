@@ -2,6 +2,9 @@
 
 #include "Application.h"
 
+#include "EmitterFactory.h"
+#include "AttractorFactory.h"
+
 #include "AttractorPoint.h"
 #include "AttractorLine.h"
 #include "AttractorPlane.h"
@@ -22,203 +25,12 @@
 
 using namespace Dg;
 
-typedef Dg::Matrix44<float>     mat44;
 typedef Dg::Vector4<float>      vec4;
 typedef Dg::Quaternion<float>   quat;
 typedef Dg::VQS<float>          Vqs;
 
-static AttractorGlobal<float, AttractorForce::Constant> CreateAttractor_1()
-{
-  Vqs vqs;
-  quat q;
-
-  AttractorGlobal<float, AttractorForce::Constant> attr;
-  attr.SetTransformation(vqs);
-  attr.SetStrength(1.0f);
-
-  return attr;
-}
-
-static AttractorPoint<float, AttractorForce::InverseSquare> CreateAttractor_2()
-{
-  Vqs vqs;
-  vec4 v;
-
-  v.Set(0.0f, 0.0f, 0.0f, 1.0f);
-  vqs.SetV(v);
-  AttractorPoint<float, AttractorForce::InverseSquare> attr;
-  attr.SetTransformation(vqs);
-  attr.SetStrength(-10.0f);
-  attr.SetMaxAccelMagnitude(1.0);
-
-  return attr;
-}
-
-//Helper function to initiate Attractors
-template<unsigned Force>
-static Attractor<float, Force> * CreateAttractor(AttractorData & a_data)
-{
-
-  unsigned attType = (a_data.type[1] << 16) 
-                   | (a_data.pulse);
-  
-  Attractor<float, Force> * pAttractor(nullptr);
-  switch (attType)
-  {
-  case (1 << 16 | false):
-  {
-    pAttractor = new AttractorGlobal<float, Force>();
-    break;
-  }
-  case (2 << 16 | false):
-  {
-    Vqs vqs;
-    vec4 v(0.0, 0.0, 5.0, 0.0);
-    vqs.SetV(v);
-    pAttractor = new AttractorPoint<float, Force>();
-    pAttractor->SetTransformation(vqs);
-    break;
-  }
-  case (3 << 16 | false):
-  {
-    break;
-  }
-  case (4 << 16 | false):
-  {
-    break;
-  }
-  case (0 << 16 | true):
-  {
-    break;
-  }
-  case (1 << 16 | true):
-  {
-    //pAttractor = new AttractorPointPulse<float, Force>();
-    break;
-  }
-  case (2 << 16 | true):
-  {
-    break;
-  }
-  case (3 << 16 | true):
-  {
-    break;
-  }
-  case (4 << 16 | true):
-  {
-    break;
-  }
-  }
-
-  if (pAttractor)
-  {
-    pAttractor->SetMaxAccelMagnitude(a_data.maxAccelMag);
-    pAttractor->SetStrength(a_data.strength);
-  }
-
-  return pAttractor;
-}
-
-//Helper function to initialise our emitters
-template<typename EmitterType>
-static EmitterType CreateEmitter(EmitterData & a_data)
-{
-  EmitterType emitter;
-  Vqs vqs;
-  quat qy, qz;
-  vec4 v;
-
-  if (a_data.on) emitter.Start();
-  else emitter.Stop();
-
-  GenPosPoint<float> genPos;
-  vqs.SetV(vec4(a_data.transform[0], a_data.transform[1], a_data.transform[2], 0.0));
-  genPos.SetTransformation(vqs);
-  a_data.posGenMethod = E_GenPosPoint;
-  emitter.AddGenerator(E_GenPosPoint, genPos);
-
-  GenVelCone<float>  genVel;
-  qz.SetRotationZ(a_data.velCone[0]);
-  qy.SetRotationY(a_data.velCone[1] - Dg::PI_f / 2.0f);
-  vqs.SetQ(qy * qz);
-  genVel.SetTransformation(vqs);
-  genVel.SetAngle(a_data.velCone[2]);
-  a_data.velGenMethod = E_GenVelCone;
-  emitter.AddGenerator(E_GenVelCone, genVel);
-
-  GenColor<float> genColor;
-  genColor.SetColors(vec4(a_data.colors[0]
-                        , a_data.colors[1]
-                        , a_data.colors[2]
-                        , a_data.colors[3])
-                   , vec4(a_data.colors[4]
-                        , a_data.colors[5]
-                        , a_data.colors[6]
-                        , a_data.colors[7]));
-  emitter.AddGenerator(E_GenColor, genColor);
-
-  GenLife<float> genLife;
-  genLife.SetLife(a_data.life);
-  emitter.AddGenerator(E_GenLife, genLife);
-
-  GenSize<float> genSize;
-  genSize.SetSizes(a_data.sizes[0], a_data.sizes[1]);
-  emitter.AddGenerator(E_GenSize, genSize);
-
-  a_data.emitterType = E_Emitter_Linear;
-  emitter.SetRate(a_data.rate);
-
-
-  return emitter;
-}
-
 void Application::InitParticleSystem()
 {
-  //--------------------------------------------------------------------
-  //  Set emitter 1 data
-  //--------------------------------------------------------------------
-  m_eData[0].ID = E_Emitter_1;
-  m_eData[0].transform[0] = 1.0f * 2.5f;
-  m_eData[0].transform[1] = 0.0;
-  m_eData[0].transform[2] = 0.0;
-  m_eData[0].sizes[0] = 0.1f;
-  m_eData[0].sizes[1] = 0.3f;
-  m_eData[0].colors[4] = 1.0f;
-  m_eData[0].colors[5] = 0.0f;
-  m_eData[0].colors[6] = 0.0f;
-  m_eData[0].colors[7] = 0.0f;
-
-
-  //--------------------------------------------------------------------
-  //  Set emitter 2 data
-  //--------------------------------------------------------------------
-  m_eData[1].ID = E_Emitter_2;
-  m_eData[1].transform[0] = -0.5f * 2.5f;
-  m_eData[1].transform[1] = 0.866f * 2.5f;
-  m_eData[1].transform[2] = 0.0;
-  m_eData[1].sizes[0] = 0.1f;
-  m_eData[1].sizes[1] = 0.3f;
-  m_eData[1].colors[4] = 0.0f;
-  m_eData[1].colors[5] = 1.0f;
-  m_eData[1].colors[6] = 0.0f;
-  m_eData[1].colors[7] = 0.0f;
-  
-
-  //--------------------------------------------------------------------
-  //  Set emitter 3 data
-  //--------------------------------------------------------------------
-  m_eData[2].ID = E_Emitter_3;
-  m_eData[2].transform[0] = -0.5 * 2.5f;
-  m_eData[2].transform[1] = -0.866f * 2.5f;
-  m_eData[2].transform[2] = 0.0;
-  m_eData[2].sizes[0] = 0.1f;
-  m_eData[2].sizes[1] = 0.3f;
-  m_eData[2].colors[4] = 0.0f;
-  m_eData[2].colors[5] = 0.0f;
-  m_eData[2].colors[6] = 1.0f;
-  m_eData[2].colors[7] = 0.0f;
-  
-
   //Init Particle Data attributes
   Dg::ParticleData<float> * pData = m_particleSystem.GetParticleData();
   pData->InitAttribute(Dg::ParticleData<float>::Attr::Position);
@@ -235,22 +47,89 @@ void Application::InitParticleSystem()
   pData->InitAttribute(Dg::ParticleData<float>::Attr::StartColor);
   pData->InitAttribute(Dg::ParticleData<float>::Attr::DColor);
 
-  //Add emitters
-  m_particleSystem.AddEmitter(E_Emitter_1, CreateEmitter<EmitterLinear<float>>(m_eData[0]));
-  m_particleSystem.AddEmitter(E_Emitter_2, CreateEmitter<EmitterLinear<float>>(m_eData[1]));
-  m_particleSystem.AddEmitter(E_Emitter_3, CreateEmitter<EmitterLinear<float>>(m_eData[2]));
+  EmitterFactory    eFactory;
+  AttractorFactory  aFactory;
+
+  //--------------------------------------------------------------------
+  //  Set emitter 1 data
+  //--------------------------------------------------------------------
+  if (m_IDServer.Get(m_eData[0].ID))
+  {
+    m_eData[0].type = E_Emitter_Linear;
+    m_eData[0].on = true;
+    m_eData[0].posGenMethod = E_GenPosPoint;
+    m_eData[0].velGenMethod = E_GenVelCone;
+    m_eData[0].transform[0] = 1.0f * 2.5f;
+    m_eData[0].transform[1] = 0.0;
+    m_eData[0].transform[2] = 0.0;
+    m_eData[0].sizes[0] = 0.1f;
+    m_eData[0].sizes[1] = 0.3f;
+    m_eData[0].colors[4] = 1.0f;
+    m_eData[0].colors[5] = 0.0f;
+    m_eData[0].colors[6] = 0.0f;
+    m_eData[0].colors[7] = 0.0f;
+
+    m_particleSystem.AddEmitter(m_eData[0].ID, eFactory.Create(m_eData[0]));
+  }
+  
+  //--------------------------------------------------------------------
+  //  Set emitter 2 data
+  //--------------------------------------------------------------------
+  //m_eData[1].ID = E_Emitter_2;
+  //m_eData[1].transform[0] = -0.5f * 2.5f;
+  //m_eData[1].transform[1] = 0.866f * 2.5f;
+  //m_eData[1].transform[2] = 0.0;
+  //m_eData[1].sizes[0] = 0.1f;
+  //m_eData[1].sizes[1] = 0.3f;
+  //m_eData[1].colors[4] = 0.0f;
+  //m_eData[1].colors[5] = 1.0f;
+  //m_eData[1].colors[6] = 0.0f;
+  //m_eData[1].colors[7] = 0.0f;
+  //
+
+  ////--------------------------------------------------------------------
+  ////  Set emitter 3 data
+  ////--------------------------------------------------------------------
+  //m_eData[2].ID = E_Emitter_3;
+  //m_eData[2].transform[0] = -0.5 * 2.5f;
+  //m_eData[2].transform[1] = -0.866f * 2.5f;
+  //m_eData[2].transform[2] = 0.0;
+  //m_eData[2].sizes[0] = 0.1f;
+  //m_eData[2].sizes[1] = 0.3f;
+  //m_eData[2].colors[4] = 0.0f;
+  //m_eData[2].colors[5] = 0.0f;
+  //m_eData[2].colors[6] = 1.0f;
+  //m_eData[2].colors[7] = 0.0f;
+  
 
   //Add Updaters
-  m_particleSystem.AddUpdater(E_UpdaterLife, UpdaterLife<float>());
-  m_particleSystem.AddUpdater(E_UpdaterZeroAccel, UpdaterZeroAccel<float>());
-  //m_particleSystem.AddUpdater(E_UpdaterAttractor_1, CreateAttractor_1());
-  m_particleSystem.AddUpdater(E_UpdaterAttractor_2, CreateAttractor_2());
-  m_particleSystem.AddUpdater(E_UpdaterEuler, UpdaterEuler<float>());
-  m_particleSystem.AddUpdater(E_UpdaterColor, UpdaterColor<float>());
-  m_particleSystem.AddUpdater(E_UpdaterSize, UpdaterSize<float>());
+  m_particleSystem.AddUpdater(E_UpdaterLife, new UpdaterLife<float>());
+  m_particleSystem.AddUpdater(E_UpdaterZeroAccel, new UpdaterZeroAccel<float>());
+
+  //--------------------------------------------------------------------
+  //  Set attractor data
+  //--------------------------------------------------------------------
+  if (m_IDServer.Get(m_aData[0].ID))
+  {
+    m_aData[0].shape = E_AttPoint;
+    m_aData[0].forceType = Dg::Attractor<float>::InvSq;
+    m_aData[0].strength = -10.0f;
+    m_aData[0].maxAccelMag = 1.0f;
+    m_aData[0].transform[0] = 3.0f;
+    m_aData[0].transform[1] = 3.0f;
+    m_aData[0].transform[2] = 3.0f;
+    m_aData[0].show = false;
+
+    m_particleSystem.AddUpdater(m_aData[0].ID, aFactory.Create(m_aData[0]));
+  }
+
+  m_particleSystem.AddUpdater(E_UpdaterEuler, new UpdaterEuler<float>());
+  m_particleSystem.AddUpdater(E_UpdaterColor, new UpdaterColor<float>());
+  m_particleSystem.AddUpdater(E_UpdaterSize, new UpdaterSize<float>());
 
   //copy current emitter data for ui callback checking
   memcpy(m_eDataPrev, m_eData, sizeof(EmitterData) * s_nEmitters);
+  memcpy(m_aDataPrev, m_aData, sizeof(AttractorData) * s_nAttractors);
 
 }
 
@@ -262,13 +141,13 @@ void Application::UpdateParSysAttr()
     EmitterData & dataPrev = m_eDataPrev[e];
     int id = data.ID;
 
-    if (data.emitterType != dataPrev.emitterType)
+    if (data.type != dataPrev.type)
     {
       Dg::ParticleEmitter<float> * pOldEmitter = m_particleSystem.GetEmitter(dataPrev.ID);
       if (pOldEmitter)
       {
         ParticleEmitter<float> * pNewEmitter(nullptr);
-        switch (data.emitterType)
+        switch (data.type)
         {
         case E_Emitter_Linear:
         {
@@ -283,10 +162,11 @@ void Application::UpdateParSysAttr()
         }
         pNewEmitter->SetRate(data.rate);
         m_particleSystem.RemoveEmitter(dataPrev.ID);
-        m_particleSystem.AddEmitter(data.ID, *pNewEmitter);
-        delete pNewEmitter;
+
+        // memory is cleared once we add to particle system
+        m_particleSystem.AddEmitter(data.ID, pNewEmitter);
       }
-      dataPrev.emitterType = data.emitterType;
+      dataPrev.type = data.type;
     }
 
     //Subsequent checks will not require us to remove the emitter from the particle system
@@ -313,29 +193,25 @@ void Application::UpdateParSysAttr()
       {
         ptr->RemoveGenerator(E_GenPosBox);
         ptr->RemoveGenerator(E_GenPosSphere);
-        GenPosPoint<float> gen;
-        gen.SetOrigin(Dg::Vector4<float>(data.transform[0]
-                                       , data.transform[1]
-                                       , data.transform[2]
-                                       , 0.0f));
-        ptr->AddGenerator(E_GenPosPoint, gen);
+        GenPosPoint<float> * pGen = new GenPosPoint<float>();
+        pGen->SetOrigin(Dg::Vector4<float>(data.transform[0]
+                                         , data.transform[1]
+                                         , data.transform[2]
+                                         , 0.0f));
+        ptr->AddGenerator(E_GenPosPoint, pGen);
         break;
       }
       case E_GenPosSphere:
       {
         ptr->RemoveGenerator(E_GenPosBox);
         ptr->RemoveGenerator(E_GenPosPoint);
-        Dg::Vector4<float>(data.transform[0]
-                           , data.transform[1]
-                           , data.transform[2]
-                           , 0.0f);
-        GenPosSphere<float> gen;
-        gen.SetOrigin(Dg::Vector4<float>(data.transform[0]
-                                       , data.transform[1]
-                                       , data.transform[2]
-                                       , 0.0f));
-        gen.SetRadius(data.transform[6]);
-        ptr->AddGenerator(E_GenPosSphere, gen);
+        GenPosSphere<float> * pGen = new GenPosSphere<float>();
+        pGen->SetOrigin(Dg::Vector4<float>(data.transform[0]
+                                         , data.transform[1]
+                                         , data.transform[2]
+                                         , 0.0f));
+        pGen->SetRadius(data.transform[6]);
+        ptr->AddGenerator(E_GenPosSphere, pGen);
         break;
       }
       case E_GenPosBox:

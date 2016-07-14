@@ -19,7 +19,7 @@
 #include <string>
 #include <cstring>
 #include "DgMatrix44.h"
-#include <math.h>
+#include <cmath>
 
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
@@ -35,6 +35,20 @@ typedef Dg::Matrix44<float> mat44;
 typedef Dg::Vector4<float>  vec4;
 
 double Application::s_scrollOffset;
+
+Application::Application() 
+  : m_window(nullptr)
+  , m_particleSystem(65536)
+{
+  int nAttIDs = E_UpdaterGeneric_end - E_UpdaterGeneric_begin + 1;
+  int * pAttIDs = (int*)malloc(nAttIDs * sizeof(int));
+  for (int i = E_UpdaterGeneric_begin, index = 0; i <= E_UpdaterGeneric_end; ++i, ++index)
+  {
+    pAttIDs[index] = i;
+  }
+  m_IDServer.Init(nAttIDs, pAttIDs);
+  free(pAttIDs);
+}
 
 bool Application::Init()
 {
@@ -176,7 +190,7 @@ void Application::BuildMainUI()
   //Common values
   float vRotMins[2] = { 0.0f, 0.0f };
   float vRotMaxs[2] = { Dg::PI_f * 2.0f, Dg::PI_f };
-  char const * vRotformats[2] = { "rz = %.2f", "rx = %.2f" };
+  char const * vRotformats[2] = { "rz = %.2f", "ry = %.2f" };
   float powers2[2] = { 1.0f, 1.0f };
   float posMins[3] = { -10.0f, -10.0f, -10.0f };
   float posMaxs[3] = { 10.0f, 10.0f, 10.0f };
@@ -205,8 +219,8 @@ void Application::BuildMainUI()
 
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Emission method");
-    ImGui::RadioButton("Linear", &curEmData.emitterType, E_Emitter_Linear); ImGui::SameLine();
-    ImGui::RadioButton("Random", &curEmData.emitterType, E_Emitter_Random);
+    ImGui::RadioButton("Linear", &curEmData.type, E_Emitter_Linear); ImGui::SameLine();
+    ImGui::RadioButton("Random", &curEmData.type, E_Emitter_Random);
 
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Define emitter shape");
@@ -280,10 +294,10 @@ void Application::BuildMainUI()
     {
       float mins[3] = { 0.0f, 0.0f, 0.0f };
       float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f, Dg::PI_f };
-      char const * formats[3] = { "rz = %.2f", "rx = %.2f", "spread = %.2f" };
+      char const * formats[3] = { "rz = %.2f", "ry = %.2f", "spread = %.2f" };
       float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("rz, rx, sprd", &curEmData.velCone[0], 3, mins, maxs, formats, powers);
+      ImGui::SliderFloatNi("rz, ry, sprd", &curEmData.velCone[0], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
 
@@ -323,18 +337,24 @@ void Application::BuildMainUI()
     ImGui::PushItemWidth(sliderOffset);
 
     const char* attrForces[] = { "Force is constant", "Force is a function of distance", "Force is a function of sq distance"};
-    ImGui::ListBox("Force", &curAttData.type[1], attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
+    static int listVal;
+    ImGui::ListBox("Force", &listVal, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
+    switch (listVal)
+    {
+    case 0: {curAttData.forceType = Dg::Attractor<float>::Constant; break; }
+    case 1: {curAttData.forceType = Dg::Attractor<float>::Linear; break; }
+    case 2: {curAttData.forceType = Dg::Attractor<float>::InvSq; break; }
+    }
 
     const char* attrShapes[] = { "None", "Global", "Point", "Line", "Plane" };
-    static int attShapeVal;
-    ImGui::ListBox("Shape", &attShapeVal, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
-    switch (attShapeVal)
+    ImGui::ListBox("Shape", &listVal, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
+    switch (listVal)
     {
-    case 0: {curAttData.type[1] = E_AttNone; break; }
-    case 1: {curAttData.type[1] = E_AttGlobal; break; }
-    case 2: {curAttData.type[1] = E_AttPoint; break; }
-    case 3: {curAttData.type[1] = E_AttLine; break; }
-    case 4: {curAttData.type[1] = E_AttPlane; break; }
+    case 0: {curAttData.shape = E_AttNone; break; }
+    case 1: {curAttData.shape = E_AttGlobal; break; }
+    case 2: {curAttData.shape = E_AttPoint; break; }
+    case 3: {curAttData.shape = E_AttLine; break; }
+    case 4: {curAttData.shape = E_AttPlane; break; }
     }
 
     CreateSpacing(nSpacing);
@@ -344,13 +364,8 @@ void Application::BuildMainUI()
     
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Position Attractor");
-    switch (curAttData.type[1])
+    switch (curAttData.shape)
     {
-    default:
-    case E_AttNone:
-    {
-      break;
-    }
     case E_AttGlobal:
     {
       ImGui::SliderFloatNi("Accel dir", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
@@ -372,6 +387,10 @@ void Application::BuildMainUI()
 
       ImGui::SliderFloatNi("Normal", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
       ImGui::SliderFloat("Offset", &curAttData.transform[5], 0.0f, 10.0f, "offset = %.2f", 1.0f);
+      break;
+    }
+    default: //E_AttNone:
+    {
       break;
     }
     }
@@ -435,21 +454,56 @@ void Application::Render()
 
   float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
 
-  int * pShowAttrTypes = (int *)malloc(s_nAttractors * sizeof(int));
+  int * pShowAttrTypes = new int[s_nAttractors];
+  Dg::Matrix44<float> * pTAttr = new Dg::Matrix44<float>[s_nAttractors];
   int nShowAttr = 0;
   for (int i = 0; i < s_nAttractors; ++i)
   {
     if (m_aData[i].show)
     {
-      pShowAttrTypes[i] = m_aData[i].type[1];
+      pShowAttrTypes[nShowAttr] = m_aData[i].shape;
+      switch (m_aData[i].shape)
+      {
+      case E_AttGlobal:
+      {
+        pTAttr[nShowAttr].Rotation(m_aData[i].transform[3]
+                                 , m_aData[i].transform[4]
+                                 , 0.0f
+                                 , Dg::EulerOrder::ZXY);
+        break;
+      }
+      case E_AttPoint:
+      {
+        pTAttr[nShowAttr].Translation
+        (
+          Dg::Vector4<float>(m_aData[i].transform[0]
+                           , m_aData[i].transform[1]
+                           , m_aData[i].transform[2]
+                           , 0.0f)
+        );
+        break;
+      }
+      case E_AttLine:
+      {
+        pTAttr[nShowAttr].Identity();;
+        break;
+      }
+      case E_AttPlane:
+      {
+        pTAttr[nShowAttr].Identity();;
+        break;
+      }
+      }
+      
       nShowAttr++;
     }
   }
   
-  m_renderer.Update(m_particleSystem.GetParticleData(), nShowAttr, pShowAttrTypes);
-  m_renderer.Render(mv_matrix, proj_matrix, parScale);
+  m_renderer.Update(m_particleSystem.GetParticleData());
+  m_renderer.Render(mv_matrix, proj_matrix, parScale, nShowAttr, pShowAttrTypes, pTAttr);
 
-  free(pShowAttrTypes);
+  delete[] pShowAttrTypes;
+  delete[] pTAttr;
 }
 
 void AppOnMouseScroll(double yOffset)

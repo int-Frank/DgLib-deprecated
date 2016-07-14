@@ -50,5 +50,8 @@
     <ClInclude Include="..\..\public\DgParser_INI.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgIDServer.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -26,8 +26,11 @@ namespace Dg
     ParticleSystem(ParticleSystem<Real> const & a_other);
     ParticleSystem<Real> & operator=(ParticleSystem<Real> const & a_other);
 
-    void AddEmitter(ParMapKey, ParticleEmitter<Real> const &);
-    void AddUpdater(ParMapKey, ParticleUpdater<Real> const &);
+    //! This function will delete the input emitter
+    void AddEmitter(ParMapKey, ParticleEmitter<Real> *);
+
+    //! This function will delete the input updater
+    void AddUpdater(ParMapKey, ParticleUpdater<Real> *);
     
     void RemoveEmitter(ParMapKey);
     void RemoveUpdater(ParMapKey);
@@ -90,18 +93,24 @@ namespace Dg
 
 
   template<typename Real>
-  void ParticleSystem<Real>::AddEmitter(ParMapKey a_key, ParticleEmitter<Real> const & a_emitter)
+  void ParticleSystem<Real>::AddEmitter(ParMapKey a_key, ParticleEmitter<Real> * a_pEmitter)
   {
-    ObjectWrapper<ParticleEmitter<Real>> newEmitter(a_emitter);
-    m_emitters.insert(a_key, newEmitter);
+    if (a_pEmitter)
+    {
+      ObjectWrapper<ParticleEmitter<Real>> newEmitter(a_pEmitter, true);
+      m_emitters.insert(a_key, newEmitter);
+    }
   }
 
 
   template<typename Real>
-  void ParticleSystem<Real>::AddUpdater(ParMapKey a_key, ParticleUpdater<Real> const & a_updater)
+  void ParticleSystem<Real>::AddUpdater(ParMapKey a_key, ParticleUpdater<Real> * a_pUpdater)
   {
-    ObjectWrapper<ParticleUpdater<Real>> newUpdater(a_updater);
-    m_updaters.insert(a_key, newUpdater);
+    if (a_pUpdater)
+    {
+      ObjectWrapper<ParticleUpdater<Real>> newUpdater(a_pUpdater, true);
+      m_updaters.insert(a_key, newUpdater);
+    }
   }
 
   template<typename Real>

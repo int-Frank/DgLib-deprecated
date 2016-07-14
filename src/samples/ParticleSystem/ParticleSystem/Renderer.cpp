@@ -59,50 +59,57 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
   m_ln_shaderProgram = CompileShaders("ln_vs.glsl", "ln_fs.glsl");
 
   glBindBuffer(GL_ARRAY_BUFFER, m_buffers[1]);
+
+  float const arrowLength = 5.0f;
+  float const crossLength = 2.0f;
+  float const lineLength = 100.0f;
+  float const gridSize = 20.0f;
+
   float lines[nLines * 3 * 2] =
   {
     //Global - arrow
     0.0f , 0.0f, 0.0f,
-    1.0f , 0.0f, 0.0f,
-    1.0f , 0.0f, 0.0f,
-    0.8f , 0.0f, 0.2f,
-    1.0f , 0.0f, 0.0f,
-    0.8f , 0.0f, -0.2f,
+    arrowLength , 0.0f, 0.0f,
+    arrowLength , 0.0f, 0.0f,
+    arrowLength * 0.8f , 0.0f, arrowLength * 0.2f,
+    arrowLength , 0.0f, 0.0f,
+    arrowLength * 0.8f , 0.0f, -arrowLength * 0.2f,
 
     //Point lines
-    -1.0f, 0.0f, 0.0f,
-    1.0f, 0.0f, 0.0f,
-    0.0f, -1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, -1.0f,
-    0.0f, 0.0f, 1.0f,
+    -crossLength * 0.5f, 0.0f, 0.0f,
+    crossLength * 0.5f, 0.0f, 0.0f,
+    0.0f, -crossLength * 0.5f, 0.0f,
+    0.0f, crossLength * 0.5f, 0.0f,
+    0.0f, 0.0f, -crossLength * 0.5f,
+    0.0f, 0.0f, crossLength * 0.5f,
 
     //Line lines
-    -30.0f, 0.0f, 0.0f,
-    30.0f, 0.0f, 0.0f,
-    0.0f, -1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, -1.0f,
-    0.0f, 0.0f, 1.0f,
+    -lineLength * 0.5f, 0.0f, 0.0f,
+    lineLength * 0.5f, 0.0f, 0.0f,
+    0.0f, -crossLength * 0.5f, 0.0f,
+    0.0f, crossLength * 0.5f, 0.0f,
+    0.0f, 0.0f, -crossLength * 0.5f,
+    0.0f, 0.0f, crossLength * 0.5f,
 
     //Grid lines
     0.0f , 0.0f, 0.0f,
-    1.0f , 0.0f, 0.0f,
-    1.0f , 0.0f, 0.0f,
-    0.8f , 0.0f, 0.2f,
-    1.0f , 0.0f, 0.0f,
-    0.8f , 0.0f, -0.2f
+    arrowLength , 0.0f, 0.0f,
+    arrowLength , 0.0f, 0.0f,
+    arrowLength * 0.8f , 0.0f, arrowLength * 0.2f,
+    arrowLength , 0.0f, 0.0f,
+    arrowLength * 0.8f , 0.0f, -arrowLength * 0.2f,
   };
   
   float const bounds[12] = 
   {
-    0.0f, -1.0f,  1.0f,
-    0.0f, 1.0f,  1.0f,
-    0.0f, -1.0f,  -1.0f,
-    0.0f, 1.0f,  -1.0f
+    0.0f, -gridSize * 0.5,  gridSize * 0.5,
+    0.0f, gridSize * 0.5,  gridSize * 0.5,
+    0.0f, -gridSize * 0.5,  -gridSize * 0.5,
+    0.0f, gridSize * 0.5,  -gridSize * 0.5
   };
-  Dg::MakeGrid<float, 3>(&lines[(s_nLinesGlobal + s_nLinesPoint + s_nLinesLine + 3) * 3 * 2], s_gridDim, bounds);
 
+  int nCells[2] = { s_gridDim, s_gridDim };
+  Dg::MakeGrid<float, 3>(&lines[(s_nLinesGlobal + s_nLinesPoint + s_nLinesLine + 3) * 3 * 2], nCells, bounds);
 
   glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * nLines * 3 * 2), lines, GL_STATIC_DRAW);
   
@@ -112,7 +119,6 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
-
 
   //--------------------------------------------------------------------------------
   //  Other
@@ -130,14 +136,8 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
   return true;
 }
 
-void Renderer::Update(Dg::ParticleData<float> * a_parData
-                    , int a_nAttractors
-                    , int * a_pAttractorTypes)
+void Renderer::Update(Dg::ParticleData<float> * a_parData)
 {
-  m_nCurrentAttractors = a_nAttractors;
-  m_pAttractorTypes = (int*)realloc(m_pAttractorTypes, a_nAttractors * sizeof(int));
-  memcpy(m_pAttractorTypes, a_pAttractorTypes, a_nAttractors * sizeof(int));
-
   glBindBuffer(GL_ARRAY_BUFFER, m_buffers[0]);
 
   m_nCurrentParticles = a_parData->GetCountAlive();
@@ -155,12 +155,11 @@ void Renderer::Update(Dg::ParticleData<float> * a_parData
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-static int GetEnumFromListVal(int a_val)
+static int GetAlphaEnumFromListVal(int a_val)
 {
   switch (a_val)
   {
   case 0: return GL_ZERO;
-  default:
   case 1: return GL_ONE;
   case 2: return GL_SRC_COLOR;
   case 3: return GL_ONE_MINUS_SRC_COLOR;
@@ -176,11 +175,15 @@ static int GetEnumFromListVal(int a_val)
   case 13: return GL_ONE_MINUS_CONSTANT_ALPHA;
   case 14: return GL_SRC_ALPHA_SATURATE;
   }
+  return GL_ONE;
 }
 
 void Renderer::Render(Dg::Matrix44<float> const & a_modelView
                     , Dg::Matrix44<float> const & a_proj
-                    , float a_parScale)
+                    , float a_parScale
+                    , int a_nAttractors
+                    , int const * a_pAttractorTypes
+                    , Dg::Matrix44<float> const * a_pAttractorTransforms)
 {
   static int sfactor_ind(6);
   static int dfactor_ind(7);
@@ -235,7 +238,7 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
     ImGui::PopItemWidth();
     ImGui::End();
 
-    glBlendFunc(GetEnumFromListVal(sfactor_ind), GetEnumFromListVal(dfactor_ind));
+    glBlendFunc(GetAlphaEnumFromListVal(sfactor_ind), GetAlphaEnumFromListVal(dfactor_ind));
   }
 
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -256,17 +259,18 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
   glBindVertexArray(m_ln_vao);
   glUseProgram(m_ln_shaderProgram);
 
-  mv_loc = glGetUniformLocation(m_ln_shaderProgram, "mv_matrix");
   proj_loc = glGetUniformLocation(m_ln_shaderProgram, "proj_matrix");
   GLuint lineColor_loc = glGetUniformLocation(m_ln_shaderProgram, "lineColor");
 
-  glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_modelView.GetData());
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
   glUniform4fv(lineColor_loc, 1, s_lineColor);
 
-  for (int i = 0; i < m_nCurrentAttractors; ++i)
+  for (int i = 0; i < a_nAttractors; ++i)
   {
-    switch (m_pAttractorTypes[i])
+    mv_loc = glGetUniformLocation(m_ln_shaderProgram, "mv_matrix");
+    glUniformMatrix4fv(mv_loc, 1, GL_FALSE, (a_pAttractorTransforms[i] * a_modelView).GetData());
+
+    switch (a_pAttractorTypes[i])
     {
     case E_AttGlobal:
     {
@@ -307,7 +311,6 @@ void Renderer::ShutDown()
   glDeleteVertexArrays(1, &m_pt_vao);
   glDeleteProgram(m_pt_shaderProgram);
   glDeleteProgram(m_ln_shaderProgram);
-  free(m_pAttractorTypes);
 }
 
 GLuint Renderer::LoadShaderFromFile(std::string path, GLenum shaderType)

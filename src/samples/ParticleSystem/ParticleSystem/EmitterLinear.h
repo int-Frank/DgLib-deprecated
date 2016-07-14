@@ -1,7 +1,7 @@
 #ifndef EMITTERLINEAR_H
 #define EMITTERLINEAR_H
 
-#include <math.h>
+#include <cmath>
 
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleEmitter.h"

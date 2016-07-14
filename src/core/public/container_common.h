@@ -1,5 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef CONTAINER_COMMON_H
+#define CONTAINER_COMMON_H
 
 //! @ingroup DgContainers_constants
 //! Default array size for containers 

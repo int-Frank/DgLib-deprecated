@@ -8,75 +8,16 @@
 #include "particle_system/DgParticleSystem.h"
 #include "Renderer.h"
 #include "Types.h"
+#include "DgIDServer.h"
 
 struct GLFWwindow;
-
-class AttractorData
-{
-public:
-
-  AttractorData()
-    : ID(0)
-    , type{0, 0}
-    , strength(1.0f)
-    , maxAccelMag(10.0f)
-    , transform{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
-    , show(false)
-  {}
-
-  int ID;
-
-  //type: [shape, pull type] 
-  //shape: None, Global, Point, Line, Plane
-  //pull type: 0: constant , 1: linear, 2: inverse square
-  int type[2]; 
-  float strength;       
-  float maxAccelMag;
-  float transform[6]; // [x, y, z, rz, rx, scale] 
-  bool show;
-};
-
-class EmitterData
-{
-public:
-
-  EmitterData()
-    : ID(0)
-    , emitterType(E_Emitter_Linear)
-    , on(true)
-    , posGenMethod(E_GenPosPoint)
-    , velGenMethod(E_GenVelCone)
-    , transform{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}
-    , boxDim{0.5f, 0.5f, 0.5f}
-    , velCone{0.0f, 0.0f, Dg::PI_f / 8.0f }
-    , velocity(1.0f)
-    , colors{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f}
-    , rate(10.0f)
-    , life(5.0f)
-    , sizes{0.1f, 0.1f}
-  {}
-
-  int ID;
-  int emitterType;       
-  bool on;               
-  int posGenMethod; // point, box, sphere
-  int velGenMethod; // direction, repel from center     
-  float transform[7]; // [x, y, z, rx, ry, rz, scale]         
-  float boxDim[3];       
-  float velCone[3]; // [rz, rx, angle]    
-  float velocity;        
-  float colors[8]; //[sr, sg, sb, sa, er, eg, eb, ea]
-  float rate;            
-  float life;          
-  float sizes[2]; //[start, end]
-};
 
 class Application
 {
 public:
 
-  Application() : m_window(nullptr)
-                , m_particleSystem(65536){}
+  Application();
+
   ~Application() {}
 
   Application(const Application&);
@@ -114,7 +55,7 @@ private:
 
   Dg::ParticleSystem<float>   m_particleSystem;
 
-  static int const    s_nEmitters = 3;
+  static int const    s_nEmitters = 1;
   static int const    s_nAttractors = 1;
 
 private:
@@ -123,8 +64,6 @@ private:
 
   APPINFO		          m_info;
   GLFWwindow*         m_window;
-  GLuint              m_renderingProgram;
-  GLuint              m_vao;
   Renderer            m_renderer;
 
   float               m_dt;
@@ -146,6 +85,8 @@ private:
 
   AttractorData       m_aData[s_nAttractors];
   AttractorData       m_aDataPrev[s_nAttractors];
+
+  Dg::IDServer<int>   m_IDServer;
 
   //Main initializer function. All others are called through here.
   bool Init();

@@ -5,8 +5,8 @@
 //!
 //! Class declaration: set_pod
 
-#ifndef DG_SET_H
-#define DG_SET_H
+#ifndef DG_SET_POD_H
+#define DG_SET_POD_H
 
 #include <exception>
 #include <assert.h>

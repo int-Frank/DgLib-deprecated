@@ -5,20 +5,20 @@
 #include "particle_system/DgParticleData.h"
 #include "DgVQS.h"
 
-template<typename Real, unsigned Force>
-class AttractorGlobal : public Dg::Attractor<Real, Force>
+template<typename Real>
+class AttractorGlobal : public Dg::Attractor<Real>
 {
 public:
 
-  AttractorGlobal() : Dg::Attractor<Real, Force>(), m_globalAccel(Dg::Vector4<Real>::ZeroVector()) {}
+  AttractorGlobal() : Dg::Attractor<Real>(), m_globalAccel(Dg::Vector4<Real>::ZeroVector()) {}
   ~AttractorGlobal() {}
 
-  AttractorGlobal(AttractorGlobal<Real, Force> const & a_other) 
-    : Dg::Attractor<Real, Force>(a_other), m_globalAccel(a_other.m_globalAccel) {}
+  AttractorGlobal(AttractorGlobal<Real> const & a_other) 
+    : Dg::Attractor<Real>(a_other), m_globalAccel(a_other.m_globalAccel) {}
   
-  AttractorGlobal<Real, Force> & operator=(AttractorGlobal<Real, Force> const & a_other)
+  AttractorGlobal<Real> & operator=(AttractorGlobal<Real> const & a_other)
   {
-    Dg::Attractor<Real, Force>::operator=(a_other);
+    Dg::Attractor<Real>::operator=(a_other);
     m_globalAccel = a_other.m_globalAccel;
     return *this;
   }
@@ -30,20 +30,20 @@ public:
 
   void SetTransformation(Dg::VQS<Real> const &);
 
-  AttractorGlobal<Real, Force> * Clone() const { return new AttractorGlobal<Real, Force>(*this); }
+  AttractorGlobal<Real> * Clone() const { return new AttractorGlobal<Real>(*this); }
 
 private:
   Dg::Vector4<Real> m_globalAccel;
 };
 
-template<typename Real, unsigned Force>
-void AttractorGlobal<Real, Force>::SetTransformation(Dg::VQS<Real> const & a_vqs)
+template<typename Real>
+void AttractorGlobal<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 {
   m_globalAccel = a_vqs.Rotate(Dg::Vector4<Real>::xAxis());
 }
 
-template<typename Real, unsigned Force>
-void AttractorGlobal<Real, Force>::Update(Dg::ParticleData<Real> & a_data
+template<typename Real>
+void AttractorGlobal<Real>::Update(Dg::ParticleData<Real> & a_data
 									                      , int a_start
                                         , Real a_dt)
 {
@@ -60,8 +60,8 @@ void AttractorGlobal<Real, Force>::Update(Dg::ParticleData<Real> & a_data
 }
 
 
-//template<typename Real, unsigned Force>
-//void AttractorGlobal<Real, Force>::Update(Dg::ParticleData<Real> & a_data
+//template<typename Real>
+//void AttractorGlobal<Real>::Update(Dg::ParticleData<Real> & a_data
 //                                        , int a_start)
 //{
 //  Dg::Vector4<Real> * pPos = a_data.GetPosition();

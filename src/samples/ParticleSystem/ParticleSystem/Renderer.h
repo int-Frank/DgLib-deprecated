@@ -17,18 +17,19 @@ namespace Dg
 class Renderer
 {
 public:
-  Renderer()
-    : m_pAttractorTypes(nullptr)
-    , m_nCurrentAttractors(0)
-  {}
+  Renderer(){}
 
   bool Init(Dg::ParticleData<float> *);
-  void Update(Dg::ParticleData<float> *
-            , int nAttractors
-            , int * attractorTypes);
+
+  void Update(Dg::ParticleData<float> *);
+
   void Render(Dg::Matrix44<float> const & a_modelView
             , Dg::Matrix44<float> const & a_proj
-            , float parScale);
+            , float parScale
+            , int nAttractors
+            , int const * attractorTypes
+            , Dg::Matrix44<float> const * attractorTransforms);
+
   void ShutDown();
 
 private:
@@ -43,8 +44,6 @@ private:
   GLuint              m_pt_shaderProgram;
   GLuint              m_ln_shaderProgram;
   int                 m_nCurrentParticles;
-  int                 m_nCurrentAttractors;
-  int *               m_pAttractorTypes;
 
 private:
   //Drawing lines...
@@ -52,7 +51,7 @@ private:
   static int const    s_nLinesGlobal = 3;
   static int const    s_nLinesPoint = 3;
   static int const    s_nLinesLine = 3;
-  static int const    s_gridDim = 10;
+  static int const    s_gridDim = 8;
   static int const    s_nLinesPlane = 3 + (s_gridDim + 1) * 2;
 };
 
