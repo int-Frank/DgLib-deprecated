@@ -211,9 +211,9 @@ namespace Dg
     }
 
     Real mag = m_strength * invDist * invDist;
-    if (mag > m_maxAccelMag)
+    if (mag * mag > m_maxAccelMag * m_maxAccelMag)
     {
-      mag = m_maxAccelMag;
+      mag = (mag < static_cast<Real>(0.0)) ? -m_maxAccelMag : m_maxAccelMag;
     }
     return v * invDist * mag;
   }
