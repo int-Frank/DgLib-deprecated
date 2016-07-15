@@ -2,7 +2,6 @@
 #define DGIDSERVER_H
 
 #include "Dg_list_pod.h"
-#include <stdio.h>
 
 namespace Dg
 {
@@ -26,22 +25,6 @@ namespace Dg
     //! @return false if id already in use.
     bool MarkAsUsed(t_int);
     bool IsUsed(t_int) const;
-
-    //----------------------------------------------------------------------
-    // DEBUGGING...
-  public:
-
-    void PrintState()
-    {
-      printf("State: < ");
-      list_pod<Interval>::iterator it = m_intervals.begin();
-      for (it; it != m_intervals.end(); ++it)
-      {
-        printf("[%i...%i] ", it->m_lower, it->m_upper);
-      }
-      printf(" >\n");
-    }
-    //----------------------------------------------------------------------
 
   private:
 
@@ -132,13 +115,8 @@ namespace Dg
   template<typename t_int>
   t_int IDManager<t_int>::GetID()
   {
-    printf("\n\n");
-    printf("GetID() - Before:\n");
-    PrintState();
-
     if (m_intervals.empty())
     {
-      printf("GetID() - EMPTY:\n");
       return static_cast<t_int>(0);
     }
  
@@ -150,27 +128,16 @@ namespace Dg
       m_intervals.erase(it);
     }
 
-    printf("GetID() - after: \n");
-    PrintState();
-    printf("Result = %i\n", result);
-
     return result;
   }
 
   template<typename t_int>
   void IDManager<t_int>::ReturnID(t_int a_val)
   {
-    printf("\n\n");
-    printf("ReturnID(%i) - Before:\n", a_val);
-    PrintState();
-
     //Check bounds
     if (a_val < m_bounds.m_lower
       || a_val > m_bounds.m_upper)
     {
-      printf("ReturnID(%i) - ERROR\n", a_val);
-      PrintState();
-
       return;
     }
 
@@ -234,28 +201,16 @@ namespace Dg
         m_intervals.back().m_upper++;
       }
     }
-
-    printf("ReturnID(%i) - After:\n", a_val);
-    PrintState();
-
   }
 
   template<typename t_int>
   bool IDManager<t_int>::MarkAsUsed(t_int a_val)
   {
-    printf("\n\n");
-    printf("MarkAsUsed(%i) - Before:\n", a_val);
-    PrintState();
-
     //Check bounds
     if (a_val < m_bounds.m_lower
       || a_val > m_bounds.m_upper
       || m_intervals.empty())
     {
-
-      printf("MarkAsUsed(%i) - ERROR\n", a_val);
-      PrintState();
-
       return false;
     }
 
@@ -288,9 +243,6 @@ namespace Dg
         break;
       }
     }
-    printf("MarkAsUsed(%i) - After:\n", a_val);
-    PrintState();
-
     return found;
   }
 

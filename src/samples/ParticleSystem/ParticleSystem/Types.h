@@ -51,7 +51,7 @@ public:
 
   AttractorData()
     : ID(0)
-    , shape(E_AttNone)
+    , type(E_AttNone)
     , forceType(Dg::Attractor<float>::Constant)
     , strength(1.0f)
     , maxAccelMag(10.0f)
@@ -60,7 +60,7 @@ public:
   {}
 
   int ID;
-  int shape;      //[None, Global, Point, Line, Plane]
+  int type;      //[None, Global, Point, Line, Plane]
   int forceType;  //[constant , linear, inverse square]
   float strength;
   float maxAccelMag;

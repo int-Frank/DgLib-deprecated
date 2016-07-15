@@ -8,7 +8,7 @@
 #include "particle_system/DgParticleSystem.h"
 #include "Renderer.h"
 #include "Types.h"
-#include "DgIDServer.h"
+#include "DgIDManager.h"
 
 struct GLFWwindow;
 
@@ -86,7 +86,7 @@ private:
   AttractorData       m_aData[s_nAttractors];
   AttractorData       m_aDataPrev[s_nAttractors];
 
-  Dg::IDServer<int>   m_IDServer;
+  Dg::IDManager<int>  m_IDManager;
 
   //Main initializer function. All others are called through here.
   bool Init();

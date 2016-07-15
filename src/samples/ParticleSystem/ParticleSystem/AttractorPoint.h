@@ -18,6 +18,11 @@ public:
   virtual ~AttractorPoint() {}
 
   AttractorPoint(AttractorPoint<Real> const &);
+
+  AttractorPoint(Dg::Attractor<Real> const & a_attr)
+    : Dg::Attractor<Real>(a_attr)
+    , m_point(Dg::Vector4<Real>::Origin())
+  {}
   
   AttractorPoint<Real> & operator=(AttractorPoint<Real> const &);
 

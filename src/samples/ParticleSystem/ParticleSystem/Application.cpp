@@ -40,14 +40,7 @@ Application::Application()
   : m_window(nullptr)
   , m_particleSystem(65536)
 {
-  int nAttIDs = E_UpdaterGeneric_end - E_UpdaterGeneric_begin + 1;
-  int * pAttIDs = (int*)malloc(nAttIDs * sizeof(int));
-  for (int i = E_UpdaterGeneric_begin, index = 0; i <= E_UpdaterGeneric_end; ++i, ++index)
-  {
-    pAttIDs[index] = i;
-  }
-  m_IDServer.Init(nAttIDs, pAttIDs);
-  free(pAttIDs);
+  m_IDManager.Init(E_UpdaterGeneric_begin, E_UpdaterGeneric_end);
 }
 
 bool Application::Init()
@@ -350,11 +343,11 @@ void Application::BuildMainUI()
     ImGui::ListBox("Shape", &listVal, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
     switch (listVal)
     {
-    case 0: {curAttData.shape = E_AttNone; break; }
-    case 1: {curAttData.shape = E_AttGlobal; break; }
-    case 2: {curAttData.shape = E_AttPoint; break; }
-    case 3: {curAttData.shape = E_AttLine; break; }
-    case 4: {curAttData.shape = E_AttPlane; break; }
+    case 0: {curAttData.type = E_AttNone; break; }
+    case 1: {curAttData.type = E_AttGlobal; break; }
+    case 2: {curAttData.type = E_AttPoint; break; }
+    case 3: {curAttData.type = E_AttLine; break; }
+    case 4: {curAttData.type = E_AttPlane; break; }
     }
 
     CreateSpacing(nSpacing);
@@ -364,7 +357,7 @@ void Application::BuildMainUI()
     
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Position Attractor");
-    switch (curAttData.shape)
+    switch (curAttData.type)
     {
     case E_AttGlobal:
     {
@@ -461,8 +454,8 @@ void Application::Render()
   {
     if (m_aData[i].show)
     {
-      pShowAttrTypes[nShowAttr] = m_aData[i].shape;
-      switch (m_aData[i].shape)
+      pShowAttrTypes[nShowAttr] = m_aData[i].type;
+      switch (m_aData[i].type)
       {
       case E_AttGlobal:
       {

@@ -23,7 +23,7 @@
 #define AUGMENTER(...) unused, __VA_ARGS__
 #define NARGS(...) NARGS_1(AUGMENTER(__VA_ARGS__))
 
-#else // TODO
+#else // TODO Not tested
 
 #define NARGS(...) __NARGS(0, ## __VA_ARGS__, 32, 31, 30, \
                 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, \
@@ -35,8 +35,6 @@
                 _30, _31, _32, N,...) N
 
 #endif
-
-#define GLUE(x, y) x##y
 
 #define ADD_ITEM0(itemName)
 #define ADD_ITEM2(itemName, n0, t0) ADD_SINGLE_ ## itemName(n0, t0)

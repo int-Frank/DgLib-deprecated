@@ -1,4 +1,6 @@
 
+#define GLUE(x, y) x##y
+
 #define ADD_SINGLE_MEMBER(NAME, TYPE) TYPE * m_ ## NAME;
 #define ADD_MEMBERS(...) GLUE(ADD_ITEM_HELPER(NARGS(__VA_ARGS__)),(MEMBER, __VA_ARGS__))
 

@@ -13,7 +13,7 @@ typedef Dg::VQS<float>          Vqs;
 Dg::Attractor<float> * AttractorFactory::Create(AttractorData const & a_data) const
 {
   Dg::Attractor<float> * pAttractor(nullptr);
-  switch (a_data.shape)
+  switch (a_data.type)
   {
   case E_AttGlobal: pAttractor = new AttractorGlobal<float>(); break;
   case E_AttPoint:  pAttractor = new AttractorPoint<float>(); break;

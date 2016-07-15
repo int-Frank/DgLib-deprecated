@@ -53,7 +53,8 @@ void Application::InitParticleSystem()
   //--------------------------------------------------------------------
   //  Set emitter 1 data
   //--------------------------------------------------------------------
-  if (m_IDServer.Get(m_eData[0].ID))
+  m_eData[0].ID = m_IDManager.GetID();
+  if (m_eData[0].ID)
   {
     m_eData[0].type = E_Emitter_Linear;
     m_eData[0].on = true;
@@ -109,9 +110,10 @@ void Application::InitParticleSystem()
   //--------------------------------------------------------------------
   //  Set attractor data
   //--------------------------------------------------------------------
-  if (m_IDServer.Get(m_aData[0].ID))
+  m_aData[0].ID = m_IDManager.GetID();
+  if (m_aData[0].ID)
   {
-    m_aData[0].shape = E_AttPoint;
+    m_aData[0].type = E_AttPoint;
     m_aData[0].forceType = Dg::Attractor<float>::InvSq;
     m_aData[0].strength = -10.0f;
     m_aData[0].maxAccelMag = 1.0f;
@@ -327,5 +329,19 @@ void Application::UpdateParSysAttr()
       }
       memcpy(dataPrev.sizes, data.sizes, sizeof(float) * 2);
     }
+  }
+
+
+  for (int a = 0; a < s_nAttractors; ++a)
+  {
+    AttractorData & data = m_aData[a];
+    AttractorData & dataPrev = m_aDataPrev[a];
+    if (data.type != dataPrev.type)
+    {
+      m_particleSystem.RemoveUpdater(dataPrev.ID);
+      AttractorFactory aFactory;
+      m_particleSystem.AddUpdater(data.ID, aFactory.Create(data));
+    }
+    dataPrev.type = data.type;
   }
 }

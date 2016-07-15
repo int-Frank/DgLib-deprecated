@@ -16,6 +16,12 @@ public:
   AttractorGlobal(AttractorGlobal<Real> const & a_other) 
     : Dg::Attractor<Real>(a_other), m_globalAccel(a_other.m_globalAccel) {}
   
+
+  AttractorGlobal(Dg::Attractor<Real> const & a_attr)
+    : Dg::Attractor<Real>(a_attr)
+    , m_globalAccel(Dg::Vector4<Real>::ZeroVector())
+  {}
+
   AttractorGlobal<Real> & operator=(AttractorGlobal<Real> const & a_other)
   {
     Dg::Attractor<Real>::operator=(a_other);
