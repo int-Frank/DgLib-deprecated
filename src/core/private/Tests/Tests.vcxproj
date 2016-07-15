@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
+    <ClCompile Include="TEST_DgIDManager.cpp" />
     <ClCompile Include="TEST_DgLine.cpp" />
     <ClCompile Include="TEST_DgLineSegment.cpp" />
     <ClCompile Include="TEST_DgMatrix.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="TEST_DgRay.cpp" />
     <ClCompile Include="TEST_DgSharedPtr.cpp" />
     <ClCompile Include="TEST_DgSphere.cpp" />
+    <ClCompile Include="TEST_dg_list_pod.cpp" />
     <ClCompile Include="TEST_dg_map.cpp" />
     <ClCompile Include="TEST_dg_map_p.cpp" />
     <ClCompile Include="TEST_dg_set_p.cpp" />

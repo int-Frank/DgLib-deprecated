@@ -1,7 +1,6 @@
 #include "TestHarness.h"
 #include "dg_list_pod.h"
 #include <list>
-#include <algorithm>
 
 typedef int t;
 typedef std::list<t>       list;

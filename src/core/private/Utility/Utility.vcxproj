@@ -144,7 +144,7 @@
     <ClCompile Include="DgStringFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\public\DgIDServer.h" />
+    <ClInclude Include="..\..\public\DgIDManager.h" />
     <ClInclude Include="..\..\public\DgObject.h" />
     <ClInclude Include="..\..\public\DgObjectWrapper.h" />
     <ClInclude Include="..\..\public\DgParser_INI.h" />

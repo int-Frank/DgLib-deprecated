@@ -9,7 +9,8 @@
 #ifndef DG_LIST_POD_H
 #define DG_LIST_POD_H
 
-#include <exception>
+#include <stdexcept>
+#include <string.h>
 
 #include "container_common.h"
 
