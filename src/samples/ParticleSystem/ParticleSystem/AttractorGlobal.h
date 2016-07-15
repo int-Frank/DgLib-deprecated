@@ -32,8 +32,6 @@ public:
   void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
   void Update(Dg::ParticleData<Real> &, int, Real);
 
-  void SetStrength(Real a_str) { if (a_str <= m_maxAccelMag) {m_strength = a_str; }}
-
   void SetTransformation(Dg::VQS<Real> const &);
 
   AttractorGlobal<Real> * Clone() const { return new AttractorGlobal<Real>(*this); }
@@ -54,10 +52,15 @@ void AttractorGlobal<Real>::Update(Dg::ParticleData<Real> & a_data
                                         , Real a_dt)
 {
   Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Real mag(m_strength);
+  if (mag * mag > m_maxAccelMag * m_maxAccelMag)
+  {
+    mag = (mag < static_cast<Real>(0.0)) ? -m_maxAccelMag : m_maxAccelMag;
+  }
 
   if (pAccels)
   {
-    Dg::Vector4<Real> accel = m_globalAccel * m_strength;
+    Dg::Vector4<Real> accel = m_globalAccel * mag;
     for (int i = a_start; i < a_data.GetCountAlive(); ++i)
     {
       pAccels[i] += accel;
