@@ -47,6 +47,10 @@ bool Application::Init()
 {
   GetConfiguration();
 
+  //Set options
+  m_parSysOpts.useUpdaterRelativeForce = false;
+  memcpy(&m_parSysOptsPrev, &m_parSysOpts, sizeof(ParSysOpts));
+
   if (!InitGL())
   {
     return false;
@@ -192,6 +196,10 @@ void Application::BuildMainUI()
 
   ImGui::Begin("Partice System");
   ImGui::Separator();
+  
+  ImGui::Checkbox("Use relative Force", &m_parSysOpts.useUpdaterRelativeForce);
+  ImGui::Separator();
+
   if (ImGui::CollapsingHeader("Emitters"))
   {
     if (s_nEmitters > 1)
@@ -301,6 +309,10 @@ void Application::BuildMainUI()
     ImGui::ColorEdit4("End color", &curEmData.colors[4]);
     ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s");
     ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
+    if (m_parSysOpts.useUpdaterRelativeForce)
+    {
+      ImGui::SliderFloat("Rel force", &curEmData.relativeForce, 0.0f, 10.0f, "%.4f m/s", 3.0f);
+    }
     ImGui::SliderFloat("Life", &curEmData.life, 0.0f, 60.0f, "%.2f s");
     ImGui::SliderFloat("Start size", curEmData.sizes, 0.0f, 1.0f, "%.2f m");
     ImGui::SliderFloat("End size", &curEmData.sizes[1], 0.0f, 1.0f, "%.2f m");
@@ -463,7 +475,10 @@ void Application::Render()
       }
       case E_AttLine:
       {
-        pTAttr[nShowAttr].Identity();;
+        pTAttr[nShowAttr].Rotation(0.0f
+                                 , m_aData[i].transform[4] - Dg::PI_f / 2.0f
+                                 , m_aData[i].transform[3]
+                                 , Dg::EulerOrder::XYZ);
         break;
       }
       case E_AttPlane:

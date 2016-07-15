@@ -27,6 +27,7 @@ private:
   Dg::ParticleGenerator<float> * CreateGenSize(EmitterData const &) const;
   Dg::ParticleGenerator<float> * CreateGenVelCone(EmitterData const &) const;
   Dg::ParticleGenerator<float> * CreateGenVelOutwards(EmitterData const &) const;
+  Dg::ParticleGenerator<float> * CreateGenRelativeForce(EmitterData const &) const;
 
 };
 

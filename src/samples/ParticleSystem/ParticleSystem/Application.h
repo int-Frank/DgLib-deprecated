@@ -47,6 +47,12 @@ public:
       unsigned int        all;
     } flags;
   };
+
+  struct ParSysOpts
+  {
+    bool useUpdaterRelativeForce;
+  };
+
 private:
 
   static Application* s_app;
@@ -86,7 +92,11 @@ private:
   AttractorData       m_aData[s_nAttractors];
   AttractorData       m_aDataPrev[s_nAttractors];
 
+  ParSysOpts          m_parSysOpts;
+  ParSysOpts          m_parSysOptsPrev;
+
   Dg::IDManager<int>  m_IDManager;
+
 
   //Main initializer function. All others are called through here.
   bool Init();

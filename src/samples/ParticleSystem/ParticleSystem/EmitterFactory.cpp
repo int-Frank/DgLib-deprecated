@@ -4,6 +4,7 @@
 #include "GenPosPoint.h"
 #include "GenPosSphere.h"
 #include "GenVelCone.h"
+#include "GenRelativeForce.h"
 #include "GenColor.h"
 #include "GenLife.h"
 #include "GenSize.h"
@@ -28,6 +29,7 @@ Dg::ParticleEmitter<float> * EmitterFactory::Create(EmitterData const & a_data) 
     pEmitter->AddGenerator(E_GenColor, CreateGenColor(a_data));
     pEmitter->AddGenerator(E_GenLife, CreateGenLife(a_data));
     pEmitter->AddGenerator(E_GenSize, CreateGenSize(a_data));
+    pEmitter->AddGenerator(E_GenRelativeForce, CreateGenRelativeForce(a_data));
 
     //Position
     switch (a_data.posGenMethod)
@@ -123,4 +125,11 @@ Dg::ParticleGenerator<float> * EmitterFactory::CreateGenVelOutwards(EmitterData 
 {
   //TODO ....
   return nullptr;
+}
+
+Dg::ParticleGenerator<float> * EmitterFactory::CreateGenRelativeForce(EmitterData const & a_data) const
+{
+  GenRelativeForce<float> * pGen = new GenRelativeForce<float>;
+  pGen->SetValue(a_data.relativeForce);
+  return pGen;
 }

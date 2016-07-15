@@ -14,11 +14,13 @@
 #include "GenPosPoint.h"
 #include "GenPosSphere.h"
 #include "GenVelCone.h"
+#include "GenRelativeForce.h"
 #include "GenColor.h"
 #include "GenLife.h"
 #include "GenSize.h"
 #include "UpdaterColor.h"
 #include "UpdaterEuler.h"
+#include "UpdaterRelativeForce.h"
 #include "UpdaterLife.h"
 #include "UpdaterSize.h"
 #include "UpdaterZeroAccel.h"
@@ -36,6 +38,7 @@ void Application::InitParticleSystem()
   pData->InitAttribute(Dg::ParticleData<float>::Attr::Position);
   pData->InitAttribute(Dg::ParticleData<float>::Attr::Velocity);
   pData->InitAttribute(Dg::ParticleData<float>::Attr::Acceleration);
+  pData->InitAttribute(Dg::ParticleData<float>::Attr::Force);
   pData->InitAttribute(Dg::ParticleData<float>::Attr::Size);
   pData->InitAttribute(Dg::ParticleData<float>::Attr::StartSize);
   pData->InitAttribute(Dg::ParticleData<float>::Attr::DSize);
@@ -126,6 +129,10 @@ void Application::InitParticleSystem()
   }
 
   m_particleSystem.AddUpdater(E_UpdaterEuler, new UpdaterEuler<float>());
+  if (m_parSysOpts.useUpdaterRelativeForce)
+  {
+    m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
+  }
   m_particleSystem.AddUpdater(E_UpdaterColor, new UpdaterColor<float>());
   m_particleSystem.AddUpdater(E_UpdaterSize, new UpdaterSize<float>());
 
@@ -137,6 +144,21 @@ void Application::InitParticleSystem()
 
 void Application::UpdateParSysAttr()
 {
+  // Update particle system updaters
+  if (m_parSysOpts.useUpdaterRelativeForce != m_parSysOptsPrev.useUpdaterRelativeForce)
+  {
+    if (!m_parSysOpts.useUpdaterRelativeForce)
+    {
+      m_particleSystem.RemoveUpdater(E_UpdaterRelativeForce);
+    }
+    else
+    {
+      m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
+    }
+    m_parSysOptsPrev.useUpdaterRelativeForce = m_parSysOpts.useUpdaterRelativeForce;
+  }
+
+
   for (int e = 0; e < s_nEmitters; ++e)
   {
     //We just do a dumb check to see if any of the data has changed,
@@ -281,6 +303,13 @@ void Application::UpdateParSysAttr()
         pVelGen->SetTransformation(vqs);
       }
       memcpy(dataPrev.velCone, data.velCone, sizeof(float) * 2);
+    }
+
+    if (data.relativeForce != dataPrev.relativeForce)
+    {
+      GenRelativeForce<float> * pGen = dynamic_cast<GenRelativeForce<float>*>(ptr->GetGenerator(E_GenRelativeForce));
+      pGen->SetValue(data.relativeForce);
+      dataPrev.relativeForce = data.relativeForce;
     }
 
     if ( memcmp(data.colors, dataPrev.colors, sizeof(float) * 8) != 0)

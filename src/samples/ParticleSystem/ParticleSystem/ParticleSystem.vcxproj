@@ -152,6 +152,7 @@
     <ClInclude Include="GenLife.h" />
     <ClInclude Include="GenPosPoint.h" />
     <ClInclude Include="GenPosSphere.h" />
+    <ClInclude Include="GenRelativeForce.h" />
     <ClInclude Include="GenSize.h" />
     <ClInclude Include="GenVelCone.h" />
     <ClInclude Include="GenVelOutwards.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="UpdaterColor.h" />
     <ClInclude Include="UpdaterEuler.h" />
     <ClInclude Include="UpdaterLife.h" />
+    <ClInclude Include="UpdaterRelativeForce.h" />
     <ClInclude Include="UpdaterSize.h" />
     <ClInclude Include="UpdaterZeroAccel.h" />
   </ItemGroup>

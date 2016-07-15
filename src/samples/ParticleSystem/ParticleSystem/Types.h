@@ -15,6 +15,7 @@ enum
   E_UpdaterGeneric_begin  = 2,
   E_UpdaterGeneric_end    = 64,
 
+  E_UpdaterRelativeForce,
   E_UpdaterEuler,
   E_UpdaterColor,
   E_UpdaterSize,
@@ -29,7 +30,7 @@ enum
   E_GenColor,
   E_GenLife,
   E_GenSize,
-  E_GenForce,
+  E_GenRelativeForce,
 
   //Attractor types
   E_AttNone       = 0,
@@ -79,6 +80,7 @@ public:
     , posGenMethod(E_GenPosPoint)
     , velGenMethod(E_GenVelCone)
     , transform{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
+    , relativeForce(1.0f)
     , boxDim{ 0.5f, 0.5f, 0.5f }
     , velCone{ 0.0f, 0.0f, Dg::PI_f / 8.0f }
     , velocity(1.0f)
@@ -93,7 +95,8 @@ public:
   bool on;
   int posGenMethod; // point, box, sphere
   int velGenMethod; // direction, repel from center     
-  float transform[7]; // [x, y, z, rx, ry, rz, scale]         
+  float transform[7]; // [x, y, z, rx, ry, rz, scale] 
+  float relativeForce;
   float boxDim[3];
   float velCone[3]; // [heading, pitch, spread]    
   float velocity;

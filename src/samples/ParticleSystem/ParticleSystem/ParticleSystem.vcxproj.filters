@@ -164,6 +164,12 @@
     <ClInclude Include="AttractorFactory.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="UpdaterRelativeForce.h">
+      <Filter>Updaters</Filter>
+    </ClInclude>
+    <ClInclude Include="GenRelativeForce.h">
+      <Filter>Generators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini">
