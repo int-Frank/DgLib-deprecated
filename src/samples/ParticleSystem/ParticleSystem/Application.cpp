@@ -183,7 +183,7 @@ void Application::BuildMainUI()
   //Common values
   float vRotMins[2] = { 0.0f, 0.0f };
   float vRotMaxs[2] = { Dg::PI_f * 2.0f, Dg::PI_f };
-  char const * vRotformats[2] = { "rz = %.2f", "ry = %.2f" };
+  char const * vRotformats[2] = { "yaw = %.2f", "pitch = %.2f" };
   float powers2[2] = { 1.0f, 1.0f };
   float posMins[3] = { -10.0f, -10.0f, -10.0f };
   float posMaxs[3] = { 10.0f, 10.0f, 10.0f };
@@ -287,10 +287,10 @@ void Application::BuildMainUI()
     {
       float mins[3] = { 0.0f, 0.0f, 0.0f };
       float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f, Dg::PI_f };
-      char const * formats[3] = { "rz = %.2f", "ry = %.2f", "spread = %.2f" };
+      char const * formats[3] = { "yaw = %.2f", "pitch = %.2f", "spread = %.2f" };
       float powers[3] = { 1.0f, 1.0f, 1.0f };
       ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("rz, ry, sprd", &curEmData.velCone[0], 3, mins, maxs, formats, powers);
+      ImGui::SliderFloatNi("yaw, pitch, sprd", &curEmData.velCone[0], 3, mins, maxs, formats, powers);
       ImGui::PopItemWidth();
     }
 
@@ -330,7 +330,7 @@ void Application::BuildMainUI()
     ImGui::PushItemWidth(sliderOffset);
 
     const char* attrForces[] = { "Force is constant", "Force is a function of distance", "Force is a function of sq distance"};
-    ImGui::ListBox("Force", &curAttData.forceType, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
+    ImGui::ListBox("Force", &curAttData.appliedAccelType, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
     
     const char* attrShapes[] = { "None", "Global", "Point", "Line", "Plane" };
     ImGui::ListBox("Shape", &curAttData.type, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
@@ -338,7 +338,7 @@ void Application::BuildMainUI()
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Strength");
     ImGui::SliderFloat("Strength", &curAttData.strength, -100.0f, 100.0f, "%.2f m/s");
-    ImGui::SliderFloat("Max accel", &curAttData.maxAccelMag, 0.0f, 500.0f, "%.2f m/s");
+    ImGui::SliderFloat("Max accel", &curAttData.maxAppliedAccelMag, 0.0f, 500.0f, "%.2f m/s");
     
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Position Attractor");

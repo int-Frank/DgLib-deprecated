@@ -52,18 +52,18 @@ public:
   AttractorData()
     : ID(0)
     , type(E_AttNone)
-    , forceType(Dg::Attractor<float>::Constant)
+    , appliedAccelType(Dg::Attractor<float>::Constant)
     , strength(1.0f)
-    , maxAccelMag(10.0f)
+    , maxAppliedAccelMag(10.0f)
     , transform{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
     , show(false)
   {}
 
   int ID;
   int type;      //[None, Global, Point, Line, Plane]
-  int forceType;  //[constant , linear, inverse square]
+  int appliedAccelType;  //[constant , linear, inverse square]
   float strength;
-  float maxAccelMag;
+  float maxAppliedAccelMag;
   float transform[6]; // [x, y, z, heading, pitch, scale] 
   bool show;
 };

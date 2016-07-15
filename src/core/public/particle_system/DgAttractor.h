@@ -65,7 +65,7 @@ namespace Dg
     virtual Real GetStrength() const { return m_strength; }
 
     //! Set the maximum allowed magnitue of the acceleration vector this attractor applies to a particle.
-    virtual void SetMaxAccelMagnitude(Real a_val);
+    virtual void SetMaxAppliedAccelMagnitude(Real a_val);
 
     void SetAccelType(int);
     int GetAccelType() const { return m_accelType; }
@@ -86,14 +86,14 @@ namespace Dg
   protected:
     int   m_accelType;
     Real  m_strength;
-    Real  m_maxAccelMag;
+    Real  m_maxAppliedAccel;
   };
 
   template<typename Real>
   Attractor<Real>::Attractor()
     : m_accelType(Constant)
     , m_strength(static_cast<Real>(1.0))
-    , m_maxAccelMag(static_cast<Real>(10.0))
+    , m_maxAppliedAccel(static_cast<Real>(10.0))
   {
 
   }
@@ -102,7 +102,7 @@ namespace Dg
   Attractor<Real>::Attractor(Attractor<Real> const & a_other)
     : m_accelType(a_other.m_accelType)
     , m_strength(a_other.m_strength)
-    , m_maxAccelMag(a_other.m_maxAccelMag)
+    , m_maxAppliedAccel(a_other.m_maxAppliedAccel)
   {
 
   }
@@ -112,15 +112,15 @@ namespace Dg
   {
     m_accelType = a_other.m_accelType;
     m_strength = a_other.m_strength;
-    m_maxAccelMag = a_other.m_maxAccelMag;
+    m_maxAppliedAccel = a_other.m_maxAppliedAccel;
 
     return *this;
   }
 
   template<typename Real>
-  void Attractor<Real>::SetMaxAccelMagnitude(Real a_val)
+  void Attractor<Real>::SetMaxAppliedAccelMagnitude(Real a_val)
   {
-    m_maxAccelMag = (a_val < static_cast<Real>(0.0)) ? static_cast<Real>(0.0) : a_val;
+    m_maxAppliedAccel = (a_val < static_cast<Real>(0.0)) ? static_cast<Real>(0.0) : a_val;
   }
 
   template<typename Real>
@@ -178,10 +178,10 @@ namespace Dg
     }
 
     v *= invSqDist * m_strength;
-    if (v.LengthSquared() > m_maxAccelMag * m_maxAccelMag)
+    if (v.LengthSquared() > m_maxAppliedAccel * m_maxAppliedAccel)
     {
       v.Normalize();
-      v *= m_maxAccelMag;
+      v *= m_maxAppliedAccel;
     }
     
     return v;
@@ -211,9 +211,9 @@ namespace Dg
     }
 
     Real mag = m_strength * invDist * invDist;
-    if (mag * mag > m_maxAccelMag * m_maxAccelMag)
+    if (mag * mag > m_maxAppliedAccel * m_maxAppliedAccel)
     {
-      mag = (mag < static_cast<Real>(0.0)) ? -m_maxAccelMag : m_maxAccelMag;
+      mag = (mag < static_cast<Real>(0.0)) ? -m_maxAppliedAccel : m_maxAppliedAccel;
     }
     return v * invDist * mag;
   }

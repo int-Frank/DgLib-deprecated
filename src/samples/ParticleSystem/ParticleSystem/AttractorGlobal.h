@@ -53,9 +53,9 @@ void AttractorGlobal<Real>::Update(Dg::ParticleData<Real> & a_data
 {
   Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
   Real mag(m_strength);
-  if (mag * mag > m_maxAccelMag * m_maxAccelMag)
+  if (mag * mag > m_maxAppliedAccel * m_maxAppliedAccel)
   {
-    mag = (mag < static_cast<Real>(0.0)) ? -m_maxAccelMag : m_maxAccelMag;
+    mag = (mag < static_cast<Real>(0.0)) ? -m_maxAppliedAccel : m_maxAppliedAccel;
   }
 
   if (pAccels)

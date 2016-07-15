@@ -34,8 +34,8 @@ Dg::Attractor<float> * AttractorFactory::Create(AttractorData const & a_data) co
     vqs.SetS(a_data.transform[5]);
 
     pAttractor->SetTransformation(vqs);
-    pAttractor->SetAccelType(a_data.forceType);
-    pAttractor->SetMaxAccelMagnitude(a_data.maxAccelMag);
+    pAttractor->SetAccelType(a_data.appliedAccelType);
+    pAttractor->SetMaxAppliedAccelMagnitude(a_data.maxAppliedAccelMag);
     pAttractor->SetStrength(a_data.strength);
   }
 

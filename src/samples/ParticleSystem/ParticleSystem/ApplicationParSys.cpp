@@ -114,9 +114,9 @@ void Application::InitParticleSystem()
   if (m_aData[0].ID)
   {
     m_aData[0].type = E_AttPoint;
-    m_aData[0].forceType = Dg::Attractor<float>::InvSq;
+    m_aData[0].appliedAccelType = Dg::Attractor<float>::InvSq;
     m_aData[0].strength = -10.0f;
-    m_aData[0].maxAccelMag = 1.0f;
+    m_aData[0].maxAppliedAccelMag = 1.0f;
     m_aData[0].transform[0] = 3.0f;
     m_aData[0].transform[1] = 3.0f;
     m_aData[0].transform[2] = 3.0f;
@@ -359,10 +359,10 @@ void Application::UpdateParSysAttr()
       continue;
     }
 
-    if (data.forceType != dataPrev.forceType)
+    if (data.appliedAccelType != dataPrev.appliedAccelType)
     {
-      ptr->SetAccelType(data.forceType);
-      dataPrev.forceType = data.forceType;
+      ptr->SetAccelType(data.appliedAccelType);
+      dataPrev.appliedAccelType = data.appliedAccelType;
     }
 
     if (data.strength != dataPrev.strength)
@@ -371,10 +371,10 @@ void Application::UpdateParSysAttr()
       dataPrev.strength = data.strength;
     }
 
-    if (data.maxAccelMag!= dataPrev.maxAccelMag)
+    if (data.maxAppliedAccelMag!= dataPrev.maxAppliedAccelMag)
     {
-      ptr->SetMaxAccelMagnitude(data.maxAccelMag);
-      dataPrev.maxAccelMag = data.maxAccelMag;
+      ptr->SetMaxAppliedAccelMagnitude(data.maxAppliedAccelMag);
+      dataPrev.maxAppliedAccelMag = data.maxAppliedAccelMag;
     }
 
     if (memcmp(data.transform, dataPrev.transform, sizeof(float) * 6) != 0)
