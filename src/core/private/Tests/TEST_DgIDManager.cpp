@@ -27,6 +27,9 @@ TEST(Stack_DgIDManager, creation_DgIDManager)
   CHECK(!idm.IsUsed(0));
   CHECK(!idm.IsUsed(40));
 
+  CHECK(!idm.MarkAsUsed(-4));
+  CHECK(!idm.MarkAsUsed(40));
+
   CHECK(idm.MarkAsUsed(4));
   CHECK(idm.MarkAsUsed(2));
   CHECK(idm.MarkAsUsed(1));
@@ -41,8 +44,15 @@ TEST(Stack_DgIDManager, creation_DgIDManager)
   CHECK(idm.MarkAsUsed(11));
   CHECK(idm.MarkAsUsed(10));
 
-  for (int i = lower; i <= upper; ++i)
-  {
-    CHECK(idm.IsUsed(i));
-  }
+  CHECK(idm.IsUsed(1));
+  CHECK(idm.IsUsed(2));
+  CHECK(idm.IsUsed(3));
+  CHECK(idm.IsUsed(4));
+  CHECK(idm.IsUsed(5));
+  CHECK(idm.IsUsed(6));
+  CHECK(idm.IsUsed(7));
+  CHECK(idm.IsUsed(8));
+  CHECK(idm.IsUsed(9));
+  CHECK(idm.IsUsed(10));
+  CHECK(idm.IsUsed(11));
 }

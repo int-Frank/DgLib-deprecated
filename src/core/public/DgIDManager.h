@@ -10,8 +10,8 @@ namespace Dg
   {
   public:
 
+    IDManager();
     IDManager(t_int lower, t_int upper);
-    IDManager() : m_bounds(static_cast<t_int>(1), static_cast<t_int>(1)) {}
     ~IDManager() {}
     IDManager(IDManager<t_int> const &);
     IDManager & operator=(IDManager<t_int> const &);
@@ -80,6 +80,20 @@ namespace Dg
   }
 
   template<typename t_int>
+  IDManager<t_int>::IDManager()
+    : m_bounds(static_cast<t_int>(1), static_cast<t_int>(1))
+  {
+    m_intervals.push_back(m_bounds);
+  }
+
+  template<typename t_int>
+  IDManager<t_int>::IDManager(t_int a_lower, t_int a_upper)
+    : m_bounds(a_lower, a_upper)
+  {
+    Init(a_lower, a_upper);
+  }
+
+  template<typename t_int>
   IDManager<t_int>::IDManager(IDManager<t_int> const & a_other)
     : m_intervals(a_other.m_intervals)
     , m_bounds(a_other.m_bounds)
@@ -102,14 +116,9 @@ namespace Dg
   {
     m_intervals.clear();
     if (a_lower > a_upper) a_lower = a_upper;
-    m_intervals.push_front(Interval(a_lower, a_upper));
-  }
-
-  template<typename t_int>
-  IDManager<t_int>::IDManager(t_int a_lower, t_int a_upper)
-    : m_bounds(a_lower, a_upper )
-  {
-    Init(a_lower, a_upper);
+    m_bounds.m_lower = a_lower;
+    m_bounds.m_upper = a_upper;
+    m_intervals.push_front(m_bounds);
   }
 
   template<typename t_int>
@@ -135,8 +144,7 @@ namespace Dg
   void IDManager<t_int>::ReturnID(t_int a_val)
   {
     //Check bounds
-    if (a_val < m_bounds.m_lower
-      || a_val > m_bounds.m_upper)
+    if (a_val < m_bounds.m_lower || a_val > m_bounds.m_upper)
     {
       return;
     }
@@ -206,21 +214,13 @@ namespace Dg
   template<typename t_int>
   bool IDManager<t_int>::MarkAsUsed(t_int a_val)
   {
-    //Check bounds
-    if (a_val < m_bounds.m_lower
-      || a_val > m_bounds.m_upper
-      || m_intervals.empty())
-    {
-      return false;
-    }
-
     list_pod<Interval>::iterator it = m_intervals.begin();
-    bool found = false;
+    bool good = false;
     for (it; it != m_intervals.end(); ++it)
     {
       if (a_val <= it->m_upper)
       {
-        found = true;
+        good = true;
         if (a_val == it->m_lower)
         {
           if (it->IsOne()) it = m_intervals.erase(it);
@@ -236,14 +236,14 @@ namespace Dg
           m_intervals.insert(it, Interval(it->m_lower, a_val - static_cast<t_int>(1) ));
           it->m_lower = a_val + static_cast<t_int>(1);
         }
-        else
+        else //Already marked as used
         {
-          found = false;
+          good = false;
         }
         break;
       }
     }
-    return found;
+    return good;
   }
 
   template<typename t_int>
