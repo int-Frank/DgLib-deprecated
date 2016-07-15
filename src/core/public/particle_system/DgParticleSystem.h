@@ -45,7 +45,7 @@ namespace Dg
     void StopAllEmitters();
 
     ParticleEmitter<Real> * GetEmitter(ParMapKey);
-
+    ParticleUpdater<Real> * GetUpdater(ParMapKey);
     ParticleData<Real> * GetParticleData() { return &m_particleData; }
 
     void Update(Real dt);
@@ -132,6 +132,17 @@ namespace Dg
     if (m_emitters.find(a_key, index))
     {
       return m_emitters[index];
+    }
+    return nullptr;
+  }
+
+  template<typename Real>
+  ParticleUpdater<Real> * ParticleSystem<Real>::GetUpdater(ParMapKey a_key)
+  {
+    int index(0);
+    if (m_updaters.find(a_key, index))
+    {
+      return m_updaters[index];
     }
     return nullptr;
   }

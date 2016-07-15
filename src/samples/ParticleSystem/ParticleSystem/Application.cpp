@@ -330,26 +330,11 @@ void Application::BuildMainUI()
     ImGui::PushItemWidth(sliderOffset);
 
     const char* attrForces[] = { "Force is constant", "Force is a function of distance", "Force is a function of sq distance"};
-    static int listVal;
-    ImGui::ListBox("Force", &listVal, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
-    switch (listVal)
-    {
-    case 0: {curAttData.forceType = Dg::Attractor<float>::Constant; break; }
-    case 1: {curAttData.forceType = Dg::Attractor<float>::Linear; break; }
-    case 2: {curAttData.forceType = Dg::Attractor<float>::InvSq; break; }
-    }
-
+    ImGui::ListBox("Force", &curAttData.forceType, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
+    
     const char* attrShapes[] = { "None", "Global", "Point", "Line", "Plane" };
-    ImGui::ListBox("Shape", &listVal, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
-    switch (listVal)
-    {
-    case 0: {curAttData.type = E_AttNone; break; }
-    case 1: {curAttData.type = E_AttGlobal; break; }
-    case 2: {curAttData.type = E_AttPoint; break; }
-    case 3: {curAttData.type = E_AttLine; break; }
-    case 4: {curAttData.type = E_AttPlane; break; }
-    }
-
+    ImGui::ListBox("Shape", &curAttData.type, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
+    
     CreateSpacing(nSpacing);
     ImGui::TextColored(headingClr, "Strength");
     ImGui::SliderFloat("Strength", &curAttData.strength, -100.0f, 100.0f, "%.2f m/s");
@@ -459,10 +444,10 @@ void Application::Render()
       {
       case E_AttGlobal:
       {
-        pTAttr[nShowAttr].Rotation(m_aData[i].transform[3]
-                                 , m_aData[i].transform[4]
-                                 , 0.0f
-                                 , Dg::EulerOrder::ZXY);
+        pTAttr[nShowAttr].Rotation(0.0f
+                                 , m_aData[i].transform[4] - Dg::PI_f / 2.0f
+                                 , m_aData[i].transform[3]
+                                 , Dg::EulerOrder::XYZ);
         break;
       }
       case E_AttPoint:

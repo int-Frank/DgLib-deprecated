@@ -32,11 +32,11 @@ enum
   E_GenForce,
 
   //Attractor types
-  E_AttNone,
-  E_AttGlobal,
-  E_AttPoint,
-  E_AttLine,
-  E_AttPlane,
+  E_AttNone       = 0,
+  E_AttGlobal     = 1,
+  E_AttPoint      = 2,
+  E_AttLine       = 3,
+  E_AttPlane      = 4,
 
   //Emitter types
   E_Emitter_Linear,
@@ -64,7 +64,7 @@ public:
   int forceType;  //[constant , linear, inverse square]
   float strength;
   float maxAccelMag;
-  float transform[6]; // [x, y, z, rz, ry, scale] 
+  float transform[6]; // [x, y, z, heading, pitch, scale] 
   bool show;
 };
 
@@ -95,7 +95,7 @@ public:
   int velGenMethod; // direction, repel from center     
   float transform[7]; // [x, y, z, rx, ry, rz, scale]         
   float boxDim[3];
-  float velCone[3]; // [rz, rx, angle]    
+  float velCone[3]; // [heading, pitch, spread]    
   float velocity;
   float colors[8]; //[sr, sg, sb, sa, er, eg, eb, ea]
   float rate;

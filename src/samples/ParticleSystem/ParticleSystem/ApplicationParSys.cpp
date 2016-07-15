@@ -331,17 +331,64 @@ void Application::UpdateParSysAttr()
     }
   }
 
-
+  //Attractors
   for (int a = 0; a < s_nAttractors; ++a)
   {
     AttractorData & data = m_aData[a];
     AttractorData & dataPrev = m_aDataPrev[a];
+
     if (data.type != dataPrev.type)
     {
       m_particleSystem.RemoveUpdater(dataPrev.ID);
       AttractorFactory aFactory;
-      m_particleSystem.AddUpdater(data.ID, aFactory.Create(data));
+
+      if (data.type != E_AttNone)
+      {
+        m_particleSystem.AddUpdater(data.ID, aFactory.Create(data));
+      }
+      dataPrev.type = data.type;
     }
-    dataPrev.type = data.type;
+
+
+    //Subsequent checks will not require us to remove the attrctor from the particle system
+    Dg::Attractor<float> * ptr = dynamic_cast<Dg::Attractor<float>*>(m_particleSystem.GetUpdater(data.ID));
+
+    if (ptr == nullptr)
+    {
+      //Error!
+      continue;
+    }
+
+    if (data.forceType != dataPrev.forceType)
+    {
+      ptr->SetAccelType(data.forceType);
+      dataPrev.forceType = data.forceType;
+    }
+
+    if (data.strength != dataPrev.strength)
+    {
+      ptr->SetStrength(data.strength);
+      dataPrev.strength = data.strength;
+    }
+
+    if (data.maxAccelMag!= dataPrev.maxAccelMag)
+    {
+      ptr->SetMaxAccelMagnitude(data.maxAccelMag);
+      dataPrev.maxAccelMag = data.maxAccelMag;
+    }
+
+    if (memcmp(data.transform, dataPrev.transform, sizeof(float) * 6) != 0)
+    {
+      Vqs vqs;
+      quat qh, qp;
+      qh.SetRotationZ(data.transform[3]);
+      qp.SetRotationY(-Dg::PI_f / 2.0f + data.transform[4]);
+      vqs.SetQ(qp * qh);
+      vqs.SetV(vec4(data.transform[0], data.transform[1], data.transform[2], 0.0f));
+      vqs.SetS(data.transform[5]);
+      ptr->SetTransformation(vqs);
+      memcpy(dataPrev.transform, data.transform, sizeof(float) * 6);
+    }
   }
+
 }
