@@ -49,6 +49,7 @@ bool Application::Init()
 
   //Set options
   m_parSysOpts.useUpdaterRelativeForce = false;
+  m_parSysOpts.preset = 0;
   memcpy(&m_parSysOptsPrev, &m_parSysOpts, sizeof(ParSysOpts));
 
   if (!InitGL())
@@ -198,6 +199,22 @@ void Application::BuildMainUI()
   ImGui::Separator();
   
   ImGui::Checkbox("Use relative Force", &m_parSysOpts.useUpdaterRelativeForce);
+  ImGui::Separator();
+
+  const char* presets[] = { "None"
+                          , "Basic 3 emitter"
+                          , "Global acceleration"
+                          , "Point attractor"
+                          , "Line attractor"
+                          , "Plane attractor"
+                          , "Cycle"
+                          , "Fire"
+                          , "Fountain"
+                          , "Rain"};
+
+  ImGui::PushItemWidth(sliderOffset);
+  ImGui::ListBox("Presets", &m_parSysOpts.preset, presets, ((int)(sizeof(presets) / sizeof(*presets))), 5);
+  ImGui::PopItemWidth();
   ImGui::Separator();
 
   if (ImGui::CollapsingHeader("Emitters"))
@@ -475,10 +492,20 @@ void Application::Render()
       }
       case E_AttLine:
       {
-        pTAttr[nShowAttr].Rotation(0.0f
-                                 , m_aData[i].transform[4] - Dg::PI_f / 2.0f
-                                 , m_aData[i].transform[3]
-                                 , Dg::EulerOrder::XYZ);
+        mat44 trans, rot;
+        trans.Translation
+        (
+          Dg::Vector4<float>(m_aData[i].transform[0]
+            , m_aData[i].transform[1]
+            , m_aData[i].transform[2]
+            , 0.0f)
+        );
+
+        rot.Rotation(0.0f
+                   , m_aData[i].transform[4] - Dg::PI_f / 2.0f
+                   , m_aData[i].transform[3]
+                   , Dg::EulerOrder::XYZ);
+        pTAttr[nShowAttr] = rot * trans;
         break;
       }
       case E_AttPlane:

@@ -50,7 +50,8 @@ public:
 
   struct ParSysOpts
   {
-    bool useUpdaterRelativeForce;
+    bool  useUpdaterRelativeForce;
+    int   preset;
   };
 
 private:
