@@ -221,6 +221,7 @@ void Application::BuildMainUI()
 
   if (ImGui::CollapsingHeader("Emitters"))
   {
+
     if (s_nEmitters > 1)
     {
       for (int i = 0; i < s_nEmitters; ++i)
@@ -395,7 +396,7 @@ void Application::BuildMainUI()
     {
 
       ImGui::SliderFloatNi("Normal", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
-      ImGui::SliderFloat("Offset", &curAttData.transform[5], 0.0f, 10.0f, "offset = %.2f", 1.0f);
+      ImGui::SliderFloatNi("Plane origin", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
       break;
     }
     default: //E_AttNone:
@@ -494,9 +495,9 @@ void Application::Render()
         trans.Translation
         (
           Dg::Vector4<float>(m_aData[i].transform[0]
-            , m_aData[i].transform[1]
-            , m_aData[i].transform[2]
-            , 0.0f)
+                           , m_aData[i].transform[1]
+                           , m_aData[i].transform[2]
+                           , 0.0f)
         );
 
         rot.Rotation(0.0f
@@ -508,7 +509,20 @@ void Application::Render()
       }
       case E_AttPlane:
       {
-        pTAttr[nShowAttr].Identity();;
+        mat44 trans, rot;
+        trans.Translation
+        (
+          Dg::Vector4<float>(m_aData[i].transform[0]
+                           , m_aData[i].transform[1]
+                           , m_aData[i].transform[2]
+                           , 0.0f)
+        );
+
+        rot.Rotation(0.0f
+                   , m_aData[i].transform[4] - Dg::PI_f / 2.0f
+                   , m_aData[i].transform[3]
+                   , Dg::EulerOrder::XYZ);
+        pTAttr[nShowAttr] = rot * trans;
         break;
       }
       }

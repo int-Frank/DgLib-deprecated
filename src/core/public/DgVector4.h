@@ -16,7 +16,7 @@ namespace Dg
 {
   template<typename Real> class Vector4;
   template<typename Real> class Matrix44;
-  template<typename Real> class Plane4;
+  template<typename Real> class Plane;
   template<typename Real> class Quaternion;
   template<typename Real> class VQS;
 
@@ -82,7 +82,7 @@ namespace Dg
   template<typename Real>
   class Vector4 : public Matrix<1, 4, Real>
   {
-    friend class Plane4<Real>;
+    friend class Plane<Real>;
     friend class Matrix44<Real>;
     friend class Quaternion<Real>;
     friend class VQS<Real>;

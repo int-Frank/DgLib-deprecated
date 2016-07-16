@@ -18,7 +18,7 @@ Dg::Attractor<float> * AttractorFactory::Create(AttractorData const & a_data) co
   case E_AttGlobal: pAttractor = new AttractorGlobal<float>(); break;
   case E_AttPoint:  pAttractor = new AttractorPoint<float>(); break;
   case E_AttLine:   pAttractor = new AttractorLine<float>; break;
-    //case E_AttPlane:  pAttractor = new AttractorPlane<float>; break;
+  case E_AttPlane:  pAttractor = new AttractorPlane<float>; break;
   }
 
   if (pAttractor)

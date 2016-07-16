@@ -91,6 +91,7 @@ public:
   {}
 
   int ID;
+  int state;
   int type;
   bool on;
   int posGenMethod; // point, box, sphere
