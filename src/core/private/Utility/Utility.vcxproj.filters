@@ -53,5 +53,8 @@
     <ClInclude Include="..\..\public\DgIDManager.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Smoother.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

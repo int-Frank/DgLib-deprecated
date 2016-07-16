@@ -48,7 +48,7 @@ bool Application::Init()
   GetConfiguration();
 
   //Set options
-  m_parSysOpts.useUpdaterRelativeForce = false;
+  m_parSysOpts.useRelativeForce = false;
   m_parSysOpts.preset = 0;
   memcpy(&m_parSysOptsPrev, &m_parSysOpts, sizeof(ParSysOpts));
 
@@ -197,25 +197,27 @@ void Application::BuildMainUI()
 
   ImGui::Begin("Partice System");
   ImGui::Separator();
-  
-  ImGui::Checkbox("Use relative Force", &m_parSysOpts.useUpdaterRelativeForce);
-  ImGui::Separator();
+  if (ImGui::CollapsingHeader("Options"))
+  {
+    ImGui::Checkbox("Enable relative Force", &m_parSysOpts.useRelativeForce);
+  }
+  if (ImGui::CollapsingHeader("Presets"))
+  {
+    const char* presets[] = { "None"
+      , "Basic 3 emitter"
+      , "Global acceleration"
+      , "Point attractor"
+      , "Line attractor"
+      , "Plane attractor"
+      , "Cycle"
+      , "Fire"
+      , "Fountain"
+      , "Rain" };
 
-  const char* presets[] = { "None"
-                          , "Basic 3 emitter"
-                          , "Global acceleration"
-                          , "Point attractor"
-                          , "Line attractor"
-                          , "Plane attractor"
-                          , "Cycle"
-                          , "Fire"
-                          , "Fountain"
-                          , "Rain"};
-
-  ImGui::PushItemWidth(sliderOffset);
-  ImGui::ListBox("Presets", &m_parSysOpts.preset, presets, ((int)(sizeof(presets) / sizeof(*presets))), 5);
-  ImGui::PopItemWidth();
-  ImGui::Separator();
+    ImGui::PushItemWidth(sliderOffset);
+    ImGui::ListBox("Presets", &m_parSysOpts.preset, presets, ((int)(sizeof(presets) / sizeof(*presets))), 5);
+    ImGui::PopItemWidth();
+  }
 
   if (ImGui::CollapsingHeader("Emitters"))
   {
@@ -326,7 +328,7 @@ void Application::BuildMainUI()
     ImGui::ColorEdit4("End color", &curEmData.colors[4]);
     ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s");
     ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
-    if (m_parSysOpts.useUpdaterRelativeForce)
+    if (m_parSysOpts.useRelativeForce)
     {
       ImGui::SliderFloat("Rel force", &curEmData.relativeForce, 0.0f, 10.0f, "%.4f m/s", 3.0f);
     }
@@ -424,14 +426,10 @@ void Application::DoLogic()
   }
 
   //Zoom the camera
-  if (abs(m_camZoomTarget - m_camZoom) > 0.1)
+  if (abs(m_camZoomTarget - m_camZoom) > 0.01)
   {
-    double dist = m_camZoomTarget - m_camZoom;
-    double vec = (dist < 0.0) ? -1.0 : 1.0;
-    double mag = vec * dist;
-    double vel = 18.0 * pow(mag, 0.3);
-    double dx = vec * vel * m_dt;
-    m_camZoom += dx;
+    double diff = m_camZoomTarget - m_camZoom;
+    m_camZoom = m_camZoomTarget - diff / (pow(1.3f, 26.0f * m_dt));
   }
 }
 
