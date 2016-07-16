@@ -50,31 +50,31 @@ void Application::InitParticleSystem()
   pData->InitAttribute(Dg::ParticleData<float>::Attr::StartColor);
   pData->InitAttribute(Dg::ParticleData<float>::Attr::DColor);
 
-  EmitterFactory    eFactory;
-  AttractorFactory  aFactory;
+  //EmitterFactory    eFactory;
+  //AttractorFactory  aFactory;
 
   //--------------------------------------------------------------------
   //  Set emitter 1 data
   //--------------------------------------------------------------------
-  m_eData[0].ID = m_IDManager.GetID();
-  if (m_eData[0].ID)
+  /*m_eData[0].first.ID = m_IDManager.GetID();
+  if (m_eData[0].first.ID)
   {
-    m_eData[0].type = E_Emitter_Linear;
-    m_eData[0].on = true;
-    m_eData[0].posGenMethod = E_GenPosPoint;
-    m_eData[0].velGenMethod = E_GenVelCone;
-    m_eData[0].transform[0] = 1.0f * 2.5f;
-    m_eData[0].transform[1] = 0.0;
-    m_eData[0].transform[2] = 0.0;
-    m_eData[0].sizes[0] = 0.1f;
-    m_eData[0].sizes[1] = 0.3f;
-    m_eData[0].colors[4] = 1.0f;
-    m_eData[0].colors[5] = 0.0f;
-    m_eData[0].colors[6] = 0.0f;
-    m_eData[0].colors[7] = 0.0f;
+    m_eData[0].first.type = E_Emitter_Linear;
+    m_eData[0].first.on = true;
+    m_eData[0].first.posGenMethod = E_GenPosPoint;
+    m_eData[0].first.velGenMethod = E_GenVelCone;
+    m_eData[0].first.transform[0] = 1.0f * 2.5f;
+    m_eData[0].first.transform[1] = 0.0;
+    m_eData[0].first.transform[2] = 0.0;
+    m_eData[0].first.sizes[0] = 0.1f;
+    m_eData[0].first.sizes[1] = 0.3f;
+    m_eData[0].first.colors[4] = 1.0f;
+    m_eData[0].first.colors[5] = 0.0f;
+    m_eData[0].first.colors[6] = 0.0f;
+    m_eData[0].first.colors[7] = 0.0f;
 
-    m_particleSystem.AddEmitter(m_eData[0].ID, eFactory.Create(m_eData[0]));
-  }
+    m_particleSystem.AddEmitter(m_eData[0].first.ID, eFactory.Create(m_eData[0].first));
+  }*/
   
   //--------------------------------------------------------------------
   //  Set emitter 2 data
@@ -113,7 +113,7 @@ void Application::InitParticleSystem()
   //--------------------------------------------------------------------
   //  Set attractor data
   //--------------------------------------------------------------------
-  m_aData[0].ID = m_IDManager.GetID();
+  /*m_aData[0].ID = m_IDManager.GetID();
   if (m_aData[0].ID)
   {
     m_aData[0].type = E_AttPoint;
@@ -126,7 +126,7 @@ void Application::InitParticleSystem()
     m_aData[0].show = false;
 
     m_particleSystem.AddUpdater(m_aData[0].ID, aFactory.Create(m_aData[0]));
-  }
+  }*/
 
   m_particleSystem.AddUpdater(E_UpdaterEuler, new UpdaterEuler<float>());
   if (m_parSysOpts.useRelativeForce)
@@ -137,9 +137,14 @@ void Application::InitParticleSystem()
   m_particleSystem.AddUpdater(E_UpdaterSize, new UpdaterSize<float>());
 
   //copy current emitter data for ui callback checking
-  memcpy(m_eDataPrev, m_eData, sizeof(EmitterData) * s_nEmitters);
-  memcpy(m_aDataPrev, m_aData, sizeof(AttractorData) * s_nAttractors);
-
+  for (int i = 0; i < m_eData.size(); ++i)
+  {
+    memcpy(&m_eData[i].second, &m_eData[i].first, sizeof(EmitterData));
+  }
+  for (int i = 0; i < m_aData.size(); ++i)
+  {
+    memcpy(&m_aData[i].second, &m_aData[i].first, sizeof(AttractorData));
+  }
 }
 
 void Application::UpdateParSysAttr()
@@ -159,13 +164,13 @@ void Application::UpdateParSysAttr()
   }
 
 
-  for (int e = 0; e < s_nEmitters; ++e)
+  for (int e = 0; e < m_eData.size(); ++e)
   {
     //We just do a dumb check to see if any of the data has changed,
     //and just remove the emitter and build a new one with the new data,
     //but it's very slow; there are noticable delays.
-    EmitterData & data = m_eData[e];
-    EmitterData & dataPrev = m_eDataPrev[e];
+    EmitterData & data = m_eData[e].first;
+    EmitterData & dataPrev = m_eData[e].second;
     int id = data.ID;
 
     if (data.type != dataPrev.type)
@@ -361,10 +366,10 @@ void Application::UpdateParSysAttr()
   }
 
   //Attractors
-  for (int a = 0; a < s_nAttractors; ++a)
+  for (int a = 0; a < m_aData.size(); ++a)
   {
-    AttractorData & data = m_aData[a];
-    AttractorData & dataPrev = m_aDataPrev[a];
+    AttractorData & data = m_aData[a].first;
+    AttractorData & dataPrev = m_aData[a].second;
 
     if (data.type != dataPrev.type)
     {
@@ -373,7 +378,7 @@ void Application::UpdateParSysAttr()
 
       if (data.type != E_AttNone)
       {
-        m_particleSystem.AddUpdater(data.ID, aFactory.Create(data));
+        m_particleSystem.AddUpdater(data.ID, aFactory(data));
       }
       dataPrev.type = data.type;
     }

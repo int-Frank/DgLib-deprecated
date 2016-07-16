@@ -10,7 +10,7 @@ typedef Dg::Vector4<float>      vec4;
 typedef Dg::Quaternion<float>   quat;
 typedef Dg::VQS<float>          Vqs;
 
-Dg::Attractor<float> * AttractorFactory::Create(AttractorData const & a_data) const
+Dg::Attractor<float> * AttractorFactory::operator()(AttractorData const & a_data) const
 {
   Dg::Attractor<float> * pAttractor(nullptr);
   switch (a_data.type)

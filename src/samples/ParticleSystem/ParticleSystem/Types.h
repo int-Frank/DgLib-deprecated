@@ -1,7 +1,10 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <string>
+
 #include "./particle_system/DgAttractor.h"
+#include "DgMatrix44.h"
 
 enum
 {
@@ -33,11 +36,11 @@ enum
   E_GenRelativeForce,
 
   //Attractor types
-  E_AttNone       = 0,
-  E_AttGlobal     = 1,
-  E_AttPoint      = 2,
-  E_AttLine       = 3,
-  E_AttPlane      = 4,
+  E_AttNone       = -1,
+  E_AttGlobal     = 0,
+  E_AttPoint      = 1,
+  E_AttLine       = 2,
+  E_AttPlane      = 3,
 
   //Emitter types
   E_Emitter_Linear,
@@ -52,13 +55,15 @@ public:
 
   AttractorData()
     : ID(0)
-    , type(E_AttNone)
+    , type(E_AttPoint)
     , appliedAccelType(Dg::Attractor<float>::Constant)
     , strength(1.0f)
     , maxAppliedAccelMag(10.0f)
     , transform{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
-    , show(false)
+    , show(true)
   {}
+
+  void BuildFromString(std::string const &);
 
   int ID;
   int type;      //[None, Global, Point, Line, Plane]
@@ -90,8 +95,9 @@ public:
     , sizes{ 0.1f, 0.1f }
   {}
 
+  void BuildFromString(std::string const &);
+
   int ID;
-  int state;
   int type;
   bool on;
   int posGenMethod; // point, box, sphere
@@ -107,5 +113,10 @@ public:
   float sizes[2]; //[start, end]
 };
 
-
+struct LineRenderData
+{
+  int                   model;
+  Dg::Matrix44<float>   mat;
+  Dg::Vector4<float>    col;
+};
 #endif

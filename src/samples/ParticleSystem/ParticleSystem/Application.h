@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <string>
+#include <vector>
 
 #include "particle_system/DgParticleSystem.h"
 #include "Renderer.h"
@@ -11,6 +11,10 @@
 #include "DgIDManager.h"
 
 struct GLFWwindow;
+typedef std::pair<EmitterData, EmitterData> eDataItem;
+typedef std::vector<eDataItem> eData;
+typedef std::pair<AttractorData, AttractorData> aDataItem;
+typedef std::vector<aDataItem> aData;
 
 class Application
 {
@@ -62,9 +66,6 @@ private:
 
   Dg::ParticleSystem<float>   m_particleSystem;
 
-  static int const    s_nEmitters = 1;
-  static int const    s_nAttractors = 1;
-
 private:
 
   char * const m_configFileName = "config.ini";
@@ -87,11 +88,10 @@ private:
   double              m_camZoom;
   double              m_camZoomTarget;
 
-  EmitterData         m_eData[s_nEmitters];
-  EmitterData         m_eDataPrev[s_nEmitters];
+  eData               m_eData;
+  aData               m_aData;
+  int                 m_attrFocus;
 
-  AttractorData       m_aData[s_nAttractors];
-  AttractorData       m_aDataPrev[s_nAttractors];
 
   ParSysOpts          m_parSysOpts;
   ParSysOpts          m_parSysOptsPrev;

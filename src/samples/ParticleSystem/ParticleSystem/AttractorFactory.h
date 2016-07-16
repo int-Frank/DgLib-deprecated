@@ -13,7 +13,7 @@ class AttractorFactory
 {
 public:
 
-  Dg::Attractor<float> * Create(AttractorData const &) const;
+  Dg::Attractor<float> * operator()(AttractorData const &) const;
 
 };
 

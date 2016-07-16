@@ -24,6 +24,9 @@
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
 
+#include "EmitterFactory.h"
+#include "AttractorFactory.h"
+
 #include "imgui/imgui.h"
 #include "imgui_impl_glfw_gl3.h"
 
@@ -51,6 +54,8 @@ bool Application::Init()
   m_parSysOpts.useRelativeForce = false;
   m_parSysOpts.preset = 0;
   memcpy(&m_parSysOptsPrev, &m_parSysOpts, sizeof(ParSysOpts));
+
+  m_attrFocus = -1;
 
   if (!InitGL())
   {
@@ -221,191 +226,264 @@ void Application::BuildMainUI()
 
   if (ImGui::CollapsingHeader("Emitters"))
   {
-
-    if (s_nEmitters > 1)
+    if (ImGui::Button("Add Emitter"))
     {
-      for (int i = 0; i < s_nEmitters; ++i)
+      EmitterData data;
+      data.ID = m_IDManager.GetID();
+      eDataItem item(data, data);
+      m_eData.push_back(item);
+
+      EmitterFactory eFact;
+      m_particleSystem.AddEmitter(data.ID, eFact(data));
+      curEm = (int)m_eData.size() - 1;
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Kill Emitter") && m_eData.size())
+    {
+      m_particleSystem.RemoveEmitter(m_eData[curEm].first.ID);
+      m_IDManager.ReturnID(m_eData[curEm].first.ID);
+      m_eData.erase(m_eData.begin() + curEm);
+      if (curEm == m_eData.size())
       {
-        char buf[16];
-        sprintf_s(buf, 16, "Emitter %i", i + 1);
-        ImGui::RadioButton(buf, &curEm, i);
-        if (i != s_nEmitters - 1) ImGui::SameLine();
+        curEm--;
       }
     }
 
-    EmitterData & curEmData = m_eData[curEm];
+    //This doesn't work :( Have to use char**
+    //typedef char inner_array_t[32];
+    //inner_array_t * currentEmitters = new inner_array_t[4];
 
-    CreateSpacing(nSpacing);
-    ImGui::Checkbox("Turn emitter off/on", &curEmData.on);
-
-    CreateSpacing(nSpacing);
-    ImGui::TextColored(headingClr, "Emission method");
-    ImGui::RadioButton("Linear", &curEmData.type, E_Emitter_Linear); ImGui::SameLine();
-    ImGui::RadioButton("Random", &curEmData.type, E_Emitter_Random);
-
-    CreateSpacing(nSpacing);
-    ImGui::TextColored(headingClr, "Define emitter shape");
-    ImGui::RadioButton("Point", &curEmData.posGenMethod, E_GenPosPoint); ImGui::SameLine();
-    ImGui::RadioButton("Box", &curEmData.posGenMethod, E_GenPosBox); ImGui::SameLine();
-    ImGui::RadioButton("Sphere", &curEmData.posGenMethod, E_GenPosSphere);
-
-    if (curEmData.posGenMethod == E_GenPosBox)
+    char ** currentEmitters = new char*[m_eData.size()];
+    for (int i = 0; i < m_eData.size(); ++i)
     {
-      float mins[3] = { 0.0f, 0.0f, 0.0f };
-      float maxs[3] = { 10.0f, 10.0f, 10.0f };
-      char const * formats[3] = { "l = %.2f", "w = %.2f", "h = %.2f" };
-      ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Dimensions", &curEmData.boxDim[0], 3, mins, maxs, formats, powers3);
-      ImGui::PopItemWidth();
+      currentEmitters[i] = new char[32]();
+      sprintf_s(currentEmitters[i], 32, "Emitter %i", m_eData[i].first.ID);
     }
-
-    if (curEmData.posGenMethod == E_GenPosSphere)
-    {
-      CreateSpacing(nSpacing);
-      ImGui::TextColored(headingClr, "Define sphere geometry");
-      ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloat("Radius", &curEmData.transform[6], 0.0f, 10.0f, "%.1f");
-      ImGui::PopItemWidth();
-    }
-
-    {
-      CreateSpacing(nSpacing);
-      ImGui::TextColored(headingClr, "Place Emitter");
-      ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Position", &curEmData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
-      ImGui::PopItemWidth();
-    }
-
-    //ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
-    //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
-    //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-    //ImGui::Button("Drag Me", ImVec2(100.0f, 100.0f));
-    //ImGui::PopStyleColor(3);
-    //if (ImGui::IsItemActive())
-    //{
-    //  // Draw a line between the button and the mouse cursor
-    //  ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    //  draw_list->PushClipRectFullScreen();
-    //  draw_list->AddLine(ImGui::CalcItemRectClosestPoint(ImGui::GetIO().MousePos, true, -2.0f), ImGui::GetIO().MousePos, ImColor(ImGui::GetStyle().Colors[ImGuiCol_Button]), 4.0f);
-    //  draw_list->PopClipRect();
-    //  ImVec2 value_raw = ImGui::GetMouseDragDelta(0, 0.0f);
-    //  ImVec2 value_with_lock_threshold = ImGui::GetMouseDragDelta(0);
-    //  ImVec2 mouse_delta = ImGui::GetIO().MouseDelta;
-    //  ImGui::SameLine(); ImGui::Text("Raw (%.1f, %.1f), WithLockThresold (%.1f, %.1f), MouseDelta (%.1f, %.1f)", value_raw.x, value_raw.y, value_with_lock_threshold.x, value_with_lock_threshold.y, mouse_delta.x, mouse_delta.y);
-    //}
-
-
-    if (curEmData.posGenMethod == E_GenPosBox)
-    {
-      float mins[3] = { 0.0f, 0.0f, 0.0f };
-      float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f * 2.0f, Dg::PI_f * 2.0f };
-      char const * formats[3] = { "rz = %.2f", "ry = %.2f", "rx = %.2f" };
-      float powers[3] = { 1.0f, 1.0f, 1.0f };
-      ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("Rotation", &curEmData.transform[3], 3, mins, maxs, formats, powers);
-      ImGui::PopItemWidth();
-    }
-
-    CreateSpacing(nSpacing);
-    ImGui::TextColored(headingClr, "Define Initial velocity vector");
-    ImGui::RadioButton("Direction", &curEmData.velGenMethod, E_GenVelCone); ImGui::SameLine();
-    ImGui::RadioButton("Outwards", &curEmData.velGenMethod, E_GenVelOutwards);
-
-    if (curEmData.velGenMethod == E_GenVelCone)
-    {
-      float mins[3] = { 0.0f, 0.0f, 0.0f };
-      float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f, Dg::PI_f };
-      char const * formats[3] = { "yaw = %.2f", "pitch = %.2f", "spread = %.2f" };
-      float powers[3] = { 1.0f, 1.0f, 1.0f };
-      ImGui::PushItemWidth(sliderOffset);
-      ImGui::SliderFloatNi("yaw, pitch, sprd", &curEmData.velCone[0], 3, mins, maxs, formats, powers);
-      ImGui::PopItemWidth();
-    }
-
-    CreateSpacing(nSpacing);
-    ImGui::TextColored(headingClr, "Other attributes");
     ImGui::PushItemWidth(sliderOffset);
-    ImGui::ColorEdit4("Start color", curEmData.colors);
-    ImGui::ColorEdit4("End color", &curEmData.colors[4]);
-    ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s");
-    ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
-    if (m_parSysOpts.useRelativeForce)
-    {
-      ImGui::SliderFloat("Rel force", &curEmData.relativeForce, 0.0f, 10.0f, "%.4f m/s", 3.0f);
-    }
-    ImGui::SliderFloat("Life", &curEmData.life, 0.0f, 60.0f, "%.2f s");
-    ImGui::SliderFloat("Start size", curEmData.sizes, 0.0f, 1.0f, "%.2f m");
-    ImGui::SliderFloat("End size", &curEmData.sizes[1], 0.0f, 1.0f, "%.2f m");
-    
+    ImGui::ListBox("Emitter", &curEm, (char const **)currentEmitters, (int)m_eData.size(), 5);
     ImGui::PopItemWidth();
+    ImGui::Separator();
+
+    for (int i = 0; i < m_eData.size(); ++i)
+    {
+      delete[] currentEmitters[i];
+    }
+    delete[] currentEmitters;
+
+    if (m_eData.size() > 0)
+    {
+      EmitterData & curEmData = m_eData[curEm].first;
+
+      CreateSpacing(nSpacing);
+      ImGui::Checkbox("Turn emitter off/on", &curEmData.on);
+
+      CreateSpacing(nSpacing);
+      ImGui::TextColored(headingClr, "Emission method");
+      ImGui::RadioButton("Linear", &curEmData.type, E_Emitter_Linear); ImGui::SameLine();
+      ImGui::RadioButton("Random", &curEmData.type, E_Emitter_Random);
+
+      CreateSpacing(nSpacing);
+      ImGui::TextColored(headingClr, "Define emitter shape");
+      ImGui::RadioButton("Point", &curEmData.posGenMethod, E_GenPosPoint); ImGui::SameLine();
+      //ImGui::RadioButton("Box", &curEmData.posGenMethod, E_GenPosBox); ImGui::SameLine();
+      ImGui::RadioButton("Sphere", &curEmData.posGenMethod, E_GenPosSphere);
+
+      if (curEmData.posGenMethod == E_GenPosBox)
+      {
+        float mins[3] = { 0.0f, 0.0f, 0.0f };
+        float maxs[3] = { 10.0f, 10.0f, 10.0f };
+        char const * formats[3] = { "l = %.2f", "w = %.2f", "h = %.2f" };
+        ImGui::PushItemWidth(sliderOffset);
+        ImGui::SliderFloatNi("Dimensions", &curEmData.boxDim[0], 3, mins, maxs, formats, powers3);
+        ImGui::PopItemWidth();
+      }
+
+      if (curEmData.posGenMethod == E_GenPosSphere)
+      {
+        CreateSpacing(nSpacing);
+        ImGui::TextColored(headingClr, "Define sphere geometry");
+        ImGui::PushItemWidth(sliderOffset);
+        ImGui::SliderFloat("Radius", &curEmData.transform[6], 0.0f, 10.0f, "%.1f");
+        ImGui::PopItemWidth();
+      }
+
+      {
+        CreateSpacing(nSpacing);
+        ImGui::TextColored(headingClr, "Place Emitter");
+        ImGui::PushItemWidth(sliderOffset);
+        ImGui::SliderFloatNi("Position", &curEmData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
+        ImGui::PopItemWidth();
+      }
+
+      //ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
+      //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
+      //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+      //ImGui::Button("Drag Me", ImVec2(100.0f, 100.0f));
+      //ImGui::PopStyleColor(3);
+      //if (ImGui::IsItemActive())
+      //{
+      //  // Draw a line between the button and the mouse cursor
+      //  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+      //  draw_list->PushClipRectFullScreen();
+      //  draw_list->AddLine(ImGui::CalcItemRectClosestPoint(ImGui::GetIO().MousePos, true, -2.0f), ImGui::GetIO().MousePos, ImColor(ImGui::GetStyle().Colors[ImGuiCol_Button]), 4.0f);
+      //  draw_list->PopClipRect();
+      //  ImVec2 value_raw = ImGui::GetMouseDragDelta(0, 0.0f);
+      //  ImVec2 value_with_lock_threshold = ImGui::GetMouseDragDelta(0);
+      //  ImVec2 mouse_delta = ImGui::GetIO().MouseDelta;
+      //  ImGui::SameLine(); ImGui::Text("Raw (%.1f, %.1f), WithLockThresold (%.1f, %.1f), MouseDelta (%.1f, %.1f)", value_raw.x, value_raw.y, value_with_lock_threshold.x, value_with_lock_threshold.y, mouse_delta.x, mouse_delta.y);
+      //}
+
+
+      if (curEmData.posGenMethod == E_GenPosBox)
+      {
+        float mins[3] = { 0.0f, 0.0f, 0.0f };
+        float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f * 2.0f, Dg::PI_f * 2.0f };
+        char const * formats[3] = { "rz = %.2f", "ry = %.2f", "rx = %.2f" };
+        float powers[3] = { 1.0f, 1.0f, 1.0f };
+        ImGui::PushItemWidth(sliderOffset);
+        ImGui::SliderFloatNi("Rotation", &curEmData.transform[3], 3, mins, maxs, formats, powers);
+        ImGui::PopItemWidth();
+      }
+
+      CreateSpacing(nSpacing);
+      ImGui::TextColored(headingClr, "Define Initial velocity vector");
+      ImGui::RadioButton("Direction", &curEmData.velGenMethod, E_GenVelCone); ImGui::SameLine();
+      ImGui::RadioButton("Outwards", &curEmData.velGenMethod, E_GenVelOutwards);
+
+      if (curEmData.velGenMethod == E_GenVelCone)
+      {
+        float mins[3] = { 0.0f, 0.0f, 0.0f };
+        float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f, Dg::PI_f };
+        char const * formats[3] = { "yaw = %.2f", "pitch = %.2f", "spread = %.2f" };
+        float powers[3] = { 1.0f, 1.0f, 1.0f };
+        ImGui::PushItemWidth(sliderOffset);
+        ImGui::SliderFloatNi("yaw, pitch, sprd", &curEmData.velCone[0], 3, mins, maxs, formats, powers);
+        ImGui::PopItemWidth();
+      }
+
+      CreateSpacing(nSpacing);
+      ImGui::TextColored(headingClr, "Other attributes");
+      ImGui::PushItemWidth(sliderOffset);
+      ImGui::ColorEdit4("Start color", curEmData.colors);
+      ImGui::ColorEdit4("End color", &curEmData.colors[4]);
+      ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s");
+      ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
+      if (m_parSysOpts.useRelativeForce)
+      {
+        ImGui::SliderFloat("Rel force", &curEmData.relativeForce, 0.0f, 10.0f, "%.4f m/s", 3.0f);
+      }
+      ImGui::SliderFloat("Life", &curEmData.life, 0.0f, 60.0f, "%.2f s");
+      ImGui::SliderFloat("Start size", curEmData.sizes, 0.0f, 1.0f, "%.2f m");
+      ImGui::SliderFloat("End size", &curEmData.sizes[1], 0.0f, 1.0f, "%.2f m");
+
+      ImGui::PopItemWidth();
+    }
   }
-  
 
   //Attractors
   if (ImGui::CollapsingHeader("Attractors"))
   {
-    static int curAtt = 0;
-    for (int i = 0; i < s_nAttractors; ++i)
+    if (ImGui::Button("Add Attractor"))
     {
-      char buf[16];
-      sprintf_s(buf, 16, "Attractor %i", i + 1);
-      ImGui::RadioButton(buf, &curAtt, i);
-      if (i != s_nAttractors - 1) ImGui::SameLine();
+      AttractorData data;
+      data.ID = m_IDManager.GetID();
+      aDataItem item(data, data);
+      m_aData.push_back(item);
+
+      AttractorFactory aFact;
+      m_particleSystem.AddUpdater(data.ID, aFact(data));
+      m_attrFocus = (int)m_aData.size() - 1;
     }
-    CreateSpacing(nSpacing);
-    
-    AttractorData & curAttData = m_aData[curAtt];
 
-    ImGui::Checkbox("Show attractor", &curAttData.show);
+    ImGui::SameLine();
+    if (ImGui::Button("Kill Attractor") && m_aData.size())
+    {
+      m_particleSystem.RemoveUpdater(m_aData[m_attrFocus].first.ID);
+      m_IDManager.ReturnID(m_aData[m_attrFocus].first.ID);
+      m_aData.erase(m_aData.begin() + m_attrFocus);
+      if (m_attrFocus == m_aData.size())
+      {
+        m_attrFocus--;
+      }
+    }
 
-    ImGui::TextColored(headingClr, "Attractor type");
+
+    char ** currentAttractors = new char*[m_aData.size()];
+    for (int i = 0; i < m_aData.size(); ++i)
+    {
+      currentAttractors[i] = new char[32]();
+      sprintf_s(currentAttractors[i], 32, "Attractor %i", m_aData[i].first.ID);
+    }
     ImGui::PushItemWidth(sliderOffset);
-
-    const char* attrForces[] = { "Force is constant", "Force is a function of distance", "Force is a function of sq distance"};
-    ImGui::ListBox("Force", &curAttData.appliedAccelType, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
-    
-    const char* attrShapes[] = { "None", "Global", "Point", "Line", "Plane" };
-    ImGui::ListBox("Shape", &curAttData.type, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
-    
-    CreateSpacing(nSpacing);
-    ImGui::TextColored(headingClr, "Strength");
-    ImGui::SliderFloat("Strength", &curAttData.strength, -100.0f, 100.0f, "%.2f m/s");
-    ImGui::SliderFloat("Max accel", &curAttData.maxAppliedAccelMag, 0.0f, 500.0f, "%.2f m/s");
-    
-    CreateSpacing(nSpacing);
-    ImGui::TextColored(headingClr, "Position Attractor");
-    switch (curAttData.type)
-    {
-    case E_AttGlobal:
-    {
-      ImGui::SliderFloatNi("Accel dir", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
-      break;
-    }
-    case E_AttPoint:
-    {
-      ImGui::SliderFloatNi("Att Pos", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
-      break;
-    }
-    case E_AttLine:
-    {
-      ImGui::SliderFloatNi("Line origin", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
-      ImGui::SliderFloatNi("Line dir", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
-      break;
-    }
-    case E_AttPlane:
-    {
-
-      ImGui::SliderFloatNi("Normal", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
-      ImGui::SliderFloatNi("Plane origin", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
-      break;
-    }
-    default: //E_AttNone:
-    {
-      break;
-    }
-    }
-    
+    ImGui::ListBox("Attractor", &m_attrFocus, (char const **)currentAttractors, (int)m_aData.size(), 5);
     ImGui::PopItemWidth();
+    ImGui::Separator();
+
+    for (int i = 0; i < m_aData.size(); ++i)
+    {
+      delete[] currentAttractors[i];
+    }
+    delete[] currentAttractors;
+
+
+    if (m_aData.size() > 0)
+    {
+      CreateSpacing(nSpacing);
+
+      AttractorData & curAttData = m_aData[m_attrFocus].first;
+
+      ImGui::Checkbox("Show attractor", &curAttData.show);
+
+      ImGui::TextColored(headingClr, "Attractor type");
+      ImGui::PushItemWidth(sliderOffset);
+
+      const char* attrForces[] = { "Force is constant", "Force is a function of distance", "Force is a function of sq distance" };
+      ImGui::ListBox("Force", &curAttData.appliedAccelType, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
+
+      const char* attrShapes[] = { "Global", "Point", "Line", "Plane" };
+      ImGui::ListBox("Shape", &curAttData.type, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);
+
+      CreateSpacing(nSpacing);
+      ImGui::TextColored(headingClr, "Strength");
+      ImGui::SliderFloat("Strength", &curAttData.strength, -100.0f, 100.0f, "%.2f m/s");
+      ImGui::SliderFloat("Max accel", &curAttData.maxAppliedAccelMag, 0.0f, 500.0f, "%.2f m/s");
+
+      CreateSpacing(nSpacing);
+      ImGui::TextColored(headingClr, "Position Attractor");
+      switch (curAttData.type)
+      {
+      case E_AttGlobal:
+      {
+        ImGui::SliderFloatNi("Accel dir", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
+        break;
+      }
+      case E_AttPoint:
+      {
+        ImGui::SliderFloatNi("Att Pos", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
+        break;
+      }
+      case E_AttLine:
+      {
+        ImGui::SliderFloatNi("Line origin", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
+        ImGui::SliderFloatNi("Line dir", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
+        break;
+      }
+      case E_AttPlane:
+      {
+
+        ImGui::SliderFloatNi("Normal", &curAttData.transform[3], 2, vRotMins, vRotMaxs, vRotformats, powers2);
+        ImGui::SliderFloatNi("Plane origin", &curAttData.transform[0], 3, posMins, posMaxs, posFormats, powers3);
+        break;
+      }
+      default: //E_AttNone:
+      {
+        break;
+      }
+      }
+
+      ImGui::PopItemWidth();
+    }
   }
   ImGui::End();
 }
@@ -434,6 +512,8 @@ void Application::DoLogic()
   }
 }
 
+
+
 void Application::Render()
 {
   mat44 translate, rotate, scale;
@@ -460,31 +540,33 @@ void Application::Render()
 
   float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
 
-  int * pShowAttrTypes = new int[s_nAttractors];
-  Dg::Matrix44<float> * pTAttr = new Dg::Matrix44<float>[s_nAttractors];
+  LineRenderData * lineRenderData = new LineRenderData[m_aData.size()];
   int nShowAttr = 0;
-  for (int i = 0; i < s_nAttractors; ++i)
+  for (int i = 0; i < m_aData.size(); ++i)
   {
-    if (m_aData[i].show)
+    if (m_aData[i].first.show)
     {
-      pShowAttrTypes[nShowAttr] = m_aData[i].type;
-      switch (m_aData[i].type)
+      lineRenderData[nShowAttr].model = m_aData[i].first.type;
+      Dg::Vector4<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
+      Dg::Vector4<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
+      lineRenderData[nShowAttr].col = (i == m_attrFocus) ? lineColFocus : lineCol;
+      switch (m_aData[i].first.type)
       {
       case E_AttGlobal:
       {
-        pTAttr[nShowAttr].Rotation(0.0f
-                                 , m_aData[i].transform[4] - Dg::PI_f / 2.0f
-                                 , m_aData[i].transform[3]
+        lineRenderData[nShowAttr].mat.Rotation(0.0f
+                                 , m_aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                                 , m_aData[i].first.transform[3]
                                  , Dg::EulerOrder::XYZ);
         break;
       }
       case E_AttPoint:
       {
-        pTAttr[nShowAttr].Translation
+        lineRenderData[nShowAttr].mat.Translation
         (
-          Dg::Vector4<float>(m_aData[i].transform[0]
-                           , m_aData[i].transform[1]
-                           , m_aData[i].transform[2]
+          Dg::Vector4<float>(m_aData[i].first.transform[0]
+                           , m_aData[i].first.transform[1]
+                           , m_aData[i].first.transform[2]
                            , 0.0f)
         );
         break;
@@ -494,17 +576,17 @@ void Application::Render()
         mat44 trans, rot;
         trans.Translation
         (
-          Dg::Vector4<float>(m_aData[i].transform[0]
-                           , m_aData[i].transform[1]
-                           , m_aData[i].transform[2]
+          Dg::Vector4<float>(m_aData[i].first.transform[0]
+                           , m_aData[i].first.transform[1]
+                           , m_aData[i].first.transform[2]
                            , 0.0f)
         );
 
         rot.Rotation(0.0f
-                   , m_aData[i].transform[4] - Dg::PI_f / 2.0f
-                   , m_aData[i].transform[3]
+                   , m_aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                   , m_aData[i].first.transform[3]
                    , Dg::EulerOrder::XYZ);
-        pTAttr[nShowAttr] = rot * trans;
+        lineRenderData[nShowAttr].mat = rot * trans;
         break;
       }
       case E_AttPlane:
@@ -512,17 +594,17 @@ void Application::Render()
         mat44 trans, rot;
         trans.Translation
         (
-          Dg::Vector4<float>(m_aData[i].transform[0]
-                           , m_aData[i].transform[1]
-                           , m_aData[i].transform[2]
+          Dg::Vector4<float>(m_aData[i].first.transform[0]
+                           , m_aData[i].first.transform[1]
+                           , m_aData[i].first.transform[2]
                            , 0.0f)
         );
 
         rot.Rotation(0.0f
-                   , m_aData[i].transform[4] - Dg::PI_f / 2.0f
-                   , m_aData[i].transform[3]
+                   , m_aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                   , m_aData[i].first.transform[3]
                    , Dg::EulerOrder::XYZ);
-        pTAttr[nShowAttr] = rot * trans;
+        lineRenderData[nShowAttr].mat = rot * trans;
         break;
       }
       }
@@ -532,10 +614,9 @@ void Application::Render()
   }
   
   m_renderer.Update(m_particleSystem.GetParticleData());
-  m_renderer.Render(mv_matrix, proj_matrix, parScale, nShowAttr, pShowAttrTypes, pTAttr);
+  m_renderer.Render(mv_matrix, proj_matrix, parScale, nShowAttr, lineRenderData);
 
-  delete[] pShowAttrTypes;
-  delete[] pTAttr;
+  delete[] lineRenderData;
 }
 
 void AppOnMouseScroll(double yOffset)

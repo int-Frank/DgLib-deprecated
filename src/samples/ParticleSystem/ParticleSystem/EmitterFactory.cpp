@@ -14,7 +14,7 @@ typedef Dg::Vector4<float>      vec4;
 typedef Dg::Quaternion<float>   quat;
 typedef Dg::VQS<float>          Vqs;
 
-Dg::ParticleEmitter<float> * EmitterFactory::Create(EmitterData const & a_data) const
+Dg::ParticleEmitter<float> * EmitterFactory::operator()(EmitterData const & a_data) const
 {
   Dg::ParticleEmitter<float> * pEmitter(nullptr);
   switch (a_data.type)

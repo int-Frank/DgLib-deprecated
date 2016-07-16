@@ -9,8 +9,6 @@
 #include "UI.h"
 #include "Types.h"
 
-float const Renderer::s_lineColor[4] = { 1.0f, 0.4588f, 0.102f, 1.0f };
-
 bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 {
   if (a_parData == nullptr)
@@ -181,9 +179,8 @@ static int GetAlphaEnumFromListVal(int a_val)
 void Renderer::Render(Dg::Matrix44<float> const & a_modelView
                     , Dg::Matrix44<float> const & a_proj
                     , float a_parScale
-                    , int a_nAttractors
-                    , int const * a_pAttractorTypes
-                    , Dg::Matrix44<float> const * a_pAttractorTransforms)
+                    , int a_nlineModels
+                    , LineRenderData const * a_lineData)
 {
   static int sfactor_ind(6);
   static int dfactor_ind(7);
@@ -261,16 +258,15 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
 
   proj_loc = glGetUniformLocation(m_ln_shaderProgram, "proj_matrix");
   GLuint lineColor_loc = glGetUniformLocation(m_ln_shaderProgram, "lineColor");
+  mv_loc = glGetUniformLocation(m_ln_shaderProgram, "mv_matrix");
 
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
-  glUniform4fv(lineColor_loc, 1, s_lineColor);
-
-  for (int i = 0; i < a_nAttractors; ++i)
+  
+  for (int i = 0; i < a_nlineModels; ++i)
   {
-    mv_loc = glGetUniformLocation(m_ln_shaderProgram, "mv_matrix");
-    glUniformMatrix4fv(mv_loc, 1, GL_FALSE, (a_pAttractorTransforms[i] * a_modelView).GetData());
-
-    switch (a_pAttractorTypes[i])
+    glUniformMatrix4fv(mv_loc, 1, GL_FALSE, (a_lineData[i].mat * a_modelView).GetData());
+    glUniform4fv(lineColor_loc, 1, a_lineData[i].col.GetData());
+    switch (a_lineData[i].model)
     {
     case E_AttGlobal:
     {

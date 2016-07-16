@@ -5,6 +5,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+struct LineRenderData;
+
 namespace Dg
 {
   template<typename Real>
@@ -26,9 +28,8 @@ public:
   void Render(Dg::Matrix44<float> const & a_modelView
             , Dg::Matrix44<float> const & a_proj
             , float parScale
-            , int nAttractors
-            , int const * attractorTypes
-            , Dg::Matrix44<float> const * attractorTransforms);
+            , int nlineModels
+            , LineRenderData const *);
 
   void ShutDown();
 
@@ -47,7 +48,6 @@ private:
 
 private:
   //Drawing lines...
-  static float const  s_lineColor[4];
   static int const    s_nLinesGlobal = 3;
   static int const    s_nLinesPoint = 3;
   static int const    s_nLinesLine = 3;

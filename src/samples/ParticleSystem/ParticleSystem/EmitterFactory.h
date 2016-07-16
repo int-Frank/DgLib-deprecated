@@ -16,7 +16,7 @@ class EmitterFactory
 {
 public:
 
-  Dg::ParticleEmitter<float> * Create(EmitterData const &) const;
+  Dg::ParticleEmitter<float> * operator()(EmitterData const &) const;
 
 private:
 
