@@ -4,6 +4,8 @@
 namespace UI
 {
   extern bool showAlphaBlendingWindow;
+  extern bool showMetrics;
+  extern bool showExampleWindow;
 }
 
 

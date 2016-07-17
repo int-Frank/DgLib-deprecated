@@ -200,28 +200,64 @@ void Application::BuildMainUI()
   char const * posFormats[3] = { "x = %.2f", "y = %.2f", "z = %.2f" };
   float powers3[3] = { 1.0f, 1.0f, 1.0f };
 
-  ImGui::Begin("Partice System");
-  ImGui::Separator();
-  if (ImGui::CollapsingHeader("Options"))
-  {
-    ImGui::Checkbox("Enable relative Force", &m_parSysOpts.useRelativeForce);
-  }
-  if (ImGui::CollapsingHeader("Presets"))
-  {
-    const char* presets[] = { "None"
-      , "Basic 3 emitter"
-      , "Global acceleration"
-      , "Point attractor"
-      , "Line attractor"
-      , "Plane attractor"
-      , "Cycle"
-      , "Fire"
-      , "Fountain"
-      , "Rain" };
+  static bool show_app_metrics = false;
+  static bool show_app_about = false;
 
-    ImGui::PushItemWidth(sliderOffset);
-    ImGui::ListBox("Presets", &m_parSysOpts.preset, presets, ((int)(sizeof(presets) / sizeof(*presets))), 5);
-    ImGui::PopItemWidth();
+  ImGui::Begin("Partice System");
+
+  // Menu
+  if (ImGui::BeginMenuBar())
+  {
+    if (ImGui::BeginMenu("Menu"))
+    {
+      if (ImGui::MenuItem("New")) {}
+      if (ImGui::MenuItem("Open")) {}
+      if (ImGui::BeginMenu("Open Recent"))
+      {
+        ImGui::MenuItem("fish_hat.c");
+        ImGui::MenuItem("fish_hat.inl");
+        ImGui::MenuItem("fish_hat.h");
+        ImGui::EndMenu();
+      }
+      if (ImGui::MenuItem("Save")) {}
+      if (ImGui::MenuItem("Save As..")) {}
+      ImGui::Separator();
+      if (ImGui::BeginMenu("Options"))
+      {
+        ImGui::EndMenu();
+      }
+      if (ImGui::MenuItem("Quit", "Esc")) {}
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Options"))
+    {
+      ImGui::MenuItem("Example UI", NULL, &UI::showExampleWindow);
+      ImGui::Separator();
+      ImGui::MenuItem("Blending", NULL, &UI::showAlphaBlendingWindow);
+      ImGui::MenuItem("Metrics", NULL, &UI::showMetrics);
+      ImGui::Separator();
+      ImGui::MenuItem("Enable rel force", NULL, &m_parSysOpts.useRelativeForce);
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Examples"))
+    {
+      if(ImGui::MenuItem("Basic 3 emitter")) {}
+      if(ImGui::MenuItem("Global acceleration")) {}
+      if(ImGui::MenuItem("Point attractor")) {}
+      if(ImGui::MenuItem("Line attractor")) {}
+      if(ImGui::MenuItem("Plane attractor")) {}
+      if(ImGui::MenuItem("Cycle")) {}
+      if(ImGui::MenuItem("Fire")) {}
+      if(ImGui::MenuItem("Fountain")) {}
+      if(ImGui::MenuItem("Rain")) {}
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Help"))
+    {
+      ImGui::MenuItem("About ImGui", NULL, &show_app_about);
+      ImGui::EndMenu();
+    }
+    ImGui::EndMenuBar();
   }
 
   if (ImGui::CollapsingHeader("Emitters"))
@@ -498,6 +534,7 @@ void Application::DoLogic()
   m_particleSystem.Update(m_dt);
 
   //Update stats
+  if (UI::showMetrics)
   {
     ImGui::Begin("Stats");
     ImGui::Text("Live Particles: %i", m_particleSystem.GetParticleData()->GetCountAlive());
@@ -705,7 +742,6 @@ void Application::GetConfiguration()
 
 void Application::Run(Application* the_app)
 {
-  bool running = true;
   s_app = the_app;
 
   if (!Init())
@@ -714,11 +750,7 @@ void Application::Run(Application* the_app)
     return;
   }
 
-  // Setup ImGui binding
-  bool show_test_window = false;
-
   double lastTick = glfwGetTime();
-  m_particleSystem.StartAllEmitters();
 
   do
   {
@@ -727,14 +759,12 @@ void Application::Run(Application* the_app)
 
     //Main window
 	  {
-      ImGui::Begin("Partice System");
-      if (ImGui::Button("Blending")) UI::showAlphaBlendingWindow ^= 1; ImGui::SameLine();
-      if (ImGui::Button("Example UI")) show_test_window ^= 1;
-      ImGui::Spacing(); ImGui::Spacing();
+      ImGui::Begin("Partice System", nullptr, ImGuiWindowFlags_MenuBar);
       ImGui::End();
     }
 
     //FPS
+    if (UI::showMetrics)
     {
       ImGui::Begin("Stats");
       ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
@@ -751,10 +781,10 @@ void Application::Run(Application* the_app)
     Render();
 
     // 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-    if (show_test_window)
+    if (UI::showExampleWindow)
     {
       ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-      ImGui::ShowTestWindow(&show_test_window);
+      ImGui::ShowTestWindow(&UI::showExampleWindow);
     }
 
 	  ImGui::Render();
