@@ -74,9 +74,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UpdaterZeroAccel.h">
-      <Filter>Updaters</Filter>
-    </ClInclude>
     <ClInclude Include="UpdaterLife.h">
       <Filter>Updaters</Filter>
     </ClInclude>
@@ -182,6 +179,9 @@
     <ClInclude Include="json\json-forwards.h">
       <Filter>json</Filter>
     </ClInclude>
+    <ClInclude Include="UpdaterResetAccel.h">
+      <Filter>Updaters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini">
@@ -198,6 +198,9 @@
     </None>
     <None Include="ln_vs.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="imgui.ini">
+      <Filter>imgui</Filter>
     </None>
   </ItemGroup>
 </Project>

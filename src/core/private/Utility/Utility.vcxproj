@@ -153,7 +153,6 @@
     <ClInclude Include="..\..\public\DgStringFunctions.h" />
     <ClInclude Include="..\..\public\DgTypes.h" />
     <ClInclude Include="..\..\public\DgVariadicMacros.h" />
-    <ClInclude Include="Smoother.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

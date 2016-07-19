@@ -75,6 +75,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\dev\lib\glew-1.13.0\include;C:\dev\lib\glfw-3.2\include;C:\dev\projects\DgLib\src\core\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\dev\lib\glfw-3.2\lib\$(Platform)\Debug;C:\dev\lib\glew-1.13.0\lib\Release\$(Platform);..\..\..\..\bin\$(Platform)\\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -87,6 +88,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\dev\lib\glew-1.13.0\include;C:\dev\lib\glfw-3.2\include;C:\dev\projects\DgLib\src\core\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\dev\lib\glfw-3.2\lib\$(Platform);C:\dev\lib\glew-1.13.0\lib\Release\$(Platform);..\..\..\..\bin\$(Platform)\\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -101,6 +103,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\dev\lib\glew-1.13.0\include;C:\dev\lib\glfw-3.2\include;C:\dev\projects\DgLib\src\core\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -117,6 +120,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\dev\lib\glew-1.13.0\include;C:\dev\lib\glfw-3.2\include;C:\dev\projects\DgLib\src\core\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -175,10 +179,11 @@
     <ClInclude Include="UpdaterLife.h" />
     <ClInclude Include="UpdaterRelativeForce.h" />
     <ClInclude Include="UpdaterSize.h" />
-    <ClInclude Include="UpdaterZeroAccel.h" />
+    <ClInclude Include="UpdaterResetAccel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />
+    <None Include="imgui.ini" />
     <None Include="pt_fs.glsl" />
     <None Include="ln_fs.glsl" />
     <None Include="pt_vs.glsl" />

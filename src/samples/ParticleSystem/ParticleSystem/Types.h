@@ -15,8 +15,9 @@ enum
 
   //We need to keep any attractor id's in this range, so they will
   //update after the life and zero accel updaters, but before the Euler.
+  //We'll also draw any other IDs we need from this pool.
   E_UpdaterGeneric_begin  = 2,
-  E_UpdaterGeneric_end    = 64,
+  E_UpdaterGeneric_end    = 65536,
 
   E_UpdaterRelativeForce,
   E_UpdaterEuler,

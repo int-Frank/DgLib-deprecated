@@ -108,7 +108,7 @@ namespace Dg
     //! Remove element from the back of the array.
     void pop_back();
 
-    //! Add element to the back of the array.
+    //! Add element to the front of the array.
     void push_front(T const &);
 
     //! Remove element from the back of the array.

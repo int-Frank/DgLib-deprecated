@@ -8,7 +8,9 @@
 */
 
 
-
+#include <windows.h>
+#include <shlwapi.h>
+#pragma comment(lib,"shlwapi.lib")
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -51,11 +53,15 @@ bool Application::Init()
   GetConfiguration();
 
   //Set options
-  m_parSysOpts.useRelativeForce = false;
+  m_parSysOpts.useUpdaterRelativeForce = false;
+  m_parSysOpts.useUpdaterColor = true;
+  m_parSysOpts.useUpdaterSize = true;
+  m_parSysOpts.useUpdaterResetAccel = true;
   m_parSysOpts.preset = 0;
   memcpy(&m_parSysOptsPrev, &m_parSysOpts, sizeof(ParSysOpts));
 
   m_attrFocus = -1;
+  m_shouldQuit = false;
 
   if (!InitGL())
   {
@@ -154,6 +160,12 @@ void Application::Shutdown()
 
 void Application::HandleInput()
 {
+  int keyState = glfwGetKey(m_window, GLFW_KEY_ESCAPE);
+  if (keyState == GLFW_PRESS)
+  {
+    m_shouldQuit = true;
+  }
+
   m_mousePrevX = m_mouseCurrentX;
   m_mousePrevY = m_mouseCurrentY;
   glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentY);
@@ -178,9 +190,84 @@ void Application::HandleInput()
   s_scrollOffset = 0.0;
 }
 
+std::vector<std::string> Application::GetProjects()
+{
+  std::vector<std::string> result;
+  WIN32_FIND_DATA ffd;
+  HANDLE hFind = INVALID_HANDLE_VALUE;
+  std::string szDir = std::string(m_projectPath) + "*";
+
+  hFind = FindFirstFile(szDir.c_str(), &ffd);
+
+  if (INVALID_HANDLE_VALUE == hFind)
+  {
+    return result;
+  }
+
+  do
+  {
+    if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+    {
+      size_t pos = PathFindExtension(ffd.cFileName) - &ffd.cFileName[0];
+      std::string ext = (std::string(ffd.cFileName).substr(pos + 1));
+      if (ext == std::string(m_fileExt))
+      {
+        result.push_back(ffd.cFileName);
+      }
+    }
+  } while (FindNextFile(hFind, &ffd) != 0);
+
+  FindClose(hFind);
+  return result;
+}
+
 static void CreateSpacing(int a_n)
 {
   for (int i = 0; i < a_n; ++i) { ImGui::Spacing(); }
+}
+
+static int CreateList(std::vector<std::string> const & a_items
+                    , char const * a_name)
+{
+  static int currentItem;
+  if (a_items.size() == 0)
+  {
+    ImGui::ListBox(a_name, &currentItem, nullptr, 0, 5);
+    currentItem = -1;
+  }
+  else
+  {
+    char * * pItems = new char*[a_items.size()];
+    for (int i = 0; i < a_items.size(); ++i)
+    {
+      pItems[i] = new char[a_items[i].size() + 1]();
+      memcpy(pItems[i], a_items[i].data(), a_items[i].size() * sizeof(char));
+    }
+    if (a_items.size() == 0)
+    {
+      currentItem = -1;
+    }
+    ImGui::ListBox(a_name, &currentItem, (char const **)pItems, (int)a_items.size(), 5);
+    for (int i = 0; i < a_items.size(); ++i)
+    {
+      delete[] pItems[i];
+    }
+    delete[] pItems;
+  }
+  return currentItem;
+}
+
+static bool FileExists(std::string const & a_name) 
+{
+  if (FILE *file = fopen(a_name.c_str(), "r")) 
+  {
+    fclose(file);
+    return true;
+  }
+  else 
+  {
+    return false;
+  }
 }
 
 void Application::BuildMainUI()
@@ -200,33 +287,23 @@ void Application::BuildMainUI()
   char const * posFormats[3] = { "x = %.2f", "y = %.2f", "z = %.2f" };
   float powers3[3] = { 1.0f, 1.0f, 1.0f };
 
-  static bool show_app_metrics = false;
   static bool show_app_about = false;
 
   ImGui::Begin("Partice System");
 
   // Menu
+  bool showOpenModal = false;
+  bool showSaveAsModal = false;
   if (ImGui::BeginMenuBar())
   {
     if (ImGui::BeginMenu("Menu"))
     {
       if (ImGui::MenuItem("New")) {}
-      if (ImGui::MenuItem("Open")) {}
-      if (ImGui::BeginMenu("Open Recent"))
-      {
-        ImGui::MenuItem("fish_hat.c");
-        ImGui::MenuItem("fish_hat.inl");
-        ImGui::MenuItem("fish_hat.h");
-        ImGui::EndMenu();
-      }
+      if (ImGui::MenuItem("Open")) { showOpenModal = true; }
       if (ImGui::MenuItem("Save")) {}
-      if (ImGui::MenuItem("Save As..")) {}
+      if (ImGui::MenuItem("Save As..")) { showSaveAsModal = true; }
       ImGui::Separator();
-      if (ImGui::BeginMenu("Options"))
-      {
-        ImGui::EndMenu();
-      }
-      if (ImGui::MenuItem("Quit", "Esc")) {}
+      if (ImGui::MenuItem("Quit", "Esc")) { m_shouldQuit = true; }
       ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("Options"))
@@ -235,21 +312,6 @@ void Application::BuildMainUI()
       ImGui::Separator();
       ImGui::MenuItem("Blending", NULL, &UI::showAlphaBlendingWindow);
       ImGui::MenuItem("Metrics", NULL, &UI::showMetrics);
-      ImGui::Separator();
-      ImGui::MenuItem("Enable rel force", NULL, &m_parSysOpts.useRelativeForce);
-      ImGui::EndMenu();
-    }
-    if (ImGui::BeginMenu("Examples"))
-    {
-      if(ImGui::MenuItem("Basic 3 emitter")) {}
-      if(ImGui::MenuItem("Global acceleration")) {}
-      if(ImGui::MenuItem("Point attractor")) {}
-      if(ImGui::MenuItem("Line attractor")) {}
-      if(ImGui::MenuItem("Plane attractor")) {}
-      if(ImGui::MenuItem("Cycle")) {}
-      if(ImGui::MenuItem("Fire")) {}
-      if(ImGui::MenuItem("Fountain")) {}
-      if(ImGui::MenuItem("Rain")) {}
       ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("Help"))
@@ -258,6 +320,100 @@ void Application::BuildMainUI()
       ImGui::EndMenu();
     }
     ImGui::EndMenuBar();
+  }
+
+  if (showOpenModal)
+  {
+    ImGui::OpenPopup("Choose a file");
+  }
+  if (ImGui::BeginPopupModal("Choose a file", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    std::vector<std::string> files = GetProjects();
+    int currentItem = CreateList(files, "Files");
+
+    if (ImGui::Button("Open", ImVec2(120, 0))) 
+    { 
+      if (currentItem != -1)
+      {
+        m_loadFile = files[currentItem];
+      }
+      ImGui::CloseCurrentPopup(); 
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel", ImVec2(120, 0))) 
+    { 
+      ImGui::CloseCurrentPopup(); 
+    }
+    ImGui::EndPopup();
+  }
+
+  if (showSaveAsModal)
+  {
+    ImGui::OpenPopup("Save as..");
+  }
+  if (ImGui::BeginPopupModal("Save as..", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    std::vector<std::string> files = GetProjects();
+    int currentItem = CreateList(files, "Files");
+
+    static char buf[128];
+    static char lastItem = 0;
+
+    if (lastItem != currentItem && currentItem >= 0)
+    {
+      strcpy_s(buf, 128, files[currentItem].data());
+      lastItem = currentItem;
+    }
+    ImGui::InputText("File name", buf, 128);
+
+    std::string finalFile = std::string(m_projectPath) + std::string(buf);
+    bool shouldClose = false;
+    if (ImGui::Button("Save", ImVec2(120, 0)))
+    {
+      if (FileExists(finalFile))
+      {
+        ImGui::OpenPopup("Overwrite?");
+      }
+      else
+      {
+        //Save..
+        shouldClose = true;
+      }
+    }
+
+    if (ImGui::BeginPopupModal("Overwrite?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+      char owText[256] = {};
+      sprintf_s(owText, 256, "'%s' exists. Overwrite?", buf);
+      ImGui::Text(owText);
+      if (ImGui::Button("Yes"))
+      {
+        //Save...
+        shouldClose = true;
+        ImGui::CloseCurrentPopup();
+      }
+      ImGui::SameLine();
+      if (ImGui::Button("No"))
+      {
+        ImGui::CloseCurrentPopup();
+      }
+      ImGui::EndPopup();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Close", ImVec2(120, 0)) || shouldClose)
+    {
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
+
+
+  if (ImGui::CollapsingHeader("Particle system options"))
+  {
+    ImGui::TextColored(headingClr, "Optional updaters");
+    ImGui::Checkbox("Color", &m_parSysOpts.useUpdaterColor);
+    ImGui::Checkbox("Size", &m_parSysOpts.useUpdaterSize);
+    ImGui::Checkbox("Rel force", &m_parSysOpts.useUpdaterRelativeForce);
   }
 
   if (ImGui::CollapsingHeader("Emitters"))
@@ -403,9 +559,9 @@ void Application::BuildMainUI()
       ImGui::PushItemWidth(sliderOffset);
       ImGui::ColorEdit4("Start color", curEmData.colors);
       ImGui::ColorEdit4("End color", &curEmData.colors[4]);
-      ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s");
+      ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s", 2.0f);
       ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
-      if (m_parSysOpts.useRelativeForce)
+      if (m_parSysOpts.useUpdaterRelativeForce)
       {
         ImGui::SliderFloat("Rel force", &curEmData.relativeForce, 0.0f, 10.0f, "%.4f m/s", 3.0f);
       }
@@ -483,7 +639,7 @@ void Application::BuildMainUI()
       CreateSpacing(nSpacing);
       ImGui::TextColored(headingClr, "Strength");
       ImGui::SliderFloat("Strength", &curAttData.strength, -100.0f, 100.0f, "%.2f m/s");
-      ImGui::SliderFloat("Max accel", &curAttData.maxAppliedAccelMag, 0.0f, 500.0f, "%.2f m/s");
+      ImGui::SliderFloat("Max accel", &curAttData.maxAppliedAccelMag, 0.0f, 500.0f, "%.2f m/s", 2.0f);
 
       CreateSpacing(nSpacing);
       ImGui::TextColored(headingClr, "Position Attractor");
@@ -528,6 +684,12 @@ void Application::DoLogic()
 {
   //Get user input
   BuildMainUI();
+
+  if (!m_loadFile.empty())
+  {
+    LoadFile(m_loadFile);
+    m_loadFile.clear();
+  }
 
   //Update particle system
   UpdateParSysAttr();
@@ -771,6 +933,13 @@ void Application::Run(Application* the_app)
       ImGui::End();
     }
 
+    //Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
+    if (UI::showExampleWindow)
+    {
+      ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+      ImGui::ShowTestWindow(&UI::showExampleWindow);
+    }
+
     double thisTick = glfwGetTime();
 	  double diff = thisTick - lastTick;
     m_dt = static_cast<float>(thisTick - lastTick);
@@ -780,17 +949,10 @@ void Application::Run(Application* the_app)
     DoLogic();
     Render();
 
-    // 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-    if (UI::showExampleWindow)
-    {
-      ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-      ImGui::ShowTestWindow(&UI::showExampleWindow);
-    }
-
 	  ImGui::Render();
     glfwSwapBuffers(m_window);
 
-  } while (!glfwWindowShouldClose(m_window));
+  } while (!glfwWindowShouldClose(m_window) && !m_shouldQuit);
 
   Shutdown();
 

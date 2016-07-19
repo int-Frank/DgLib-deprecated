@@ -1,19 +1,19 @@
-#ifndef UPDATERZEROACCEL_H
-#define UPDATERZEROACCEL_H
+#ifndef UPDATERRESETACCEL_H
+#define UPDATERRESETACCEL_H
 
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleUpdater.h"
 
 //! Zeros acceleration
 template<typename Real>
-class UpdaterZeroAccel : public Dg::ParticleUpdater<Real>
+class UpdaterResetAccel : public Dg::ParticleUpdater<Real>
 {
 public:
-  UpdaterZeroAccel() : Dg::ParticleUpdater<Real>() {}
-  ~UpdaterZeroAccel() {}
+  UpdaterResetAccel() : Dg::ParticleUpdater<Real>() {}
+  ~UpdaterResetAccel() {}
 
-  UpdaterZeroAccel(UpdaterZeroAccel<Real> const & a_other) :Dg::ParticleUpdater<Real>(a_other) {}
-  UpdaterZeroAccel<Real> & operator=(UpdaterZeroAccel<Real> const & a_other)
+  UpdaterResetAccel(UpdaterResetAccel<Real> const & a_other) :Dg::ParticleUpdater<Real>(a_other) {}
+  UpdaterResetAccel<Real> & operator=(UpdaterResetAccel<Real> const & a_other)
   {
     Dg::ParticleUpdater<Real>::operator=(a_other);
     return *this;
@@ -22,14 +22,14 @@ public:
   void UpdateNew(Dg::ParticleData<Real> & data, int start, Real dt) { implUpdate(data, start, dt); }
   void Update(Dg::ParticleData<Real> & data, int start, Real dt) { implUpdate(data, start, dt); }
 
-  UpdaterZeroAccel<Real> * Clone() const { return new UpdaterZeroAccel<Real>(*this); }
+  UpdaterResetAccel<Real> * Clone() const { return new UpdaterResetAccel<Real>(*this); }
 
 private:
   void implUpdate(Dg::ParticleData<Real> &, int, Real);
 };
 
 template<typename Real>
-void UpdaterZeroAccel<Real>::implUpdate(Dg::ParticleData<Real> & a_data
+void UpdaterResetAccel<Real>::implUpdate(Dg::ParticleData<Real> & a_data
                                       , int a_start
                                       , Real a_dt)
 {
