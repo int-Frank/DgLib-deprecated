@@ -292,6 +292,7 @@ void Application::BuildMainUI()
   ImGui::Begin("Partice System");
 
   // Menu
+  bool showSavePrompt = false;
   bool showOpenModal = false;
   bool showSaveAsModal = false;
   if (ImGui::BeginMenuBar())
@@ -299,7 +300,7 @@ void Application::BuildMainUI()
     if (ImGui::BeginMenu("Menu"))
     {
       if (ImGui::MenuItem("New")) {}
-      if (ImGui::MenuItem("Open")) { showOpenModal = true; }
+      if (ImGui::MenuItem("Open")) { showSavePrompt = true; }
       if (ImGui::MenuItem("Save")) {}
       if (ImGui::MenuItem("Save As..")) { showSaveAsModal = true; }
       ImGui::Separator();
@@ -322,27 +323,24 @@ void Application::BuildMainUI()
     ImGui::EndMenuBar();
   }
 
-  if (showOpenModal)
+  static bool thenShowOpen = false;
+  if (showSavePrompt)
   {
-    ImGui::OpenPopup("Choose a file");
+    ImGui::OpenPopup("Save first");
   }
-  if (ImGui::BeginPopupModal("Choose a file", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  if (ImGui::BeginPopupModal("Save first", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
-    std::vector<std::string> files = GetProjects();
-    int currentItem = CreateList(files, "Files");
-
-    if (ImGui::Button("Open", ImVec2(120, 0))) 
-    { 
-      if (currentItem != -1)
-      {
-        m_loadFile = files[currentItem];
-      }
-      ImGui::CloseCurrentPopup(); 
+    if (ImGui::Button("Yes", ImVec2(120, 0)))
+    {
+      showSaveAsModal = true;
+      thenShowOpen = true;
+      ImGui::CloseCurrentPopup();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel", ImVec2(120, 0))) 
-    { 
-      ImGui::CloseCurrentPopup(); 
+    if (ImGui::Button("No", ImVec2(120, 0)))
+    {
+      showOpenModal = true;
+      ImGui::CloseCurrentPopup();
     }
     ImGui::EndPopup();
   }
@@ -402,6 +400,38 @@ void Application::BuildMainUI()
     ImGui::SameLine();
     if (ImGui::Button("Close", ImVec2(120, 0)) || shouldClose)
     {
+      if (thenShowOpen)
+      {
+        thenShowOpen = false;
+        showOpenModal = true;
+      }
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
+
+  if (showOpenModal)
+  {
+    ImGui::OpenPopup("Open file");
+  }
+  if (ImGui::BeginPopupModal("Open file", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    std::vector<std::string> files = GetProjects();
+    int currentItem = CreateList(files, "Files");
+
+    if (ImGui::Button("Open", ImVec2(120, 0)))
+    {
+      if (currentItem != -1)
+      {
+        m_loadFile = files[currentItem];
+      }
+      showOpenModal = false;
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel", ImVec2(120, 0)))
+    {
+      showOpenModal = false;
       ImGui::CloseCurrentPopup();
     }
     ImGui::EndPopup();
