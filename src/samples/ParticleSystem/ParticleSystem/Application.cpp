@@ -226,14 +226,14 @@ static void CreateSpacing(int a_n)
   for (int i = 0; i < a_n; ++i) { ImGui::Spacing(); }
 }
 
-static int CreateList(std::vector<std::string> const & a_items
-                    , char const * a_name)
+void CreateList(std::vector<std::string> const & a_items
+              , char const * a_name
+              , int * a_currentItem)
 {
-  static int currentItem;
   if (a_items.size() == 0)
   {
-    ImGui::ListBox(a_name, &currentItem, nullptr, 0, 5);
-    currentItem = -1;
+    ImGui::ListBox(a_name, a_currentItem, nullptr, 0, 5);
+    *a_currentItem = -1;
   }
   else
   {
@@ -245,16 +245,15 @@ static int CreateList(std::vector<std::string> const & a_items
     }
     if (a_items.size() == 0)
     {
-      currentItem = -1;
+      *a_currentItem = -1;
     }
-    ImGui::ListBox(a_name, &currentItem, (char const **)pItems, (int)a_items.size(), 5);
+    ImGui::ListBox(a_name, a_currentItem, (char const **)pItems, (int)a_items.size(), 5);
     for (int i = 0; i < a_items.size(); ++i)
     {
       delete[] pItems[i];
     }
     delete[] pItems;
   }
-  return currentItem;
 }
 
 static bool FileExists(std::string const & a_name) 
@@ -326,18 +325,18 @@ void Application::BuildMainUI()
   static bool thenShowOpen = false;
   if (showSavePrompt)
   {
-    ImGui::OpenPopup("Save first");
+    ImGui::OpenPopup("Save current Project?");
   }
-  if (ImGui::BeginPopupModal("Save first", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  if (ImGui::BeginPopupModal("Save current Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
-    if (ImGui::Button("Yes", ImVec2(120, 0)))
+    if (ImGui::Button("Yes", ImVec2(80, 0)))
     {
       showSaveAsModal = true;
       thenShowOpen = true;
       ImGui::CloseCurrentPopup();
     }
     ImGui::SameLine();
-    if (ImGui::Button("No", ImVec2(120, 0)))
+    if (ImGui::Button("No", ImVec2(80, 0)))
     {
       showOpenModal = true;
       ImGui::CloseCurrentPopup();
@@ -347,25 +346,26 @@ void Application::BuildMainUI()
 
   if (showSaveAsModal)
   {
-    ImGui::OpenPopup("Save as..");
+    ImGui::OpenPopup("Save As..");
   }
-  if (ImGui::BeginPopupModal("Save as..", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  if (ImGui::BeginPopupModal("Save As..", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
     std::vector<std::string> files = GetProjects();
-    int currentItem = CreateList(files, "Files");
+    static int save_currentItem = -1;
+    CreateList(files, "Files", &save_currentItem);
 
-    static char buf[128];
-    static char lastItem = 0;
+    static char buf[128] = {};
+    static int  save_lastItem = -2;
 
-    if (lastItem != currentItem && currentItem >= 0)
+    if (save_lastItem != save_currentItem && save_currentItem >= 0)
     {
-      strcpy_s(buf, 128, files[currentItem].data());
-      lastItem = currentItem;
+      strcpy_s(buf, 128, files[save_currentItem].data());
+      save_lastItem = save_currentItem;
     }
     ImGui::InputText("File name", buf, 128);
 
     std::string finalFile = std::string(m_projectPath) + std::string(buf);
-    bool shouldClose = false;
+    bool doSave = false;
     if (ImGui::Button("Save", ImVec2(120, 0)))
     {
       if (FileExists(finalFile))
@@ -374,29 +374,40 @@ void Application::BuildMainUI()
       }
       else
       {
-        //Save..
-        shouldClose = true;
+        doSave = true;
       }
     }
 
-    if (ImGui::BeginPopupModal("Overwrite?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    if (!doSave && ImGui::BeginPopupModal("Overwrite?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
       char owText[256] = {};
       sprintf_s(owText, 256, "'%s' exists. Overwrite?", buf);
       ImGui::Text(owText);
-      if (ImGui::Button("Yes"))
+      if (ImGui::Button("Yes", ImVec2(80, 0)))
       {
-        //Save...
-        shouldClose = true;
+        doSave = true;
         ImGui::CloseCurrentPopup();
       }
       ImGui::SameLine();
-      if (ImGui::Button("No"))
+      if (ImGui::Button("No", ImVec2(80, 0)))
       {
         ImGui::CloseCurrentPopup();
       }
       ImGui::EndPopup();
     }
+
+    bool shouldClose = false;
+    if (doSave)
+    {
+      //Save...
+
+      //Reset
+      memset(buf, 0, sizeof(buf) / sizeof(char));
+      save_lastItem = -2;
+      save_currentItem = -1;
+      shouldClose = true;
+    }
+
     ImGui::SameLine();
     if (ImGui::Button("Close", ImVec2(120, 0)) || shouldClose)
     {
@@ -416,7 +427,7 @@ void Application::BuildMainUI()
   }
   if (ImGui::BeginPopupModal("Open file", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
-    std::vector<std::string> files = GetProjects();
+    /*std::vector<std::string> files = GetProjects();
     int currentItem = CreateList(files, "Files");
 
     if (ImGui::Button("Open", ImVec2(120, 0)))
@@ -433,7 +444,7 @@ void Application::BuildMainUI()
     {
       showOpenModal = false;
       ImGui::CloseCurrentPopup();
-    }
+    }*/
     ImGui::EndPopup();
   }
 
