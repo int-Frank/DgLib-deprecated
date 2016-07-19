@@ -22,6 +22,7 @@
 #include <cstring>
 #include "DgMatrix44.h"
 #include <cmath>
+#include <stack>
 
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
@@ -291,17 +292,29 @@ void Application::BuildMainUI()
   ImGui::Begin("Partice System");
 
   // Menu
-  bool showSavePrompt = false;
-  bool showOpenModal = false;
-  bool showSaveAsModal = false;
+  enum Modal
+  {
+    SavePrompt,
+    SaveAsWindow,
+    OpenWindow,
+    None
+  };
+  static std::stack<int> windowStack;
   if (ImGui::BeginMenuBar())
   {
     if (ImGui::BeginMenu("Menu"))
     {
       if (ImGui::MenuItem("New")) {}
-      if (ImGui::MenuItem("Open")) { showSavePrompt = true; }
+      if (ImGui::MenuItem("Open")) 
+      {
+        windowStack.push(Modal::OpenWindow);
+        windowStack.push(Modal::SavePrompt);
+      }
       if (ImGui::MenuItem("Save")) {}
-      if (ImGui::MenuItem("Save As..")) { showSaveAsModal = true; }
+      if (ImGui::MenuItem("Save As..")) 
+      { 
+        windowStack.push(Modal::SaveAsWindow); 
+      }
       ImGui::Separator();
       if (ImGui::MenuItem("Quit", "Esc")) { m_shouldQuit = true; }
       ImGui::EndMenu();
@@ -322,29 +335,33 @@ void Application::BuildMainUI()
     ImGui::EndMenuBar();
   }
 
-  static bool thenShowOpen = false;
-  if (showSavePrompt)
+  if (!windowStack.empty() && windowStack.top() == Modal::SavePrompt )
   {
     ImGui::OpenPopup("Save current Project?");
   }
   if (ImGui::BeginPopupModal("Save current Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
+    bool finished = false;
     if (ImGui::Button("Yes", ImVec2(80, 0)))
     {
-      showSaveAsModal = true;
-      thenShowOpen = true;
-      ImGui::CloseCurrentPopup();
+      windowStack.pop();
+      windowStack.push(Modal::SaveAsWindow);
+      finished = true;
     }
     ImGui::SameLine();
     if (ImGui::Button("No", ImVec2(80, 0)))
     {
-      showOpenModal = true;
+      windowStack.pop();
+      finished = true;
+    }
+    if (finished)
+    {
       ImGui::CloseCurrentPopup();
     }
     ImGui::EndPopup();
   }
 
-  if (showSaveAsModal)
+  if (!windowStack.empty() && windowStack.top() == Modal::SaveAsWindow)
   {
     ImGui::OpenPopup("Save As..");
   }
@@ -352,10 +369,10 @@ void Application::BuildMainUI()
   {
     std::vector<std::string> files = GetProjects();
     static int save_currentItem = -1;
+    static int  save_lastItem = -2;
     CreateList(files, "Files", &save_currentItem);
 
     static char buf[128] = {};
-    static int  save_lastItem = -2;
 
     if (save_lastItem != save_currentItem && save_currentItem >= 0)
     {
@@ -396,7 +413,6 @@ void Application::BuildMainUI()
       ImGui::EndPopup();
     }
 
-    bool shouldClose = false;
     if (doSave)
     {
       //Save...
@@ -405,49 +421,49 @@ void Application::BuildMainUI()
       memset(buf, 0, sizeof(buf) / sizeof(char));
       save_lastItem = -2;
       save_currentItem = -1;
-      shouldClose = true;
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Close", ImVec2(120, 0)) || shouldClose)
+    if (ImGui::Button("Close", ImVec2(120, 0)) || doSave)
     {
-      if (thenShowOpen)
-      {
-        thenShowOpen = false;
-        showOpenModal = true;
-      }
+      windowStack.pop();
       ImGui::CloseCurrentPopup();
     }
     ImGui::EndPopup();
   }
 
-  if (showOpenModal)
+  if (!windowStack.empty() && windowStack.top() == Modal::OpenWindow)
   {
     ImGui::OpenPopup("Open file");
   }
   if (ImGui::BeginPopupModal("Open file", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
-    /*std::vector<std::string> files = GetProjects();
-    int currentItem = CreateList(files, "Files");
+    std::vector<std::string> files = GetProjects();
+    static int open_currentItem = -1;
+    CreateList(files, "Files", &open_currentItem);
 
+    bool finished = false;
     if (ImGui::Button("Open", ImVec2(120, 0)))
     {
-      if (currentItem != -1)
+      if (open_currentItem != -1)
       {
-        m_loadFile = files[currentItem];
+        m_loadFile = files[open_currentItem];
       }
-      showOpenModal = false;
-      ImGui::CloseCurrentPopup();
+      finished = true;
     }
     ImGui::SameLine();
     if (ImGui::Button("Cancel", ImVec2(120, 0)))
     {
-      showOpenModal = false;
+      finished = true;
+    }
+    if (finished)
+    {
+      open_currentItem = -1;
+      windowStack.pop();
       ImGui::CloseCurrentPopup();
-    }*/
+    }
     ImGui::EndPopup();
   }
-
 
   if (ImGui::CollapsingHeader("Particle system options"))
   {
