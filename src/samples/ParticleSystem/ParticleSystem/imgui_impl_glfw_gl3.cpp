@@ -20,6 +20,7 @@
 #endif
 
 void AppOnMouseScroll(double);
+void AppOnKeyEvent(int a_key, int a_action);
 
 // Data
 static GLFWwindow*  g_Window = NULL;
@@ -140,6 +141,7 @@ static void ImGui_ImplGlfwGL3_SetClipboardText(const char* text)
 
 void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow*, int button, int action, int /*mods*/)
 {
+  AppOnKeyEvent(button, action);
     if (action == GLFW_PRESS && button >= 0 && button < 3)
         g_MousePressed[button] = true;
 }
@@ -152,6 +154,7 @@ void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow*, double /*xoffset*/, double yo
 
 void ImGui_ImplGlfwGL3_KeyCallback(GLFWwindow*, int key, int, int action, int mods)
 {
+  AppOnKeyEvent(key, action);
     ImGuiIO& io = ImGui::GetIO();
     if (action == GLFW_PRESS)
         io.KeysDown[key] = true;

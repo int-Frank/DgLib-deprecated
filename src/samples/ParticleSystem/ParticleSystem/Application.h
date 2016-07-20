@@ -39,6 +39,7 @@ public:
   bool LoadProject(std::string);
   bool SaveProject(std::string);
   void UpdateScroll(double);
+  void KeyEvent(int, int);
 
 public:
   struct APPINFO
@@ -61,15 +62,6 @@ public:
     } flags;
   };
 
-  struct ParSysOpts
-  {
-    bool  useUpdaterRelativeForce;
-    bool  useUpdaterColor;
-    bool  useUpdaterSize;
-    bool  useUpdaterResetAccel;
-    int   preset;
-  };
-
 private:
 
   static Application* s_app;
@@ -85,7 +77,7 @@ private:
   GLFWwindow*               m_window;
   Renderer                  m_renderer;
 
-  float                     m_dt;
+  //float                     m_dt;
 
   double                    m_mouseSpeed;
   double                    m_mouseCurrentX;
@@ -102,9 +94,9 @@ private:
   eData                     m_eData;
   aData                     m_aData;
   int                       m_attrFocus;
+  bool                      m_camCanRotate;
 
-  ParSysOpts                m_parSysOpts;
-  ParSysOpts                m_parSysOptsPrev;
+  ParSysOpts                m_parSysOpts[2];
 
   Dg::IDManager<int>        m_IDManager;
   bool                      m_shouldQuit;
@@ -123,7 +115,7 @@ private:
   void UpdateParSysAttr();
 
   void HandleEvents();
-  void DoLogic();
+  void DoLogic(double dt);
   void Render();
 
   std::vector<std::string> GetProjects();

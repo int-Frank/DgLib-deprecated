@@ -53,20 +53,44 @@ void Application::PushEvent(Event const & a_event)
   m_eventManager.PushEvent(a_event);
 }
 
+void AppOnKeyEvent(int a_key, int a_action)
+{
+  Event_KeyEvent e;
+  e.SetKey(a_key);
+  e.SetAction(a_action);
+  Application::GetInstance()->PushEvent(e);
+}
+
+void Application::KeyEvent(int a_key, int a_action)
+{
+  switch (a_key)
+  {
+  case GLFW_KEY_ESCAPE:
+  {
+    m_shouldQuit = true;
+    break;
+  }
+  case GLFW_MOUSE_BUTTON_LEFT:
+  {
+    m_camCanRotate = (a_action == GLFW_PRESS);
+    break;
+  }
+  }
+}
+
 bool Application::Init()
 {
   GetConfiguration();
 
   //Set options
-  m_parSysOpts.useUpdaterRelativeForce = true;
-  m_parSysOpts.useUpdaterColor = true;
-  m_parSysOpts.useUpdaterSize = true;
-  m_parSysOpts.useUpdaterResetAccel = true;
-  m_parSysOpts.preset = 0;
-  memcpy(&m_parSysOptsPrev, &m_parSysOpts, sizeof(ParSysOpts));
+  m_parSysOpts[0].useUpdaterRelativeForce = true;
+  m_parSysOpts[0].useUpdaterColor = true;
+  m_parSysOpts[0].useUpdaterSize = true;
+  memcpy(&m_parSysOpts[1], &m_parSysOpts[0], sizeof(ParSysOpts));
 
   m_attrFocus = -1;
   m_shouldQuit = false;
+  m_camCanRotate = false;
 
   if (!InitGL())
   {
@@ -186,28 +210,21 @@ void Application::HandleEvents()
   {
     e->DoEvent();
   }
-
-  int keyState = glfwGetKey(m_window, GLFW_KEY_ESCAPE);
-  if (keyState == GLFW_PRESS)
-  {
-    m_shouldQuit = true;
-  }
-
+   
   m_mousePrevX = m_mouseCurrentX;
   m_mousePrevY = m_mouseCurrentY;
   glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentY);
 
   //Mouse
-  if (!ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard)
+  if (!ImGui::GetIO().WantCaptureMouse 
+    && !ImGui::GetIO().WantCaptureKeyboard
+    && m_camCanRotate)
   {
-    if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    {
-      //Handle mouse rotation
-      m_camRotZ += (m_mouseCurrentX - m_mousePrevX) * m_mouseSpeed;
-      Dg::WrapAngle(m_camRotZ);
-      m_camRotX += (m_mouseCurrentY - m_mousePrevY) * m_mouseSpeed;
-      Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
-    }
+    //Handle mouse rotation
+    m_camRotZ += (m_mouseCurrentX - m_mousePrevX) * m_mouseSpeed;
+    Dg::WrapAngle(m_camRotZ);
+    m_camRotX += (m_mouseCurrentY - m_mousePrevY) * m_mouseSpeed;
+    Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
   }
 }
 
@@ -520,9 +537,9 @@ void Application::BuildMainUI()
   if (ImGui::CollapsingHeader("Particle system options"))
   {
     ImGui::TextColored(headingClr, "Optional updaters");
-    ImGui::Checkbox("Color", &m_parSysOpts.useUpdaterColor);
-    ImGui::Checkbox("Size", &m_parSysOpts.useUpdaterSize);
-    ImGui::Checkbox("Rel force", &m_parSysOpts.useUpdaterRelativeForce);
+    ImGui::Checkbox("Color", &m_parSysOpts[0].useUpdaterColor);
+    ImGui::Checkbox("Size", &m_parSysOpts[0].useUpdaterSize);
+    ImGui::Checkbox("Rel force", &m_parSysOpts[0].useUpdaterRelativeForce);
   }
 
   if (ImGui::CollapsingHeader("Emitters"))
@@ -679,7 +696,7 @@ void Application::BuildMainUI()
       ImGui::ColorEdit4("End color", &curEmData.colors[4]);
       ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s", 2.0f);
       ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
-      if (m_parSysOpts.useUpdaterRelativeForce)
+      if (m_parSysOpts[0].useUpdaterRelativeForce)
       {
         ImGui::SliderFloat("Rel force", &curEmData.relativeForce, 0.0f, 10.0f, "%.4f m/s", 3.0f);
       }
@@ -798,14 +815,14 @@ void Application::BuildMainUI()
   ImGui::End();
 }
 
-void Application::DoLogic()
+void Application::DoLogic(double a_dt)
 {
   //Get user input
   BuildMainUI();
 
   //Update particle system
   UpdateParSysAttr();
-  m_particleSystem.Update(m_dt);
+  m_particleSystem.Update(a_dt);
 
   //Update stats
   if (UI::showMetrics)
@@ -819,7 +836,7 @@ void Application::DoLogic()
   if (abs(m_camZoomTarget - m_camZoom) > 0.01)
   {
     double diff = m_camZoomTarget - m_camZoom;
-    m_camZoom = m_camZoomTarget - diff / (pow(1.3f, 26.0f * m_dt));
+    m_camZoom = m_camZoomTarget - diff / (pow(1.3f, 26.0f * a_dt));
   }
 }
 
@@ -1056,11 +1073,11 @@ void Application::Run(Application* the_app)
 
     double thisTick = glfwGetTime();
 	  double diff = thisTick - lastTick;
-    m_dt = static_cast<float>(thisTick - lastTick);
+    double dt = static_cast<float>(thisTick - lastTick);
     lastTick = thisTick;
 
     HandleEvents();
-    DoLogic();
+    DoLogic(dt);
     Render();
 
 	  ImGui::Render();

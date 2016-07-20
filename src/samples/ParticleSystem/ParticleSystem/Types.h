@@ -120,4 +120,12 @@ struct LineRenderData
   Dg::Matrix44<float>   mat;
   Dg::Vector4<float>    col;
 };
+
+
+struct ParSysOpts
+{
+  bool  useUpdaterRelativeForce;
+  bool  useUpdaterColor;
+  bool  useUpdaterSize;
+};
 #endif

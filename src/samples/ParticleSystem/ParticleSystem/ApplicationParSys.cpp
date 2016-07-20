@@ -129,7 +129,7 @@ void Application::InitParticleSystem()
   }*/
 
   m_particleSystem.AddUpdater(E_UpdaterEuler, new UpdaterEuler<float>());
-  if (m_parSysOpts.useUpdaterRelativeForce)
+  if (m_parSysOpts[0].useUpdaterRelativeForce)
   {
     m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
   }
@@ -150,9 +150,9 @@ void Application::InitParticleSystem()
 void Application::UpdateParSysAttr()
 {
   // Update particle system updaters
-  if (m_parSysOpts.useUpdaterRelativeForce != m_parSysOptsPrev.useUpdaterRelativeForce)
+  if (m_parSysOpts[0].useUpdaterRelativeForce != m_parSysOpts[1].useUpdaterRelativeForce)
   {
-    if (!m_parSysOpts.useUpdaterRelativeForce)
+    if (!m_parSysOpts[0].useUpdaterRelativeForce)
     {
       m_particleSystem.RemoveUpdater(E_UpdaterRelativeForce);
     }
@@ -160,7 +160,7 @@ void Application::UpdateParSysAttr()
     {
       m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
     }
-    m_parSysOptsPrev.useUpdaterRelativeForce = m_parSysOpts.useUpdaterRelativeForce;
+    m_parSysOpts[1].useUpdaterRelativeForce = m_parSysOpts[0].useUpdaterRelativeForce;
   }
 
 
