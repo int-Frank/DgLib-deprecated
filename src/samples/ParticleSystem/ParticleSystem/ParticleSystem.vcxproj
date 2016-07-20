@@ -130,8 +130,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="ApplicationParSys.cpp" />
+    <ClCompile Include="Application_main.cpp" />
+    <ClCompile Include="Application_parSys.cpp" />
+    <ClCompile Include="Application_UI.cpp" />
     <ClCompile Include="AttractorFactory.cpp" />
     <ClCompile Include="EmitterFactory.cpp" />
     <ClCompile Include="EventManager.cpp" />

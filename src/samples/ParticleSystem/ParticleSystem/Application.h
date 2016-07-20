@@ -64,8 +64,15 @@ private:
 
 private:
 
-  //The GUI only modifies this data. After which, we can 
-  //go through and check if anything has changed. 
+  //The GUI touches only this struct. After which, we can 
+  //go through and check if anything has changed and update the
+  //app accordingly. Exceptions are:
+  //  - Opening a project (creates event)
+  //  - Saving a project (creates event)
+  //  - Creating Emitters / Attractors (creates them directly)
+  //  - Killing Emitters / Attractors (kills them directly)
+  //  - 'Quit' menu item modifies m_shouldQuit direcly
+  //  - anything from the UI namespace
   AppData                   m_appData;
 
   EventManager              m_eventManager;
@@ -114,6 +121,8 @@ private:
 
   std::vector<std::string> GetProjects();
 
+  void Shutdown();
+
 private:
 
   //UI
@@ -128,15 +137,7 @@ private:
 
   std::stack<int>          m_windowStack;
 
-  void BuildMainUI();
-  void BuildMenu();
-  void HandleSavePrompt();
-  void HandleOverwrite();
-  void HandleSaving();
-  void HandleOpen();
-  
-
-  void Shutdown();
+  void ShowMainGUIWindow();
 };
 
 #endif

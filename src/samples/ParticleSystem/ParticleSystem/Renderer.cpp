@@ -6,8 +6,8 @@
 #include "DgMatrix44.h"
 #include "DgMakeGrid.h"
 #include "imgui/imgui.h"
-#include "UI.h"
 #include "Types.h"
+#include "UI.h"
 
 bool Renderer::Init(Dg::ParticleData<float> * a_parData)
 {
