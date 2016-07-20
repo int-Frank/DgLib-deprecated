@@ -2,9 +2,18 @@
 #define TYPES_H
 
 #include <string>
+#include <vector>
 
 #include "./particle_system/DgAttractor.h"
 #include "DgMatrix44.h"
+
+class EmitterData;
+class AttractorData;
+
+typedef std::pair<EmitterData, EmitterData> EDataItem;
+typedef std::vector<EDataItem> EData;
+typedef std::pair<AttractorData, AttractorData> ADataItem;
+typedef std::vector<ADataItem> AData;
 
 enum
 {
@@ -121,11 +130,26 @@ struct LineRenderData
   Dg::Vector4<float>    col;
 };
 
-
-struct ParSysOpts
+class ParSysOpts
 {
+public:
+
+  ParSysOpts()
+    : useUpdaterColor(true)
+    , useUpdaterSize(true)
+    , useUpdaterRelativeForce(true)
+  {}
+
+public:
   bool  useUpdaterRelativeForce;
   bool  useUpdaterColor;
   bool  useUpdaterSize;
+};
+
+struct AppData
+{
+  EData         eData;
+  AData         aData;
+  ParSysOpts    parSysOpts[2];
 };
 #endif

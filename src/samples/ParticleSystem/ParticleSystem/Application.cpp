@@ -83,11 +83,6 @@ bool Application::Init()
   GetConfiguration();
 
   //Set options
-  m_parSysOpts[0].useUpdaterRelativeForce = true;
-  m_parSysOpts[0].useUpdaterColor = true;
-  m_parSysOpts[0].useUpdaterSize = true;
-  memcpy(&m_parSysOpts[1], &m_parSysOpts[0], sizeof(ParSysOpts));
-
   m_attrFocus = -1;
   m_shouldQuit = false;
   m_camCanRotate = false;
@@ -537,9 +532,9 @@ void Application::BuildMainUI()
   if (ImGui::CollapsingHeader("Particle system options"))
   {
     ImGui::TextColored(headingClr, "Optional updaters");
-    ImGui::Checkbox("Color", &m_parSysOpts[0].useUpdaterColor);
-    ImGui::Checkbox("Size", &m_parSysOpts[0].useUpdaterSize);
-    ImGui::Checkbox("Rel force", &m_parSysOpts[0].useUpdaterRelativeForce);
+    ImGui::Checkbox("Color", &m_appData.parSysOpts[0].useUpdaterColor);
+    ImGui::Checkbox("Size", &m_appData.parSysOpts[0].useUpdaterSize);
+    ImGui::Checkbox("Rel force", &m_appData.parSysOpts[0].useUpdaterRelativeForce);
   }
 
   if (ImGui::CollapsingHeader("Emitters"))
@@ -548,21 +543,21 @@ void Application::BuildMainUI()
     {
       EmitterData data;
       data.ID = m_IDManager.GetID();
-      eDataItem item(data, data);
-      m_eData.push_back(item);
+      EDataItem item(data, data);
+      m_appData.eData.push_back(item);
 
       EmitterFactory eFact;
       m_particleSystem.AddEmitter(data.ID, eFact(data));
-      curEm = (int)m_eData.size() - 1;
+      curEm = (int)m_appData.eData.size() - 1;
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Kill Emitter") && m_eData.size())
+    if (ImGui::Button("Kill Emitter") && m_appData.eData.size())
     {
-      m_particleSystem.RemoveEmitter(m_eData[curEm].first.ID);
-      m_IDManager.ReturnID(m_eData[curEm].first.ID);
-      m_eData.erase(m_eData.begin() + curEm);
-      if (curEm == m_eData.size())
+      m_particleSystem.RemoveEmitter(m_appData.eData[curEm].first.ID);
+      m_IDManager.ReturnID(m_appData.eData[curEm].first.ID);
+      m_appData.eData.erase(m_appData.eData.begin() + curEm);
+      if (curEm == m_appData.eData.size())
       {
         curEm--;
       }
@@ -572,26 +567,26 @@ void Application::BuildMainUI()
     //typedef char inner_array_t[32];
     //inner_array_t * currentEmitters = new inner_array_t[4];
 
-    char ** currentEmitters = new char*[m_eData.size()];
-    for (int i = 0; i < m_eData.size(); ++i)
+    char ** currentEmitters = new char*[m_appData.eData.size()];
+    for (int i = 0; i < m_appData.eData.size(); ++i)
     {
       currentEmitters[i] = new char[32]();
-      sprintf_s(currentEmitters[i], 32, "Emitter %i", m_eData[i].first.ID);
+      sprintf_s(currentEmitters[i], 32, "Emitter %i", m_appData.eData[i].first.ID);
     }
     ImGui::PushItemWidth(sliderOffset);
-    ImGui::ListBox("Emitter", &curEm, (char const **)currentEmitters, (int)m_eData.size(), 5);
+    ImGui::ListBox("Emitter", &curEm, (char const **)currentEmitters, (int)m_appData.eData.size(), 5);
     ImGui::PopItemWidth();
     ImGui::Separator();
 
-    for (int i = 0; i < m_eData.size(); ++i)
+    for (int i = 0; i < m_appData.eData.size(); ++i)
     {
       delete[] currentEmitters[i];
     }
     delete[] currentEmitters;
 
-    if (m_eData.size() > 0)
+    if (m_appData.eData.size() > 0)
     {
-      EmitterData & curEmData = m_eData[curEm].first;
+      EmitterData & curEmData = m_appData.eData[curEm].first;
 
       CreateSpacing(nSpacing);
       ImGui::Checkbox("Turn emitter off/on", &curEmData.on);
@@ -696,7 +691,7 @@ void Application::BuildMainUI()
       ImGui::ColorEdit4("End color", &curEmData.colors[4]);
       ImGui::SliderFloat("Rate", &curEmData.rate, 0.0f, 500.0f, "%.2f par/s", 2.0f);
       ImGui::SliderFloat("Velocity", &curEmData.velocity, 0.0f, 10.0f, "%.2f m/s");
-      if (m_parSysOpts[0].useUpdaterRelativeForce)
+      if (m_appData.parSysOpts[0].useUpdaterRelativeForce)
       {
         ImGui::SliderFloat("Rel force", &curEmData.relativeForce, 0.0f, 10.0f, "%.4f m/s", 3.0f);
       }
@@ -715,50 +710,50 @@ void Application::BuildMainUI()
     {
       AttractorData data;
       data.ID = m_IDManager.GetID();
-      aDataItem item(data, data);
-      m_aData.push_back(item);
+      ADataItem item(data, data);
+      m_appData.aData.push_back(item);
 
       AttractorFactory aFact;
       m_particleSystem.AddUpdater(data.ID, aFact(data));
-      m_attrFocus = (int)m_aData.size() - 1;
+      m_attrFocus = (int)m_appData.aData.size() - 1;
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Kill Attractor") && m_aData.size())
+    if (ImGui::Button("Kill Attractor") && m_appData.aData.size())
     {
-      m_particleSystem.RemoveUpdater(m_aData[m_attrFocus].first.ID);
-      m_IDManager.ReturnID(m_aData[m_attrFocus].first.ID);
-      m_aData.erase(m_aData.begin() + m_attrFocus);
-      if (m_attrFocus == m_aData.size())
+      m_particleSystem.RemoveUpdater(m_appData.aData[m_attrFocus].first.ID);
+      m_IDManager.ReturnID(m_appData.aData[m_attrFocus].first.ID);
+      m_appData.aData.erase(m_appData.aData.begin() + m_attrFocus);
+      if (m_attrFocus == m_appData.aData.size())
       {
         m_attrFocus--;
       }
     }
 
 
-    char ** currentAttractors = new char*[m_aData.size()];
-    for (int i = 0; i < m_aData.size(); ++i)
+    char ** currentAttractors = new char*[m_appData.aData.size()];
+    for (int i = 0; i < m_appData.aData.size(); ++i)
     {
       currentAttractors[i] = new char[32]();
-      sprintf_s(currentAttractors[i], 32, "Attractor %i", m_aData[i].first.ID);
+      sprintf_s(currentAttractors[i], 32, "Attractor %i", m_appData.aData[i].first.ID);
     }
     ImGui::PushItemWidth(sliderOffset);
-    ImGui::ListBox("Attractor", &m_attrFocus, (char const **)currentAttractors, (int)m_aData.size(), 5);
+    ImGui::ListBox("Attractor", &m_attrFocus, (char const **)currentAttractors, (int)m_appData.aData.size(), 5);
     ImGui::PopItemWidth();
     ImGui::Separator();
 
-    for (int i = 0; i < m_aData.size(); ++i)
+    for (int i = 0; i < m_appData.aData.size(); ++i)
     {
       delete[] currentAttractors[i];
     }
     delete[] currentAttractors;
 
 
-    if (m_aData.size() > 0)
+    if (m_appData.aData.size() > 0)
     {
       CreateSpacing(nSpacing);
 
-      AttractorData & curAttData = m_aData[m_attrFocus].first;
+      AttractorData & curAttData = m_appData.aData[m_attrFocus].first;
 
       ImGui::Checkbox("Show attractor", &curAttData.show);
 
@@ -822,7 +817,7 @@ void Application::DoLogic(double a_dt)
 
   //Update particle system
   UpdateParSysAttr();
-  m_particleSystem.Update(a_dt);
+  m_particleSystem.Update((float)a_dt);
 
   //Update stats
   if (UI::showMetrics)
@@ -868,23 +863,23 @@ void Application::Render()
 
   float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
 
-  LineRenderData * lineRenderData = new LineRenderData[m_aData.size()];
+  LineRenderData * lineRenderData = new LineRenderData[m_appData.aData.size()];
   int nShowAttr = 0;
-  for (int i = 0; i < m_aData.size(); ++i)
+  for (int i = 0; i < m_appData.aData.size(); ++i)
   {
-    if (m_aData[i].first.show)
+    if (m_appData.aData[i].first.show)
     {
-      lineRenderData[nShowAttr].model = m_aData[i].first.type;
+      lineRenderData[nShowAttr].model = m_appData.aData[i].first.type;
       Dg::Vector4<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
       Dg::Vector4<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
       lineRenderData[nShowAttr].col = (i == m_attrFocus) ? lineColFocus : lineCol;
-      switch (m_aData[i].first.type)
+      switch (m_appData.aData[i].first.type)
       {
       case E_AttGlobal:
       {
         lineRenderData[nShowAttr].mat.Rotation(0.0f
-                                 , m_aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                                 , m_aData[i].first.transform[3]
+                                 , m_appData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                                 , m_appData.aData[i].first.transform[3]
                                  , Dg::EulerOrder::XYZ);
         break;
       }
@@ -892,9 +887,9 @@ void Application::Render()
       {
         lineRenderData[nShowAttr].mat.Translation
         (
-          Dg::Vector4<float>(m_aData[i].first.transform[0]
-                           , m_aData[i].first.transform[1]
-                           , m_aData[i].first.transform[2]
+          Dg::Vector4<float>(m_appData.aData[i].first.transform[0]
+                           , m_appData.aData[i].first.transform[1]
+                           , m_appData.aData[i].first.transform[2]
                            , 0.0f)
         );
         break;
@@ -904,15 +899,15 @@ void Application::Render()
         mat44 trans, rot;
         trans.Translation
         (
-          Dg::Vector4<float>(m_aData[i].first.transform[0]
-                           , m_aData[i].first.transform[1]
-                           , m_aData[i].first.transform[2]
+          Dg::Vector4<float>(m_appData.aData[i].first.transform[0]
+                           , m_appData.aData[i].first.transform[1]
+                           , m_appData.aData[i].first.transform[2]
                            , 0.0f)
         );
 
         rot.Rotation(0.0f
-                   , m_aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                   , m_aData[i].first.transform[3]
+                   , m_appData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                   , m_appData.aData[i].first.transform[3]
                    , Dg::EulerOrder::XYZ);
         lineRenderData[nShowAttr].mat = rot * trans;
         break;
@@ -922,15 +917,15 @@ void Application::Render()
         mat44 trans, rot;
         trans.Translation
         (
-          Dg::Vector4<float>(m_aData[i].first.transform[0]
-                           , m_aData[i].first.transform[1]
-                           , m_aData[i].first.transform[2]
+          Dg::Vector4<float>(m_appData.aData[i].first.transform[0]
+                           , m_appData.aData[i].first.transform[1]
+                           , m_appData.aData[i].first.transform[2]
                            , 0.0f)
         );
 
         rot.Rotation(0.0f
-                   , m_aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                   , m_aData[i].first.transform[3]
+                   , m_appData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                   , m_appData.aData[i].first.transform[3]
                    , Dg::EulerOrder::XYZ);
         lineRenderData[nShowAttr].mat = rot * trans;
         break;

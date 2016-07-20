@@ -56,54 +56,54 @@ void Application::InitParticleSystem()
   //--------------------------------------------------------------------
   //  Set emitter 1 data
   //--------------------------------------------------------------------
-  /*m_eData[0].first.ID = m_IDManager.GetID();
-  if (m_eData[0].first.ID)
+  /*m_appData.eData[0].first.ID = m_IDManager.GetID();
+  if (m_appData.eData[0].first.ID)
   {
-    m_eData[0].first.type = E_Emitter_Linear;
-    m_eData[0].first.on = true;
-    m_eData[0].first.posGenMethod = E_GenPosPoint;
-    m_eData[0].first.velGenMethod = E_GenVelCone;
-    m_eData[0].first.transform[0] = 1.0f * 2.5f;
-    m_eData[0].first.transform[1] = 0.0;
-    m_eData[0].first.transform[2] = 0.0;
-    m_eData[0].first.sizes[0] = 0.1f;
-    m_eData[0].first.sizes[1] = 0.3f;
-    m_eData[0].first.colors[4] = 1.0f;
-    m_eData[0].first.colors[5] = 0.0f;
-    m_eData[0].first.colors[6] = 0.0f;
-    m_eData[0].first.colors[7] = 0.0f;
+    m_appData.eData[0].first.type = E_Emitter_Linear;
+    m_appData.eData[0].first.on = true;
+    m_appData.eData[0].first.posGenMethod = E_GenPosPoint;
+    m_appData.eData[0].first.velGenMethod = E_GenVelCone;
+    m_appData.eData[0].first.transform[0] = 1.0f * 2.5f;
+    m_appData.eData[0].first.transform[1] = 0.0;
+    m_appData.eData[0].first.transform[2] = 0.0;
+    m_appData.eData[0].first.sizes[0] = 0.1f;
+    m_appData.eData[0].first.sizes[1] = 0.3f;
+    m_appData.eData[0].first.colors[4] = 1.0f;
+    m_appData.eData[0].first.colors[5] = 0.0f;
+    m_appData.eData[0].first.colors[6] = 0.0f;
+    m_appData.eData[0].first.colors[7] = 0.0f;
 
-    m_particleSystem.AddEmitter(m_eData[0].first.ID, eFactory.Create(m_eData[0].first));
+    m_particleSystem.AddEmitter(m_appData.eData[0].first.ID, eFactory.Create(m_appData.eData[0].first));
   }*/
   
   //--------------------------------------------------------------------
   //  Set emitter 2 data
   //--------------------------------------------------------------------
-  //m_eData[1].ID = E_Emitter_2;
-  //m_eData[1].transform[0] = -0.5f * 2.5f;
-  //m_eData[1].transform[1] = 0.866f * 2.5f;
-  //m_eData[1].transform[2] = 0.0;
-  //m_eData[1].sizes[0] = 0.1f;
-  //m_eData[1].sizes[1] = 0.3f;
-  //m_eData[1].colors[4] = 0.0f;
-  //m_eData[1].colors[5] = 1.0f;
-  //m_eData[1].colors[6] = 0.0f;
-  //m_eData[1].colors[7] = 0.0f;
+  //m_appData.eData[1].ID = E_Emitter_2;
+  //m_appData.eData[1].transform[0] = -0.5f * 2.5f;
+  //m_appData.eData[1].transform[1] = 0.866f * 2.5f;
+  //m_appData.eData[1].transform[2] = 0.0;
+  //m_appData.eData[1].sizes[0] = 0.1f;
+  //m_appData.eData[1].sizes[1] = 0.3f;
+  //m_appData.eData[1].colors[4] = 0.0f;
+  //m_appData.eData[1].colors[5] = 1.0f;
+  //m_appData.eData[1].colors[6] = 0.0f;
+  //m_appData.eData[1].colors[7] = 0.0f;
   //
 
   ////--------------------------------------------------------------------
   ////  Set emitter 3 data
   ////--------------------------------------------------------------------
-  //m_eData[2].ID = E_Emitter_3;
-  //m_eData[2].transform[0] = -0.5 * 2.5f;
-  //m_eData[2].transform[1] = -0.866f * 2.5f;
-  //m_eData[2].transform[2] = 0.0;
-  //m_eData[2].sizes[0] = 0.1f;
-  //m_eData[2].sizes[1] = 0.3f;
-  //m_eData[2].colors[4] = 0.0f;
-  //m_eData[2].colors[5] = 0.0f;
-  //m_eData[2].colors[6] = 1.0f;
-  //m_eData[2].colors[7] = 0.0f;
+  //m_appData.eData[2].ID = E_Emitter_3;
+  //m_appData.eData[2].transform[0] = -0.5 * 2.5f;
+  //m_appData.eData[2].transform[1] = -0.866f * 2.5f;
+  //m_appData.eData[2].transform[2] = 0.0;
+  //m_appData.eData[2].sizes[0] = 0.1f;
+  //m_appData.eData[2].sizes[1] = 0.3f;
+  //m_appData.eData[2].colors[4] = 0.0f;
+  //m_appData.eData[2].colors[5] = 0.0f;
+  //m_appData.eData[2].colors[6] = 1.0f;
+  //m_appData.eData[2].colors[7] = 0.0f;
   
 
   //Add Updaters
@@ -113,23 +113,23 @@ void Application::InitParticleSystem()
   //--------------------------------------------------------------------
   //  Set attractor data
   //--------------------------------------------------------------------
-  /*m_aData[0].ID = m_IDManager.GetID();
-  if (m_aData[0].ID)
+  /*m_appData.aData[0].ID = m_IDManager.GetID();
+  if (m_appData.aData[0].ID)
   {
-    m_aData[0].type = E_AttPoint;
-    m_aData[0].appliedAccelType = Dg::Attractor<float>::InvSq;
-    m_aData[0].strength = -10.0f;
-    m_aData[0].maxAppliedAccelMag = 1.0f;
-    m_aData[0].transform[0] = 3.0f;
-    m_aData[0].transform[1] = 3.0f;
-    m_aData[0].transform[2] = 3.0f;
-    m_aData[0].show = false;
+    m_appData.aData[0].type = E_AttPoint;
+    m_appData.aData[0].appliedAccelType = Dg::Attractor<float>::InvSq;
+    m_appData.aData[0].strength = -10.0f;
+    m_appData.aData[0].maxAppliedAccelMag = 1.0f;
+    m_appData.aData[0].transform[0] = 3.0f;
+    m_appData.aData[0].transform[1] = 3.0f;
+    m_appData.aData[0].transform[2] = 3.0f;
+    m_appData.aData[0].show = false;
 
-    m_particleSystem.AddUpdater(m_aData[0].ID, aFactory.Create(m_aData[0]));
+    m_particleSystem.AddUpdater(m_appData.aData[0].ID, aFactory.Create(m_appData.aData[0]));
   }*/
 
   m_particleSystem.AddUpdater(E_UpdaterEuler, new UpdaterEuler<float>());
-  if (m_parSysOpts[0].useUpdaterRelativeForce)
+  if (m_appData.parSysOpts[0].useUpdaterRelativeForce)
   {
     m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
   }
@@ -137,22 +137,22 @@ void Application::InitParticleSystem()
   m_particleSystem.AddUpdater(E_UpdaterSize, new UpdaterSize<float>());
 
   //copy current emitter data for ui callback checking
-  for (int i = 0; i < m_eData.size(); ++i)
+  for (int i = 0; i < m_appData.eData.size(); ++i)
   {
-    memcpy(&m_eData[i].second, &m_eData[i].first, sizeof(EmitterData));
+    memcpy(&m_appData.eData[i].second, &m_appData.eData[i].first, sizeof(EmitterData));
   }
-  for (int i = 0; i < m_aData.size(); ++i)
+  for (int i = 0; i < m_appData.aData.size(); ++i)
   {
-    memcpy(&m_aData[i].second, &m_aData[i].first, sizeof(AttractorData));
+    memcpy(&m_appData.aData[i].second, &m_appData.aData[i].first, sizeof(AttractorData));
   }
 }
 
 void Application::UpdateParSysAttr()
 {
   // Update particle system updaters
-  if (m_parSysOpts[0].useUpdaterRelativeForce != m_parSysOpts[1].useUpdaterRelativeForce)
+  if (m_appData.parSysOpts[0].useUpdaterRelativeForce != m_appData.parSysOpts[1].useUpdaterRelativeForce)
   {
-    if (!m_parSysOpts[0].useUpdaterRelativeForce)
+    if (!m_appData.parSysOpts[0].useUpdaterRelativeForce)
     {
       m_particleSystem.RemoveUpdater(E_UpdaterRelativeForce);
     }
@@ -160,17 +160,17 @@ void Application::UpdateParSysAttr()
     {
       m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
     }
-    m_parSysOpts[1].useUpdaterRelativeForce = m_parSysOpts[0].useUpdaterRelativeForce;
+    m_appData.parSysOpts[1].useUpdaterRelativeForce = m_appData.parSysOpts[0].useUpdaterRelativeForce;
   }
 
 
-  for (int e = 0; e < m_eData.size(); ++e)
+  for (int e = 0; e < m_appData.eData.size(); ++e)
   {
     //We just do a dumb check to see if any of the data has changed,
     //and just remove the emitter and build a new one with the new data,
     //but it's very slow; there are noticable delays.
-    EmitterData & data = m_eData[e].first;
-    EmitterData & dataPrev = m_eData[e].second;
+    EmitterData & data = m_appData.eData[e].first;
+    EmitterData & dataPrev = m_appData.eData[e].second;
     int id = data.ID;
 
     if (data.type != dataPrev.type)
@@ -366,10 +366,10 @@ void Application::UpdateParSysAttr()
   }
 
   //Attractors
-  for (int a = 0; a < m_aData.size(); ++a)
+  for (int a = 0; a < m_appData.aData.size(); ++a)
   {
-    AttractorData & data = m_aData[a].first;
-    AttractorData & dataPrev = m_aData[a].second;
+    AttractorData & data = m_appData.aData[a].first;
+    AttractorData & dataPrev = m_appData.aData[a].second;
 
     if (data.type != dataPrev.type)
     {

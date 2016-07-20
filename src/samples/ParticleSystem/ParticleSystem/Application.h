@@ -14,10 +14,6 @@
 #include "EventManager.h"
 
 struct GLFWwindow;
-typedef std::pair<EmitterData, EmitterData> eDataItem;
-typedef std::vector<eDataItem> eData;
-typedef std::pair<AttractorData, AttractorData> aDataItem;
-typedef std::vector<aDataItem> aData;
 
 class Application
 {
@@ -68,6 +64,10 @@ private:
 
 private:
 
+  //The GUI only modifies this data. After which, we can 
+  //go through and check if anything has changed. 
+  AppData                   m_appData;
+
   EventManager              m_eventManager;
   Dg::ParticleSystem<float> m_particleSystem;
 
@@ -76,8 +76,6 @@ private:
   APPINFO		                m_info;
   GLFWwindow*               m_window;
   Renderer                  m_renderer;
-
-  //float                     m_dt;
 
   double                    m_mouseSpeed;
   double                    m_mouseCurrentX;
@@ -91,12 +89,8 @@ private:
   double                    m_camZoom;
   double                    m_camZoomTarget;
 
-  eData                     m_eData;
-  aData                     m_aData;
   int                       m_attrFocus;
   bool                      m_camCanRotate;
-
-  ParSysOpts                m_parSysOpts[2];
 
   Dg::IDManager<int>        m_IDManager;
   bool                      m_shouldQuit;
