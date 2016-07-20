@@ -89,13 +89,15 @@ namespace Dg
   //	@	ObjectWrapper<T>::ObjectWrapper()
   //--------------------------------------------------------------------------------
   template<class T>
-  ObjectWrapper<T>::ObjectWrapper(T* t, bool dealloc)
+  ObjectWrapper<T>::ObjectWrapper(T* t, bool dealloc) : m_ptr(nullptr)
   {
-    m_ptr = t->Clone();
+    if (t != nullptr)
+    {
+      m_ptr = t->Clone();
 
-    if (dealloc)
-      delete t;
-
+      if (dealloc)
+        delete t;
+    }
   }	//End: ObjectWrapper:ObjectWrapper()
 
 
@@ -114,9 +116,12 @@ namespace Dg
   //	@	ObjectWrapper<T>::ObjectWrapper()
   //--------------------------------------------------------------------------------
   template<class T>
-  ObjectWrapper<T>::ObjectWrapper(const ObjectWrapper& other)
+  ObjectWrapper<T>::ObjectWrapper(const ObjectWrapper& other): m_ptr(nullptr)
   {
-    m_ptr = other.m_ptr->Clone();
+    if (other.m_ptr != nullptr)
+    {
+      m_ptr = other.m_ptr->Clone();
+    }
 
   }	//End: ObjectWrapper::ObjectWrapper()
 
@@ -128,11 +133,11 @@ namespace Dg
   ObjectWrapper<T>& ObjectWrapper<T>::operator=(const ObjectWrapper& other)
   {
     delete m_ptr;
+    m_ptr = nullptr;
 
     if (other.m_ptr != nullptr)
     {
-      T* temp_m_ptr(other.m_ptr->Clone());
-      m_ptr = temp_m_ptr;
+      m_ptr = (T*)other.m_ptr->Clone();
     }
 
     return *this;

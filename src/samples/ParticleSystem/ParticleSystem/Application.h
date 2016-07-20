@@ -5,11 +5,13 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <vector>
+#include <stack>
 
 #include "particle_system/DgParticleSystem.h"
 #include "Renderer.h"
 #include "Types.h"
 #include "DgIDManager.h"
+#include "EventManager.h"
 
 struct GLFWwindow;
 typedef std::pair<EmitterData, EmitterData> eDataItem;
@@ -30,7 +32,13 @@ public:
 
   void Run(Application*);
 
-  static double s_scrollOffset;
+  void PushEvent(Event const &);
+
+  static Application * GetInstance() { return s_app; }
+
+  bool LoadProject(std::string);
+  bool SaveProject(std::string);
+  void UpdateScroll(double);
 
 public:
   struct APPINFO
@@ -68,9 +76,8 @@ private:
 
 private:
 
+  EventManager              m_eventManager;
   Dg::ParticleSystem<float> m_particleSystem;
-
-private:
 
   char * const              m_configFileName = "config.ini";
 
@@ -105,9 +112,6 @@ private:
   char const *              m_projectPath = "./projects/";
   char const *              m_fileExt = "dgp";
 
-  std::string               m_loadFile;
-  std::string               m_saveFile;
-
   //Main initializer function. All others are called through here.
   bool Init();
 
@@ -118,14 +122,33 @@ private:
 
   void UpdateParSysAttr();
 
-  void HandleInput();
+  void HandleEvents();
   void DoLogic();
   void Render();
 
-  void BuildMainUI();
   std::vector<std::string> GetProjects();
-  bool LoadFile(std::string) { return true; }
-  bool SaveFile(std::string) { return true; }
+
+private:
+
+  //UI
+  enum Modal
+  {
+    SavePrompt,
+    OverwriteWindow,
+    SaveAsWindow,
+    OpenWindow,
+    None
+  };
+
+  std::stack<int>          m_windowStack;
+
+  void BuildMainUI();
+  void BuildMenu();
+  void HandleSavePrompt();
+  void HandleOverwrite();
+  void HandleSaving();
+  void HandleOpen();
+  
 
   void Shutdown();
 };

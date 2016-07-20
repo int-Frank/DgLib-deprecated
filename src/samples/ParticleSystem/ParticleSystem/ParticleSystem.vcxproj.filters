@@ -72,6 +72,12 @@
     <ClCompile Include="jsoncpp.cpp">
       <Filter>json</Filter>
     </ClCompile>
+    <ClCompile Include="EventManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Events.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UpdaterLife.h">
@@ -181,6 +187,12 @@
     </ClInclude>
     <ClInclude Include="UpdaterResetAccel.h">
       <Filter>Updaters</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Events.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -32,7 +32,7 @@
 
 #include "imgui/imgui.h"
 #include "imgui_impl_glfw_gl3.h"
-
+#include "Events.h"
 #include "UI.h"
 
 Application* Application::s_app(nullptr);
@@ -40,13 +40,17 @@ Application* Application::s_app(nullptr);
 typedef Dg::Matrix44<float> mat44;
 typedef Dg::Vector4<float>  vec4;
 
-double Application::s_scrollOffset;
-
 Application::Application() 
   : m_window(nullptr)
   , m_particleSystem(65536)
 {
   m_IDManager.Init(E_UpdaterGeneric_begin, E_UpdaterGeneric_end);
+  s_app = this;
+}
+
+void Application::PushEvent(Event const & a_event)
+{
+  m_eventManager.PushEvent(a_event);
 }
 
 bool Application::Init()
@@ -54,7 +58,7 @@ bool Application::Init()
   GetConfiguration();
 
   //Set options
-  m_parSysOpts.useUpdaterRelativeForce = false;
+  m_parSysOpts.useUpdaterRelativeForce = true;
   m_parSysOpts.useUpdaterColor = true;
   m_parSysOpts.useUpdaterSize = true;
   m_parSysOpts.useUpdaterResetAccel = true;
@@ -141,7 +145,6 @@ bool Application::InitGL()
 
 void Application::InitControls()
 {
-  s_scrollOffset = 0.0;
   m_mouseSpeed = 0.01;
   m_camRotZ = 0.0;
   m_camRotX = Dg::PI * 0.5;
@@ -158,9 +161,32 @@ void Application::Shutdown()
   m_renderer.ShutDown();
 }
 
-
-void Application::HandleInput()
+bool Application::LoadProject(std::string a_file)
 {
+  printf("%s loaded!\n", a_file.c_str());
+  return true;
+}
+
+bool Application::SaveProject(std::string a_file)
+{
+  printf("%s saved!\n", a_file.c_str());
+  return true;
+}
+
+void Application::UpdateScroll(double a_val)
+{
+  m_camZoomTarget -= a_val;
+  Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
+}
+
+void Application::HandleEvents()
+{
+  eObject e(nullptr);
+  while (m_eventManager.PollEvent(e))
+  {
+    e->DoEvent();
+  }
+
   int keyState = glfwGetKey(m_window, GLFW_KEY_ESCAPE);
   if (keyState == GLFW_PRESS)
   {
@@ -182,13 +208,7 @@ void Application::HandleInput()
       m_camRotX += (m_mouseCurrentY - m_mousePrevY) * m_mouseSpeed;
       Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
     }
-
-    //Handle mouse zoom
-    m_camZoomTarget -= s_scrollOffset;
-    Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
   }
-
-  s_scrollOffset = 0.0;
 }
 
 std::vector<std::string> Application::GetProjects()
@@ -270,6 +290,209 @@ static bool FileExists(std::string const & a_name)
   }
 }
 
+void Application::BuildMenu()
+{
+  if (ImGui::BeginMenuBar())
+  {
+    if (ImGui::BeginMenu("Menu"))
+    {
+      if (ImGui::MenuItem("New")) {}
+      if (ImGui::MenuItem("Open"))
+      {
+        m_windowStack.push(Modal::OpenWindow);
+        m_windowStack.push(Modal::SavePrompt);
+      }
+      if (ImGui::MenuItem("Save")) {}
+      if (ImGui::MenuItem("Save As.."))
+      {
+        m_windowStack.push(Modal::SaveAsWindow);
+      }
+      ImGui::Separator();
+      if (ImGui::MenuItem("Quit", "Esc")) { m_shouldQuit = true; }
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Options"))
+    {
+      ImGui::MenuItem("Example UI", NULL, &UI::showExampleWindow);
+      ImGui::Separator();
+      ImGui::MenuItem("Blending", NULL, &UI::showAlphaBlendingWindow);
+      ImGui::MenuItem("Metrics", NULL, &UI::showMetrics);
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Help"))
+    {
+      ImGui::MenuItem("About ImGui", NULL, &UI::showAbout);
+      ImGui::EndMenu();
+    }
+    ImGui::EndMenuBar();
+  }
+}
+
+void Application::HandleSavePrompt()
+{
+  if (!m_windowStack.empty() && m_windowStack.top() == Modal::SavePrompt)
+  {
+    ImGui::OpenPopup("Save current Project?");
+  }
+  if (ImGui::BeginPopupModal("Save current Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    bool finished = false;
+    if (ImGui::Button("Yes", ImVec2(80, 0)))
+    {
+      m_windowStack.pop();
+      m_windowStack.push(Modal::SaveAsWindow);
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("No", ImVec2(80, 0)))
+    {
+      m_windowStack.pop();
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
+}
+
+void Application::HandleSaving()
+{
+  static int save_currentItem = -1;
+  static int  save_lastItem = -2;
+  static char buf[128] = {};
+  static std::string finalFile;
+
+  if (!m_windowStack.empty() && m_windowStack.top() == Modal::OverwriteWindow)
+  {
+    ImGui::OpenPopup("Overwrite?");
+  }
+  if (ImGui::BeginPopupModal("Overwrite?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    ImGui::Text("File already exists. Overwrite?");
+    if (ImGui::Button("Yes", ImVec2(80, 0)))
+    {
+      //Save...
+      Event_SaveProject e;
+      e.SetFileName(finalFile);
+      m_eventManager.PushEvent(e);
+
+      //Reset
+      memset(buf, 0, sizeof(buf) / sizeof(char));
+      save_lastItem = -2;
+      save_currentItem = -1;
+      m_windowStack.pop();
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("No", ImVec2(80, 0)))
+    {
+      m_windowStack.pop();
+      m_windowStack.push(Modal::SaveAsWindow);
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
+
+  if (!m_windowStack.empty() && m_windowStack.top() == Modal::SaveAsWindow)
+  {
+    ImGui::OpenPopup("Save As..");
+  }
+  if (ImGui::BeginPopupModal("Save As..", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    std::vector<std::string> files = GetProjects();
+
+    CreateList(files, "Files", &save_currentItem);
+
+    if (save_currentItem != save_lastItem && save_currentItem >= 0)
+    {
+      strcpy_s(buf, 128, files[save_currentItem].data());
+      save_lastItem = save_currentItem;
+    }
+    ImGui::InputText("File name", buf, 128);
+
+    bool shouldClose = false;
+    bool shouldReset = true;
+    if (ImGui::Button("Save", ImVec2(120, 0)))
+    {
+      finalFile = std::string(m_projectPath) + std::string(buf);
+      std::string dotExt = std::string(".") + std::string(m_fileExt);
+      if (finalFile.rfind(dotExt) != finalFile.size() - 4)
+      {
+        finalFile += dotExt;
+      }
+      m_windowStack.pop();
+      shouldClose = true;
+      if (FileExists(finalFile))
+      {
+        m_windowStack.push(Modal::OverwriteWindow);
+        shouldReset = false;
+      }
+      else
+      {
+        //Save...
+        Event_SaveProject e;
+        e.SetFileName(finalFile);
+        m_eventManager.PushEvent(e);
+      }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Close", ImVec2(120, 0)))
+    {
+      m_windowStack.pop();
+      shouldClose = true;
+    }
+
+    if (shouldClose)
+    {
+      if (shouldReset)
+      {
+        memset(buf, 0, sizeof(buf) / sizeof(char));
+        save_lastItem = -2;
+        save_currentItem = -1;
+      }
+
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
+}
+
+void Application::HandleOpen()
+{
+  if (!m_windowStack.empty() && m_windowStack.top() == Modal::OpenWindow)
+  {
+    ImGui::OpenPopup("Open file");
+  }
+  if (ImGui::BeginPopupModal("Open file", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    std::vector<std::string> files = GetProjects();
+    static int open_currentItem = -1;
+    CreateList(files, "Files", &open_currentItem);
+
+    bool finished = false;
+    if (ImGui::Button("Open", ImVec2(120, 0)))
+    {
+      if (open_currentItem != -1)
+      {
+        Event_LoadProject e;
+        e.SetFileName(m_projectPath + files[open_currentItem]);
+        m_eventManager.PushEvent(e);
+      }
+      finished = true;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel", ImVec2(120, 0)))
+    {
+      finished = true;
+    }
+    if (finished)
+    {
+      open_currentItem = -1;
+      m_windowStack.pop();
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
+}
+
 void Application::BuildMainUI()
 {
   ImVec4 headingClr(1.0f, 0.0f, 1.0f, 1.0f);
@@ -287,183 +510,12 @@ void Application::BuildMainUI()
   char const * posFormats[3] = { "x = %.2f", "y = %.2f", "z = %.2f" };
   float powers3[3] = { 1.0f, 1.0f, 1.0f };
 
-  static bool show_app_about = false;
-
   ImGui::Begin("Partice System");
 
-  // Menu
-  enum Modal
-  {
-    SavePrompt,
-    SaveAsWindow,
-    OpenWindow,
-    None
-  };
-  static std::stack<int> windowStack;
-  if (ImGui::BeginMenuBar())
-  {
-    if (ImGui::BeginMenu("Menu"))
-    {
-      if (ImGui::MenuItem("New")) {}
-      if (ImGui::MenuItem("Open")) 
-      {
-        windowStack.push(Modal::OpenWindow);
-        windowStack.push(Modal::SavePrompt);
-      }
-      if (ImGui::MenuItem("Save")) {}
-      if (ImGui::MenuItem("Save As..")) 
-      { 
-        windowStack.push(Modal::SaveAsWindow); 
-      }
-      ImGui::Separator();
-      if (ImGui::MenuItem("Quit", "Esc")) { m_shouldQuit = true; }
-      ImGui::EndMenu();
-    }
-    if (ImGui::BeginMenu("Options"))
-    {
-      ImGui::MenuItem("Example UI", NULL, &UI::showExampleWindow);
-      ImGui::Separator();
-      ImGui::MenuItem("Blending", NULL, &UI::showAlphaBlendingWindow);
-      ImGui::MenuItem("Metrics", NULL, &UI::showMetrics);
-      ImGui::EndMenu();
-    }
-    if (ImGui::BeginMenu("Help"))
-    {
-      ImGui::MenuItem("About ImGui", NULL, &show_app_about);
-      ImGui::EndMenu();
-    }
-    ImGui::EndMenuBar();
-  }
-
-  if (!windowStack.empty() && windowStack.top() == Modal::SavePrompt )
-  {
-    ImGui::OpenPopup("Save current Project?");
-  }
-  if (ImGui::BeginPopupModal("Save current Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-  {
-    bool finished = false;
-    if (ImGui::Button("Yes", ImVec2(80, 0)))
-    {
-      windowStack.pop();
-      windowStack.push(Modal::SaveAsWindow);
-      finished = true;
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("No", ImVec2(80, 0)))
-    {
-      windowStack.pop();
-      finished = true;
-    }
-    if (finished)
-    {
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::EndPopup();
-  }
-
-  if (!windowStack.empty() && windowStack.top() == Modal::SaveAsWindow)
-  {
-    ImGui::OpenPopup("Save As..");
-  }
-  if (ImGui::BeginPopupModal("Save As..", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-  {
-    std::vector<std::string> files = GetProjects();
-    static int save_currentItem = -1;
-    static int  save_lastItem = -2;
-    CreateList(files, "Files", &save_currentItem);
-
-    static char buf[128] = {};
-
-    if (save_lastItem != save_currentItem && save_currentItem >= 0)
-    {
-      strcpy_s(buf, 128, files[save_currentItem].data());
-      save_lastItem = save_currentItem;
-    }
-    ImGui::InputText("File name", buf, 128);
-
-    std::string finalFile = std::string(m_projectPath) + std::string(buf);
-    bool doSave = false;
-    if (ImGui::Button("Save", ImVec2(120, 0)))
-    {
-      if (FileExists(finalFile))
-      {
-        ImGui::OpenPopup("Overwrite?");
-      }
-      else
-      {
-        doSave = true;
-      }
-    }
-
-    if (!doSave && ImGui::BeginPopupModal("Overwrite?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-      char owText[256] = {};
-      sprintf_s(owText, 256, "'%s' exists. Overwrite?", buf);
-      ImGui::Text(owText);
-      if (ImGui::Button("Yes", ImVec2(80, 0)))
-      {
-        doSave = true;
-        ImGui::CloseCurrentPopup();
-      }
-      ImGui::SameLine();
-      if (ImGui::Button("No", ImVec2(80, 0)))
-      {
-        ImGui::CloseCurrentPopup();
-      }
-      ImGui::EndPopup();
-    }
-
-    if (doSave)
-    {
-      //Save...
-
-      //Reset
-      memset(buf, 0, sizeof(buf) / sizeof(char));
-      save_lastItem = -2;
-      save_currentItem = -1;
-    }
-
-    ImGui::SameLine();
-    if (ImGui::Button("Close", ImVec2(120, 0)) || doSave)
-    {
-      windowStack.pop();
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::EndPopup();
-  }
-
-  if (!windowStack.empty() && windowStack.top() == Modal::OpenWindow)
-  {
-    ImGui::OpenPopup("Open file");
-  }
-  if (ImGui::BeginPopupModal("Open file", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-  {
-    std::vector<std::string> files = GetProjects();
-    static int open_currentItem = -1;
-    CreateList(files, "Files", &open_currentItem);
-
-    bool finished = false;
-    if (ImGui::Button("Open", ImVec2(120, 0)))
-    {
-      if (open_currentItem != -1)
-      {
-        m_loadFile = files[open_currentItem];
-      }
-      finished = true;
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Cancel", ImVec2(120, 0)))
-    {
-      finished = true;
-    }
-    if (finished)
-    {
-      open_currentItem = -1;
-      windowStack.pop();
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::EndPopup();
-  }
+  BuildMenu();
+  HandleSavePrompt();
+  HandleSaving();
+  HandleOpen();
 
   if (ImGui::CollapsingHeader("Particle system options"))
   {
@@ -565,23 +617,32 @@ void Application::BuildMainUI()
         ImGui::PopItemWidth();
       }
 
-      //ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
-      //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
-      //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-      //ImGui::Button("Drag Me", ImVec2(100.0f, 100.0f));
-      //ImGui::PopStyleColor(3);
-      //if (ImGui::IsItemActive())
-      //{
-      //  // Draw a line between the button and the mouse cursor
-      //  ImDrawList* draw_list = ImGui::GetWindowDrawList();
-      //  draw_list->PushClipRectFullScreen();
-      //  draw_list->AddLine(ImGui::CalcItemRectClosestPoint(ImGui::GetIO().MousePos, true, -2.0f), ImGui::GetIO().MousePos, ImColor(ImGui::GetStyle().Colors[ImGuiCol_Button]), 4.0f);
-      //  draw_list->PopClipRect();
-      //  ImVec2 value_raw = ImGui::GetMouseDragDelta(0, 0.0f);
-      //  ImVec2 value_with_lock_threshold = ImGui::GetMouseDragDelta(0);
-      //  ImVec2 mouse_delta = ImGui::GetIO().MouseDelta;
-      //  ImGui::SameLine(); ImGui::Text("Raw (%.1f, %.1f), WithLockThresold (%.1f, %.1f), MouseDelta (%.1f, %.1f)", value_raw.x, value_raw.y, value_with_lock_threshold.x, value_with_lock_threshold.y, mouse_delta.x, mouse_delta.y);
-      //}
+      /*if (UI::showEmitterPlacer)
+      {
+        ImGui::Begin("Place Emitter"); ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.6f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.6f));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+        ImGui::Button("Drag Me", ImVec2(100.0f, 100.0f));
+        ImGui::PopStyleVar();
+        ImGui::PopStyleColor(3);
+        if (ImGui::IsItemActive())
+        {
+          ImVec2 rect_min = ImGui::GetItemRectMin();
+          ImVec2 rect_max = ImGui::GetItemRectMax();
+
+          ImVec2 relPos;
+          relPos.x = (ImGui::GetIO().MousePos.x - rect_min.x) / (rect_max.x / rect_min.x);
+          relPos.y = (ImGui::GetIO().MousePos.y - rect_min.y) / (rect_max.y / rect_min.y);
+
+          ImGui::Text("Rel pos (%.1f, %.1f)", relPos.x, relPos.y);
+        }
+        if (ImGui::Button("Close"))
+        {
+          UI::showEmitterPlacer = false;
+        }
+        ImGui::End();
+      }*/
 
 
       if (curEmData.posGenMethod == E_GenPosBox)
@@ -742,12 +803,6 @@ void Application::DoLogic()
   //Get user input
   BuildMainUI();
 
-  if (!m_loadFile.empty())
-  {
-    LoadFile(m_loadFile);
-    m_loadFile.clear();
-  }
-
   //Update particle system
   UpdateParSysAttr();
   m_particleSystem.Update(m_dt);
@@ -877,7 +932,9 @@ void Application::Render()
 
 void AppOnMouseScroll(double yOffset)
 {
-  Application::s_scrollOffset += yOffset;
+  Event_MouseScroll e;
+  e.SetOffset(yOffset);
+  Application::GetInstance()->PushEvent(e);
 }
 
 void Application::GetConfiguration()
@@ -1002,7 +1059,7 @@ void Application::Run(Application* the_app)
     m_dt = static_cast<float>(thisTick - lastTick);
     lastTick = thisTick;
 
-    HandleInput();
+    HandleEvents();
     DoLogic();
     Render();
 
