@@ -99,6 +99,33 @@ public:
 
 };
 
+class Event_DeleteFile : public Event
+{
+public:
+  Event_DeleteFile() : Event() {}
+  ~Event_DeleteFile() {}
+
+  Event_DeleteFile(Event_DeleteFile const & a_other)
+    : Event(a_other)
+    , m_fileName(a_other.m_fileName)
+  {}
+
+  Event_DeleteFile & operator=(Event_DeleteFile const & a_other)
+  {
+    Event::operator = (a_other);
+    m_fileName = a_other.m_fileName;
+  }
+
+  void DoEvent();
+  void SetFileName(std::string const & a_file) { m_fileName = a_file; }
+  std::string GetFileName() const { return m_fileName; }
+
+  Event_DeleteFile * Clone() const { return new Event_DeleteFile(*this); }
+
+private:
+  std::string       m_fileName;
+};
+
 class Event_MouseScroll : public Event
 {
 public:

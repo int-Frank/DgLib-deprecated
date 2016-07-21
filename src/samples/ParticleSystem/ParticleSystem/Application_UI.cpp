@@ -14,9 +14,9 @@ static void CreateSpacing(int a_n)
   for (int i = 0; i < a_n; ++i) { ImGui::Spacing(); }
 }
 
-static void CreateList(std::vector<std::string> const & a_items
-  , char const * a_name
-  , int * a_currentItem)
+void Application::CreateFileList(std::vector<std::string> const & a_items
+                               , char const * a_name
+                               , int * a_currentItem)
 {
   if (a_items.size() == 0)
   {
@@ -36,6 +36,20 @@ static void CreateList(std::vector<std::string> const & a_items
       *a_currentItem = -1;
     }
     ImGui::ListBox(a_name, a_currentItem, (char const **)pItems, (int)a_items.size(), 5);
+
+    if (ImGui::BeginPopupContextItem("item context menu"))
+    {
+      if (ImGui::Selectable("Delete selected"))
+      {
+        if (*a_currentItem >= 0)
+        {
+          Event_DeleteFile e;
+          e.SetFileName(m_projectPath + a_items[*a_currentItem]);
+          PushEvent(e);
+        }
+      }
+      ImGui::EndPopup();
+    }
     for (int i = 0; i < a_items.size(); ++i)
     {
       delete[] pItems[i];
@@ -211,7 +225,7 @@ void Application::ShowMainGUIWindow()
   {
     std::vector<std::string> files = GetProjects();
 
-    CreateList(files, "Files", &save_currentItem);
+    CreateFileList(files, "Files", &save_currentItem);
 
     if (save_currentItem != save_lastItem && save_currentItem >= 0)
     {
@@ -278,7 +292,7 @@ void Application::ShowMainGUIWindow()
   if (ImGui::BeginPopupModal("Open file", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
     std::vector<std::string> files = GetProjects();
-    CreateList(files, "Files", &open_currentItem);
+    CreateFileList(files, "Files", &open_currentItem);
 
     bool finished = false;
     if (ImGui::Button("Open", ImVec2(120, 0)))

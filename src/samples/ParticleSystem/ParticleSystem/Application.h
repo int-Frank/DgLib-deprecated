@@ -117,6 +117,9 @@ private:
   void InitParticleSystem();
   int  AddEmitter();
   int  AddAttractor();
+  void CreateFileList(std::vector<std::string> const &
+                    , char const *
+                    , int *);
 
   void UpdateParSysAttr();
 
