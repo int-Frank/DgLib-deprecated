@@ -166,22 +166,14 @@ void Application::Shutdown()
   m_renderer.ShutDown();
 }
 
-bool Application::LoadProject(std::string a_file)
-{
-  printf("%s loaded!\n", a_file.c_str());
-  return true;
-}
-
-bool Application::SaveProject(std::string a_file)
-{
-  printf("%s saved!\n", a_file.c_str());
-  return true;
-}
 
 void Application::UpdateScroll(double a_val)
 {
-  m_camZoomTarget -= a_val;
-  Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
+  if (!ImGui::GetIO().WantCaptureMouse)
+  {
+    m_camZoomTarget -= a_val;
+    Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
+  }
 }
 
 void Application::HandleEvents()
@@ -214,7 +206,7 @@ std::vector<std::string> Application::GetProjects()
   std::vector<std::string> result;
   WIN32_FIND_DATA ffd;
   HANDLE hFind = INVALID_HANDLE_VALUE;
-  std::string szDir = std::string(m_projectPath) + "*";
+  std::string szDir = m_projectPath + "*";
 
   hFind = FindFirstFile(szDir.c_str(), &ffd);
 
@@ -229,7 +221,7 @@ std::vector<std::string> Application::GetProjects()
     {
       size_t pos = PathFindExtension(ffd.cFileName) - &ffd.cFileName[0];
       std::string ext = (std::string(ffd.cFileName).substr(pos + 1));
-      if (ext == std::string(m_fileExt))
+      if (ext == m_fileExt)
       {
         result.push_back(ffd.cFileName);
       }
@@ -294,23 +286,23 @@ void Application::Render()
 
   float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
 
-  LineRenderData * lineRenderData = new LineRenderData[m_appData.aData.size()];
+  LineRenderData * lineRenderData = new LineRenderData[m_projData.aData.size()];
   int nShowAttr = 0;
-  for (int i = 0; i < m_appData.aData.size(); ++i)
+  for (int i = 0; i < m_projData.aData.size(); ++i)
   {
-    if (m_appData.aData[i].first.show)
+    if (m_projData.aData[i].first.show)
     {
-      lineRenderData[nShowAttr].model = m_appData.aData[i].first.type;
+      lineRenderData[nShowAttr].model = m_projData.aData[i].first.type;
       Dg::Vector4<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
       Dg::Vector4<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
       lineRenderData[nShowAttr].col = (i == m_attrFocus) ? lineColFocus : lineCol;
-      switch (m_appData.aData[i].first.type)
+      switch (m_projData.aData[i].first.type)
       {
       case E_AttGlobal:
       {
         lineRenderData[nShowAttr].mat.Rotation(0.0f
-                                 , m_appData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                                 , m_appData.aData[i].first.transform[3]
+                                 , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                                 , m_projData.aData[i].first.transform[3]
                                  , Dg::EulerOrder::XYZ);
         break;
       }
@@ -318,9 +310,9 @@ void Application::Render()
       {
         lineRenderData[nShowAttr].mat.Translation
         (
-          Dg::Vector4<float>(m_appData.aData[i].first.transform[0]
-                           , m_appData.aData[i].first.transform[1]
-                           , m_appData.aData[i].first.transform[2]
+          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
+                           , m_projData.aData[i].first.transform[1]
+                           , m_projData.aData[i].first.transform[2]
                            , 0.0f)
         );
         break;
@@ -330,15 +322,15 @@ void Application::Render()
         mat44 trans, rot;
         trans.Translation
         (
-          Dg::Vector4<float>(m_appData.aData[i].first.transform[0]
-                           , m_appData.aData[i].first.transform[1]
-                           , m_appData.aData[i].first.transform[2]
+          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
+                           , m_projData.aData[i].first.transform[1]
+                           , m_projData.aData[i].first.transform[2]
                            , 0.0f)
         );
 
         rot.Rotation(0.0f
-                   , m_appData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                   , m_appData.aData[i].first.transform[3]
+                   , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                   , m_projData.aData[i].first.transform[3]
                    , Dg::EulerOrder::XYZ);
         lineRenderData[nShowAttr].mat = rot * trans;
         break;
@@ -348,15 +340,15 @@ void Application::Render()
         mat44 trans, rot;
         trans.Translation
         (
-          Dg::Vector4<float>(m_appData.aData[i].first.transform[0]
-                           , m_appData.aData[i].first.transform[1]
-                           , m_appData.aData[i].first.transform[2]
+          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
+                           , m_projData.aData[i].first.transform[1]
+                           , m_projData.aData[i].first.transform[2]
                            , 0.0f)
         );
 
         rot.Rotation(0.0f
-                   , m_appData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                   , m_appData.aData[i].first.transform[3]
+                   , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+                   , m_projData.aData[i].first.transform[3]
                    , Dg::EulerOrder::XYZ);
         lineRenderData[nShowAttr].mat = rot * trans;
         break;
@@ -459,6 +451,72 @@ void Application::GetConfiguration()
   }
 }
 
+void Application::UI_NewFrame()
+{
+  glfwPollEvents();
+  ImGui_ImplGlfwGL3_NewFrame();
+
+  int winWidth(0), winHeight(0);
+  glfwGetWindowSize(m_window, &winWidth, &winHeight);
+
+  //Main window
+  {
+    float indent = 5.0f;
+    float width = (float)winWidth / 4.0f;
+    float height = (float)winHeight - (2.0f * indent);
+    Dg::ClampNumber(400.0f, 600.0f, width);
+    if (height < 100.0f) height = 100.0f;
+
+    ImGui::SetNextWindowSize(ImVec2(width, height));
+    ImGui::SetNextWindowPos(ImVec2(indent, indent));
+    ImGui::Begin("Partice System", nullptr
+              , ImGuiWindowFlags_MenuBar 
+                | ImGuiWindowFlags_NoResize 
+                | ImGuiWindowFlags_NoMove 
+                | ImGuiWindowFlags_NoCollapse 
+                | ImGuiWindowFlags_NoSavedSettings
+                | ImGuiWindowFlags_NoTitleBar);
+    ImGui::End();
+  }
+
+  //Title window
+  {
+    float indent = 5.0f;
+    ImGui::Begin("##Title", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Text(((m_projData.name == "") ? "New Project" : m_projData.name.c_str()));
+
+    //ImGuiID id = ImGui::GetID("##Title");
+    ImVec2 size = ImGui::GetItemRectSize();
+    ImGui::SetWindowPos(ImVec2(((float)winWidth - size.x) / 2.0f, indent));
+    ImGui::End();
+  }
+
+  //FPS
+  if (UI::showMetrics)
+  {
+    float width = 170.0f;
+    float height = 70.0f;
+    float indent = 5.0f;
+
+    ImGui::SetNextWindowSize(ImVec2(width, height));
+    ImGui::SetNextWindowPos(ImVec2((float)winWidth - width - indent, indent));
+    ImGui::Begin("Stats", nullptr
+               , ImGuiWindowFlags_NoResize
+               | ImGuiWindowFlags_NoMove
+               | ImGuiWindowFlags_NoCollapse
+               | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
+    ImGui::End();
+  }
+
+  //Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
+  if (UI::showExampleWindow)
+  {
+    ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+    ImGui::ShowTestWindow(&UI::showExampleWindow);
+  }
+}
+
 void Application::Run(Application* the_app)
 {
   s_app = the_app;
@@ -473,35 +531,12 @@ void Application::Run(Application* the_app)
 
   do
   {
-	  glfwPollEvents();
-	  ImGui_ImplGlfwGL3_NewFrame();
-
-    //Main window
-	  {
-      ImGui::Begin("Partice System", nullptr, ImGuiWindowFlags_MenuBar);
-      ImGui::End();
-    }
-
-    //FPS
-    if (UI::showMetrics)
-    {
-      ImGui::Begin("Stats");
-      ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
-      ImGui::End();
-    }
-
-    //Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-    if (UI::showExampleWindow)
-    {
-      ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-      ImGui::ShowTestWindow(&UI::showExampleWindow);
-    }
-
     double thisTick = glfwGetTime();
 	  double diff = thisTick - lastTick;
     double dt = static_cast<float>(thisTick - lastTick);
     lastTick = thisTick;
 
+    UI_NewFrame();
     HandleEvents();
     DoLogic(dt);
     Render();

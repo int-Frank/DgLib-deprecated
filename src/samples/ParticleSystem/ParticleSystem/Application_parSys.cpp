@@ -55,7 +55,7 @@ void Application::InitParticleSystem()
   m_particleSystem.AddUpdater(E_UpdaterZeroAccel, new UpdaterResetAccel<float>());
 
   m_particleSystem.AddUpdater(E_UpdaterEuler, new UpdaterEuler<float>());
-  if (m_appData.parSysOpts[0].useUpdaterRelativeForce)
+  if (m_projData.parSysOpts[0].useUpdaterRelativeForce)
   {
     m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
   }
@@ -63,22 +63,22 @@ void Application::InitParticleSystem()
   m_particleSystem.AddUpdater(E_UpdaterSize, new UpdaterSize<float>());
 
   //copy current emitter data for ui callback checking
-  for (int i = 0; i < m_appData.eData.size(); ++i)
+  for (int i = 0; i < m_projData.eData.size(); ++i)
   {
-    memcpy(&m_appData.eData[i].second, &m_appData.eData[i].first, sizeof(EmitterData));
+    memcpy(&m_projData.eData[i].second, &m_projData.eData[i].first, sizeof(EmitterData));
   }
-  for (int i = 0; i < m_appData.aData.size(); ++i)
+  for (int i = 0; i < m_projData.aData.size(); ++i)
   {
-    memcpy(&m_appData.aData[i].second, &m_appData.aData[i].first, sizeof(AttractorData));
+    memcpy(&m_projData.aData[i].second, &m_projData.aData[i].first, sizeof(AttractorData));
   }
 }
 
 void Application::UpdateParSysAttr()
 {
   // Update particle system updaters
-  if (m_appData.parSysOpts[0].useUpdaterRelativeForce != m_appData.parSysOpts[1].useUpdaterRelativeForce)
+  if (m_projData.parSysOpts[0].useUpdaterRelativeForce != m_projData.parSysOpts[1].useUpdaterRelativeForce)
   {
-    if (!m_appData.parSysOpts[0].useUpdaterRelativeForce)
+    if (!m_projData.parSysOpts[0].useUpdaterRelativeForce)
     {
       m_particleSystem.RemoveUpdater(E_UpdaterRelativeForce);
     }
@@ -86,17 +86,17 @@ void Application::UpdateParSysAttr()
     {
       m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
     }
-    m_appData.parSysOpts[1].useUpdaterRelativeForce = m_appData.parSysOpts[0].useUpdaterRelativeForce;
+    m_projData.parSysOpts[1].useUpdaterRelativeForce = m_projData.parSysOpts[0].useUpdaterRelativeForce;
   }
 
 
-  for (int e = 0; e < m_appData.eData.size(); ++e)
+  for (int e = 0; e < m_projData.eData.size(); ++e)
   {
     //We just do a dumb check to see if any of the data has changed,
     //and just remove the emitter and build a new one with the new data,
     //but it's very slow; there are noticable delays.
-    EmitterData & data = m_appData.eData[e].first;
-    EmitterData & dataPrev = m_appData.eData[e].second;
+    EmitterData & data = m_projData.eData[e].first;
+    EmitterData & dataPrev = m_projData.eData[e].second;
     int id = data.ID;
 
     if (data.type != dataPrev.type)
@@ -292,10 +292,10 @@ void Application::UpdateParSysAttr()
   }
 
   //Attractors
-  for (int a = 0; a < m_appData.aData.size(); ++a)
+  for (int a = 0; a < m_projData.aData.size(); ++a)
   {
-    AttractorData & data = m_appData.aData[a].first;
-    AttractorData & dataPrev = m_appData.aData[a].second;
+    AttractorData & data = m_projData.aData[a].first;
+    AttractorData & dataPrev = m_projData.aData[a].second;
 
     if (data.type != dataPrev.type)
     {

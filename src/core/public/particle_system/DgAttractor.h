@@ -156,7 +156,7 @@ namespace Dg
     {
       v = GetRandomVector<Real>();
     }
-    return v / dist * m_strength;
+    return v / dist * ((m_strength <= m_maxAppliedAccel) ? m_strength : m_maxAppliedAccel);
   }
 
   template<typename Real>

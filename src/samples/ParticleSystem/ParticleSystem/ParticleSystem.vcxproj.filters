@@ -81,6 +81,9 @@
     <ClCompile Include="Application_parSys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Application_io.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UpdaterLife.h">

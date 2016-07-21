@@ -73,7 +73,7 @@ private:
   //  - Killing Emitters / Attractors (kills them directly)
   //  - 'Quit' menu item modifies m_shouldQuit direcly
   //  - anything from the UI namespace
-  AppData                   m_appData;
+  ProjectData               m_projData;
 
   EventManager              m_eventManager;
   Dg::ParticleSystem<float> m_particleSystem;
@@ -102,8 +102,8 @@ private:
   Dg::IDManager<int>        m_IDManager;
   bool                      m_shouldQuit;
 
-  char const *              m_projectPath = "./projects/";
-  char const *              m_fileExt = "dgp";
+  std::string const         m_projectPath = "./projects/";
+  std::string const         m_fileExt = "dgp";
 
   //Main initializer function. All others are called through here.
   bool Init();
@@ -115,6 +115,7 @@ private:
 
   void UpdateParSysAttr();
 
+  void UI_NewFrame();
   void HandleEvents();
   void DoLogic(double dt);
   void Render();

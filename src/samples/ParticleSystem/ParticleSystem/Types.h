@@ -146,8 +146,10 @@ public:
   bool  useUpdaterSize;
 };
 
-struct AppData
+struct ProjectData
 {
+  std::string   name;
+
   EData         eData;
   AData         aData;
   ParSysOpts    parSysOpts[2];

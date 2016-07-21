@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application_io.cpp" />
     <ClCompile Include="Application_main.cpp" />
     <ClCompile Include="Application_parSys.cpp" />
     <ClCompile Include="Application_UI.cpp" />

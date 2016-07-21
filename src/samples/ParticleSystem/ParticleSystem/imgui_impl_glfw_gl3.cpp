@@ -344,6 +344,9 @@ bool    ImGui_ImplGlfwGL3_Init(GLFWwindow* window, bool install_callbacks)
         glfwSetCharCallback(window, ImGui_ImplGlfwGL3_CharCallback);
     }
 
+    //Set default styling
+    ImGui::GetStyle().WindowRounding =5.0f;
+
     return true;
 }
 
