@@ -34,6 +34,7 @@ public:
 
   bool LoadProject(std::string);
   bool SaveProject(std::string);
+  void NewProject();
   void UpdateScroll(double);
   void KeyEvent(int, int);
 
@@ -96,7 +97,9 @@ private:
   double                    m_camZoom;
   double                    m_camZoomTarget;
 
-  int                       m_attrFocus;
+  int                       m_focusAttr;
+  int                       m_focusEmitter;
+
   bool                      m_camCanRotate;
 
   Dg::IDManager<int>        m_IDManager;
@@ -110,8 +113,10 @@ private:
 
   void GetConfiguration();
   bool InitGL();
-  void InitControls();
+  void ResetCamera();
   void InitParticleSystem();
+  int  AddEmitter();
+  int  AddAttractor();
 
   void UpdateParSysAttr();
 

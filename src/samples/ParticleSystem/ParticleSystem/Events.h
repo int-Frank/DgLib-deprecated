@@ -79,6 +79,26 @@ private:
   std::string       m_fileName;
 };
 
+class Event_NewProject : public Event
+{
+public:
+  Event_NewProject() : Event() {}
+  ~Event_NewProject() {}
+
+  Event_NewProject(Event_NewProject const & a_other)
+    : Event(a_other)
+  {}
+
+  Event_NewProject & operator=(Event_NewProject const & a_other)
+  {
+    Event::operator = (a_other);
+  }
+
+  void DoEvent();
+  Event_NewProject * Clone() const { return new Event_NewProject(*this); }
+
+};
+
 class Event_MouseScroll : public Event
 {
 public:

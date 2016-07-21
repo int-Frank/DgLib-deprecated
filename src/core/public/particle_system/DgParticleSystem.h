@@ -49,6 +49,7 @@ namespace Dg
     ParticleData<Real> * GetParticleData() { return &m_particleData; }
 
     void Update(Real dt);
+    void Clear();
 
   private:
     Dg::map<ParMapKey, ObjectWrapper<ParticleEmitter<Real>>>   m_emitters;
@@ -187,6 +188,14 @@ namespace Dg
     {
       m_emitters[i]->Stop();
     }
+  }
+
+  template<typename Real>
+  void ParticleSystem<Real>::Clear()
+  {
+    m_emitters.clear();
+    m_updaters.clear();
+    m_particleData.KillAll();
   }
 
   template<typename Real>

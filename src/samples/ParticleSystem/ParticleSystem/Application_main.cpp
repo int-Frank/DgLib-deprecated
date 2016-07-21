@@ -17,6 +17,8 @@
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
 #include "Events.h"
+#include "EmitterFactory.h"
+#include "AttractorFactory.h"
 
 #include "imgui/imgui.h"
 #include "imgui_impl_glfw_gl3.h"
@@ -69,7 +71,8 @@ bool Application::Init()
   GetConfiguration();
 
   //Set options
-  m_attrFocus = -1;
+  m_focusAttr = -1;
+  m_focusEmitter = -1;
   m_shouldQuit = false;
   m_camCanRotate = false;
 
@@ -78,11 +81,9 @@ bool Application::Init()
     return false;
   }
 
-  InitControls();
-  InitParticleSystem();
   m_renderer.Init(m_particleSystem.GetParticleData());
   ImGui_ImplGlfwGL3_Init(m_window, true);
-
+  NewProject();
   return true;
 }
 
@@ -148,7 +149,7 @@ bool Application::InitGL()
 }
 
 
-void Application::InitControls()
+void Application::ResetCamera()
 {
   m_mouseSpeed = 0.01;
   m_camRotZ = 0.0;
@@ -295,7 +296,7 @@ void Application::Render()
       lineRenderData[nShowAttr].model = m_projData.aData[i].first.type;
       Dg::Vector4<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
       Dg::Vector4<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
-      lineRenderData[nShowAttr].col = (i == m_attrFocus) ? lineColFocus : lineCol;
+      lineRenderData[nShowAttr].col = (i == m_focusAttr) ? lineColFocus : lineCol;
       switch (m_projData.aData[i].first.type)
       {
       case E_AttGlobal:
@@ -451,6 +452,49 @@ void Application::GetConfiguration()
   }
 }
 
+int Application::AddEmitter()
+{
+  EmitterData data;
+  data.ID = m_IDManager.GetID();
+  EDataItem item(data, data);
+  m_projData.eData.push_back(item);
+
+  EmitterFactory eFact;
+  m_particleSystem.AddEmitter(data.ID, eFact(data));
+  m_focusEmitter = (int)m_projData.eData.size() - 1;
+  return data.ID;
+}
+
+
+int Application::AddAttractor()
+{
+  AttractorData data;
+  data.ID = m_IDManager.GetID();
+  ADataItem item(data, data);
+  m_projData.aData.push_back(item);
+
+  AttractorFactory aFact;
+  m_particleSystem.AddUpdater(data.ID, aFact(data));
+  m_focusAttr = (int)m_projData.aData.size() - 1;
+  return data.ID;
+}
+
+
+void Application::NewProject()
+{
+  ResetCamera();
+  m_projData.name.clear();
+  m_projData.eData.clear();
+  m_projData.aData.clear();
+  m_projData.parSysOpts[0] = ParSysOpts();
+  m_projData.parSysOpts[1] = ParSysOpts();
+  m_particleSystem.Clear();
+  InitParticleSystem();
+
+  //Add a default emitter
+  AddEmitter();
+}
+
 void Application::UI_NewFrame()
 {
   glfwPollEvents();
@@ -462,8 +506,9 @@ void Application::UI_NewFrame()
   //Main window
   {
     float indent = 5.0f;
+    float indentBottom = 20.0f;
     float width = (float)winWidth / 4.0f;
-    float height = (float)winHeight - (2.0f * indent);
+    float height = (float)winHeight - indent - indentBottom;
     Dg::ClampNumber(400.0f, 600.0f, width);
     if (height < 100.0f) height = 100.0f;
 
@@ -482,7 +527,13 @@ void Application::UI_NewFrame()
   //Title window
   {
     float indent = 5.0f;
-    ImGui::Begin("##Title", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Begin("##Title", nullptr
+      , ImGuiWindowFlags_NoTitleBar 
+      | ImGuiWindowFlags_NoResize 
+      | ImGuiWindowFlags_AlwaysAutoResize
+      | ImGuiWindowFlags_NoMove
+      | ImGuiWindowFlags_NoCollapse
+      | ImGuiWindowFlags_NoSavedSettings);
     ImGui::Text(((m_projData.name == "") ? "New Project" : m_projData.name.c_str()));
 
     //ImGuiID id = ImGui::GetID("##Title");

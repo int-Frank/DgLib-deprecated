@@ -61,6 +61,7 @@ namespace Dg
     bool HasUnusedParticles() const { return m_countAlive < m_countMax; }
 
     int Kill(int);
+    void KillAll();
 
     //New particles are always added to the end of the list;
     bool Wake(int &);
@@ -123,6 +124,12 @@ namespace Dg
     }
 
     return m_countAlive;
+  }
+
+  template<typename Real>
+  void ParticleData<Real>::KillAll()
+  {
+    m_countAlive = 0;
   }
 
   template<typename Real>

@@ -20,3 +20,8 @@ void Event_KeyEvent::DoEvent()
 {
   Application::GetInstance()->KeyEvent(m_key, m_action);
 }
+
+void Event_NewProject::DoEvent()
+{
+  Application::GetInstance()->NewProject();
+}
