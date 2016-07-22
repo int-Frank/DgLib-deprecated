@@ -479,8 +479,7 @@ int Application::AddAttractor()
   return data.ID;
 }
 
-
-void Application::NewProject()
+void Application::ClearProject()
 {
   ResetCamera();
   m_projData.name.clear();
@@ -489,9 +488,12 @@ void Application::NewProject()
   m_projData.parSysOpts[0] = ParSysOpts();
   m_projData.parSysOpts[1] = ParSysOpts();
   m_particleSystem.Clear();
-  InitParticleSystem();
+}
 
-  //Add a default emitter
+void Application::NewProject()
+{
+  ClearProject();
+  InitParticleSystem();
   AddEmitter();
 }
 

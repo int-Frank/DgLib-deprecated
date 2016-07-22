@@ -261,7 +261,7 @@ void Application::ShowMainGUIWindow()
       }
     }
     ImGui::SameLine();
-    if (ImGui::Button("Close", ImVec2(120, 0)))
+    if (ImGui::Button("Cancel", ImVec2(120, 0)))
     {
       m_windowStack.pop();
       shouldClose = true;

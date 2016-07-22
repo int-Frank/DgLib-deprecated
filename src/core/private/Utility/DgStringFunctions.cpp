@@ -7,6 +7,20 @@
 
 namespace Dg
 {
+  std::vector<std::string> & Split(std::string const & a_in
+                                 , char a_delim
+                                 , std::vector<std::string> & a_out) 
+  {
+    a_out.clear();
+    std::stringstream ss(a_in);
+    std::string item;
+    while (getline(ss, item, a_delim)) 
+    {
+      a_out.push_back(item);
+    }
+    return a_out;
+  }
+
   std::string Trim(std::string const & a_str
                  , std::string const & a_chars)
   {

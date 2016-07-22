@@ -59,8 +59,14 @@ void Application::InitParticleSystem()
   {
     m_particleSystem.AddUpdater(E_UpdaterRelativeForce, new UpdaterRelativeForce<float>());
   }
-  m_particleSystem.AddUpdater(E_UpdaterColor, new UpdaterColor<float>());
-  m_particleSystem.AddUpdater(E_UpdaterSize, new UpdaterSize<float>());
+  if (m_projData.parSysOpts[0].useUpdaterColor)
+  {
+    m_particleSystem.AddUpdater(E_UpdaterColor, new UpdaterColor<float>());
+  }
+  if (m_projData.parSysOpts[0].useUpdaterSize)
+  {
+    m_particleSystem.AddUpdater(E_UpdaterSize, new UpdaterSize<float>());
+  }
 
   //copy current emitter data for ui callback checking
   for (int i = 0; i < m_projData.eData.size(); ++i)

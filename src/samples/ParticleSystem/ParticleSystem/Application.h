@@ -34,6 +34,7 @@ public:
 
   bool LoadProject(std::string);
   bool SaveProject(std::string);
+  void ClearProject();
   void NewProject();
   void UpdateScroll(double);
   void KeyEvent(int, int);
