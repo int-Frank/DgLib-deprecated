@@ -5,7 +5,7 @@
 #include "particle_system/DgParticleGenerator.h"
 #include "DgMath.h"
 
-//! Updates particle color
+//TODO All position generators should derive from a base with member 'SetDirectionOutwards'
 template<typename Real>
 class GenVelCone : public Dg::ParticleGenerator<Real>
 {

@@ -221,7 +221,7 @@ void Application::UpdateParSysAttr()
 
     if (data.velGenMethod != dataPrev.velGenMethod)
     {
-      //TODO DO work... All pos generators should inherit a base
+      //TODO Do work... All pos generators should inherit a base
       // position gen with the RepelFromCenter method in the base.
       dataPrev.velGenMethod = data.velGenMethod;
     }

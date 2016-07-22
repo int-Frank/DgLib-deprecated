@@ -517,13 +517,13 @@ namespace Dg
     RNG generator;
 
     Real theta = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(2.0) * static_cast<Real>(Dg::PI_d));
-    Real phi = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(Dg::PI_d));
+    Real rho = generator.GetUniform<Real>(static_cast<Real>(-1.0), static_cast<Real>(1.0));
 
-    Real sinTheta = sin(theta);
+    Real val = sqrt(static_cast<Real>(1.0) - rho * rho);
 
-    Real x = sinTheta * cos(phi);
-    Real y = sinTheta * sin(phi);
-    Real z = cos(theta);
+    Real x = val * cos(theta);
+    Real y = val * sin(theta);
+    Real z = val;
 
     return Vector4<Real>({ x, y, z, static_cast<Real>(0.0) });
   }	//End: GetRandomVector()
@@ -558,6 +558,7 @@ namespace Dg
   template<typename Real>
   Vector4<Real> GetRandomVector(Vector4<Real> const & a_axis, Real theta)
   {
+    //TODO Use an algorithm that produces evenly distributed vectors;
     RNG generator;
 
     //Find random angle [0, theta]

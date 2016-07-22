@@ -95,7 +95,7 @@ void Application::ShowMainGUIWindow()
   //Statics for opening...
   static int          open_currentItem = -1;
 
-  ImGui::Begin("Partice System");
+  ImGui::Begin("Editor");
 
   //----------------------------------------------------------------------------------
   //  Menu Bar
@@ -137,6 +137,7 @@ void Application::ShowMainGUIWindow()
     }
     if (ImGui::BeginMenu("Options"))
     {
+      //TODO Add fullscreen/window toggle
       ImGui::MenuItem("Example UI", NULL, &UI::showExampleWindow);
       ImGui::Separator();
       ImGui::MenuItem("Blending", NULL, &UI::showAlphaBlendingWindow);
@@ -145,7 +146,11 @@ void Application::ShowMainGUIWindow()
     }
     if (ImGui::BeginMenu("Help"))
     {
-      ImGui::MenuItem("About ImGui", NULL, &UI::showAbout);
+      //TODO implement 'Help' window
+      ImGui::MenuItem("View Help", NULL, &UI::showHelp);
+      ImGui::Separator();
+      //TODO implement 'About' window
+      ImGui::MenuItem("About", NULL, &UI::showAbout);
       ImGui::EndMenu();
     }
     ImGui::EndMenuBar();
@@ -331,7 +336,7 @@ void Application::ShowMainGUIWindow()
     ImGui::Checkbox("Rel force", &m_projData.parSysOpts[0].useUpdaterRelativeForce);
   }
 
-  
+  //TODO Set slider imits for all the UI
   //----------------------------------------------------------------------------------
   //  Emitters
   //----------------------------------------------------------------------------------
@@ -421,7 +426,7 @@ void Application::ShowMainGUIWindow()
       }
 
 
-      //TODO 
+      //TODO 2D placer
       //if (UI::showEmitterPlacer)
       //{
       //ImGui::Begin("Place Emitter"); ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
@@ -464,6 +469,8 @@ void Application::ShowMainGUIWindow()
       CreateSpacing(nSpacing);
       ImGui::TextColored(headingClr, "Define Initial velocity vector");
       ImGui::RadioButton("Direction", &curEmData.velGenMethod, E_GenVelCone); ImGui::SameLine();
+
+      //TODO Implement Outwards functionality
       ImGui::RadioButton("Outwards", &curEmData.velGenMethod, E_GenVelOutwards);
 
       if (curEmData.velGenMethod == E_GenVelCone)

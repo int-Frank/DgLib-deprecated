@@ -8,6 +8,7 @@ namespace UI
   extern bool showExampleWindow;
   extern bool showAbout;
   extern bool showEmitterPlacer;
+  extern bool showHelp;
 }
 
 #endif

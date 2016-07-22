@@ -19,6 +19,7 @@ public:
 
   AttractorPoint(AttractorPoint<Real> const &);
 
+  //TODO Properly implement UpdateNew
   AttractorPoint(Dg::Attractor<Real> const & a_attr)
     : Dg::Attractor<Real>(a_attr)
     , m_point(Dg::Vector4<Real>::Origin())

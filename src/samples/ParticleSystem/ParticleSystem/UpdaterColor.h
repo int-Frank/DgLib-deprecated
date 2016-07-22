@@ -19,6 +19,7 @@ public:
     return *this; 
   }
 
+  //TODO Properly implement UpdateNew
   void UpdateNew(Dg::ParticleData<Real> & data, int start, Real dt) { implUpdate(data, start, dt); }
   void Update(Dg::ParticleData<Real> & data, int start, Real dt) { implUpdate(data, start, dt); }
 

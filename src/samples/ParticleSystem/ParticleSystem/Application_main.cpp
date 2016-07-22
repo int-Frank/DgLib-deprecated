@@ -28,6 +28,9 @@ Application* Application::s_app(nullptr);
 typedef Dg::Matrix44<float> mat44;
 typedef Dg::Vector4<float>  vec4;
 
+//TODO Create some samples
+
+//TODO Organise these functions
 Application::Application() 
   : m_window(nullptr)
   , m_particleSystem(65536)
@@ -287,6 +290,7 @@ void Application::Render()
 
   float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
 
+  //TODO Use std::vector here??
   LineRenderData * lineRenderData = new LineRenderData[m_projData.aData.size()];
   int nShowAttr = 0;
   for (int i = 0; i < m_projData.aData.size(); ++i)
@@ -516,13 +520,14 @@ void Application::UI_NewFrame()
 
     ImGui::SetNextWindowSize(ImVec2(width, height));
     ImGui::SetNextWindowPos(ImVec2(indent, indent));
-    ImGui::Begin("Partice System", nullptr
+    ImGui::Begin("Editor", nullptr
               , ImGuiWindowFlags_MenuBar 
                 | ImGuiWindowFlags_NoResize 
                 | ImGuiWindowFlags_NoMove 
-                | ImGuiWindowFlags_NoCollapse 
+                //| ImGuiWindowFlags_NoCollapse 
                 | ImGuiWindowFlags_NoSavedSettings
-                | ImGuiWindowFlags_NoTitleBar);
+                //| ImGuiWindowFlags_NoTitleBar
+    );
     ImGui::End();
   }
 
@@ -562,6 +567,7 @@ void Application::UI_NewFrame()
     ImGui::End();
   }
 
+  //TODO Get rid of all ImGui unwanted code, demos, etc...
   //Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
   if (UI::showExampleWindow)
   {

@@ -39,27 +39,6 @@ public:
   void UpdateScroll(double);
   void KeyEvent(int, int);
 
-public:
-  struct APPINFO
-  {
-    char title[128];
-    int windowWidth;
-    int windowHeight;
-    int majorVersion;
-    int minorVersion;
-    int samples;
-    union
-    {
-      struct
-      {
-        unsigned int    fullscreen : 1;
-        unsigned int    vsync : 1;
-        unsigned int    debug : 1;
-      };
-      unsigned int        all;
-    } flags;
-  };
-
 private:
 
   static Application* s_app;
@@ -73,7 +52,7 @@ private:
   //  - Saving a project (creates event)
   //  - Creating Emitters / Attractors (creates them directly)
   //  - Killing Emitters / Attractors (kills them directly)
-  //  - 'Quit' menu item modifies m_shouldQuit direcly
+  //  - 'Quit' menu item modifies m_shouldQuit directly
   //  - anything from the UI namespace
   ProjectData               m_projData;
 
@@ -82,7 +61,7 @@ private:
 
   char * const              m_configFileName = "config.ini";
 
-  APPINFO		                m_info;
+  AppInfo		                m_info;
   GLFWwindow*               m_window;
   Renderer                  m_renderer;
 
@@ -102,9 +81,9 @@ private:
   int                       m_focusEmitter;
 
   bool                      m_camCanRotate;
+  bool                      m_shouldQuit;
 
   Dg::IDManager<int>        m_IDManager;
-  bool                      m_shouldQuit;
 
   std::string const         m_projectPath = "./projects/";
   std::string const         m_fileExt = "dgp";
@@ -135,7 +114,8 @@ private:
 
 private:
 
-  //UI
+  //The windows stack allows us to work around ImGui's issue of stacking modals
+  //called from menu items.
   enum Modal
   {
     SavePrompt,

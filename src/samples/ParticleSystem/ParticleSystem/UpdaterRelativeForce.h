@@ -21,6 +21,7 @@ public:
     return *this;
   }
 
+  //TODO Properly implement UpdateNew
   void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
   void Update(Dg::ParticleData<Real> &, int, Real);
 

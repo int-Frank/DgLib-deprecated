@@ -26,6 +26,7 @@ public:
 
   AttractorLine<Real> & operator=(AttractorLine<Real> const &);
 
+  //TODO Properly implement UpdateNew
   virtual void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
   virtual void Update(Dg::ParticleData<Real> &, int, Real);
 
