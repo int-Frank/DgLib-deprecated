@@ -34,6 +34,7 @@
                    StartColor,          Dg::Vector4<float>,\
                    DColor,              Dg::Vector4<float>
 
+//TODO Documentation
 namespace Dg
 {
   template<typename Real>

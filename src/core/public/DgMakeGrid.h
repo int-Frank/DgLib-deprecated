@@ -1,6 +1,7 @@
 #ifndef DGMAKEGRID_H
 #define DGMAKEGRID_H
 
+//TODO Documentation, put this somewhere else, Utility perhaps.
 namespace Dg
 {
   //! Creates a grid of lines. Useful for rendering planes.

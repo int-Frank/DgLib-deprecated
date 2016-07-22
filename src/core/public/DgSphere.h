@@ -13,6 +13,7 @@
 #include "dgmath.h"
 #include "DgRNG.h"
 
+//TODO Queries
 namespace Dg
 {
 
