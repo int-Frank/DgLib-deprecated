@@ -166,6 +166,7 @@
     <ClCompile Include="TEST_dg_map.cpp" />
     <ClCompile Include="TEST_dg_map_p.cpp" />
     <ClCompile Include="TEST_dg_set_p.cpp" />
+    <ClCompile Include="TEST_dg_vector_pod2.cpp" />
     <ClCompile Include="TEST_math.cpp" />
     <ClCompile Include="TEST_Matrix44.cpp" />
     <ClCompile Include="TEST_ParticleSystems.cpp" />

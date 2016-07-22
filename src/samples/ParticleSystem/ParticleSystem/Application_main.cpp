@@ -115,19 +115,19 @@ bool Application::InitGL()
       m_info.windowHeight = mode->height;
     }
     m_window = glfwCreateWindow(m_info.windowWidth,
-      m_info.windowHeight,
-      m_info.title,
-      glfwGetPrimaryMonitor(),
-      nullptr);
-    glfwSwapInterval((int)m_info.flags.vsync);
+                                m_info.windowHeight,
+                                m_info.title,
+                                glfwGetPrimaryMonitor(),
+                                nullptr);
+                                glfwSwapInterval((int)m_info.flags.vsync);
   }
   else
   {
     m_window = glfwCreateWindow(m_info.windowWidth,
-      m_info.windowHeight,
-      m_info.title,
-      nullptr,
-      nullptr);
+                                m_info.windowHeight,
+                                m_info.title,
+                                nullptr,
+                                nullptr);
   }
 
   if (!m_window)

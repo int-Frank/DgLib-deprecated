@@ -182,6 +182,48 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
                     , int a_nlineModels
                     , LineRenderData const * a_lineData)
 {
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+  glBindVertexArray(m_ln_vao);
+  glUseProgram(m_ln_shaderProgram);
+
+  GLuint proj_loc = glGetUniformLocation(m_ln_shaderProgram, "proj_matrix");
+  GLuint lineColor_loc = glGetUniformLocation(m_ln_shaderProgram, "lineColor");
+  GLuint mv_loc = glGetUniformLocation(m_ln_shaderProgram, "mv_matrix");
+
+  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  for (int i = 0; i < a_nlineModels; ++i)
+  {
+    glUniformMatrix4fv(mv_loc, 1, GL_FALSE, (a_lineData[i].mat * a_modelView).GetData());
+    glUniform4fv(lineColor_loc, 1, a_lineData[i].col.GetData());
+    switch (a_lineData[i].model)
+    {
+    case E_AttGlobal:
+    {
+      glDrawArrays(GL_LINES, 0, 3 * 2);
+      break;
+    }
+    case E_AttPoint:
+    {
+      glDrawArrays(GL_LINES, s_nLinesGlobal * 2, 3 * 2);
+      break;
+    }
+    case E_AttLine:
+    {
+      glDrawArrays(GL_LINES, (s_nLinesGlobal + s_nLinesPoint) * 2, 3 * 2);
+      break;
+    }
+    case E_AttPlane:
+    {
+      glDrawArrays(GL_LINES, (s_nLinesGlobal + s_nLinesPoint + s_nLinesLine) * 2, s_nLinesPlane * 2);
+      break;
+    }
+    }
+  }
+  glBindVertexArray(0);
+
   static int sfactor_ind(6);
   static int dfactor_ind(7);
 
@@ -238,13 +280,11 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
     glBlendFunc(GetAlphaEnumFromListVal(sfactor_ind), GetAlphaEnumFromListVal(dfactor_ind));
   }
 
-  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
   glBindVertexArray(m_pt_vao);
   glUseProgram(m_pt_shaderProgram);
 
-  GLint mv_loc = glGetUniformLocation(m_pt_shaderProgram, "mv_matrix");
-  GLint proj_loc = glGetUniformLocation(m_pt_shaderProgram, "proj_matrix");
+  mv_loc = glGetUniformLocation(m_pt_shaderProgram, "mv_matrix");
+  proj_loc = glGetUniformLocation(m_pt_shaderProgram, "proj_matrix");
   GLint parScale_loc = glGetUniformLocation(m_pt_shaderProgram, "parScale");
 
   glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_modelView.GetData());
@@ -253,43 +293,6 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
 
   glDrawArrays(GL_POINTS, 0, m_nCurrentParticles);
 
-  glBindVertexArray(m_ln_vao);
-  glUseProgram(m_ln_shaderProgram);
-
-  proj_loc = glGetUniformLocation(m_ln_shaderProgram, "proj_matrix");
-  GLuint lineColor_loc = glGetUniformLocation(m_ln_shaderProgram, "lineColor");
-  mv_loc = glGetUniformLocation(m_ln_shaderProgram, "mv_matrix");
-
-  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
-  
-  for (int i = 0; i < a_nlineModels; ++i)
-  {
-    glUniformMatrix4fv(mv_loc, 1, GL_FALSE, (a_lineData[i].mat * a_modelView).GetData());
-    glUniform4fv(lineColor_loc, 1, a_lineData[i].col.GetData());
-    switch (a_lineData[i].model)
-    {
-    case E_AttGlobal:
-    {
-      glDrawArrays(GL_LINES, 0, 3 * 2);
-      break;
-    }
-    case E_AttPoint:
-    {
-      glDrawArrays(GL_LINES, s_nLinesGlobal * 2, 3 * 2);
-      break;
-    }
-    case E_AttLine:
-    {
-      glDrawArrays(GL_LINES, (s_nLinesGlobal + s_nLinesPoint) * 2, 3 * 2);
-      break;
-    }
-    case E_AttPlane:
-    {
-      glDrawArrays(GL_LINES, (s_nLinesGlobal + s_nLinesPoint + s_nLinesLine ) * 2, s_nLinesPlane * 2);
-      break;
-    }
-    }
-  }
   glBindVertexArray(0);
 }
 

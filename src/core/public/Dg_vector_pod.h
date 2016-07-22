@@ -1,7 +1,7 @@
 //! @file Dg_vector_pod.h
 //!
 //! @author Frank Hart
-//! @date 2/01/2014
+//! @date 22/07/2016
 //!
 //! Class header: vector_pod<>
 
@@ -9,11 +9,9 @@
 #define DG_VECTOR_P_H
 
 #include <exception>
-#include <assert.h>
 
 #include "container_common.h"
 
-//TODO Go through this. Create tests.
 namespace Dg
 {
   //! @ingroup DgContainers
@@ -24,22 +22,7 @@ namespace Dg
   //!
   //! http://www.cplusplus.com/reference/vector/vector/
   //!
-  //! DgArrays are sequence containers representing arrays that can change in size.
-  //! Just like arrays, DgArrays use contiguous storage locations for their elements,
-  //! which means that their elements can also be accessed using offsets on regular
-  //! pointers to its elements, and just as efficiently as in arrays. But unlike arrays,
-  //! their size can change dynamically, with their storage being handled automatically by
-  //! the container.
-  //!
-  //! Internally, DgArrays use a dynamically allocated array to store their elements.
-  //! This array may need to be reallocated in order to grow in size when new elements
-  //! are inserted, which implies allocating a new array and moving all elements to it.
-  //! This is a relatively expensive task in terms of processing time, and thus, DgArrays
-  //! do not reallocate each time an element is added to the container.
-  //!
-  //! Instead, vector_pod containers may allocate some extra storage to accommodate for
-  //! possible growth, and thus the container may have an actual capacity greater than
-  //! the storage strictly needed to contain its elements (i.e., its size).
+  //! Similar to std::vector. Constructors/destructors are not called, so use for pod types only.
   //!
   //!
   //! @author Frank Hart
@@ -61,26 +44,23 @@ namespace Dg
     //! Assignment
     vector_pod& operator= (vector_pod const &);
 
-    //! Copy both the current elements and the elements in the reserved memory.
-    void copy_all(vector_pod const & other);
-
     //! Access element
-    T& operator[](size_t i)				{ return m_data[i]; }
+    T & operator[](size_t i)				{ return m_pData[i]; }
 
     //! Accessor, no range check.
-    T const & operator[](size_t i) const	{ return m_data[i]; }
+    T const & operator[](size_t i) const	{ return m_pData[i]; }
 
     //! Get last element
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to item in the vector
-    T& back() { return m_data[m_arraySize - 1]; }
+    T& back() { return m_pData[m_currentSize - 1]; }
 
     //! Get last element
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to item in the vector
-    T const & back() const { return m_data[m_arraySize - 1]; }
+    T const & back() const { return m_pData[m_currentSize - 1]; }
 
     //! Accessor with range check.
     T& at(size_t);
@@ -98,22 +78,16 @@ namespace Dg
     size_t max_size()	const			{ return m_arraySize; }
 
     //! Get pointer to first element.
-    T* data()							{ return m_data; }
+    T* data()							{ return m_pData; }
 
     //! Get pointer to first element.
-    const T* Data()		const			{ return m_data; }
+    const T* Data()		const			{ return m_pData; }
 
     //! Add element to the back of the array.
     void push_back(T const &);
 
     //! Remove element from the back of the array.
     void pop_back();
-
-    //! Add element to the front of the array.
-    void push_front(T const &);
-
-    //! Remove element from the back of the array.
-    void pop_front();
 
     //! Current size is flagged as 0. Elements are NOT destroyed.
     void clear();
@@ -129,7 +103,7 @@ namespace Dg
 
   private:
     //Data members
-    T* m_data;
+    T* m_pData;
     size_t m_arraySize;
     size_t m_currentSize;
   };
@@ -140,15 +114,15 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<class T>
   vector_pod<T>::vector_pod() 
-    : m_data(nullptr)
+    : m_pData(nullptr)
     , m_arraySize(DG_CONTAINER_DEFAULT_SIZE)
     , m_currentSize(0)
   {
-    m_data = static_cast<T*>(malloc(m_arraySize * sizeof(T)));
+    m_pData = static_cast<T*>(malloc(m_arraySize * sizeof(T)));
 
-    if (m_data == nullptr)
+    if (m_pData == nullptr)
     {
-      throw std::bad_alloc;
+      throw std::bad_alloc();
     }
 
   }	//End: vector_pod::vector_pod()
@@ -159,18 +133,16 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<class T>
   vector_pod<T>::vector_pod(size_t a_size)
-    : m_data(nullptr)
+    : m_pData(nullptr)
     , m_currentSize(0)
     , m_arraySize(a_size)
   {
-    assert(a_size != 0);
-
     //Initialise pointers
-    m_data = static_cast<T*>(malloc(m_arraySize * sizeof(T)));
+    m_pData = static_cast<T*>(malloc(m_arraySize * sizeof(T)));
 
-    if (m_data == nullptr)
+    if (m_pData == nullptr)
     {
-      throw std::bad_alloc;
+      throw std::bad_alloc();
     }
 
   }	//End: vector_pod::vector_pod()
@@ -183,7 +155,7 @@ namespace Dg
   vector_pod<T>::~vector_pod()
   {
     //Free memory
-    free(m_data);
+    free(m_pData);
 
   }	//End: vector_pod::~vector_pod()
 
@@ -194,20 +166,20 @@ namespace Dg
   template<class T>
   void vector_pod<T>::init(vector_pod const & a_other)
   {
-    T * tempPtr = static_cast<T*>(realloc(a_.m_arraySize * sizeof(T)));
+    T * tempPtr = static_cast<T*>(realloc(m_pData, a_other.m_arraySize * sizeof(T)));
 
     if (tempPtr == nullptr)
     {
-      throw std::bad_alloc;
+      throw std::bad_alloc();
     }
 
-    m_data = tempPtr;
+    m_pData = tempPtr;
 
     //Set sizes
     m_arraySize = a_other.m_arraySize;
     m_currentSize = a_other.m_currentSize;
 
-    memcpy(m_data, a_other.m_data, a_other.m_currentSize * sizeof(T));
+    memcpy(m_pData, a_other.m_pData, a_other.m_currentSize * sizeof(T));
 
   }	//End: vector_pod<T>::init()
 
@@ -216,7 +188,7 @@ namespace Dg
   //	@	vector_pod<T>::vector_pod()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector_pod<T>::vector_pod(vector_pod const & other) : m_data(nullptr)
+  vector_pod<T>::vector_pod(vector_pod const & other) : m_pData(nullptr)
   {
     init(other);
 
@@ -239,20 +211,6 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::CopyAll()
-  //--------------------------------------------------------------------------------
-  template<class T>
-  void vector_pod<T>::copy_all(const vector_pod<T>& a_other)
-  {
-    if (m_arraySize != a_other.m_arraySize)
-      resize(a_other.m_arraySize);
-
-    memcpy(m_data, a_other.m_data, m_arraySize * sizeof(T));
-
-  }	//End: vector_pod<T>::CopyAll()
-
-
-  //--------------------------------------------------------------------------------
   //	@	vector_pod<T>::at()
   //--------------------------------------------------------------------------------
   template<class T>
@@ -261,7 +219,7 @@ namespace Dg
     if (index >= m_currentSize)
       throw std::out_of_range("vector_pod: range error");
 
-    return m_data[index];
+    return m_pData[index];
 
   }	//End: vector_pod<T>::at()
 
@@ -275,7 +233,7 @@ namespace Dg
     if (index >= m_currentSize)
       throw std::out_of_range("vector_pod: range error");
 
-    return m_data[index];
+    return m_pData[index];
 
   }	//End: vector_pod<T>::at()
 
@@ -293,7 +251,7 @@ namespace Dg
     }
 
     //Set element
-    memcpy(&m_data[m_currentSize], &a_item, sizeof(T));
+    memcpy(&m_pData[m_currentSize], &a_item, sizeof(T));
 
     //increment current size
     ++m_currentSize;
@@ -317,46 +275,6 @@ namespace Dg
   }	//End: vector_pod<T>::pop_back()
 
 
-
-  //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::push_front()
-  //--------------------------------------------------------------------------------
-  template<class T>
-  void vector_pod<T>::push_front(T const & a_item)
-  {
-    //Range check
-    if (m_currentSize == m_arraySize)
-    {
-      extend();
-    }
-
-    memmove(&m_data[1], &m_data[0], m_currentSize * sizeof(T));
-    memcpy(&m_data[0], &a_item, sizeof(T));
-
-    //increment current size
-    ++m_currentSize;
-
-  }	//End: vector_pod<T>::push_back()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::pop_front
-  //--------------------------------------------------------------------------------
-  template<class T>
-  void vector_pod<T>::pop_front()
-  {
-    //Range check
-    if (m_currentSize == 0)
-      return;
-
-    memmove(&m_data[0], &m_data[1], (m_currentSize - 1) * sizeof(T));
-
-    //Deincrement current size
-    --m_currentSize;
-
-  }	//End: vector_pod<T>::pop_front()
-
-
   //--------------------------------------------------------------------------------
   //	@	vector_pod<T>::clear()
   //--------------------------------------------------------------------------------
@@ -375,18 +293,14 @@ namespace Dg
   template<class T>
   void vector_pod<T>::resize(size_t a_size)
   {
-    assert(a_size != 0);
-
-    T * tempPtr = static_cast<T*>(realloc(m_data, a_size * sizeof(T)));
+    T * tempPtr = static_cast<T*>(realloc(m_pData, a_size * sizeof(T)));
 
     if (tempPtr == nullptr)
     {
-      throw std::bad_alloc;
+      throw std::bad_alloc();
     }
 
-    m_data = tempPtr;
-
-    //Set sizes
+    m_pData = tempPtr;
     m_arraySize = a_size;
     if (a_size < m_currentSize)
     {
@@ -403,28 +317,14 @@ namespace Dg
   void vector_pod<T>::extend()
   {
     //Calculate new size 
-    size_t new_size = m_arraySize << 1;
+    size_t newSize = m_arraySize << 1;
 
-    if (new_size < m_arraySize)
+    if (newSize < m_arraySize)
     {
       throw std::overflow_error("m_arraySize");
     }
 
-    T * tempPtr = static_cast<T*>(realloc(m_data, a_size * sizeof(T)));
-
-    if (tempPtr == nullptr)
-    {
-      throw std::bad_alloc;
-    }
-
-    m_data = tempPtr;
-
-    //Set sizes
-    m_arraySize = a_size;
-    if (a_size < m_currentSize)
-    {
-      m_currentSize = a_size;
-    }
+    resize(newSize);
 
   }	//End: vector_pod::extend()
 
