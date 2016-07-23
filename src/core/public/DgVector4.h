@@ -556,68 +556,16 @@ namespace Dg
   template<typename Real>
   Vector4<Real> GetRandomVector(Vector4<Real> const & a_axis, Real theta)
   { 
-    //TODO Use an algorithm that produces evenly distributed vectors.
     RNG generator;
 
-    //Find random angle [0, theta]
-    //Real phi = generator.GetUniform<Real>(static_cast<Real>(0.0), theta);
-
     Dg::WrapNumber(static_cast<Real>(0.0)
-                 , static_cast<Real>(Dg::PI_d)
-                 , theta);
+      , static_cast<Real>(Dg::PI_d)
+      , theta);
 
-
-    Real piOn2 = static_cast<Real>(Dg::PI_d / 2.0);
-    theta /= piOn2;
-    
-    Real bound;
-    if (theta <= static_cast<Real>(1.0))
-    {
-      bound = -sqrt(static_cast<Real>(1.0) - theta * theta);
-    }
-    else
-    {
-      Real val = static_cast<Real>(2.0) - theta;
-      bound = sqrt(static_cast<Real>(1.0) - val * val);
-    }
-
+    //Use acos as the function!!
+    Real bound = cos(static_cast<Real>(Dg::PI_d) - theta);
     Real x = generator.GetUniform(static_cast<Real>(-1.0), bound);
-
-    if (bound > 2.0)
-    {
-      char f = 0;
-    }
-    if (bound < -1.0)
-    {
-      char f = 0;
-    }
-    if (x < -1.0)
-    {
-      char f = 0;
-    }
-    else if (x > bound) {
-      char f = 0;
-    }
-
-
-    Real phi;
-    if (x < static_cast<Real>(0.0))
-    {
-      phi = piOn2 * (sqrt(static_cast<Real>(1.0) - x * x));
-    }
-    else
-    {
-      phi = piOn2 * (static_cast<Real>(2.0) - sqrt(static_cast<Real>(1.0) - x * x));
-    }
-    
-    if (phi > piOn2 * 2.0)
-    {
-      char f = 0;
-    }
-    else if (phi < 0.0) {
-      char f = 0;
-    }
-
+    Real phi = static_cast<Real>(Dg::PI_d) - acos(x);
     return (cos(phi) * a_axis + sin(phi) * GetRandomOrthonormalVector(a_axis));
   }	//End: GetRandomVector()
 

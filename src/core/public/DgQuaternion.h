@@ -1163,7 +1163,7 @@ namespace Dg
     Real startInterp, endInterp;
 
     // if "angle" between quaternions is less than 90 degrees
-    if (cosTheta >= static_cast<Real>(EPSILON_d))
+    if (cosTheta >= static_cast<Real>(EPSILON))
     {
       // if angle is greater than zero
       if ((static_cast<Real>(1.0) - cosTheta) > static_cast<Real>(EPSILON_d))
