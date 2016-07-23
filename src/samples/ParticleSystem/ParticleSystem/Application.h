@@ -122,6 +122,7 @@ private:
     OverwriteWindow,
     SaveAsWindow,
     OpenWindow,
+    NewProjectPrompt,
     None
   };
 

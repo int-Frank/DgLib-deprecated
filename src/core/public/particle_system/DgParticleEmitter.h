@@ -64,11 +64,12 @@ namespace Dg
     //! Query on state.
     bool IsOn() const { return m_isOn; }
 
-    //! Add a generator to the internal list of generators.
+    //! Add a generator to the internal list of generators. The Emitter takes ownership of
+    //! the input generator.
     //! 
     //! @param id Identifier - must be unique to this emitter
     //! @param pGen Pointer to the generator to add.
-    void AddGenerator(int id, ParticleGenerator<Real> const * pGen);
+    void AddGenerator(int id, ParticleGenerator<Real> * pGen);
     
     //! Remove generator by ID
     void RemoveGenerator(int id);
@@ -93,7 +94,7 @@ namespace Dg
   //	@	ParticleEmitter::AddGenerator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void ParticleEmitter<Real>::AddGenerator(int a_key, ParticleGenerator<Real> const * a_pGen)
+  void ParticleEmitter<Real>::AddGenerator(int a_key, ParticleGenerator<Real> * a_pGen)
   {
     if (a_pGen)
     {

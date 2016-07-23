@@ -15,8 +15,6 @@
 //TODO Documentation
 namespace Dg
 {
-  typedef unsigned int;
-
   template<typename Real>
   class ParticleSystem
   {

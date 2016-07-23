@@ -557,8 +557,8 @@ namespace Dg
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> GetRandomVector(Vector4<Real> const & a_axis, Real theta)
-  {
-    //TODO Use an algorithm that produces evenly distributed vectors;
+  { 
+    //TODO Use an algorithm that produces evenly distributed vectors.
     RNG generator;
 
     //Find random angle [0, theta]
