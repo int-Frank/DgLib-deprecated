@@ -1,13 +1,12 @@
 #ifndef DGMAKEGRID_H
 #define DGMAKEGRID_H
 
-//TODO Documentation, put this somewhere else, Utility perhaps.
-//todo asdf
 namespace Dg
 {
   //! Creates a grid of lines. Useful for rendering planes.
-  //! @param[in] a_out Output
-  //! @param[in] a_dimension Number of grids 
+  //!
+  //! @param[in] a_out Output points
+  //! @param[in] a_dimension dimension on each side of the grid
   //! @param[in] a_bounds [tl, tr, bl, br]
   template<typename Real, int VectorSize>
   void MakeGrid(Real * a_out, int a_dimension, Real const a_bounds[4 * VectorSize])
@@ -18,7 +17,7 @@ namespace Dg
 
   //! Creates a grid of lines. Useful for rendering planes.
   //! @param[in] a_out Output
-  //! @param[in] a_dimension Number of grids 
+  //! @param[in] a_dimension dimension on each side of the grid [w, h]
   //! @param[in] a_bounds [tl, tr, bl, br]
   template<typename Real, int VectorSize>
   void MakeGrid(Real * a_out, int a_dimension[2], Real const a_bounds[4 * VectorSize])

@@ -146,7 +146,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\public\DgBoundedSND.h" />
     <ClInclude Include="..\..\public\DgLine.h" />
-    <ClInclude Include="..\..\public\DgMakeGrid.h" />
     <ClInclude Include="..\..\public\DgMath.h" />
     <ClInclude Include="..\..\public\DgMatrix.h" />
     <ClInclude Include="..\..\public\DgMatrix44.h" />
