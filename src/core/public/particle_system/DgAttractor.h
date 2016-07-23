@@ -11,6 +11,7 @@
 #include "..\DgVector4.h"
 #include "..\DgVQS.h"
 #include "DgParticleUpdater.h"
+#include "DgMath.h"
 
 namespace Dg
 {
@@ -177,8 +178,11 @@ namespace Dg
     if (Dg::IsZero(dist))
     {
       v = GetRandomVector<Real>();
+      dist = static_cast<Real>(1.0);
     }
-    return v / dist * ((m_strength <= m_maxAppliedAccel) ? m_strength : m_maxAppliedAccel);
+    Real str(m_strength);
+    ClampNumber(-m_maxAppliedAccel, m_maxAppliedAccel, str);
+    return v / dist * str;
   } //End: Attractor::GetAccel_Constant()
 
 
