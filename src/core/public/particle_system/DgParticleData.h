@@ -1,7 +1,7 @@
 //! @file DgLineSegment.h
 //!
 //! @author: Frank B. Hart
-//! @date 29/05/2016
+//! @date 22/07/2016
 //!
 //! Class declaration: ParticleData
 
@@ -34,48 +34,75 @@
                    StartColor,          Dg::Vector4<float>,\
                    DColor,              Dg::Vector4<float>
 
-//TODO Documentation
+
 namespace Dg
 {
+  //! @ingroup DgEngine_ParticleSystem
+  //!
+  //! @class ParticleData
+  //!
+  //! A particle is an aggregation on attributes. The data is kept as an SoA.
+  //! Particle attributes are defined in the ATTRIBUTES macro.
+  //!
+  //! @author Frank Hart
+  //! @date 22/07/2016
   template<typename Real>
   class ParticleData
   {
   public:
 
+    //! Enum enrty names are taken from ATTRIBUTES names
     enum Attr
     {
-      //Enum enrty names are taken from ATTRIBUTES names
       ADD_ENUM_ENTRIES(ATTRIBUTES)
       COUNT
     };
 
   public:
 
-    explicit ParticleData(int a_maxCount);
+    ParticleData(int a_maxCount);
     ~ParticleData();
 
+    //! Are all available particles active?
     bool IsFull() const { return m_countAlive == m_countMax; }
 
+    //! Get the number of particles currently active.
     int GetCountAlive() const { return m_countAlive; }
+
+    //! Get the maximum number of particles the ParticleData object can hold.
     int GetCountMax() const { return m_countMax; }
 
+    //! Are there any unused particles?
     bool HasUnusedParticles() const { return m_countAlive < m_countMax; }
 
+    //! Kill a particle at index. 
     int Kill(int);
+
+    //! Kill all particles.
     void KillAll();
 
-    //New particles are always added to the end of the list;
-    bool Wake(int &);
+    //! Request to wake a particle. New particles are located at the end of the lists.
+    //!
+    //! @param[in] index Index of the new particle.
+    //! @return true if there are still available particles.
+    bool Wake(int & index);
 
+    //! Initialize a particular attribute.
     void InitAttribute(Attr);
+
+    //! Deinitialize a particular attribute.
     void DeinitAttribute(Attr);
 
+    //! Initialise all attributes.
     void InitAll();
+
+    //! Deinitialise all attributes.
     void DeinitAll();
 
     //! For each entry in ATTRIBUTES, there exists a Get function.
     //! For example, for the Position attribute:
     //!   Dg::Vector4<Real> * GetPosition();
+    //!  An uninitialized attributed will return a null pointer.
     ADD_METHODS(ATTRIBUTES)
 
   private:

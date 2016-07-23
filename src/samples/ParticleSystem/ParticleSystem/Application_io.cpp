@@ -135,8 +135,8 @@ bool Application::LoadProject(std::string a_file)
       val = node[i]["ID"];
       if (!val.isNull()) a.first.ID = val.asInt();
 
-      val = node[i]["appliedAccelType"];
-      if (!val.isNull()) a.first.appliedAccelType = val.asInt();
+      val = node[i]["attenuationMethod"];
+      if (!val.isNull()) a.first.attenuationMethod = val.asInt();
 
       val = node[i]["maxAppliedAccelMag"];
       if (!val.isNull()) a.first.maxAppliedAccelMag = val.asFloat();
@@ -229,7 +229,7 @@ bool Application::SaveProject(std::string a_file)
     Json::Value attractor;
     attractor["ID"] = m_projData.aData[i].first.ID;
     attractor["type"] = m_projData.aData[i].first.type;
-    attractor["appliedAccelType"] = m_projData.aData[i].first.appliedAccelType;
+    attractor["attenuationMethod"] = m_projData.aData[i].first.attenuationMethod;
     attractor["strength"] = m_projData.aData[i].first.strength;
     attractor["maxAppliedAccelMag"] = m_projData.aData[i].first.maxAppliedAccelMag;
     attractor["show"] = m_projData.aData[i].first.show;

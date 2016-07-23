@@ -35,7 +35,7 @@
 //! @defgroup DgEngine_functions Functions 
 //! @defgroup DgEngine_types Types
 //! @defgroup DgEngine_Rm Resource Manager 
-//! @defgroup DgEngine_PS Particle System 
+//! @defgroup DgEngine_ParticleSystem Particle System 
 
 //! @}
 #endif

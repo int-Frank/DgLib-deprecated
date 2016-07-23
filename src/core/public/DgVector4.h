@@ -523,7 +523,7 @@ namespace Dg
 
     Real x = val * cos(theta);
     Real y = val * sin(theta);
-    Real z = val;
+    Real z = rho;
 
     return Vector4<Real>({ x, y, z, static_cast<Real>(0.0) });
   }	//End: GetRandomVector()

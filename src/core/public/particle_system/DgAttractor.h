@@ -1,9 +1,9 @@
 //! @file DgAttractor.h
 //!
 //! @author: Frank B. Hart
-//! @date 29/06/2016
+//! @date 22/07/2016
 //!
-//! Class declaration: ObjectWrapper
+//! Class declaration: Attractor
 
 #ifndef DGATTRACTOR_H
 #define DGATTRACTOR_H
@@ -12,14 +12,13 @@
 #include "..\DgVQS.h"
 #include "DgParticleUpdater.h"
 
-//TODO Documentation
 namespace Dg
 {
-  //! @ingroup DgEngine_PS
+  //! @ingroup DgEngine_ParticleSystem
   //!
-  //! @class Attrator
+  //! @class Attractor
   //!
-  //! An attractor is a region in space which provides some force on particles.
+  //! An attractor is a region in space which pulls or pushes particles.
   //! It could be defined as a point, line or surface.
   //!
   //! @author Frank Hart
@@ -28,12 +27,14 @@ namespace Dg
   class Attractor : public ParticleUpdater<Real>
   {
   public:
-
-    enum Force
+    
+    //! These options describe how the force applied particles
+    //! diminishes over distance. 
+    enum ForceAttenuation
     {
-      Constant,
-      Linear,
-      InvSq
+      Constant,       //The force does not diminish with distance.
+      Inverse,        //The force diminishes at a rate proportional to the inverse of the distance from the attractor.
+      InverseSquare   //The force diminishes at a rate proportional to the inverse square of the distance from the attractor.
     };
 
   public:
@@ -48,10 +49,12 @@ namespace Dg
     //! Some attractors may pulse at some frequency.
     virtual void UpdateAttractor(Real dt) {}
 
+    //! A secondary update method, called for newy created particles.
     virtual void UpdateNew(ParticleData<Real> & data
 				                 , int start
                          , Real dt) {}
 
+    //! Apply force and update the particles.
     virtual void Update(ParticleData<Real> & data
 				              , int start
                       , Real dt) {}
@@ -68,9 +71,13 @@ namespace Dg
     //! Set the maximum allowed magnitue of the acceleration vector this attractor applies to a particle.
     virtual void SetMaxAppliedAccelMagnitude(Real a_val);
 
-    void SetAccelType(int);
-    int GetAccelType() const { return m_accelType; }
+    //! Set at what rate the force of the attractor attenuates with distance.
+    void SetAttenuationMethod(int);
 
+    //! Query the attenuation type.
+    int GetAttenuationMethod() const { return m_attenuation; }
+
+    //! Create a deep copy of this object.
     virtual Attractor<Real> * Clone() const { return new Attractor<Real>(*this); }
   
   protected:
@@ -78,75 +85,89 @@ namespace Dg
     Vector4<Real> GetAccel_Constant(Vector4<Real> const & p0
                                   , Vector4<Real> const & p1) const;
 
-    Vector4<Real> GetAccel_Linear(Vector4<Real> const & p0
-                                , Vector4<Real> const & p1) const;
+    Vector4<Real> GetAccel_Inverse(Vector4<Real> const & p0
+                                 , Vector4<Real> const & p1) const;
 
-    Vector4<Real> GetAccel_InvSq(Vector4<Real> const & p0
-                               , Vector4<Real> const & p1) const;
+    Vector4<Real> GetAccel_InverseSquare(Vector4<Real> const & p0
+                                       , Vector4<Real> const & p1) const;
  
   protected:
-    int   m_accelType;
+    int   m_attenuation;
     Real  m_strength;
     Real  m_maxAppliedAccel;
   };
 
+
+  //--------------------------------------------------------------------------------
+  //	@	Attractor::Attractor()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   Attractor<Real>::Attractor()
-    : m_accelType(Constant)
+    : m_attenuation(Constant)
     , m_strength(static_cast<Real>(1.0))
     , m_maxAppliedAccel(static_cast<Real>(10.0))
   {
 
-  }
+  } //End: Attractor::Attractor()
 
+  
+  //--------------------------------------------------------------------------------
+  //	@	Attractor::Attractor()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   Attractor<Real>::Attractor(Attractor<Real> const & a_other)
-    : m_accelType(a_other.m_accelType)
+    : m_attenuation(a_other.m_attenuation)
     , m_strength(a_other.m_strength)
     , m_maxAppliedAccel(a_other.m_maxAppliedAccel)
   {
 
-  }
+  } //End: Attractor::Attractor()
 
+  
+  //--------------------------------------------------------------------------------
+  //	@	Attractor::operator=()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   Attractor<Real> & Attractor<Real>::operator=(Attractor<Real> const & a_other)
   {
-    m_accelType = a_other.m_accelType;
+    m_attenuation = a_other.m_attenuation;
     m_strength = a_other.m_strength;
     m_maxAppliedAccel = a_other.m_maxAppliedAccel;
 
     return *this;
-  }
+  } //End: Attractor::operator=()
 
+  
+  //--------------------------------------------------------------------------------
+  //	@	Attractor::SetMaxAppliedAccelMagnitude()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   void Attractor<Real>::SetMaxAppliedAccelMagnitude(Real a_val)
   {
     m_maxAppliedAccel = (a_val < static_cast<Real>(0.0)) ? static_cast<Real>(0.0) : a_val;
-  }
+  } //End: Attractor::SetMaxAppliedAccelMagnitude()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	Attractor::SetAttenuationMethod()
+  //--------------------------------------------------------------------------------
   template<typename Real>
-  void Attractor<Real>::SetAccelType(int a_val)
+  void Attractor<Real>::SetAttenuationMethod(int a_val)
   {
-    switch (a_val)
+    if (a_val >= ForceAttenuation::Constant && a_val <= ForceAttenuation::InverseSquare)
     {
-    case Linear:
+      m_attenuation = a_val;
+    }
+    else
     {
-      m_accelType = Linear;
-      break;
+      m_attenuation = Inverse;
     }
-    case InvSq:
-    {
-      m_accelType = InvSq;
-      break;
-    }
-    default: //Constant
-    {
-      m_accelType = Constant;
-      break;
-    }
-    }
-  }
+  } //End: Attractor::SetAttenuationMethod()
 
+  
+  //--------------------------------------------------------------------------------
+  //	@	Attractor::GetAccel_Constant()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> Attractor<Real>::GetAccel_Constant(Vector4<Real> const & a_p0
                                                  , Vector4<Real> const & a_p1) const
@@ -158,10 +179,14 @@ namespace Dg
       v = GetRandomVector<Real>();
     }
     return v / dist * ((m_strength <= m_maxAppliedAccel) ? m_strength : m_maxAppliedAccel);
-  }
+  } //End: Attractor::GetAccel_Constant()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	Attractor::GetAccel_Inverse()
+  //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Attractor<Real>::GetAccel_Linear(Vector4<Real> const & a_p0
+  Vector4<Real> Attractor<Real>::GetAccel_Inverse(Vector4<Real> const & a_p0
                                                , Vector4<Real> const & a_p1) const
   {
     Vector4<Real> v(a_p1 - a_p0);
@@ -186,10 +211,14 @@ namespace Dg
     }
     
     return v;
-  }
+  } //End: Attractor::GetAccel_Inverse()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	Attractor::GetAccel_InverseSquare()
+  //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Attractor<Real>::GetAccel_InvSq(Vector4<Real> const & a_p0
+  Vector4<Real> Attractor<Real>::GetAccel_InverseSquare(Vector4<Real> const & a_p0
                                               , Vector4<Real> const & a_p1) const
   {
     Vector4<Real> v(a_p1 - a_p0);
@@ -217,7 +246,7 @@ namespace Dg
       mag = (mag < static_cast<Real>(0.0)) ? -m_maxAppliedAccel : m_maxAppliedAccel;
     }
     return v * invDist * mag;
-  }
+  } //End: Attractor::GetAccel_InverseSquare()
 }
 
 #endif

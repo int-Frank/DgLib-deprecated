@@ -69,7 +69,7 @@ void AttractorPoint<Real>::Update(Dg::ParticleData<Real> & a_data
 
   if (pPos && pAccels)
   {
-    switch (GetAccelType())
+    switch (GetAttenuationMethod())
     {
     case Constant:
     {
@@ -79,19 +79,19 @@ void AttractorPoint<Real>::Update(Dg::ParticleData<Real> & a_data
       }
       break;
     }
-    case Linear:
+    case Inverse:
     {
       for (int i = a_start; i < a_data.GetCountAlive(); ++i)
       {
-        pAccels[i] += (GetAccel_Linear(m_point, pPos[i]));
+        pAccels[i] += (GetAccel_Inverse(m_point, pPos[i]));
       }
       break;
     }
-    case InvSq:
+    case InverseSquare:
     {
       for (int i = a_start; i < a_data.GetCountAlive(); ++i)
       {
-        pAccels[i] += (GetAccel_InvSq(m_point, pPos[i]));
+        pAccels[i] += (GetAccel_InverseSquare(m_point, pPos[i]));
       }
       break;
     }

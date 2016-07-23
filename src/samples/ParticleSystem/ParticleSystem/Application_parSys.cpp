@@ -325,10 +325,10 @@ void Application::UpdateParSysAttr()
       continue;
     }
 
-    if (data.appliedAccelType != dataPrev.appliedAccelType)
+    if (data.attenuationMethod != dataPrev.attenuationMethod)
     {
-      ptr->SetAccelType(data.appliedAccelType);
-      dataPrev.appliedAccelType = data.appliedAccelType;
+      ptr->SetAttenuationMethod(data.attenuationMethod);
+      dataPrev.attenuationMethod = data.attenuationMethod;
     }
 
     if (data.strength != dataPrev.strength)

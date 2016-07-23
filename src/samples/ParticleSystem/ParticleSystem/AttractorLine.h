@@ -73,7 +73,7 @@ void AttractorLine<Real>::Update(Dg::ParticleData<Real> & a_data
     Dg::CPPointLine<Real> query;
     Dg::CPPointLine<Real>::Result result;
 
-    switch (GetAccelType())
+    switch (GetAttenuationMethod())
     {
     case Constant:
     {
@@ -84,21 +84,21 @@ void AttractorLine<Real>::Update(Dg::ParticleData<Real> & a_data
       }
       break;
     }
-    case Linear:
+    case Inverse:
     {
       for (int i = a_start; i < a_data.GetCountAlive(); ++i)
       {
         result = query(pPos[i], m_line);
-        pAccels[i] += (GetAccel_Linear(result.cp, pPos[i]));
+        pAccels[i] += (GetAccel_Inverse(result.cp, pPos[i]));
       }
       break;
     }
-    case InvSq:
+    case InverseSquare:
     {
       for (int i = a_start; i < a_data.GetCountAlive(); ++i)
       {
         result = query(pPos[i], m_line);
-        pAccels[i] += (GetAccel_InvSq(result.cp, pPos[i]));
+        pAccels[i] += (GetAccel_InverseSquare(result.cp, pPos[i]));
       }
       break;
     }

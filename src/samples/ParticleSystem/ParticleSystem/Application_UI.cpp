@@ -556,7 +556,7 @@ void Application::ShowMainGUIWindow()
       ImGui::PushItemWidth(sliderOffset);
 
       const char* attrForces[] = { "Force is constant", "Force is a function of distance", "Force is a function of sq distance" };
-      ImGui::ListBox("Force", &curAttData.appliedAccelType, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
+      ImGui::ListBox("Force", &curAttData.attenuationMethod, attrForces, ((int)(sizeof(attrForces) / sizeof(*attrForces))), 3);
 
       const char* attrShapes[] = { "Global", "Point", "Line", "Plane" };
       ImGui::ListBox("Shape", &curAttData.type, attrShapes, ((int)(sizeof(attrShapes) / sizeof(*attrShapes))), 5);

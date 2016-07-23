@@ -86,7 +86,7 @@ public:
   AttractorData()
     : ID(0)
     , type(E_AttPoint)
-    , appliedAccelType(Dg::Attractor<float>::Constant)
+    , attenuationMethod(Dg::Attractor<float>::Constant)
     , strength(1.0f)
     , maxAppliedAccelMag(10.0f)
     , transform{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
@@ -97,7 +97,7 @@ public:
 
   int ID;
   int type;      //[None, Global, Point, Line, Plane]
-  int appliedAccelType;  //[constant , linear, inverse square]
+  int attenuationMethod;  //[constant , linear, inverse square]
   float strength;
   float maxAppliedAccelMag;
   float transform[6]; // [x, y, z, heading, pitch, scale] 

@@ -15,7 +15,7 @@
 //TODO Documentation
 namespace Dg
 {
-  typedef unsigned ParMapKey;
+  typedef unsigned int;
 
   template<typename Real>
   class ParticleSystem
@@ -28,13 +28,13 @@ namespace Dg
     ParticleSystem<Real> & operator=(ParticleSystem<Real> const & a_other);
 
     //! This function will delete the input emitter
-    void AddEmitter(ParMapKey, ParticleEmitter<Real> *);
+    void AddEmitter(int, ParticleEmitter<Real> *);
 
     //! This function will delete the input updater
-    void AddUpdater(ParMapKey, ParticleUpdater<Real> *);
+    void AddUpdater(int, ParticleUpdater<Real> *);
     
-    void RemoveEmitter(ParMapKey);
-    void RemoveUpdater(ParMapKey);
+    void RemoveEmitter(int);
+    void RemoveUpdater(int);
 
     void InitParticleAttr(int);
     void DeinitParticleAttr(int);
@@ -45,17 +45,17 @@ namespace Dg
     void StartAllEmitters();
     void StopAllEmitters();
 
-    ParticleEmitter<Real> * GetEmitter(ParMapKey);
-    ParticleUpdater<Real> * GetUpdater(ParMapKey);
+    ParticleEmitter<Real> * GetEmitter(int);
+    ParticleUpdater<Real> * GetUpdater(int);
     ParticleData<Real> * GetParticleData() { return &m_particleData; }
 
     void Update(Real dt);
     void Clear();
 
   private:
-    Dg::map<ParMapKey, ObjectWrapper<ParticleEmitter<Real>>>   m_emitters;
+    Dg::map<int, ObjectWrapper<ParticleEmitter<Real>>>   m_emitters;
     ParticleData<Real>                                         m_particleData;
-    Dg::map<ParMapKey, ObjectWrapper<ParticleUpdater<Real>>>   m_updaters;
+    Dg::map<int, ObjectWrapper<ParticleUpdater<Real>>>   m_updaters;
   };
 
   template<typename Real>
@@ -95,7 +95,7 @@ namespace Dg
 
 
   template<typename Real>
-  void ParticleSystem<Real>::AddEmitter(ParMapKey a_key, ParticleEmitter<Real> * a_pEmitter)
+  void ParticleSystem<Real>::AddEmitter(int a_key, ParticleEmitter<Real> * a_pEmitter)
   {
     if (a_pEmitter)
     {
@@ -106,7 +106,7 @@ namespace Dg
 
 
   template<typename Real>
-  void ParticleSystem<Real>::AddUpdater(ParMapKey a_key, ParticleUpdater<Real> * a_pUpdater)
+  void ParticleSystem<Real>::AddUpdater(int a_key, ParticleUpdater<Real> * a_pUpdater)
   {
     if (a_pUpdater)
     {
@@ -116,19 +116,19 @@ namespace Dg
   }
 
   template<typename Real>
-  void ParticleSystem<Real>::RemoveEmitter(ParMapKey a_key)
+  void ParticleSystem<Real>::RemoveEmitter(int a_key)
   {
     m_emitters.erase(a_key);
   }
 
   template<typename Real>
-  void ParticleSystem<Real>::RemoveUpdater(ParMapKey a_key)
+  void ParticleSystem<Real>::RemoveUpdater(int a_key)
   {
     m_updaters.erase(a_key);
   }
 
   template<typename Real>
-  ParticleEmitter<Real> * ParticleSystem<Real>::GetEmitter(ParMapKey a_key)
+  ParticleEmitter<Real> * ParticleSystem<Real>::GetEmitter(int a_key)
   {
     int index(0);
     if (m_emitters.find(a_key, index))
@@ -139,7 +139,7 @@ namespace Dg
   }
 
   template<typename Real>
-  ParticleUpdater<Real> * ParticleSystem<Real>::GetUpdater(ParMapKey a_key)
+  ParticleUpdater<Real> * ParticleSystem<Real>::GetUpdater(int a_key)
   {
     int index(0);
     if (m_updaters.find(a_key, index))
