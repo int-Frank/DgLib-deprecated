@@ -1,7 +1,9 @@
 //! @file DgParticleSystem.h
 //!
 //! @author Frank Hart
-//! @date 4/10/2015
+//! @date 23/07/2016
+//!
+//! Clas declartion: ParticleSystem
 
 #ifndef DGPARTICLESYSTEM_H
 #define DGPARTICLESYSTEM_H
@@ -12,9 +14,24 @@
 #include "DgParticleData.h"
 #include "DgAttractor.h"
 
-//TODO Documentation
+
 namespace Dg
 {
+  //! @ingroup DgEngine_ParticleSystem
+  //!
+  //! @class ParticleSystem
+  //!
+  //! Particles systems contain three main components
+  //!   - Emitters
+  //!   - Updaters
+  //!   - Particle data
+  //! To set up a particle system:
+  //!   - Initialize the particle attributes you will use
+  //!   - Add Emitters 
+  //!   - Add updaters
+  //!
+  //! @author Frank Hart
+  //! @date 23/07/2016
   template<typename Real>
   class ParticleSystem
   {
@@ -25,29 +42,52 @@ namespace Dg
     ParticleSystem(ParticleSystem<Real> const & a_other);
     ParticleSystem<Real> & operator=(ParticleSystem<Real> const & a_other);
 
-    //! This function will delete the input emitter
-    void AddEmitter(int, ParticleEmitter<Real> *);
+    //! This function will take control of the emitter.
+    //!
+    //! @param[in] id ID of the emitter.
+    //! @param[in] Particle emitter to add.
+    void AddEmitter(int id, ParticleEmitter<Real> *);
 
-    //! This function will delete the input updater
+    //! This function will take control of the updater.
+    //!
+    //! @param[in] id ID of the updater.
+    //! @param[in] Particle updater to add.
     void AddUpdater(int, ParticleUpdater<Real> *);
     
-    void RemoveEmitter(int);
-    void RemoveUpdater(int);
+    //! Remove emitter by ID.
+    void RemoveEmitter(int id);
 
-    void InitParticleAttr(int);
+    //! Remove Updater by ID.
+    void RemoveUpdater(int id);
+
+    //! Initialize particle attribute by id, as define in ParticleData::Attr.
+    void InitParticleAttr(int id);
+    
+    //! Deinitialize particle attribute by id, as define in ParticleData::Attr.
     void DeinitParticleAttr(int);
 
+    //! Initialize all particle attributes.
     void InitAllParticleAttr();
+
+    //! Deinitialize all particle attributes.
     void DeinitAllParticleAttr();
 
     void StartAllEmitters();
     void StopAllEmitters();
 
-    ParticleEmitter<Real> * GetEmitter(int);
+    //! Get Emitter by ID
+    ParticleEmitter<Real> * GetEmitter(int id);
+    
+    //! Get Updater by ID
     ParticleUpdater<Real> * GetUpdater(int);
+    
+    //! Get Pointer to particle data
     ParticleData<Real> * GetParticleData() { return &m_particleData; }
 
+    //! Update the particle system.
     void Update(Real dt);
+
+    //! Deletes all emitters and updaters, also kills all particles.
     void Clear();
 
   private:

@@ -146,14 +146,61 @@ void Application::ShowMainGUIWindow()
     }
     if (ImGui::BeginMenu("Help"))
     {
-      //TODO implement 'Help' window
-      ImGui::MenuItem("View Help", NULL, &UI::showHelp);
+      if (ImGui::MenuItem("View Help", NULL, &UI::showHelp)) 
+      { 
+        m_windowStack.push(Modal::ViewHelp); 
+      }
       ImGui::Separator();
-      //TODO implement 'About' window
-      ImGui::MenuItem("About", NULL, &UI::showAbout);
+      if (ImGui::MenuItem("About", NULL, &UI::showAbout))
+      {
+        m_windowStack.push(Modal::ViewAbout);
+      }
       ImGui::EndMenu();
     }
     ImGui::EndMenuBar();
+  }
+
+
+  //----------------------------------------------------------------------------------
+  //  Help Window
+  //----------------------------------------------------------------------------------
+  if (!m_windowStack.empty() && m_windowStack.top() == Modal::ViewHelp)
+  {
+    ImGui::OpenPopup("Help");
+  }
+  if (ImGui::BeginPopupModal("Help", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    ImGui::Text("Helpful tips:");
+    ImGui::BulletText("Add / remove particle emitters and attractors.");
+    ImGui::BulletText("Unchecking the 'Relative Force' option may increase performance");
+    ImGui::Text(""); ImGui::SameLine(ImGui::GetWindowWidth() - 140.0f);
+    if (ImGui::Button("OK", ImVec2(130, 0)))
+    {
+      UI::showHelp = false;
+      m_windowStack.pop();
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
+
+
+  //----------------------------------------------------------------------------------
+  //  About Window
+  //----------------------------------------------------------------------------------
+  if (!m_windowStack.empty() && m_windowStack.top() == Modal::ViewAbout)
+  {
+    ImGui::OpenPopup("About");
+  }
+  if (ImGui::BeginPopupModal("About", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    ImGui::Text("About this");
+    if (ImGui::Button("OK", ImVec2(130, 0)))
+    {
+      UI::showAbout = false;
+      m_windowStack.pop();
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
   }
 
 

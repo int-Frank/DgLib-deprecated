@@ -123,6 +123,8 @@ private:
     SaveAsWindow,
     OpenWindow,
     NewProjectPrompt,
+    ViewHelp,
+    ViewAbout,
     None
   };
 
