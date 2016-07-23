@@ -353,7 +353,7 @@ void Application::ShowMainGUIWindow()
     ImGui::TextColored(headingClr, "Optional updaters");
     ImGui::Checkbox("Color", &m_projData.parSysOpts[0].useUpdaterColor);
     ImGui::Checkbox("Size", &m_projData.parSysOpts[0].useUpdaterSize);
-    ImGui::Checkbox("Rel force", &m_projData.parSysOpts[0].useUpdaterRelativeForce);
+    ImGui::Checkbox("Relative force", &m_projData.parSysOpts[0].useUpdaterRelativeForce);
   }
 
   //TODO Set slider imits for all the UI
