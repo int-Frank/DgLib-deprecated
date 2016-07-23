@@ -133,6 +133,11 @@ namespace Dg
   template<class T>
   ObjectWrapper<T>& ObjectWrapper<T>::operator=(const ObjectWrapper& other)
   {
+    if (this == &other)
+    {
+      return *this;
+    }
+
     delete m_ptr;
     m_ptr = nullptr;
 

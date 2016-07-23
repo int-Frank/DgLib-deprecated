@@ -50,6 +50,9 @@ namespace Dg
 		//! Get random unsigned integer within the interval [a, b].
 		unsigned int GetUint(unsigned int a, unsigned int b);
 
+    //! Flip a coin
+    bool FlipACoin();
+
 		//! Get random unsigned integer.
 		unsigned int GetUint();
 

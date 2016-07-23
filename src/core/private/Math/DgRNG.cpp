@@ -49,6 +49,10 @@ namespace Dg
 
 	}	//End: RNG::GetUint()
 
+  bool RNG::FlipACoin()
+  {
+    return (GetUint() & 1);
+  }
 
 		//--------------------------------------------------------------------------------
 		//	@	RNG::GetUint()

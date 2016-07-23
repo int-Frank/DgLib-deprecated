@@ -1,4 +1,4 @@
-//! @file DgLineSegment.h
+//! @file DgParticleData.h
 //!
 //! @author: Frank B. Hart
 //! @date 22/07/2016
@@ -113,6 +113,10 @@ namespace Dg
     ADD_MEMBERS(ATTRIBUTES)
   };
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::ParticleData()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   ParticleData<Real>::ParticleData(int a_maxCount)
     : ADD_MEMBER_CONSTRUCTORS(ATTRIBUTES)
@@ -120,14 +124,22 @@ namespace Dg
     , m_countAlive(0)
   {
    
-  }
+  }	//End: ParticleData::ParticleData()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::~ParticleData()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   ParticleData<Real>::~ParticleData()
   {
     ADD_MEMBER_DESTRUCTORS(ATTRIBUTES)
-  }
+  }	//End: ParticleData::~ParticleData()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::Wake()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   bool ParticleData<Real>::Wake(int & a_index)
   {
@@ -139,8 +151,12 @@ namespace Dg
     a_index = m_countAlive;
     ++m_countAlive;
     return true;
-  }
+  }	//End: ParticleData::Wake()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::Kill()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   int ParticleData<Real>::Kill(int a_index)
   {
@@ -152,14 +168,22 @@ namespace Dg
     }
 
     return m_countAlive;
-  }
+  }	//End: ParticleData::Kill()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::KillAll()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   void ParticleData<Real>::KillAll()
   {
     m_countAlive = 0;
-  }
+  }	//End: ParticleData::KillAll()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::InitAttribute()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   void ParticleData<Real>::InitAttribute(Attr a_val)
   {
@@ -167,8 +191,12 @@ namespace Dg
     {
       ADD_INIT_CODE(ATTRIBUTES)
     }
-  }
+  }	//End: ParticleData::InitAttribute()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::DeinitAttribute()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   void ParticleData<Real>::DeinitAttribute(Attr a_val)
   {
@@ -176,19 +204,27 @@ namespace Dg
     {
       ADD_DEINIT_CODE(ATTRIBUTES)
     }
-  }
+  }	//End: ParticleData::DeinitAttribute()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::InitAll()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   void ParticleData<Real>::InitAll()
   {
     ADD_INITALL_CODE(ATTRIBUTES)
-  }
+  }	//End: ParticleData::InitAll()
 
+
+  //--------------------------------------------------------------------------------
+  //	@	ParticleData::DeinitAll()
+  //--------------------------------------------------------------------------------
   template<typename Real>
   void ParticleData<Real>::DeinitAll()
   {
     ADD_DEINITALL_CODE(ATTRIBUTES)
-  }
+  }	//End: ParticleData::DeinitAll()
 
 }
 
