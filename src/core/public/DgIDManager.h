@@ -10,14 +10,15 @@
 
 #include "Dg_list_pod.h"
 
-//TODO Documentation, tests
 namespace Dg
 {
   //! @ingroup DgUtility
   //!
   //! @class IDManager
   //!
-  //! The IDManager serves unique ID's with a certain range.
+  //! The IDManager serves unique ID's with a certain range. It does this by storing a set of ranges
+  //! of available IDs. If an ID is taken from the a set, the set bounds may be incremented or decremented,
+  //! or borken, creating a new set.
   //!
   //! @author Frank Hart
   //! @date 23/07/2016
@@ -26,24 +27,38 @@ namespace Dg
   {
   public:
 
+    //! The default range will be simply 1
     IDManager();
+    
+    //! Construct the manager with a lower and upper limit to the ID pool
     IDManager(T lower, T upper);
+
     ~IDManager() {}
     IDManager(IDManager<T> const &);
     IDManager & operator=(IDManager<T> const &);
 
+    //! Initialize the ID manager with a lower and upper bound.
     void Init(T lower, T upper);
-
+    
+    //! Get the next available ID.
+    //!
     //! @return 0 if no more IDs are available.
     T GetID();
+    
+    //! Mark an ID as available.
     void ReturnID(T);
 
+    //! Mark an ID as in use.
+    //!
     //! @return false if id already in use.
     bool MarkAsUsed(T);
+    
+    //! Check to see if an ID is in use.
     bool IsUsed(T) const;
 
   private:
 
+    //! Intervals are ranges of available numbers
     class Interval
     {
     public:
@@ -83,39 +98,63 @@ namespace Dg
     Interval               m_bounds;
   };
 
+
+  //-------------------------------------------------------------------------------
+  //		@ IDManager<T>::Interval::operator<()
+  //-------------------------------------------------------------------------------
   template<typename T>
   bool IDManager<T>::Interval::operator<(typename IDManager<T>::Interval const & a_other) const
   {
     return m_upper < a_other.m_lower;
-  }
+  } //End: IDManager::Interval::operator<()
 
+
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::Interval::operator>()
+  //-------------------------------------------------------------------------------
   template<typename T>
   bool IDManager<T>::Interval::operator>(typename IDManager<T>::Interval const & a_other) const
   {
     return m_upper > a_other.m_lower;
-  }
+  } //End: IDManager::Interval:operator>()
 
+  
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::IDManager()
+  //-------------------------------------------------------------------------------
   template<typename T>
   IDManager<T>::IDManager()
     : m_bounds(static_cast<T>(1), static_cast<T>(1))
   {
     m_intervals.push_back(m_bounds);
-  }
+  } //End: IDManager::IDManager()
 
+  
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::IDManager()
+  //-------------------------------------------------------------------------------
   template<typename T>
   IDManager<T>::IDManager(T a_lower, T a_upper)
     : m_bounds(a_lower, a_upper)
   {
     Init(a_lower, a_upper);
-  }
+  } //End: IDManager::IDManager()
 
+
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::IDManager()
+  //-------------------------------------------------------------------------------
   template<typename T>
   IDManager<T>::IDManager(IDManager<T> const & a_other)
     : m_intervals(a_other.m_intervals)
     , m_bounds(a_other.m_bounds)
   {
-  }
+  } //End: IDManager::IDManager()
 
+  
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::operator=()
+  //-------------------------------------------------------------------------------
   template<typename T>
   IDManager<T> & IDManager<T>::operator=(IDManager<T> const & a_other)
   {
@@ -125,8 +164,12 @@ namespace Dg
       m_bounds = a_other.m_bounds;
     }
     return *this;
-  }
+  } //End: IDManager::operator=()
 
+  
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::Init()
+  //-------------------------------------------------------------------------------
   template<typename T>
   void IDManager<T>::Init(T a_lower, T a_upper)
   {
@@ -135,8 +178,12 @@ namespace Dg
     m_bounds.m_lower = a_lower;
     m_bounds.m_upper = a_upper;
     m_intervals.push_front(m_bounds);
-  }
+  } //End: IDManager::Init()
 
+  
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::GetID()
+  //-------------------------------------------------------------------------------
   template<typename T>
   T IDManager<T>::GetID()
   {
@@ -154,8 +201,12 @@ namespace Dg
     }
 
     return result;
-  }
+  } //End: IDManager::GetID()
 
+  
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::ReturnID()
+  //-------------------------------------------------------------------------------
   template<typename T>
   void IDManager<T>::ReturnID(T a_val)
   {
@@ -225,8 +276,12 @@ namespace Dg
         m_intervals.back().m_upper++;
       }
     }
-  }
+  } //End: IDManager::ReturnID()
 
+  
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::MarkAsUsed()
+  //-------------------------------------------------------------------------------
   template<typename T>
   bool IDManager<T>::MarkAsUsed(T a_val)
   {
@@ -260,8 +315,12 @@ namespace Dg
       }
     }
     return good;
-  }
+  } //End: IDManager::MarkAsUsed()
 
+  
+  //-------------------------------------------------------------------------------
+  //		@ IDManager::IsUsed()
+  //-------------------------------------------------------------------------------
   template<typename T>
   bool IDManager<T>::IsUsed(T a_val) const
   {
@@ -280,7 +339,7 @@ namespace Dg
       }
     }
     return true;
-  }
+  } //End: IDManager::IsUsed()
 }
 
 
