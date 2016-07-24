@@ -535,18 +535,13 @@ namespace Dg
   template<typename Real>
   Vector4<Real> GetRandomOrthonormalVector(Vector4<Real> const & a_axis)
   {
-    RNG generator;
-    Vector4<Real> o;
+    RNG gen;
+    Vector4<Real> perp = Perpendicular(a_axis);
+    Vector4<Real> crs = Cross(a_axis, perp);
+    Real phi = gen.GetUniform(static_cast<Real>(0.0)
+                            , static_cast<Real>(Dg::PI_d * 2.0));
 
-    do
-    {
-      Vector4<Real> v(GetRandomVector<Real>());
-      o = (Cross(a_axis, v));
-    } while (o.IsZero());
-
-    o.Normalize();
-
-    return o;
+    return (cos(phi) * perp + sin(phi) * crs);
   }	//End: GetRandomOrthonormalVector()
 
 
@@ -559,10 +554,9 @@ namespace Dg
     RNG generator;
 
     Dg::WrapNumber(static_cast<Real>(0.0)
-      , static_cast<Real>(Dg::PI_d)
-      , theta);
+                 , static_cast<Real>(Dg::PI_d)
+                 , theta);
 
-    //Use acos as the function!!
     Real bound = cos(static_cast<Real>(Dg::PI_d) - theta);
     Real x = generator.GetUniform(static_cast<Real>(-1.0), bound);
     Real phi = static_cast<Real>(Dg::PI_d) - acos(x);
