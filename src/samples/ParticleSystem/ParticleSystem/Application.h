@@ -100,6 +100,7 @@ private:
   void CreateFileList(std::vector<std::string> const &
                     , char const *
                     , int *);
+  void BuildLineRenderData(std::vector<LineRenderData> & a_out);
 
   void UpdateParSysAttr();
 

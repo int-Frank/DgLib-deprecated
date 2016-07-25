@@ -262,7 +262,83 @@ void Application::DoLogic(double a_dt)
   }
 }
 
+void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
+{
+  a_out.clear();
 
+  for (int i = 0; i < m_projData.aData.size(); ++i)
+  {
+    if (m_projData.aData[i].first.show)
+    {
+      LineRenderData lineRenderData; 
+      lineRenderData.model = m_projData.aData[i].first.type;
+      Dg::Vector4<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
+      Dg::Vector4<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
+      lineRenderData.col = (i == m_focusAttr) ? lineColFocus : lineCol;
+      switch (m_projData.aData[i].first.type)
+      {
+      case E_AttGlobal:
+      {
+        lineRenderData.mat.Rotation(0.0f
+          , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+          , m_projData.aData[i].first.transform[3]
+          , Dg::EulerOrder::XYZ);
+        break;
+      }
+      case E_AttPoint:
+      {
+        lineRenderData.mat.Translation
+        (
+          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
+            , m_projData.aData[i].first.transform[1]
+            , m_projData.aData[i].first.transform[2]
+            , 0.0f)
+        );
+        break;
+      }
+      case E_AttLine:
+      {
+        mat44 trans, rot;
+        trans.Translation
+        (
+          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
+            , m_projData.aData[i].first.transform[1]
+            , m_projData.aData[i].first.transform[2]
+            , 0.0f)
+        );
+
+        rot.Rotation(0.0f
+          , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+          , m_projData.aData[i].first.transform[3]
+          , Dg::EulerOrder::XYZ);
+        lineRenderData.mat = rot * trans;
+        break;
+      }
+      case E_AttPlane:
+      {
+        mat44 trans, rot;
+        trans.Translation
+        (
+          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
+            , m_projData.aData[i].first.transform[1]
+            , m_projData.aData[i].first.transform[2]
+            , 0.0f)
+        );
+
+        rot.Rotation(0.0f
+          , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+          , m_projData.aData[i].first.transform[3]
+          , Dg::EulerOrder::XYZ);
+        lineRenderData.mat = rot * trans;
+        break;
+      }
+      }
+
+      a_out.push_back(lineRenderData);
+
+    }
+  }
+}
 
 void Application::Render()
 {
@@ -290,84 +366,11 @@ void Application::Render()
 
   float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
 
-  //TODO Use std::vector here??
-  LineRenderData * lineRenderData = new LineRenderData[m_projData.aData.size()];
-  int nShowAttr = 0;
-  for (int i = 0; i < m_projData.aData.size(); ++i)
-  {
-    if (m_projData.aData[i].first.show)
-    {
-      lineRenderData[nShowAttr].model = m_projData.aData[i].first.type;
-      Dg::Vector4<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
-      Dg::Vector4<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
-      lineRenderData[nShowAttr].col = (i == m_focusAttr) ? lineColFocus : lineCol;
-      switch (m_projData.aData[i].first.type)
-      {
-      case E_AttGlobal:
-      {
-        lineRenderData[nShowAttr].mat.Rotation(0.0f
-                                 , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                                 , m_projData.aData[i].first.transform[3]
-                                 , Dg::EulerOrder::XYZ);
-        break;
-      }
-      case E_AttPoint:
-      {
-        lineRenderData[nShowAttr].mat.Translation
-        (
-          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
-                           , m_projData.aData[i].first.transform[1]
-                           , m_projData.aData[i].first.transform[2]
-                           , 0.0f)
-        );
-        break;
-      }
-      case E_AttLine:
-      {
-        mat44 trans, rot;
-        trans.Translation
-        (
-          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
-                           , m_projData.aData[i].first.transform[1]
-                           , m_projData.aData[i].first.transform[2]
-                           , 0.0f)
-        );
-
-        rot.Rotation(0.0f
-                   , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                   , m_projData.aData[i].first.transform[3]
-                   , Dg::EulerOrder::XYZ);
-        lineRenderData[nShowAttr].mat = rot * trans;
-        break;
-      }
-      case E_AttPlane:
-      {
-        mat44 trans, rot;
-        trans.Translation
-        (
-          Dg::Vector4<float>(m_projData.aData[i].first.transform[0]
-                           , m_projData.aData[i].first.transform[1]
-                           , m_projData.aData[i].first.transform[2]
-                           , 0.0f)
-        );
-
-        rot.Rotation(0.0f
-                   , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
-                   , m_projData.aData[i].first.transform[3]
-                   , Dg::EulerOrder::XYZ);
-        lineRenderData[nShowAttr].mat = rot * trans;
-        break;
-      }
-      }
-      
-      nShowAttr++;
-    }
-  }
+  std::vector<LineRenderData> lineReanderData;
+  BuildLineRenderData(lineReanderData);
   
   m_renderer.Update(m_particleSystem.GetParticleData());
-  m_renderer.Render(mv_matrix, proj_matrix, parScale, nShowAttr, lineRenderData);
-
-  delete[] lineRenderData;
+  m_renderer.Render(mv_matrix, proj_matrix, parScale, lineReanderData);
 }
 
 void AppOnMouseScroll(double yOffset)

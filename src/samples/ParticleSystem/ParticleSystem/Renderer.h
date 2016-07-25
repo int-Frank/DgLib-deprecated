@@ -4,8 +4,9 @@
 #include <string>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <vector>
 
-struct LineRenderData;
+#include "Types.h"
 
 namespace Dg
 {
@@ -25,11 +26,10 @@ public:
 
   void Update(Dg::ParticleData<float> *);
 
-  void Render(Dg::Matrix44<float> const & a_modelView
-            , Dg::Matrix44<float> const & a_proj
+  void Render(Dg::Matrix44<float> const & modelView
+            , Dg::Matrix44<float> const & proj
             , float parScale
-            , int nlineModels
-            , LineRenderData const *);
+            , std::vector<LineRenderData> const & lineRenderData);
 
   void ShutDown();
 

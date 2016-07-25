@@ -179,8 +179,7 @@ static int GetAlphaEnumFromListVal(int a_val)
 void Renderer::Render(Dg::Matrix44<float> const & a_modelView
                     , Dg::Matrix44<float> const & a_proj
                     , float a_parScale
-                    , int a_nlineModels
-                    , LineRenderData const * a_lineData)
+                    , std::vector<LineRenderData> const & a_lineRenderData)
 {
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -194,11 +193,11 @@ void Renderer::Render(Dg::Matrix44<float> const & a_modelView
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  for (int i = 0; i < a_nlineModels; ++i)
+  for (int i = 0; i < (int)a_lineRenderData.size(); ++i)
   {
-    glUniformMatrix4fv(mv_loc, 1, GL_FALSE, (a_lineData[i].mat * a_modelView).GetData());
-    glUniform4fv(lineColor_loc, 1, a_lineData[i].col.GetData());
-    switch (a_lineData[i].model)
+    glUniformMatrix4fv(mv_loc, 1, GL_FALSE, (a_lineRenderData[i].mat * a_modelView).GetData());
+    glUniform4fv(lineColor_loc, 1, a_lineRenderData[i].col.GetData());
+    switch (a_lineRenderData[i].model)
     {
     case E_AttGlobal:
     {
