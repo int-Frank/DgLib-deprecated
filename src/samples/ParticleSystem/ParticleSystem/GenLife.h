@@ -4,7 +4,7 @@
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleGenerator.h"
 
-//! Updates particle color
+
 template<typename Real>
 class GenLife : public Dg::ParticleGenerator<Real>
 {

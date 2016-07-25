@@ -59,7 +59,9 @@ private:
   EventManager              m_eventManager;
   Dg::ParticleSystem<float> m_particleSystem;
 
-  char * const              m_configFileName = "config.ini";
+  std::string const         m_configFileName = "config.ini";
+  std::string const         m_projectPath = "./projects/";
+  std::string const         m_fileExt = "dgp";
 
   AppInfo		                m_info;
   GLFWwindow*               m_window;
@@ -85,9 +87,7 @@ private:
 
   Dg::IDManager<int>        m_IDManager;
 
-  std::string const         m_projectPath = "./projects/";
-  std::string const         m_fileExt = "dgp";
-
+private:
   //Main initializer function. All others are called through here.
   bool Init();
 
@@ -101,6 +101,9 @@ private:
                     , char const *
                     , int *);
   void BuildLineRenderData(std::vector<LineRenderData> & a_out);
+  void GetRenderTransforms(Dg::Matrix44<float> & a_mv
+                         , Dg::Matrix44<float> & a_proj
+                         , float & a_parScale);
 
   void UpdateParSysAttr();
 

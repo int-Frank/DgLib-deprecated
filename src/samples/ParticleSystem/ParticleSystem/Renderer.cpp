@@ -134,6 +134,7 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
   return true;
 }
 
+
 void Renderer::Update(Dg::ParticleData<float> * a_parData)
 {
   glBindBuffer(GL_ARRAY_BUFFER, m_buffers[0]);
@@ -152,6 +153,7 @@ void Renderer::Update(Dg::ParticleData<float> * a_parData)
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
 
 static int GetAlphaEnumFromListVal(int a_val)
 {
@@ -175,6 +177,7 @@ static int GetAlphaEnumFromListVal(int a_val)
   }
   return GL_ONE;
 }
+
 
 void Renderer::Render(Dg::Matrix44<float> const & a_modelView
                     , Dg::Matrix44<float> const & a_proj
@@ -307,6 +310,7 @@ void Renderer::ShutDown()
   }
 
   glDeleteVertexArrays(1, &m_pt_vao);
+  glDeleteVertexArrays(1, &m_ln_vao);
   glDeleteProgram(m_pt_shaderProgram);
   glDeleteProgram(m_ln_shaderProgram);
 }

@@ -5,8 +5,6 @@
 
 #include "Application.h"
 #include "imgui/imgui.h"
-#include "EmitterFactory.h"
-#include "AttractorFactory.h"
 #include "UI.h"
 
 static void CreateSpacing(int a_n)
@@ -535,8 +533,6 @@ void Application::ShowMainGUIWindow()
       CreateSpacing(nSpacing);
       ImGui::TextColored(headingClr, "Define Initial velocity vector");
       ImGui::RadioButton("Direction", &curEmData.velGenMethod, E_GenVelCone); ImGui::SameLine();
-
-      //TODO Implement Outwards functionality
       ImGui::RadioButton("Outwards", &curEmData.velGenMethod, E_GenVelOutwards);
 
       if (curEmData.velGenMethod == E_GenVelCone)

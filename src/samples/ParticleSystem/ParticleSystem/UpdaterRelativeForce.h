@@ -6,7 +6,7 @@
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleUpdater.h"
 
-//! Updates position
+//! Updates relative force
 template<typename Real>
 class UpdaterRelativeForce : public Dg::ParticleUpdater<Real>
 {

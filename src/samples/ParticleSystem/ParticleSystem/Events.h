@@ -24,6 +24,7 @@ public:
   Event * Clone() const { return new Event(*this); }
 };
 
+
 class Event_LoadProject : public Event
 {
 public:
@@ -79,6 +80,7 @@ private:
   std::string       m_fileName;
 };
 
+
 class Event_NewProject : public Event
 {
 public:
@@ -98,6 +100,7 @@ public:
   Event_NewProject * Clone() const { return new Event_NewProject(*this); }
 
 };
+
 
 class Event_DeleteFile : public Event
 {
@@ -125,6 +128,7 @@ public:
 private:
   std::string       m_fileName;
 };
+
 
 class Event_MouseScroll : public Event
 {
@@ -156,6 +160,7 @@ public:
 private:
   double    m_val;
 };
+
 
 class Event_KeyEvent : public Event
 {

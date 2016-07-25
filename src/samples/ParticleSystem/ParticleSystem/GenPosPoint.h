@@ -9,14 +9,15 @@ template<typename Real>
 class GenPosPoint : public Dg::ParticleGenerator<Real>
 {
 public:
-  GenPosPoint() : m_origin(Dg::Vector4<Real>::Origin()),
-                  Dg::ParticleGenerator<Real>() {}
+  GenPosPoint() : Dg::ParticleGenerator<Real>() 
+                , m_origin(Dg::Vector4<Real>::Origin())
+  {}
 
   ~GenPosPoint() {}
 
   GenPosPoint(GenPosPoint<Real> const & a_other)
-    : Dg::ParticleGenerator<Real>(a_other),
-      m_origin(a_other.m_origin){}
+    : Dg::ParticleGenerator<Real>(a_other)
+    , m_origin(a_other.m_origin){}
 
   GenPosPoint<Real> & operator=(GenPosPoint<Real> const & a_other)
   {

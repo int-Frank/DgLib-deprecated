@@ -4,7 +4,7 @@
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleUpdater.h"
 
-//! Updates particle color
+//! Updates particle size
 template<typename Real>
 class UpdaterSize : public Dg::ParticleUpdater<Real>
 {

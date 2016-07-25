@@ -6,25 +6,29 @@
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleEmitter.h"
 
-//! Updates position
+
 template<typename Real>
 class EmitterLinear : public Dg::ParticleEmitter<Real>
 {
 public:
-  EmitterLinear() : Dg::ParticleEmitter<Real>(), 
-                    m_rate(static_cast<Real>(1.0)),
-                    m_residual(static_cast<Real>(0.0)){}
+  EmitterLinear() 
+    : Dg::ParticleEmitter<Real>()
+    , m_rate(static_cast<Real>(1.0))
+    , m_residual(static_cast<Real>(0.0))
+  {}
   ~EmitterLinear() {}
 
   EmitterLinear(EmitterLinear<Real> const & a_other) 
-    : Dg::ParticleEmitter<Real>(a_other),
-      m_rate(a_other.m_rate),
-      m_residual(a_other.m_residual) {}
+    : Dg::ParticleEmitter<Real>(a_other)
+    , m_rate(a_other.m_rate)
+    , m_residual(a_other.m_residual)
+  {}
 
   EmitterLinear(Dg::ParticleEmitter<Real> const & a_other) 
-    : Dg::ParticleEmitter<Real>(a_other),
-      m_rate(static_cast<Real>(1.0)),
-      m_residual(static_cast<Real>(0.0)) {}
+    : Dg::ParticleEmitter<Real>(a_other)
+    , m_rate(static_cast<Real>(1.0))
+    , m_residual(static_cast<Real>(0.0)) 
+  {}
 
   EmitterLinear<Real> & operator=(EmitterLinear<Real> const & a_other)
   {
@@ -35,7 +39,6 @@ public:
   }
 
   void SetRate(Real a_rate) { if (a_rate >= static_cast<Real>(0.0)) { m_rate = a_rate; } }
-
   int EmitParticles(Dg::ParticleData<Real> &, Real);
 
   EmitterLinear<Real> * Clone() const { return new EmitterLinear<Real>(*this); }

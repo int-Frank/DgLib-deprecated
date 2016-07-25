@@ -1,13 +1,4 @@
-﻿/*!
-* @file Application.cpp
-*
-* @author Frank Hart
-* @date 30/01/2014
-*
-* [description]
-*/
-
-
+﻿
 #include <windows.h>
 #include <shlwapi.h>
 #pragma comment(lib,"shlwapi.lib")
@@ -39,10 +30,12 @@ Application::Application()
   s_app = this;
 }
 
+
 void Application::PushEvent(Event const & a_event)
 {
   m_eventManager.PushEvent(a_event);
 }
+
 
 void AppOnKeyEvent(int a_key, int a_action)
 {
@@ -51,6 +44,7 @@ void AppOnKeyEvent(int a_key, int a_action)
   e.SetAction(a_action);
   Application::GetInstance()->PushEvent(e);
 }
+
 
 void Application::KeyEvent(int a_key, int a_action)
 {
@@ -68,6 +62,7 @@ void Application::KeyEvent(int a_key, int a_action)
   }
   }
 }
+
 
 bool Application::Init()
 {
@@ -89,6 +84,7 @@ bool Application::Init()
   NewProject();
   return true;
 }
+
 
 bool Application::InitGL()
 {
@@ -180,6 +176,7 @@ void Application::UpdateScroll(double a_val)
   }
 }
 
+
 void Application::HandleEvents()
 {
   eObject e(nullptr);
@@ -204,6 +201,7 @@ void Application::HandleEvents()
     Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
   }
 }
+
 
 std::vector<std::string> Application::GetProjects()
 {
@@ -261,6 +259,7 @@ void Application::DoLogic(double a_dt)
     m_camZoom = m_camZoomTarget - diff / (pow(1.3f, 26.0f * a_dt));
   }
 }
+
 
 void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
 {
@@ -333,22 +332,28 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
         break;
       }
       }
-
       a_out.push_back(lineRenderData);
-
     }
   }
 }
 
-void Application::Render()
+
+void Application::GetRenderTransforms(Dg::Matrix44<float> & a_mv
+                                    , Dg::Matrix44<float> & a_proj
+                                    , float & a_parScale)
 {
-  mat44 translate, rotate, scale;
-  translate.Translation(vec4(0.0f, -2.0f, float(-m_camZoom), 0.0f));
+  float camHeight = 2.0f;
+  float fov = 1.5f;
+  float nearClip = 0.1f;
+  float farClip = 1000.0f;
+
+  mat44 translate, rotate;
+  translate.Translation(vec4(0.0f, -camHeight, float(-m_camZoom), 0.0f));
   rotate.Rotation(float(Dg::PI_d + m_camRotX)
                 , 0.0f
                 , float(m_camRotZ)
                 , Dg::EulerOrder::ZYX);
-  mat44 mv_matrix = rotate * translate;
+  a_mv = rotate * translate;
 
   //Set up the viewport
   float ratio;
@@ -360,18 +365,25 @@ void Application::Render()
   glViewport(0, 0, width, height);
 
   //Set up the perspective matrix;
-  mat44 proj_matrix;
-  float fov = 1.5f;
-  proj_matrix.Perspective(fov, ratio, 0.1f, 1000.0f);
+  a_proj.Perspective(fov, ratio, nearClip, farClip);
 
-  float parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
+  a_parScale = (static_cast<float>(width) * 0.5f) / std::tan(fov * 0.5f);
+}
+
+
+void Application::Render()
+{
+  Dg::Matrix44<float> mv, proj;
+  float parScale(0.0f);
+  GetRenderTransforms(mv, proj, parScale);
 
   std::vector<LineRenderData> lineReanderData;
   BuildLineRenderData(lineReanderData);
   
   m_renderer.Update(m_particleSystem.GetParticleData());
-  m_renderer.Render(mv_matrix, proj_matrix, parScale, lineReanderData);
+  m_renderer.Render(mv, proj, parScale, lineReanderData);
 }
+
 
 void AppOnMouseScroll(double yOffset)
 {
@@ -379,6 +391,7 @@ void AppOnMouseScroll(double yOffset)
   e.SetOffset(yOffset);
   Application::GetInstance()->PushEvent(e);
 }
+
 
 void Application::GetConfiguration()
 {
@@ -397,12 +410,12 @@ void Application::GetConfiguration()
 
   if (result == Dg::ErrorCode::FailedToOpenFile)
   {
-    fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", m_configFileName);
+    fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", m_configFileName.c_str());
     return;
   }
   else if (result != Dg::ErrorCode::None)
   {
-    fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", m_configFileName);
+    fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", m_configFileName.c_str());
     return;
   }
 
@@ -458,6 +471,7 @@ void Application::GetConfiguration()
     }
   }
 }
+
 
 int Application::AddEmitter()
 {
@@ -571,7 +585,6 @@ void Application::UI_NewFrame()
   }
 
   //TODO Get rid of all ImGui unwanted code, demos, etc...
-  //Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
   if (UI::showExampleWindow)
   {
     ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
@@ -594,7 +607,6 @@ void Application::Run(Application* the_app)
   do
   {
     double thisTick = glfwGetTime();
-	  double diff = thisTick - lastTick;
     double dt = static_cast<float>(thisTick - lastTick);
     lastTick = thisTick;
 

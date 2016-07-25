@@ -10,10 +10,10 @@
 class EmitterData;
 class AttractorData;
 
-typedef std::pair<EmitterData, EmitterData> EDataItem;
-typedef std::vector<EDataItem> EData;
-typedef std::pair<AttractorData, AttractorData> ADataItem;
-typedef std::vector<ADataItem> AData;
+typedef std::pair<EmitterData, EmitterData>       EDataItem;
+typedef std::vector<EDataItem>                    EData;
+typedef std::pair<AttractorData, AttractorData>   ADataItem;
+typedef std::vector<ADataItem>                    AData;
 
 enum
 {
