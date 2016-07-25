@@ -153,39 +153,10 @@ void Application::UpdateParSysAttr()
 
     if (data.posGenMethod != dataPrev.posGenMethod)
     {
-      switch (data.posGenMethod)
-      {
-      case E_GenPosPoint:
-      {
-        ptr->RemoveGenerator(E_GenPosBox);
-        ptr->RemoveGenerator(E_GenPosSphere);
-        GenPosPoint<float> * pGen = new GenPosPoint<float>();
-        pGen->SetOrigin(Dg::Vector4<float>(data.transform[0]
-                                         , data.transform[1]
-                                         , data.transform[2]
-                                         , 0.0f));
-        ptr->AddGenerator(E_GenPosPoint, pGen);
-        break;
-      }
-      case E_GenPosSphere:
-      {
-        ptr->RemoveGenerator(E_GenPosBox);
-        ptr->RemoveGenerator(E_GenPosPoint);
-        GenPosSphere<float> * pGen = new GenPosSphere<float>();
-        pGen->SetOrigin(Dg::Vector4<float>(data.transform[0]
-                                         , data.transform[1]
-                                         , data.transform[2]
-                                         , 0.0f));
-        pGen->SetRadius(data.transform[6]);
-        ptr->AddGenerator(E_GenPosSphere, pGen);
-        break;
-      }
-      case E_GenPosBox:
-      {
-        break;
-      }
-      }
-
+      ptr->RemoveGenerator(E_GenPosBox);
+      ptr->RemoveGenerator(E_GenPosSphere);
+      ptr->RemoveGenerator(E_GenPosPoint);
+      ptr->AddGenerator(data.posGenMethod, eFact.CreateGenPosition(data));
       dataPrev.posGenMethod = data.posGenMethod;
     }
 
@@ -230,19 +201,7 @@ void Application::UpdateParSysAttr()
     {
       ptr->RemoveGenerator(E_GenVelCone);
       ptr->RemoveGenerator(E_GenVelOutwards);
-      switch (data.velGenMethod)
-      {
-      case E_GenVelCone:
-      {
-        ptr->AddGenerator(E_GenVelCone, eFact.CreateGenVelCone(data));
-        break;
-      }
-      case E_GenVelOutwards:
-      {
-        ptr->AddGenerator(E_GenVelOutwards, eFact.CreateGenVelOutwards(data));
-        break;
-      }
-      }
+      ptr->AddGenerator(data.velGenMethod, eFact.CreateGenVelocity(data));
       dataPrev.velGenMethod = data.velGenMethod;
     }
 

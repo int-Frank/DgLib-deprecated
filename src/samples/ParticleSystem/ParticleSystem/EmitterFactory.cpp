@@ -33,18 +33,10 @@ Dg::ParticleEmitter<float> * EmitterFactory::operator()(EmitterData const & a_da
     pEmitter->AddGenerator(E_GenRelativeForce, CreateGenRelativeForce(a_data));
 
     //Position
-    switch (a_data.posGenMethod)
-    {
-    case E_GenPosPoint: pEmitter->AddGenerator(E_GenPosPoint, CreateGenPosPoint(a_data)); break;
-    case E_GenPosSphere: pEmitter->AddGenerator(E_GenPosSphere, CreateGenPosSphere(a_data)); break;
-    }
-
+    pEmitter->AddGenerator(a_data.posGenMethod, CreateGenPosition(a_data));
+    
     //Velocity
-    switch (a_data.velGenMethod)
-    {
-    case E_GenVelCone: pEmitter->AddGenerator(E_GenVelCone, CreateGenVelCone(a_data)); break;
-    case E_GenVelOutwards: pEmitter->AddGenerator(E_GenVelOutwards, CreateGenVelOutwards(a_data)); break;
-    }
+    pEmitter->AddGenerator(a_data.velGenMethod, CreateGenVelocity(a_data));
 
     //Other attributes
     pEmitter->SetRate(a_data.rate);
@@ -80,6 +72,38 @@ Dg::ParticleGenerator<float> * EmitterFactory::CreateGenLife(EmitterData const &
   GenLife<float> * pGen = new GenLife<float>;
   pGen->SetLife(a_data.life);
   return pGen;
+}
+
+Dg::ParticleGenerator<float> * EmitterFactory::CreateGenPosition(EmitterData const & a_data) const
+{
+  switch (a_data.posGenMethod)
+  {
+  case E_GenPosPoint:
+  {
+    return CreateGenPosPoint(a_data);
+  }
+  case E_GenPosSphere:
+  {
+    return CreateGenPosSphere(a_data);
+  }
+  }
+  return nullptr;
+}
+
+Dg::ParticleGenerator<float> * EmitterFactory::CreateGenVelocity(EmitterData const & a_data) const
+{
+  switch (a_data.velGenMethod)
+  {
+  case E_GenVelCone:
+  {
+    return CreateGenVelCone(a_data);
+  }
+  case E_GenVelOutwards:
+  {
+    return CreateGenVelOutwards(a_data);
+  }
+  }
+  return nullptr;
 }
 
 Dg::ParticleGenerator<float> * EmitterFactory::CreateGenPosPoint(EmitterData const & a_data) const
