@@ -4,10 +4,12 @@
 
 namespace Dg
 {
+  char const Parser_INI::s_comment[] = "#;";
+
   bool Parser_INI::IsComment(std::string const & a_str)
   {
     std::string str(Trim(a_str));
-    std::string CommentDelim = "#;";
+    std::string CommentDelim = s_comment;
     size_t strBegin = str.find_first_of(CommentDelim);
     return strBegin == 0;
   }

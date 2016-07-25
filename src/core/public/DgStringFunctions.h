@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <vector>
 
-//TODO Documentation
 namespace Dg
 {
   //! @ingroup DgUtility_functions
@@ -34,10 +33,31 @@ namespace Dg
     return !(iss >> f >> t).fail();
   }	//End: StringToNumber()
 
+  
+  //! @ingroup DgUtility_functions
+  //!
+  //! Converts a string to a vector of strings, using some deliminator. 
+  //!
+  //! @param[in] a_in Input string.
+  //! @param[in] a_delim List deliminator
+  //! @param[out] a_out Output vector of items
+  //!
+  //! @return Reference to output vector.
   std::vector<std::string> & Split(std::string const & a_in
                                  , char a_delim
                                  , std::vector<std::string> & a_out);
 
+  
+  //! @ingroup DgUtility_functions
+  //!
+  //! Converts a string to a vector of number types. 
+  //!
+  //! @param[in] a_in Input string.
+  //! @param[in] a_delim List deliminator
+  //! @param[in] a_f The base fo the number to read. (eg std::dec)
+  //! @param[out] a_out Output vector of items
+  //!
+  //! @return Reference to output vector.
   template<typename Real>
   std::vector<Real> & StringToNumberList(std::string const & a_in
                                        , char a_delim

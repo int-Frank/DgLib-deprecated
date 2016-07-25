@@ -6,7 +6,6 @@
 #ifndef DGVARIADICMACROS_H
 #define DGVARIADICMACROS_H
 
-//TODO Documentation
 #ifdef _MSC_VER // Microsoft compilers
 
 #define EXPAND(x) x

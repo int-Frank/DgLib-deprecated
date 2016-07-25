@@ -14,14 +14,17 @@
 #include "Dg_map.h"
 #include "DgTypes.h"
 
-//TODO Documentation
 namespace Dg
 {
-  //! @ingroup DgUtility_types
+  //! @ingroup DgUtility
   //!
   //! @class Parser_INI
   //!
-  //! @brief Parser_INI
+  //! Basic parser for .ini files. An ini file is in the format 
+  //!
+  //!   token=value
+  //!
+  //! Comments are preceeded by a either a '#' or ';'
   //!
   //! @author Frank Hart
   //! @date 4/10/2015
@@ -29,9 +32,12 @@ namespace Dg
   {
   public:
 
-    //! Get pointer to the static instance of the object
+    //! Loads and parses an ini file.
+    //!
+    //! @return ErrorCode::None on success.
     ErrorCode Parse(std::string const & file);
 
+    //! Get the token/value items successfully extracted from the ini file.
     Dg::map<std::string, std::string> const & GetItems() const { return m_items; }
 
   private:
@@ -41,13 +47,14 @@ namespace Dg
   private:
 
     static char const s_delim = '=';
+    static char const s_comment[];
 
   private:
 
-    //! Prevent construction
+    //! Is this line a comment?
     bool IsComment(std::string const & a_str);
 
-    //! Prevent construction by copying
+    //! Break the current line in to a token and value.
     bool GetNameValue(std::string const & a_str
                     , std::string & a_name
                     , std::string & a_value);

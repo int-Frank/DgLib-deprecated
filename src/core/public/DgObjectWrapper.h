@@ -10,7 +10,6 @@
 
 #include "DgObject.h"
 
-//TODO Documentation
 namespace Dg
 {
   //! @ingroup DgUtility_types
@@ -39,7 +38,7 @@ namespace Dg
     //! @param[in] t Pointer to the object to clone.
     //! @param[in] dealloc Flag to determine if the input resource 't' should be freed.
     //!
-    //! @pre 't' must be a valid pointer to an object contained the clone() method.
+    //! @pre 't' must be a valid pointer to an object contained the Clone() method.
     //! @post Pointer to new resource stored.
     ObjectWrapper(T* t, bool dealloc = true);
 
