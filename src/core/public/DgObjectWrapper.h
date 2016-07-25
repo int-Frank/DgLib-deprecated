@@ -43,10 +43,10 @@ namespace Dg
     ObjectWrapper(T* t, bool dealloc = true);
 
     //! Copy constructor
-    ObjectWrapper(const ObjectWrapper& other);
+    ObjectWrapper(ObjectWrapper const & other);
 
     //! Assignment
-    ObjectWrapper& ObjectWrapper::operator=(const ObjectWrapper& other);
+    ObjectWrapper& operator=(ObjectWrapper<T> const &);
 
     ~ObjectWrapper();
 
@@ -78,7 +78,7 @@ namespace Dg
   //	@	ObjectWrapper<T>::ObjectWrapper()
   //--------------------------------------------------------------------------------
   template<class T>
-  ObjectWrapper<T>::ObjectWrapper(const T& t)
+  ObjectWrapper<T>::ObjectWrapper(T const & t)
   {
     m_ptr = t.Clone();
 
@@ -116,7 +116,7 @@ namespace Dg
   //	@	ObjectWrapper<T>::ObjectWrapper()
   //--------------------------------------------------------------------------------
   template<class T>
-  ObjectWrapper<T>::ObjectWrapper(const ObjectWrapper& other): m_ptr(nullptr)
+  ObjectWrapper<T>::ObjectWrapper(ObjectWrapper<T> const & other): m_ptr(nullptr)
   {
     if (other.m_ptr != nullptr)
     {
@@ -130,7 +130,7 @@ namespace Dg
   //	@	ObjectWrapper<T>::operator=()
   //--------------------------------------------------------------------------------
   template<class T>
-  ObjectWrapper<T>& ObjectWrapper<T>::operator=(const ObjectWrapper& other)
+  ObjectWrapper<T> & ObjectWrapper<T>::operator=(ObjectWrapper<T> const & other)
   {
     if (this == &other)
     {

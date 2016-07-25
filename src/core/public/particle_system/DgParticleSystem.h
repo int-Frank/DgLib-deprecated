@@ -45,14 +45,14 @@ namespace Dg
     //! This function will take control of the emitter.
     //!
     //! @param[in] id ID of the emitter.
-    //! @param[in] Particle emitter to add.
-    void AddEmitter(int id, ParticleEmitter<Real> *);
+    //! @param[in] emitter Particle emitter to add.
+    void AddEmitter(int id, ParticleEmitter<Real> * emitter);
 
     //! This function will take control of the updater.
     //!
     //! @param[in] id ID of the updater.
-    //! @param[in] Particle updater to add.
-    void AddUpdater(int, ParticleUpdater<Real> *);
+    //! @param[in] updater Particle updater to add.
+    void AddUpdater(int id, ParticleUpdater<Real> * updater);
     
     //! Remove emitter by ID.
     void RemoveEmitter(int id);

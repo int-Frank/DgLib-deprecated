@@ -83,6 +83,7 @@ namespace Dg
   //! @brief Trims leading and trailing characters
   //!
   //! @param[in] a_str Input string.
+  //! @param[in] a_chars Characters to remove from the front and back of the string.
   //!
   //! @return Trimed string
   std::string Trim(std::string const & a_str

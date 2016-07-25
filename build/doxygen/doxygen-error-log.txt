@@ -1,0 +1,4 @@
+C:/dev/projects/DgLib/deploy/DgLib/include/DgObjectWrapper.h:133: warning: no uniquely matching class member found for 
+  template < T >
+  ObjectWrapper< T > & Dg::ObjectWrapper< T >::operator=(ObjectWrapper< T > const &other)
+
