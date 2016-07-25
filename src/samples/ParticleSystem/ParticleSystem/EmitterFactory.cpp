@@ -4,6 +4,7 @@
 #include "GenPosPoint.h"
 #include "GenPosSphere.h"
 #include "GenVelCone.h"
+#include "GenVelOutwards.h"
 #include "GenRelativeForce.h"
 #include "GenColor.h"
 #include "GenLife.h"
@@ -123,7 +124,22 @@ Dg::ParticleGenerator<float> * EmitterFactory::CreateGenVelCone(EmitterData cons
 
 Dg::ParticleGenerator<float> * EmitterFactory::CreateGenVelOutwards(EmitterData const & a_data) const
 {
-  //TODO ....
+  switch (a_data.posGenMethod)
+  {
+  case E_GenPosPoint:
+  case E_GenPosSphere:
+  default:
+  {
+    Dg::Vector4<float> origin(a_data.transform[0]
+                            , a_data.transform[1]
+                            , a_data.transform[2]
+                            , 1.0f);
+    GenVelOutwards<float> * pGen = new GenVelOutwards<float>;
+    pGen->SetOrigin(origin);
+    pGen->SetVelocity(a_data.velocity);
+    return pGen;
+  }
+  }
   return nullptr;
 }
 

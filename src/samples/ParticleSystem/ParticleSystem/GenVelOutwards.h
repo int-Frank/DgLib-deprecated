@@ -33,7 +33,7 @@ public:
   }
 
   void SetTransformation(Dg::VQS<Real> const &);
-  void SetAngle(Real);
+  void SetOrigin(Dg::Vector4<Real> const &);
   void SetVelocity(Real a_vel) { m_velocity = a_vel; }
 
   void Generate(Dg::ParticleData<Real> &, int, int);
@@ -48,14 +48,14 @@ private:
 template<typename Real>
 void GenVelOutwards<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 {
-  m_origin = a_vqs.Rotate(Dg::Vector4<Real>::xAxis());
+  m_origin = a_vqs.Translate(Dg::Vector4<Real>::Origin());
 }
 
 
 template<typename Real>
-void GenVelOutwards<Real>::SetAngle(Real a_ang)
+void GenVelOutwards<Real>::SetOrigin(Dg::Vector4<Real> const & a_origin)
 {
-  m_angle = (a_ang > static_cast<Real>(Dg::PI)) ? static_cast<Real>(Dg::PI) : a_ang;
+  m_origin = a_origin;
 }
 
 template<typename Real>
@@ -63,12 +63,22 @@ void GenVelOutwards<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start
 {
   Dg::Vector4<Real> * pVels = a_data.GetVelocity();
   Dg::Vector4<Real> * pAccel = a_data.GetAcceleration();
+  Dg::Vector4<Real> * pPos = a_data.GetPosition();
 
-  if (pVels)
+  if (pVels && pPos)
   {
     for (int i = a_start; i <= a_end; ++i)
     {
-      pVels[i] = m_velocity * Dg::GetRandomVector(m_origin, m_angle);
+      Dg::Vector4<Real> vec(pPos[i] - m_origin);
+      if (vec.IsZero())
+      {
+        vec = Dg::GetRandomVector<float>();
+      }
+      else
+      {
+        vec.Normalize();
+      }
+      pVels[i] = m_velocity * vec;
     }
   }
   if (pAccel)

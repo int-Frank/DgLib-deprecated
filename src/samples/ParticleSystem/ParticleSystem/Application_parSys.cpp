@@ -14,6 +14,7 @@
 #include "GenPosPoint.h"
 #include "GenPosSphere.h"
 #include "GenVelCone.h"
+#include "GenVelOutwards.h"
 #include "GenRelativeForce.h"
 #include "GenColor.h"
 #include "GenLife.h"
@@ -135,7 +136,8 @@ void Application::UpdateParSysAttr()
 
     //Subsequent checks will not require us to remove the emitter from the particle system
     Dg::ParticleEmitter<float> * ptr = m_particleSystem.GetEmitter(data.ID);
-    
+    EmitterFactory eFact;
+
     if (ptr == nullptr)
     {
       //Error!
@@ -200,6 +202,11 @@ void Application::UpdateParSysAttr()
         vqs.SetS(data.transform[6]);
         pPosGen->SetTransformation(vqs);
       }
+      GenVelOutwards<float> * pGenVelOutwards = (GenVelOutwards<float>*)ptr->GetGenerator(E_GenVelOutwards);
+      if (pGenVelOutwards)
+      {
+        pGenVelOutwards->SetOrigin(vec4(data.transform[0], data.transform[1], data.transform[2], 1.0f));
+      }
       memcpy(dataPrev.transform, data.transform, sizeof(float) * 7);
     }
 
@@ -221,8 +228,21 @@ void Application::UpdateParSysAttr()
 
     if (data.velGenMethod != dataPrev.velGenMethod)
     {
-      //TODO Do work... All pos generators should inherit a base
-      // position gen with the RepelFromCenter method in the base.
+      ptr->RemoveGenerator(E_GenVelCone);
+      ptr->RemoveGenerator(E_GenVelOutwards);
+      switch (data.velGenMethod)
+      {
+      case E_GenVelCone:
+      {
+        ptr->AddGenerator(E_GenVelCone, eFact.CreateGenVelCone(data));
+        break;
+      }
+      case E_GenVelOutwards:
+      {
+        ptr->AddGenerator(E_GenVelOutwards, eFact.CreateGenVelOutwards(data));
+        break;
+      }
+      }
       dataPrev.velGenMethod = data.velGenMethod;
     }
 
@@ -268,11 +288,28 @@ void Application::UpdateParSysAttr()
 
     if (data.velocity != dataPrev.velocity)
     {
-      GenVelCone<float> * pVelGen = (GenVelCone<float> *)ptr->GetGenerator(data.velGenMethod);
-      if (pVelGen)
+      switch (data.velGenMethod)
       {
-        pVelGen->SetVelocity(data.velocity);
+      case E_GenVelCone:
+      {
+        GenVelCone<float> * pVelGen = (GenVelCone<float> *)ptr->GetGenerator(E_GenVelCone);
+        if (pVelGen)
+        {
+          pVelGen->SetVelocity(data.velocity);
+        }
+        break;
       }
+      case E_GenVelOutwards:
+      {
+        GenVelOutwards<float> * pVelGen = (GenVelOutwards<float> *)ptr->GetGenerator(E_GenVelOutwards);
+        if (pVelGen)
+        {
+          pVelGen->SetVelocity(data.velocity);
+        }
+        break;
+      }
+      }
+      
       dataPrev.velocity = data.velocity;
     }
 

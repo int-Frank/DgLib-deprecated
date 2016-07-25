@@ -18,8 +18,6 @@ public:
 
   Dg::ParticleEmitter<float> * operator()(EmitterData const &) const;
 
-private:
-
   Dg::ParticleGenerator<float> * CreateGenColor(EmitterData const &) const;
   Dg::ParticleGenerator<float> * CreateGenLife(EmitterData const &) const;
   Dg::ParticleGenerator<float> * CreateGenPosPoint(EmitterData const &) const;

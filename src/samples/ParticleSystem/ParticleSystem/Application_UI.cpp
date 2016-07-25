@@ -137,7 +137,6 @@ void Application::ShowMainGUIWindow()
     }
     if (ImGui::BeginMenu("Options"))
     {
-      //TODO Add fullscreen/window toggle
       ImGui::MenuItem("Example UI", NULL, &UI::showExampleWindow);
       ImGui::Separator();
       ImGui::MenuItem("Blending", NULL, &UI::showAlphaBlendingWindow);
