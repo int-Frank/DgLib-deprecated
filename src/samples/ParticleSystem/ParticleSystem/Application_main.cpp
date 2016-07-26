@@ -177,6 +177,9 @@ void Application::UpdateScroll(double a_val)
 
 void Application::HandleEvents()
 {
+  //Get user input
+  ShowMainGUIWindow();
+
   eObject e(nullptr);
   while (m_eventManager.PollEvent(e))
   {
@@ -235,9 +238,6 @@ std::vector<std::string> Application::GetProjects()
 
 void Application::DoLogic(double a_dt)
 {
-  //Get user input
-  ShowMainGUIWindow();
-
   //Update particle system
   UpdateParSysAttr();
   m_particleSystem.Update((float)a_dt);
