@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <stdlib.h>
 
 #include "Application.h"
 #include "EmitterFactory.h"
@@ -10,6 +11,23 @@
 #include "DgStringFunctions.h"
 
 #define ARRAY_SIZE(arr) (int)((sizeof(arr))/(sizeof(*arr)))
+
+void Application::UpdateProjectTitle(std::string const & a_name)
+{
+  char pFile[32];
+  _splitpath_s(
+    a_name.c_str()
+    , nullptr
+    , 0
+    , nullptr
+    , 0
+    , pFile
+    , 32
+    , nullptr
+    , 0);
+
+  m_projData.name = std::string(pFile);
+}
 
 bool Application::LoadProject(std::string a_file)
 {
@@ -165,6 +183,7 @@ bool Application::LoadProject(std::string a_file)
     }
   }
 
+  UpdateProjectTitle(a_file);
   return true;
 }
 
@@ -237,6 +256,6 @@ bool Application::SaveProject(std::string a_file)
   }
   
   fs << root;
-  printf("%s saved!\n", a_file.c_str());
+  UpdateProjectTitle(a_file);
   return true;
 }

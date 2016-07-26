@@ -504,6 +504,7 @@ namespace Dg
       result[3] = static_cast<Real>(0.0);
     }
 
+    result.Normalize();
     return result;
   }	//End: Perpendicular()
 
@@ -550,7 +551,7 @@ namespace Dg
   //-------------------------------------------------------------------------------
   template<typename Real>
   Vector4<Real> GetRandomVector(Vector4<Real> const & a_axis, Real theta)
-  { 
+  {
     RNG generator;
 
     Dg::WrapNumber(static_cast<Real>(0.0)

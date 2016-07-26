@@ -104,6 +104,7 @@ private:
   void GetRenderTransforms(Dg::Matrix44<float> & a_mv
                          , Dg::Matrix44<float> & a_proj
                          , float & a_parScale);
+  void UpdateProjectTitle(std::string const &);
 
   void UpdateParSysAttr();
 

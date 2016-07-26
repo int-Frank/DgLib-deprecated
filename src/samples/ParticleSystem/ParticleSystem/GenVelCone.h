@@ -68,7 +68,8 @@ void GenVelCone<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, in
   {
     for (int i = a_start; i <= a_end; ++i)
     {
-      pVels[i] = m_velocity * Dg::GetRandomVector(m_axis, m_angle);
+      Dg::Vector4<float> vec = Dg::GetRandomVector(m_axis, m_angle);
+      pVels[i] = m_velocity * vec;
     }
   }
   if (pAccel)
