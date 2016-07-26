@@ -3,6 +3,8 @@
 
 namespace Dg
 {
+  //! @ingroup DgUtility_functions
+  //!
   //! Creates a grid of lines. Useful for rendering planes.
   //!
   //! @param[in] a_out Output points
@@ -15,6 +17,8 @@ namespace Dg
     MakeGrid(a_out, dim, a_bounds);
   }
 
+  //! @ingroup DgUtility_functions
+  //!
   //! Creates a grid of lines. Useful for rendering planes.
   //! @param[in] a_out Output
   //! @param[in] a_dimension dimension on each side of the grid [w, h]
