@@ -137,7 +137,7 @@ bool Application::LoadProject(std::string a_file)
       m_IDManager.MarkAsUsed(e.first.ID);
       EmitterFactory eFact;
       m_particleSystem.AddEmitter(e.first.ID, eFact(e.first));
-      m_focusEmitter = 0;
+      m_projData.emitterFocus = 0;
     }
   }
 
@@ -179,11 +179,13 @@ bool Application::LoadProject(std::string a_file)
       m_IDManager.MarkAsUsed(a.first.ID);
       AttractorFactory aFact;
       m_particleSystem.AddUpdater(a.first.ID, aFact(a.first));
-      m_focusAttr = 0;
+      m_projData.attrFocus = 0;
     }
   }
 
   UpdateProjectTitle(a_file);
+  m_projData.dirty = false;
+
   return true;
 }
 
@@ -257,5 +259,6 @@ bool Application::SaveProject(std::string a_file)
   
   fs << root;
   UpdateProjectTitle(a_file);
+  m_projData.dirty = false;
   return true;
 }

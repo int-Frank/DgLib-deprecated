@@ -50,8 +50,6 @@ private:
   //app accordingly. Exceptions are:
   //  - Opening a project (creates event)
   //  - Saving a project (creates event)
-  //  - Creating Emitters / Attractors (creates them directly)
-  //  - Killing Emitters / Attractors (kills them directly)
   //  - 'Quit' menu item modifies m_shouldQuit directly
   //  - anything from the UI namespace
   ProjectData               m_projData;
@@ -78,9 +76,6 @@ private:
 
   double                    m_camZoom;
   double                    m_camZoomTarget;
-
-  int                       m_focusAttr;
-  int                       m_focusEmitter;
 
   bool                      m_camCanRotate;
   bool                      m_shouldQuit;

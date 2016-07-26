@@ -85,6 +85,7 @@ void Application::UpdateParSysAttr()
   // Update particle system updaters
   if (m_projData.parSysOpts[0].useUpdaterRelativeForce != m_projData.parSysOpts[1].useUpdaterRelativeForce)
   {
+    m_projData.dirty = true;
     if (!m_projData.parSysOpts[0].useUpdaterRelativeForce)
     {
       m_particleSystem.RemoveUpdater(E_UpdaterRelativeForce);
@@ -97,7 +98,7 @@ void Application::UpdateParSysAttr()
   }
 
 
-  for (int e = 0; e < m_projData.eData.size(); ++e)
+  for (int e = (int)m_projData.eData.size() - 1; e >= 0; --e)
   {
     //We just do a dumb check to see if any of the data has changed,
     //and just remove the emitter and build a new one with the new data,
@@ -106,8 +107,24 @@ void Application::UpdateParSysAttr()
     EmitterData & dataPrev = m_projData.eData[e].second;
     int id = data.ID;
 
+    //Check if we need to kill this emitter.
+    if (data.shouldDie)
+    {
+      m_projData.dirty = true;
+      m_particleSystem.RemoveEmitter(id);
+      m_IDManager.ReturnID(id);
+      m_projData.eData.erase(m_projData.eData.begin() + e);
+      if (m_projData.emitterFocus == m_projData.eData.size())
+      {
+        m_projData.emitterFocus--;
+      }
+      continue;
+
+    }
+
     if (data.type != dataPrev.type)
     {
+      m_projData.dirty = true;
       Dg::ParticleEmitter<float> * pOldEmitter = m_particleSystem.GetEmitter(dataPrev.ID);
       if (pOldEmitter)
       {
@@ -146,6 +163,7 @@ void Application::UpdateParSysAttr()
 
     if (data.on != dataPrev.on)
     {
+      m_projData.dirty = true;
       if (data.on) ptr->Start();
       else ptr->Stop();
       dataPrev.on = data.on;
@@ -153,6 +171,7 @@ void Application::UpdateParSysAttr()
 
     if (data.posGenMethod != dataPrev.posGenMethod)
     {
+      m_projData.dirty = true;
       ptr->RemoveGenerator(E_GenPosBox);
       ptr->RemoveGenerator(E_GenPosSphere);
       ptr->RemoveGenerator(E_GenPosPoint);
@@ -162,6 +181,7 @@ void Application::UpdateParSysAttr()
 
     if (memcmp(data.transform, dataPrev.transform, sizeof(float) * 7) != 0)
     {
+      m_projData.dirty = true;
       Dg::ParticleGenerator<float> * pPosGen = ptr->GetGenerator(data.posGenMethod);
       if (pPosGen)
       {
@@ -183,6 +203,7 @@ void Application::UpdateParSysAttr()
 
     if (data.velCone[2] != dataPrev.velCone[2] && data.velGenMethod == E_GenVelCone)
     {
+      m_projData.dirty = true;
       GenVelCone<float> * pVelGen = (GenVelCone<float> *)ptr->GetGenerator(data.velGenMethod);
       if (pVelGen)
       {
@@ -193,12 +214,14 @@ void Application::UpdateParSysAttr()
 
     if (memcmp(data.boxDim, dataPrev.boxDim, sizeof(float) * 3) != 0)
     {
+      m_projData.dirty = true;
       //TODO Do work...
       memcpy(dataPrev.boxDim, data.boxDim, sizeof(float) * 3);
     }
 
     if (data.velGenMethod != dataPrev.velGenMethod)
     {
+      m_projData.dirty = true;
       ptr->RemoveGenerator(E_GenVelCone);
       ptr->RemoveGenerator(E_GenVelOutwards);
       ptr->AddGenerator(data.velGenMethod, eFact.CreateGenVelocity(data));
@@ -208,6 +231,7 @@ void Application::UpdateParSysAttr()
     if (memcmp(data.velCone, dataPrev.velCone, sizeof(float) * 2) != 0
       && data.velGenMethod == E_GenVelCone)
     {
+      m_projData.dirty = true;
       Dg::ParticleGenerator<float> * pVelGen = ptr->GetGenerator(data.velGenMethod);
       if (pVelGen)
       {
@@ -223,6 +247,7 @@ void Application::UpdateParSysAttr()
 
     if (data.relativeForce != dataPrev.relativeForce)
     {
+      m_projData.dirty = true;
       GenRelativeForce<float> * pGen = dynamic_cast<GenRelativeForce<float>*>(ptr->GetGenerator(E_GenRelativeForce));
       pGen->SetValue(data.relativeForce);
       dataPrev.relativeForce = data.relativeForce;
@@ -230,6 +255,7 @@ void Application::UpdateParSysAttr()
 
     if ( memcmp(data.colors, dataPrev.colors, sizeof(float) * 8) != 0)
     {
+      m_projData.dirty = true;
       GenColor<float> * pColorGen = (GenColor<float> *)ptr->GetGenerator(E_GenColor);
       if (pColorGen)
       {
@@ -241,12 +267,14 @@ void Application::UpdateParSysAttr()
 
     if (data.rate != dataPrev.rate)
     {
+      m_projData.dirty = true;
       ptr->SetRate(data.rate);
       dataPrev.rate = data.rate;
     }
 
     if (data.velocity != dataPrev.velocity)
     {
+      m_projData.dirty = true;
       switch (data.velGenMethod)
       {
       case E_GenVelCone:
@@ -274,6 +302,7 @@ void Application::UpdateParSysAttr()
 
     if (data.life != dataPrev.life)
     {
+      m_projData.dirty = true;
       GenLife<float> * pLifeGen = (GenLife<float> *)ptr->GetGenerator(E_GenLife);
       if (pLifeGen)
       {
@@ -284,6 +313,7 @@ void Application::UpdateParSysAttr()
 
     if (memcmp(data.sizes, dataPrev.sizes, sizeof(float) * 2) != 0)
     {
+      m_projData.dirty = true;
       GenSize<float> * pSizeGen = (GenSize<float> *)ptr->GetGenerator(E_GenSize);
       if (pSizeGen)
       {
@@ -293,14 +323,36 @@ void Application::UpdateParSysAttr()
     }
   }
 
+  //Add new emitters
+  for (int i = 0; i < m_projData.newEmitters; ++i)
+  {
+    m_projData.dirty = true;
+    AddEmitter();
+  }
+  m_projData.newEmitters = 0;
+
   //Attractors
   for (int a = 0; a < m_projData.aData.size(); ++a)
   {
     AttractorData & data = m_projData.aData[a].first;
     AttractorData & dataPrev = m_projData.aData[a].second;
 
+    if (data.shouldDie)
+    {
+      m_projData.dirty = true;
+      m_particleSystem.RemoveUpdater(data.ID);
+      m_IDManager.ReturnID(data.ID);
+      m_projData.aData.erase(m_projData.aData.begin() + m_projData.attrFocus);
+      if (m_projData.attrFocus == m_projData.aData.size())
+      {
+        m_projData.attrFocus--;
+      }
+      continue;
+    }
+
     if (data.type != dataPrev.type)
     {
+      m_projData.dirty = true;
       m_particleSystem.RemoveUpdater(dataPrev.ID);
       AttractorFactory aFactory;
 
@@ -323,24 +375,28 @@ void Application::UpdateParSysAttr()
 
     if (data.attenuationMethod != dataPrev.attenuationMethod)
     {
+      m_projData.dirty = true;
       ptr->SetAttenuationMethod(data.attenuationMethod);
       dataPrev.attenuationMethod = data.attenuationMethod;
     }
 
     if (data.strength != dataPrev.strength)
     {
+      m_projData.dirty = true;
       ptr->SetStrength(data.strength);
       dataPrev.strength = data.strength;
     }
 
     if (data.maxAppliedAccelMag!= dataPrev.maxAppliedAccelMag)
     {
+      m_projData.dirty = true;
       ptr->SetMaxAppliedAccelMagnitude(data.maxAppliedAccelMag);
       dataPrev.maxAppliedAccelMag = data.maxAppliedAccelMag;
     }
 
     if (memcmp(data.transform, dataPrev.transform, sizeof(float) * 6) != 0)
     {
+      m_projData.dirty = true;
       Vqs vqs;
       quat qh, qp;
       qh.SetRotationZ(data.transform[3]);
@@ -353,4 +409,10 @@ void Application::UpdateParSysAttr()
     }
   }
 
+  for (int i = 0; i < m_projData.newAttractors; ++i)
+  {
+    m_projData.dirty = true;
+    AddAttractor();
+  }
+  m_projData.newAttractors = 0;
 }

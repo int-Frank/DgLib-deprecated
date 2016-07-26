@@ -105,12 +105,18 @@ void Application::ShowMainGUIWindow()
       if (ImGui::MenuItem("New")) 
       {
         m_windowStack.push(Modal::NewProjectPrompt);
-        m_windowStack.push(Modal::SavePrompt);
+        if (m_projData.dirty)
+        {
+          m_windowStack.push(Modal::SavePrompt);
+        }
       }
       if (ImGui::MenuItem("Open"))
       {
         m_windowStack.push(Modal::OpenWindow);
-        m_windowStack.push(Modal::SavePrompt);
+        if (m_projData.dirty)
+        {
+          m_windowStack.push(Modal::SavePrompt);
+        }
       }
       if (ImGui::MenuItem("Save")) 
       {
@@ -121,7 +127,7 @@ void Application::ShowMainGUIWindow()
         else
         {
           Event_SaveProject e;
-          e.SetFileName(m_projData.name);
+          //e.SetFileName(m_projData.name);
           m_eventManager.PushEvent(e);
         }
       }
@@ -400,7 +406,7 @@ void Application::ShowMainGUIWindow()
     ImGui::Checkbox("Relative force", &m_projData.parSysOpts[0].useUpdaterRelativeForce);
   }
 
-  //TODO Set slider imits for all the UI
+
   //----------------------------------------------------------------------------------
   //  Emitters
   //----------------------------------------------------------------------------------
@@ -408,19 +414,15 @@ void Application::ShowMainGUIWindow()
   {
     if (ImGui::Button("Add Emitter"))
     {
-      AddEmitter();
+      m_projData.newEmitters++;
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Kill Emitter") && m_projData.eData.size())
+    if (ImGui::Button("Kill Emitter")
+      && m_projData.emitterFocus >= 0
+      && m_projData.emitterFocus < m_projData.eData.size())
     {
-      m_particleSystem.RemoveEmitter(m_projData.eData[m_focusEmitter].first.ID);
-      m_IDManager.ReturnID(m_projData.eData[m_focusEmitter].first.ID);
-      m_projData.eData.erase(m_projData.eData.begin() + m_focusEmitter);
-      if (m_focusEmitter == m_projData.eData.size())
-      {
-        m_focusEmitter--;
-      }
+      m_projData.eData[m_projData.emitterFocus].first.shouldDie = true;
     }
 
     //This doesn't work :( Have to use char**
@@ -434,7 +436,7 @@ void Application::ShowMainGUIWindow()
       sprintf_s(currentEmitters[i], 32, "Emitter %i", m_projData.eData[i].first.ID);
     }
     ImGui::PushItemWidth(sliderOffset);
-    ImGui::ListBox("Emitter", &m_focusEmitter, (char const **)currentEmitters, (int)m_projData.eData.size(), 5);
+    ImGui::ListBox("Emitter", &m_projData.emitterFocus, (char const **)currentEmitters, (int)m_projData.eData.size(), 5);
     ImGui::PopItemWidth();
     ImGui::Separator();
 
@@ -446,7 +448,7 @@ void Application::ShowMainGUIWindow()
 
     if (m_projData.eData.size() > 0)
     {
-      EmitterData & curEmData = m_projData.eData[m_focusEmitter].first;
+      EmitterData & curEmData = m_projData.eData[m_projData.emitterFocus].first;
 
       CreateSpacing(nSpacing);
       ImGui::Checkbox("Turn emitter off/on", &curEmData.on);
@@ -572,21 +574,16 @@ void Application::ShowMainGUIWindow()
   {
     if (ImGui::Button("Add Attractor"))
     {
-      AddAttractor();
+      m_projData.newAttractors++;
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Kill Attractor") && m_projData.aData.size())
+    if (ImGui::Button("Kill Attractor")
+      && m_projData.attrFocus < m_projData.aData.size()
+      && m_projData.attrFocus >= 0)
     {
-      m_particleSystem.RemoveUpdater(m_projData.aData[m_focusAttr].first.ID);
-      m_IDManager.ReturnID(m_projData.aData[m_focusAttr].first.ID);
-      m_projData.aData.erase(m_projData.aData.begin() + m_focusAttr);
-      if (m_focusAttr == m_projData.aData.size())
-      {
-        m_focusAttr--;
-      }
+      m_projData.aData[m_projData.attrFocus].first.shouldDie = true;
     }
-
 
     char ** currentAttractors = new char*[m_projData.aData.size()];
     for (int i = 0; i < m_projData.aData.size(); ++i)
@@ -595,7 +592,7 @@ void Application::ShowMainGUIWindow()
       sprintf_s(currentAttractors[i], 32, "Attractor %i", m_projData.aData[i].first.ID);
     }
     ImGui::PushItemWidth(sliderOffset);
-    ImGui::ListBox("Attractor", &m_focusAttr, (char const **)currentAttractors, (int)m_projData.aData.size(), 5);
+    ImGui::ListBox("Attractor", &m_projData.attrFocus, (char const **)currentAttractors, (int)m_projData.aData.size(), 5);
     ImGui::PopItemWidth();
     ImGui::Separator();
 
@@ -610,7 +607,7 @@ void Application::ShowMainGUIWindow()
     {
       CreateSpacing(nSpacing);
 
-      AttractorData & curAttData = m_projData.aData[m_focusAttr].first;
+      AttractorData & curAttData = m_projData.aData[m_projData.attrFocus].first;
 
       ImGui::Checkbox("Show attractor", &curAttData.show);
 

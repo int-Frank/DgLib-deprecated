@@ -91,6 +91,7 @@ public:
     , maxAppliedAccelMag(10.0f)
     , transform{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
     , show(true)
+    , shouldDie(false)
   {}
 
   void BuildFromString(std::string const &);
@@ -102,6 +103,7 @@ public:
   float maxAppliedAccelMag;
   float transform[6]; // [x, y, z, heading, pitch, scale] 
   bool show;
+  bool shouldDie;
 };
 
 class EmitterData
@@ -123,6 +125,7 @@ public:
     , rate(10.0f)
     , life(5.0f)
     , sizes{ 0.1f, 0.1f }
+    , shouldDie(false)
   {}
 
   void BuildFromString(std::string const &);
@@ -141,6 +144,7 @@ public:
   float rate;
   float life;
   float sizes[2]; //[start, end]
+  bool shouldDie;
 };
 
 struct LineRenderData
@@ -166,9 +170,25 @@ public:
   bool  useUpdaterSize;
 };
 
-struct ProjectData
+class ProjectData
 {
+public:
+  ProjectData()
+    : newEmitters(0)
+    , newAttractors(0)
+    , dirty(false)
+    , emitterFocus(-1)
+    , attrFocus(-1)
+  {}
+
+  bool dirty;
+
   std::string   name;
+
+  int newEmitters;
+  int newAttractors;
+  int emitterFocus;
+  int attrFocus;
 
   EData         eData;
   AData         aData;

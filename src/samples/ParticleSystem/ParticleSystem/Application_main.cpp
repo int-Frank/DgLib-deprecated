@@ -69,8 +69,6 @@ bool Application::Init()
   GetConfiguration();
 
   //Set options
-  m_focusAttr = -1;
-  m_focusEmitter = -1;
   m_shouldQuit = false;
   m_camCanRotate = false;
 
@@ -273,7 +271,7 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
       lineRenderData.model = m_projData.aData[i].first.type;
       Dg::Vector4<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
       Dg::Vector4<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
-      lineRenderData.col = (i == m_focusAttr) ? lineColFocus : lineCol;
+      lineRenderData.col = (i == m_projData.attrFocus) ? lineColFocus : lineCol;
       switch (m_projData.aData[i].first.type)
       {
       case E_AttGlobal:
@@ -482,7 +480,7 @@ int Application::AddEmitter()
 
   EmitterFactory eFact;
   m_particleSystem.AddEmitter(data.ID, eFact(data));
-  m_focusEmitter = (int)m_projData.eData.size() - 1;
+  m_projData.emitterFocus = (int)m_projData.eData.size() - 1;
   return data.ID;
 }
 
@@ -496,7 +494,7 @@ int Application::AddAttractor()
 
   AttractorFactory aFact;
   m_particleSystem.AddUpdater(data.ID, aFact(data));
-  m_focusAttr = (int)m_projData.aData.size() - 1;
+  m_projData.attrFocus = (int)m_projData.aData.size() - 1;
   return data.ID;
 }
 
