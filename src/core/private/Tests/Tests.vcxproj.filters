@@ -92,6 +92,7 @@
     <Text Include="results.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="unit-test-results.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="testini.ini">
