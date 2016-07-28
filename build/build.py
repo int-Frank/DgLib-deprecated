@@ -5,7 +5,6 @@ import sys
 import os
 import shutil
 import subprocess
-import ctypes
 
 #--- Classes ------------------------------------------------------
 
@@ -30,7 +29,7 @@ class Logger(object):
 #--- Functions ----------------------------------------------------
 
 def Exit():
-    ctypes.windll.user32.MessageBoxW(0, "Build Failed", "DgLib build completed", 1)
+    logger.write("Build Failed")
     sys.exit()
 
 
@@ -73,12 +72,14 @@ LibEXEPath64        = os.path.abspath("../3rd_party/lib.exe/x64/lib.exe")
 LibEXEPath32        = os.path.abspath("../3rd_party/lib.exe/x86/lib.exe")
 DoxygenPath         = os.path.abspath("../3rd_party/doxygen/doxygen.exe")
 DgLibFilePath       = os.path.abspath("../DgLib.sln")
+SamplesFilePath     = os.path.abspath("../src/samples/Samples.sln")
 
 OutputLibName = "DgLib.lib"
 LogFileName = "log__" + time.strftime("%Y-%m-%d__%I-%M-%S.txt")
 
-#Do we want the build to fail if there is an error when compiling the docs?
-FailOnBadDocs = True
+#Flags
+FailOnBadDocs = True #Fail the build if there are errors in doc compilation
+CheckSamples = True  #Check to see if the samples build   
 
 #--- Main ---------------------------------------------------------
 
@@ -114,17 +115,17 @@ LibEXEPaths = [LibEXEPath32, LibEXEPath64]
 for i in range(0,len(platforms)):
     
     platform = platforms[i]
-    logger.write("Building " + platform + "\n")
 
+    #Build the main libs
+    logger.write("Building " + platform + "...\n")
     args = [MSBuildPath, DgLibFilePath, "/property:Configuration=Release", "/property:Platform=" + platform, "/t:Rebuild"]
-
     if not Execute(args):
         logger.write("Build failed! Exiting...\n")
         Exit()
-
     logger.write("Build complete!\n")
-    logger.write("Running tests...\n")
 
+    #Run tests
+    logger.write("Running tests...\n")
     TestsPath = os.path.abspath("../output/Tests/" + platform + "/Release")
     TestsEXEPath = os.path.abspath(TestsPath + "/Tests.exe")
     TestsOutputFilePath = os.path.abspath(UnitTestResultsDir + "/unit-test-results-" + platform + ".txt")
@@ -132,10 +133,10 @@ for i in range(0,len(platforms)):
     if not Execute(args, TestsPath):
         logger.write("One or more tests failed! See test results in build/unit-test-results.txt. Exiting...\n")
         Exit()
-    
     logger.write("All tests passed!\n")
-    logger.write("Combining libraries...\n")
 
+    #Combine libraries and output to deploy dir
+    logger.write("Combining libraries...\n")
     os.makedirs(DeployDir + "/DgLib/lib/" + platforms[i])
     OutLibPath = os.path.abspath(DeployDir + "/DgLib/lib/" + platform + "/" + OutputLibName)
     InLibPath = os.path.abspath(DgLibOutPath + "/" + platform + "/Release/")
@@ -143,8 +144,23 @@ for i in range(0,len(platforms)):
     if not Execute(args, InLibPath):
         logger.write("Failed to create lib file. Exiting...\n")
         Exit()
-
     logger.write("Finished combining libs!\n")
+
+    #Make sure samples build
+    if CheckSamples:
+        logger.write("Building samples. Platform: " + platform + ", Configuration: Debug\n")
+        args = [MSBuildPath, SamplesFilePath, "/property:Configuration=Debug", "/property:Platform=" + platform, "/t:Rebuild"]
+        if not Execute(args):
+            logger.write("Build failed! Exiting...\n")
+            Exit()
+        logger.write("Build complete!")
+        logger.write("Building samples. Platform: " + platform + ", Configuration: Debug\n")
+        args = [MSBuildPath, SamplesFilePath, "/property:Configuration=Release", "/property:Platform=" + platform, "/t:Rebuild"]
+        if not Execute(args):
+            logger.write("Build failed! Exiting...\n")
+            Exit()
+        logger.write("Build complete!\n")
+    
 
 # Copy public headers
 logger.write("Copying source code...\n")
@@ -162,8 +178,6 @@ if (FailOnBadDocs and os.stat(DoxygenErrorLog).st_size != 0):
     Exit()
 logger.write("Done!\n")
     
-# Check samples build
-
 # Copy samples to package
 
 # Check samples projects build with CMake
