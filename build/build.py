@@ -6,6 +6,14 @@ import os
 import shutil
 import subprocess
 
+#--- Options ------------------------------------------------------
+
+#Set this path to where ever you want to deploy the library
+DeployDir           = os.path.abspath("../deploy/")
+
+FailOnBadDocs       = True #Fail the build if there are errors in doc compilation
+CheckSamples        = False #Check to see if the samples build
+
 #--- Classes ------------------------------------------------------
 
 class Logger(object):
@@ -57,9 +65,6 @@ def Execute(a_cmd, a_workingDir = None):
     
 #--- Setup --------------------------------------------------------
 
-#Set this path to where ever you want to deploy the library
-DeployDir           = os.path.abspath("../deploy/")
-
 # These paths shouldn't need to change
 LogDir              = os.path.abspath("./logs/")
 UnitTestResultsDir  = os.path.abspath("./test_results/")
@@ -69,21 +74,19 @@ DoxygenEXEPath      = os.path.abspath("../3rd_party/doxygen/doxygen.exe")
 DoxygenOutPath      = os.path.abspath("./doxygen/")
 DoxygenFilePath     = os.path.abspath(DoxygenOutPath + "/Doxyfile")
 DoxygenErrorLog     = os.path.abspath(DoxygenOutPath + "/doxygen-error-log.txt")
-MSBuildPath         = os.path.abspath("../3rd_party/MSBuild/MSBuild.exe")
-LibEXEPath64        = os.path.abspath("../3rd_party/lib.exe/x64/lib.exe")
-LibEXEPath32        = os.path.abspath("../3rd_party/lib.exe/x86/lib.exe")
-DoxygenPath         = os.path.abspath("../3rd_party/doxygen/doxygen.exe")
+_3rdPartyDir        = os.path.abspath("../3rd_party/")
+MSBuildPath         = os.path.abspath(_3rdPartyDir + "/MSBuild/MSBuild.exe")
+LibEXEPath64        = os.path.abspath(_3rdPartyDir + "/lib.exe/x64/lib.exe")
+LibEXEPath32        = os.path.abspath(_3rdPartyDir + "/lib.exe/x86/lib.exe")
+DoxygenPath         = os.path.abspath(_3rdPartyDir + "/doxygen/doxygen.exe")
 DgLibFilePath       = os.path.abspath("../DgLib.sln")
 SamplesFilePath     = os.path.abspath("../src/samples/Samples.sln")
 
 Libs                = ["Engine", "Math", "Utility"]
+Names3rdParty       = ["doxygen", "glew-1.13.0", "glfw-3.2", "imgui", "jsoncpp"]
 
 FinalLibName        = "DgLib"
 LogFileName         = "log__" + time.strftime("%Y-%m-%d__%I-%M-%S.txt")
-
-#Flags
-FailOnBadDocs       = True #Fail the build if there are errors in doc compilation
-CheckSamples        = True #Check to see if the samples build   
 
 #--- Main ---------------------------------------------------------
 
@@ -105,7 +108,6 @@ logger.write("Done!\n")
 logger.write("\nCreating new deployment dir structure...\n")
 os.makedirs(DeployDir)
 os.makedirs(DeployDir + "/" + FinalLibName + "/")
-os.makedirs(DeployDir + "/" + FinalLibName + "/3rd party")
 os.makedirs(DeployDir + "/" + FinalLibName + "/docs")
 os.makedirs(DeployDir + "/" + FinalLibName + "/lib")
 os.makedirs(DeployDir + "/" + FinalLibName + "/samples")
@@ -114,10 +116,10 @@ logger.write("Done!\n")
 platforms = ["Win32", "x64"]
 LibEXEPaths = [LibEXEPath32, LibEXEPath64]
 
-for i in range(0,len(platforms)):
-    
-    platform = platforms[i]
+for i in range(0, len(platforms)):
 
+    platform = platforms[i]
+    
     #Build the main libs
     logger.write("\nBuilding " + platform + "...\n\n")
     args = [MSBuildPath, DgLibFilePath, "/property:Configuration=Release", "/property:Platform=" + platform, "/t:Rebuild"]
@@ -175,6 +177,14 @@ if not Execute(args, DoxygenOutPath):
 if (FailOnBadDocs and os.stat(DoxygenErrorLog).st_size != 0):
     logger.write("\nDocumentation contains errors. Exiting...\n")
     Exit()
+
+# Copy 3rd party software
+logger.write("\nCopying 3rd party bins...\n")
+for name in Names3rdParty:
+    src = os.path.abspath(_3rdPartyDir + "/" + name + "/")
+    dest = os.path.abspath(DeployDir + "/DgLib/3rd_party/" + name + "/")
+    shutil.copytree(src, dest)
+logger.write("Done!\n")
     
 # TODO Copy samples to package
 
