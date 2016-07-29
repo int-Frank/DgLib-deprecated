@@ -57,9 +57,12 @@ def Execute(a_cmd, a_workingDir = None):
     
 #--- Setup --------------------------------------------------------
 
+#Set this path to where ever you want to deploy the library
+DeployDir           = os.path.abspath("../deploy/")
+
+# These paths shouldn't need to change
 LogDir              = os.path.abspath("./logs/")
 UnitTestResultsDir  = os.path.abspath("./test_results/")
-DeployDir           = os.path.abspath("../deploy/")
 OutputPath          = os.path.abspath("../output/")
 SrcPath             = os.path.abspath("../src/core/public/")
 DoxygenEXEPath      = os.path.abspath("../3rd_party/doxygen/doxygen.exe")
@@ -173,9 +176,9 @@ if (FailOnBadDocs and os.stat(DoxygenErrorLog).st_size != 0):
     logger.write("\nDocumentation contains errors. Exiting...\n")
     Exit()
     
-# Copy samples to package
+# TODO Copy samples to package
 
-# Check samples projects build with CMake
+# TODO Check samples projects build with CMake
 
 # Done!
 logger.write("\nBuild Succeeded!")
