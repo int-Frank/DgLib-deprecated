@@ -79,8 +79,8 @@ FinalLibName        = "DgLib"
 LogFileName         = "log__" + time.strftime("%Y-%m-%d__%I-%M-%S.txt")
 
 #Flags
-FailOnBadDocs = True #Fail the build if there are errors in doc compilation
-CheckSamples = True  #Check to see if the samples build   
+FailOnBadDocs       = True #Fail the build if there are errors in doc compilation
+CheckSamples        = True #Check to see if the samples build   
 
 #--- Main ---------------------------------------------------------
 

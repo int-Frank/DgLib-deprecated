@@ -122,7 +122,7 @@ private:
     OverwriteWindow,
     SaveAsWindow,
     OpenWindow,
-    NewProjectPrompt,
+    NewProjectRequest,
     ViewHelp,
     ViewAbout,
     None

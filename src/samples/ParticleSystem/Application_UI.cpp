@@ -106,7 +106,7 @@ void Application::ShowMainGUIWindow()
     {
       if (ImGui::MenuItem("New")) 
       {
-        m_windowStack.push(Modal::NewProjectPrompt);
+        m_windowStack.push(Modal::NewProjectRequest);
         if (m_projData.dirty)
         {
           m_windowStack.push(Modal::SavePrompt);
@@ -129,7 +129,7 @@ void Application::ShowMainGUIWindow()
         else
         {
           Event_SaveProject e;
-          //e.SetFileName(m_projData.name);
+          e.SetFileName(m_projData.name);
           m_eventManager.PushEvent(e);
         }
       }
@@ -212,20 +212,11 @@ void Application::ShowMainGUIWindow()
   //----------------------------------------------------------------------------------
   //  New Project created info box
   //----------------------------------------------------------------------------------
-  if (!m_windowStack.empty() && m_windowStack.top() == Modal::NewProjectPrompt)
+  if (!m_windowStack.empty() && m_windowStack.top() == Modal::NewProjectRequest)
   {
-    ImGui::OpenPopup("Creating new project");
-  }
-  if (ImGui::BeginPopupModal("Creating new project", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-  {
-    if (ImGui::Button("OK", ImVec2(130, 0)))
-    {
-      Event_NewProject e;
-      m_eventManager.PushEvent(e);
-      m_windowStack.pop();
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::EndPopup();
+    Event_NewProject e;
+    m_eventManager.PushEvent(e);
+    m_windowStack.pop();
   }
 
 
