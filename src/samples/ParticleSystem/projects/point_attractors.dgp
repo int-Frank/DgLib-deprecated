@@ -1,0 +1,48 @@
+{
+	"Attractors" : 
+	[
+		{
+			"ID" : 7,
+			"attenuationMethod" : 1,
+			"maxAppliedAccelMag" : 10,
+			"show" : true,
+			"strength" : 8.7200002670288086,
+			"transform" : "4.9,0,3.65,0,0,1",
+			"type" : 1
+		},
+		{
+			"ID" : 8,
+			"attenuationMethod" : 1,
+			"maxAppliedAccelMag" : 10,
+			"show" : true,
+			"strength" : 9.880000114440918,
+			"transform" : "-8.04,0,10,0,0,1",
+			"type" : 1
+		}
+	],
+	"Emitters" : 
+	[
+		{
+			"ID" : 6,
+			"boxDim" : "0.5,0.5,0.5",
+			"colors" : "1,1,1,1,0.478431,0.392157,0.796078,0.572549",
+			"life" : 21.629999160766602,
+			"on" : true,
+			"posGenMethod" : 65541,
+			"rate" : 500,
+			"relativeForce" : 1,
+			"sizes" : "0.1,0.1",
+			"transform" : "0,0,0,0,0,0,1",
+			"type" : 4,
+			"velCone" : "0,0,0.15",
+			"velGenMethod" : 65544,
+			"velocity" : 3.6299998760223389
+		}
+	],
+	"State" : 
+	{
+		"useUpdaterColor" : true,
+		"useUpdaterRelativeForce" : true,
+		"useUpdaterSize" : true
+	}
+}
