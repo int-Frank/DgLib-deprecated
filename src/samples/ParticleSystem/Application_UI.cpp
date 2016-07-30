@@ -129,7 +129,7 @@ void Application::ShowMainGUIWindow()
         else
         {
           Event_SaveProject e;
-          e.SetFileName(m_projData.name);
+          e.SetFileName(m_projectPath + m_projData.name + "." + m_fileExt);
           m_eventManager.PushEvent(e);
         }
       }
