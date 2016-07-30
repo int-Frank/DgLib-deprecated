@@ -83,7 +83,6 @@ DgLibFilePath       = os.path.abspath("../DgLib.sln")
 SamplesFilePath     = os.path.abspath("../src/samples/Samples.sln")
 
 Libs                = ["Engine", "Math", "Utility"]
-Names3rdParty       = ["doxygen", "glew-1.13.0", "glfw-3.2", "imgui", "jsoncpp"]
 
 FinalLibName        = "DgLib"
 LogFileName         = "log__" + time.strftime("%Y-%m-%d__%I-%M-%S.txt")
@@ -177,18 +176,6 @@ if not Execute(args, DoxygenOutPath):
 if (FailOnBadDocs and os.stat(DoxygenErrorLog).st_size != 0):
     logger.write("\nDocumentation contains errors. Exiting...\n")
     Exit()
-
-# Copy 3rd party software
-logger.write("\nCopying 3rd party bins...\n")
-for name in Names3rdParty:
-    src = os.path.abspath(_3rdPartyDir + "/" + name + "/")
-    dest = os.path.abspath(DeployDir + "/DgLib/3rd_party/" + name + "/")
-    shutil.copytree(src, dest)
-logger.write("Done!\n")
-    
-# TODO Copy samples to package
-
-# TODO Check samples projects build with CMake
 
 # Done!
 logger.write("\nBuild Succeeded!")
