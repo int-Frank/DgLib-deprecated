@@ -26,5 +26,7 @@ int main(int argc, char * argv[])
   TestRegistry::runAllTests(tr);
   
   std::clog.rdbuf(CLOG_OLD_BUF);
-  return tr.FailureCount();
+  int failCount = tr.FailureCount();
+
+  return failCount;
 }

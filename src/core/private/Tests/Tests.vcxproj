@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
+    <ClCompile Include="TEST_DGGrids.cpp" />
     <ClCompile Include="TEST_DgIDManager.cpp" />
     <ClCompile Include="TEST_DgLine.cpp" />
     <ClCompile Include="TEST_DgLineSegment.cpp" />
@@ -205,7 +206,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="results.txt" />
     <Text Include="unit-test-results.txt" />
   </ItemGroup>
   <ItemGroup>

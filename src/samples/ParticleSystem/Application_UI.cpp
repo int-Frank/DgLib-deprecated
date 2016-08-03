@@ -198,7 +198,7 @@ void Application::ShowMainGUIWindow()
   }
   if (ImGui::BeginPopupModal("About", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
-    ImGui::Text("About this");
+    ImGui::Text("A simple particle system using components from the Dg library.");
     if (ImGui::Button("OK", ImVec2(130, 0)))
     {
       UI::showAbout = false;

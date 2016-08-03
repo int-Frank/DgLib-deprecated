@@ -87,16 +87,18 @@
     <ClCompile Include="TEST_dg_vector_pod2.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="results.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="unit-test-results.txt" />
+    <ClCompile Include="TEST_DGGrids.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="testini.ini">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="unit-test-results.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

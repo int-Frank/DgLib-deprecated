@@ -8,7 +8,8 @@
 #ifndef DG_VECTOR_P_H
 #define DG_VECTOR_P_H
 
-#include <exception>
+#include <stdexcept>
+#include <cstring>
 
 #include "container_common.h"
 

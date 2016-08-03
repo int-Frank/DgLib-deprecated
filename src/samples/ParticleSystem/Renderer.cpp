@@ -106,8 +106,9 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
     0.0f, gridSize * 0.5,  -gridSize * 0.5
   };
 
-  int nCells[2] = { s_gridDim, s_gridDim };
-  Dg::MakeGrid<float, 3>(&lines[(s_nLinesGlobal + s_nLinesPoint + s_nLinesLine + 3) * 3 * 2], nCells, bounds);
+  Dg::vector_pod<float> vLines;
+  Dg::MakeLineGrid<float, 3>(vLines, s_gridDim, bounds);
+  memcpy(&lines[(s_nLinesGlobal + s_nLinesPoint + s_nLinesLine + 3) * 3 * 2], vLines.Data(), vLines.size() * sizeof(float));
 
   glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * nLines * 3 * 2), lines, GL_STATIC_DRAW);
   

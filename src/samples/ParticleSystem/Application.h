@@ -76,6 +76,7 @@ private:
 
   double                    m_camZoom;
   double                    m_camZoomTarget;
+  double                    m_maxCamZoomOut;
 
   bool                      m_camCanRotate;
   bool                      m_shouldQuit;

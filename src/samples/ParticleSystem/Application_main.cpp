@@ -71,6 +71,7 @@ bool Application::Init()
   //Set options
   m_shouldQuit = false;
   m_camCanRotate = false;
+  m_maxCamZoomOut = 50.0;
 
   if (!InitGL())
   {
@@ -170,7 +171,7 @@ void Application::UpdateScroll(double a_val)
   if (!ImGui::GetIO().WantCaptureMouse)
   {
     m_camZoomTarget -= a_val;
-    Dg::ClampNumber(1.0, 20.0, m_camZoomTarget);
+    Dg::ClampNumber(1.0, m_maxCamZoomOut, m_camZoomTarget);
   }
 }
 

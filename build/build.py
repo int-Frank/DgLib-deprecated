@@ -12,7 +12,7 @@ import subprocess
 DeployDir           = os.path.abspath("../deploy/")
 
 FailOnBadDocs       = True #Fail the build if there are errors in doc compilation
-CheckSamples        = False #Check to see if the samples build
+CheckSamples        = True #Check to see if the samples build
 
 #--- Classes ------------------------------------------------------
 
@@ -109,7 +109,6 @@ os.makedirs(DeployDir)
 os.makedirs(DeployDir + "/" + FinalLibName + "/")
 os.makedirs(DeployDir + "/" + FinalLibName + "/docs")
 os.makedirs(DeployDir + "/" + FinalLibName + "/lib")
-os.makedirs(DeployDir + "/" + FinalLibName + "/samples")
 logger.write("Done!\n")
 
 platforms = ["Win32", "x64"]
