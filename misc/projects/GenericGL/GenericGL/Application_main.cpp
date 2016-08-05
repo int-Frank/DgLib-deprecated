@@ -99,14 +99,45 @@ bool Application::InitGL()
   return true;
 }
 
+void Application::Shutdown()
+{
+  m_renderer.ShutDown();
+}
+
+void Application::ClearProject()
+{
+  m_appData.projName.clear();
+}
+
+void Application::NewProject()
+{
+  printf("New project created!\n");
+  ClearProject();
+}
+
 void Application::PushEvent(Event const & a_event)
 {
   m_eventManager.PushEvent(a_event);
 }
 
-void Application::Shutdown()
+void Application::KeyEvent(int a_key, int a_action)
 {
-  m_renderer.ShutDown();
+  switch (a_key)
+  {
+  case GLFW_KEY_ESCAPE:
+  {
+    m_shouldQuit = true;
+    break;
+  }
+  }
+}
+
+void Application::UpdateScroll(double a_val)
+{
+  if (!ImGui::GetIO().WantCaptureMouse)
+  {
+    m_mouseScroll += a_val;
+  }
 }
 
 void AppOnKeyEvent(int a_key, int a_action)
@@ -136,24 +167,13 @@ void Application::HandleEvents()
   }
 }
 
-void Application::KeyEvent(int a_key, int a_action)
+void Application::DoLogic(double a_dt)
 {
-  switch (a_key)
-  {
-  case GLFW_KEY_ESCAPE:
-  {
-    m_shouldQuit = true;
-    break;
-  }
-  }
 }
 
-void Application::UpdateScroll(double a_val)
+void Application::Render()
 {
-  if (!ImGui::GetIO().WantCaptureMouse)
-  {
-    m_mouseScroll += a_val;
-  }
+  m_renderer.Render();
 }
 
 std::vector<std::string> Application::GetProjects()
@@ -186,18 +206,6 @@ std::vector<std::string> Application::GetProjects()
   FindClose(hFind);
   return result;
 }
-
-
-void Application::DoLogic(double a_dt)
-{
-}
-
-
-void Application::Render()
-{
-  m_renderer.Render();
-}
-
 
 void Application::GetConfiguration()
 {
@@ -276,17 +284,6 @@ void Application::GetConfiguration()
       }
     }
   }
-}
-
-void Application::ClearProject()
-{
-  m_appData.projName.clear();
-}
-
-void Application::NewProject()
-{
-  printf("New project created!\n");
-  ClearProject();
 }
 
 void Application::UI_NewFrame()
