@@ -112,53 +112,59 @@ os.makedirs(DeployDir + "/" + FinalLibName + "/lib")
 logger.write("Done!\n")
 
 platforms = ["Win32", "x64"]
+configurations = ["Release", "Debug"]
 LibEXEPaths = [LibEXEPath32, LibEXEPath64]
 
 for i in range(0, len(platforms)):
 
     platform = platforms[i]
+    LibPlatformDir = DeployDir + "/" + FinalLibName + "/lib/" + platform
+    os.makedirs(LibPlatformDir)
     
-    #Build the main libs
-    logger.write("\nBuilding " + platform + "...\n\n")
-    args = [MSBuildPath, DgLibFilePath, "/property:Configuration=Release", "/property:Platform=" + platform, "/t:Rebuild"]
-    if not Execute(args):
-        logger.write("\nBuild failed! Exiting...\n")
-        Exit()
-    logger.write("\nBuild complete!\n")
-
-    #Run tests
-    logger.write("\nRunning tests...\n")
-    TestsPath = os.path.abspath("../output/Tests/" + platform + "/Release")
-    TestsEXEPath = os.path.abspath(TestsPath + "/Tests.exe")
-    TestsOutputFilePath = os.path.abspath(UnitTestResultsDir + "/unit-test-results-" + platform + ".txt")
-    args = [TestsEXEPath, "-out", TestsOutputFilePath]
-    if not Execute(args, TestsPath):
-        logger.write("\nOne or more tests failed! See test results in build/unit-test-results.txt. Exiting...\n")
-        Exit()
-    logger.write("All tests passed!\n")
-
-    #Combine libraries and output to deploy dir
-    logger.write("\nCombining libraries...\n\n")
-    os.makedirs(DeployDir + "/" + FinalLibName + "/lib/" + platforms[i])
-    OutLibFilePath = os.path.abspath(DeployDir + "/" + FinalLibName + "/lib/" + platform + "/" + FinalLibName + ".lib")
-    LibPaths = [];
-    for name in Libs:
-        LibPaths.append(os.path.abspath(OutputPath + "/" + name + "/" + platform + "/Release/" + name + ".lib"))
-    args = [LibEXEPaths[i], "/OUT:" + OutLibFilePath]
-    args.extend(LibPaths)
-    if not Execute(args):
-        logger.write("\nFailed to create lib file. Exiting...\n")
-        Exit()
-    logger.write("Finished combining libs!\n")
-
-    #Make sure samples build
-    if CheckSamples:
-        logger.write("\nBuilding samples. Platform: " + platform + "\n\n")
-        args = [MSBuildPath, SamplesFilePath, "/property:Configuration=Release", "/property:Platform=" + platform, "/t:Rebuild"]
+    for configuration in configurations:
+    
+        #Build the main libs
+        logger.write("\nBuilding " + platform + "...\n\n")
+        args = [MSBuildPath, DgLibFilePath, "/property:Configuration=" + configuration, "/property:Platform=" + platform, "/t:Rebuild"]
         if not Execute(args):
             logger.write("\nBuild failed! Exiting...\n")
             Exit()
         logger.write("\nBuild complete!\n")
+
+        #Run tests
+        logger.write("\nRunning tests...\n")
+        TestsPath = os.path.abspath("../output/Tests/" + platform + "/" + configuration)
+        TestsEXEPath = os.path.abspath(TestsPath + "/Tests.exe")
+        TestsOutputFilePath = os.path.abspath(UnitTestResultsDir + "/unit-test-results-" + platform + "/" + configuration + "/" + ".txt")
+        args = [TestsEXEPath, "-out", TestsOutputFilePath]
+        if not Execute(args, TestsPath):
+            logger.write("\nOne or more tests failed! See test results in build/unit-test-results.txt. Exiting...\n")
+            Exit()
+        logger.write("All tests passed!\n")
+
+        #Combine libraries and output to deploy dir
+        logger.write("\nCombining libraries...\n\n")
+        OutLibPath = LibPlatformDir + "/" + configuration
+        os.makedirs(OutLibPath)
+        OutLibFilePath = os.path.abspath(OutLibPath + "/" + FinalLibName + ".lib")
+        LibPaths = [];
+        for name in Libs:
+            LibPaths.append(os.path.abspath(OutputPath + "/" + name + "/" + platform + "/" + configuration + "/" + name + ".lib"))
+        args = [LibEXEPaths[i], "/OUT:" + OutLibFilePath]
+        args.extend(LibPaths)
+        if not Execute(args):
+            logger.write("\nFailed to create lib file. Exiting...\n")
+            Exit()
+        logger.write("Finished combining libs!\n")
+
+        #Make sure samples build
+        if CheckSamples and configuration == "Release":
+            logger.write("\nBuilding samples. Platform: " + platform + "\n\n")
+            args = [MSBuildPath, SamplesFilePath, "/property:Configuration=Release", "/property:Platform=" + platform, "/t:Rebuild"]
+            if not Execute(args):
+                logger.write("\nBuild failed! Exiting...\n")
+                Exit()
+            logger.write("\nBuild complete!\n")
     
 
 # Copy public headers
