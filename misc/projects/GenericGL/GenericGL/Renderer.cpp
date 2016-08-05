@@ -20,9 +20,9 @@ bool Renderer::Init()
 
   float const tri[12] =
   {
-    -1.0f,  -1.0f,   0.0f,
-    1.0f,   -1.0f,   0.0f,
-    0.0f,    1.0f,   0.0f,
+    -1.0f,  -1.0f,   0.0f,  1.0f,
+    1.0f,   -1.0f,   0.0f,  1.0f, 
+    0.0f,    1.0f,   0.0f,  1.0f
   };
 
   GLushort inds[3] =
