@@ -111,15 +111,15 @@ namespace Dg
     FixedPoint(long double a_val) { SetFromFloatingPoint<long double>(a_val); }
 
     //! Constructor from int types.
-    FixedPoint(bool a_val)     : m_val(static_cast<I>(a_val) << F) {}
-    FixedPoint(int8_t a_val)   : m_val(static_cast<I>(a_val) << F) {}
-    FixedPoint(uint8_t a_val)  : m_val(static_cast<I>(a_val) << F) {}
-    FixedPoint(int16_t a_val)  : m_val(static_cast<I>(a_val) << F) {}
-    FixedPoint(uint16_t a_val) : m_val(static_cast<I>(a_val) << F) {}
-    FixedPoint(int32_t a_val)  : m_val(static_cast<I>(a_val) << F) {}
-    FixedPoint(uint32_t a_val) : m_val(static_cast<I>(a_val) << F) {}
-    FixedPoint(int64_t a_val)  : m_val(static_cast<I>(a_val) << F) {}
-    FixedPoint(uint64_t a_val) : m_val(static_cast<I>(a_val) << F) {}
+    FixedPoint(bool a_val)     : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+    FixedPoint(int8_t a_val)   : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+    FixedPoint(uint8_t a_val)  : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+    FixedPoint(int16_t a_val)  : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+    FixedPoint(uint16_t a_val) : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+    FixedPoint(int32_t a_val)  : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+    FixedPoint(uint32_t a_val) : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+    FixedPoint(int64_t a_val)  : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+    FixedPoint(uint64_t a_val) : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
 
     //! Constructor from another fixed point type.
     template<typename I2, uint8_t F2>
@@ -131,15 +131,15 @@ namespace Dg
     operator long double()  const { return static_cast<long double>(m_val) / Power2<F>::value; }
 
     //! Integer conversion.
-    operator bool()         const { return static_cast<bool>(m_val >> F); }
-    operator int8_t()       const { return static_cast<int8_t>(m_val >> F); }
-    operator uint8_t()      const { return static_cast<uint8_t>(m_val >> F); }
-    operator int16_t()      const { return static_cast<int16_t>(m_val >> F); }
-    operator uint16_t()     const { return static_cast<uint16_t>(m_val >> F); }
-    operator int32_t()      const { return static_cast<int32_t>(m_val >> F); }
-    operator uint32_t()     const { return static_cast<uint32_t>(m_val >> F); }
-    operator int64_t()      const { return static_cast<int64_t>(m_val >> F); }
-    operator uint64_t()     const { return static_cast<uint64_t>(m_val >> F); }
+    operator bool()         const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<bool>(m_val >> F); }
+    operator int8_t()       const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int8_t>(m_val >> F); }
+    operator uint8_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint8_t>(m_val >> F); }
+    operator int16_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int16_t>(m_val >> F); }
+    operator uint16_t()     const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint16_t>(m_val >> F); }
+    operator int32_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int32_t>(m_val >> F); }
+    operator uint32_t()     const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint32_t>(m_val >> F); }
+    operator int64_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int64_t>(m_val >> F); }
+    operator uint64_t()     const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint64_t>(m_val >> F); }
 
     I GetBase() const { return m_val; }
 
@@ -216,7 +216,6 @@ namespace Dg
 
   }
 
-
   template<typename I, uint8_t F>
   FixedPoint<I, F> & FixedPoint<I, F>::operator=(FixedPoint<I, F> const & a_other)
   {
@@ -229,44 +228,30 @@ namespace Dg
   template<typename I2, uint8_t F2>
   FixedPoint<I, F>::operator FixedPoint<I2, F2>() const
   {
-    I2 intPart = static_cast<I2>(m_val >> F);
+    //Make sure we don't bit shift equal to or greater then the size of the type.
+    //This produces undefined behaviour.
+    I2 intPart = (F >= sizeof(I) * CHAR_BIT) ? 0 : static_cast<I2>(m_val >> F);
     I ifracPart = m_val & static_cast<I>(impl::fBitMasks[F]);
-    I2 i2fracPart;
+    I2 i2fracPart(0);
     if (F2 > F)
     {
-      i2fracPart = static_cast<I2>(ifracPart) << impl::Shfts[F2 - F];
+      uint8_t diff = F2 - F;
+      i2fracPart = (diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(ifracPart) << impl::Shfts[F2 - F];
     }
     else
     {
-      i2fracPart = static_cast<I2>(ifracPart >> impl::Shfts[F - F2]);
+      uint8_t diff = F - F2;
+      i2fracPart = (diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(ifracPart >> impl::Shfts[F - F2]);
     }
+
     FixedPoint<I2, F2> result;
-    result.SetBase((intPart << F2) | i2fracPart);
+    if (F2 < sizeof(I2) * CHAR_BIT)
+    {
+      i2fracPart |= (intPart << F2);
+    }
+    result.SetBase(i2fracPart);
     return result;
   }
-
-  //template<typename I>
-  //template<typename I2, uint8_t F2>
-  //FixedPoint<I, 32>::operator FixedPoint<I2, F2>() const
-  //{
-  //  return FixedPoint<I2, F2>(m_val >> impl::Shfts[32 - F2]);
-  //}
-
-  /*
-  template<typename I>
-  template<typename I2, uint8_t F2>
-  FixedPoint<I, 0>::operator FixedPoint<I2, F2>() const
-  {
-    return FixedPoint<I2, F2>(m_val << impl::Shfts[F2]);
-  }
-
-  template<typename I, F>
-  template<typename I2>
-  FixedPoint<I, F>::operator FixedPoint<I2, 32>() const
-  {
-    I ifracPart = m_val & static_cast<I>(impl::fBitMasks[F]);
-    return FixedPoint<I2, F2>(m_val << impl::Shfts[32 - F]);
-  }*/
 
   template<typename I, uint8_t F>
   template<typename T>
