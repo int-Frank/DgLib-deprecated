@@ -98,17 +98,27 @@ namespace Dg
   {
     static_assert(impl::QueryFPType<I, F>::valid, "Invalid template argument. Check input type and number of fractional bits.");
     
+    /// Grant the fixed_point template access to private members. Types with
+    /// different template parameters are different types and without this
+    /// declaration they do not have access to private members.
+    friend class Dg::FixedPoint;
+
+    /// Grant the numeric_limits specialization for this fixed_point class 
+    /// access to private members.
+    friend class std::numeric_limits<Dg::FixedPoint<I, F> >;
+
   public:
 
     /// The base type of this fixed_point class.
     typedef I base_type;
 
     FixedPoint() : m_val(0) {}
+    ~FixedPoint() {}
 
     //! Construct from floating point
-    FixedPoint(float a_val)       { SetFromFloatingPoint<float>(a_val); }
-    FixedPoint(double a_val)      { SetFromFloatingPoint<double>(a_val); }
-    FixedPoint(long double a_val) { SetFromFloatingPoint<long double>(a_val); }
+    FixedPoint(float a_val)       : m_val(static_cast<I>(a_val * static_cast<float>(Power2<F>::value) + (a_val >= 0.0f ? 0.5f : -0.5f))) {}
+    FixedPoint(double a_val)      : m_val(static_cast<I>(a_val * static_cast<double>(Power2<F>::value) + (a_val >= 0.0 ? 0.5 : -0.5))) {}
+    FixedPoint(long double a_val) : m_val(static_cast<I>(a_val * static_cast<long double>(Power2<F>::value) + (a_val >= 0.0L ? 0.5L : -0.5L))) {}
 
     //! Constructor from int types.
     FixedPoint(bool a_val)     : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
@@ -125,6 +135,9 @@ namespace Dg
     template<typename I2, uint8_t F2>
     explicit operator FixedPoint<I2, F2>() const;
 
+    FixedPoint(FixedPoint const &);
+    FixedPoint & operator=(FixedPoint const &);
+
     //! Floating point conversion.
     operator float()        const { return static_cast<float>(m_val) / Power2<F>::value; }
     operator double()       const { return static_cast<double>(m_val) / Power2<F>::value; }
@@ -140,14 +153,6 @@ namespace Dg
     operator uint32_t()     const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint32_t>(m_val >> F); }
     operator int64_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int64_t>(m_val >> F); }
     operator uint64_t()     const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint64_t>(m_val >> F); }
-
-    I GetBase() const { return m_val; }
-
-    ~FixedPoint() {}
-    FixedPoint(FixedPoint const &);
-    FixedPoint & operator=(FixedPoint const &);
-
-    void SetBase(I a_val) { m_val = a_val; }
 
     bool operator==(FixedPoint const & a_other) const {return m_val == a_other.m_val;}
     bool operator!=(FixedPoint const & a_other) const {return m_val != a_other.m_val;}
@@ -202,9 +207,6 @@ namespace Dg
       static uint64_t const value = 1;
     };
 
-    template<typename T>
-    void SetFromFloatingPoint(T);
-
   private:
     I       m_val;
   };
@@ -249,15 +251,8 @@ namespace Dg
     {
       i2fracPart |= (intPart << F2);
     }
-    result.SetBase(i2fracPart);
+    result.m_val = i2fracPart;
     return result;
-  }
-
-  template<typename I, uint8_t F>
-  template<typename T>
-  void FixedPoint<I, F>::SetFromFloatingPoint(T a_fval)
-  {
-    m_val = static_cast<I>(a_fval * static_cast<T>(Power2<F>::value) + (a_fval >= static_cast<T>(0.0) ? static_cast<T>(0.5) : static_cast<T>(-0.5)));
   }
 
   template<typename I, uint8_t F>
@@ -266,7 +261,7 @@ namespace Dg
     static_assert(std::numeric_limits<I>::is_signed, "Cannot negate an unsigned type.");
 
     FixedPoint<I, F> result;
-    result.SetBase(-m_val);
+    result.m_val = -m_val;
     return result;
   }
 
