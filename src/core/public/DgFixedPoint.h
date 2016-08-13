@@ -92,7 +92,8 @@ namespace Dg
 
   }
 
-
+  //! I: base int type.
+  //! F: number of fraction bits.
   template<typename I, uint8_t F>
   class FixedPoint
   {
@@ -258,8 +259,7 @@ namespace Dg
   template<typename I, uint8_t F>
   FixedPoint<I, F> FixedPoint<I, F>::operator-() const
   {
-    static_assert(std::numeric_limits<I>::is_signed, "Cannot negate an unsigned type.");
-
+    //Negating an unsigned FixedPoint has undefined behaviour.
     FixedPoint<I, F> result;
     result.m_val = -m_val;
     return result;
