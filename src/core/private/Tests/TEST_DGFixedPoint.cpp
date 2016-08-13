@@ -14,7 +14,7 @@ TEST(Stack_DgFixedPoint, creation_DgFixedPoint)
 
   fp_u32_24 = 169.3;
   CHECK(static_cast<uint32_t>(fp_u32_24) == 2840382669);
-  CHECK(static_cast<float>(fp_u32_24) == 169.299988f);
+  CHECK(static_cast<float>(fp_u32_24) == 169.300003f);
 
 
 }

@@ -11,87 +11,84 @@ namespace Dg
     { 
     };
 
-    template<typename T>
-    struct Promote
-    {
-      #ifdef _MSC_VER
-			typedef Error_promote_type_not_specialized_for_this_type type;
-			#endif
-    };
-
-    template<> struct Promote<uint8_t>  { uint16_t value; };
-    template<> struct Promote<int8_t>   { int16_t  value; };
-    template<> struct Promote<uint16_t> { uint32_t value; };
-    template<> struct Promote<int16_t>  { int32_t  value; };
-    template<> struct Promote<uint32_t> { uint64_t value; };
-    template<> struct Promote<int32_t>  { int64_t  value; };
-
-    enum class FPBaseType
-    {
-      sint8,
-      uint8,
-      sint16,
-      uint16,
-      sint32,
-      uint32,
-      INVALID_TYPE
-    };
-
-    template<typename T, uint8_t F>
+    template<typename I, uint8_t F>
     struct QueryFPType 
     { 
-      static FPBaseType const fpBaseType = FPBaseType::INVALID_TYPE;
       static bool const valid = false;
       static int const nIntegerBits = 0;
+      typedef Error_promote_type_not_specialized_for_this_type promoteType;
     };
 
     template<uint8_t F>
     struct QueryFPType<int8_t, F>
     {
-      static FPBaseType const fpBaseType = FPBaseType::sint8;
       static bool const valid = (F <= 7);
       static int const nIntegerBits = 7 - F;
+      typedef int16_t PromoteType;
     };
 
     template<uint8_t F>
     struct QueryFPType<uint8_t, F>
     {
-      static FPBaseType const fpBaseType = FPBaseType::uint8;
       static bool const valid = (F <= 8);
       static int const nIntegerBits = 8 - F;
+      typedef uint16_t PromoteType;
     };
 
     template<uint8_t F>
     struct QueryFPType<int16_t, F>
     {
-      static FPBaseType const fpBaseType = FPBaseType::sint16;
       static bool const valid = (F <= 15);
       static int const nIntegerBits = 15 - F;
+      typedef int32_t PromoteType;
     };
 
     template<uint8_t F>
     struct QueryFPType<uint16_t, F>
     {
-      static FPBaseType const fpBaseType = FPBaseType::uint16;
       static bool const valid = (F <= 16);
       static int const nIntegerBits = 16 - F;
+      typedef uint32_t PromoteType;
     };
 
     template<uint8_t F>
     struct QueryFPType<int32_t, F>
     {
-      static FPBaseType const fpBaseType = FPBaseType::sint32;
       static bool const valid = (F <= 31);
       static int const nIntegerBits = 31 - F;
+      typedef int64_t PromoteType;
     };
 
     template<uint8_t F>
     struct QueryFPType<uint32_t, F>
     {
-      static FPBaseType const fpBaseType = FPBaseType::uint32;
       static bool const valid = (F <= 32);
       static int const nIntegerBits = 32 - F;
+      typedef uint64_t PromoteType;
     };
+
+    uint32_t const fBitMasks[32] =
+    {
+      0x1, 0x3, 0x7, 0xF,
+      0x1F, 0x3F, 0x7F, 0xFF,
+      0x1FF, 0x3FF, 0x7FF, 0xFFF,
+      0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF,
+      0x1FFFF, 0x3FFFF, 0x7FFFF, 0xFFFFF,
+      0x1FFFFF, 0x3FFFFF, 0x7FFFFF, 0xFFFFFF,
+      0x1FFFFFF, 0x3FFFFFF, 0x7FFFFFF, 0xFFFFFFF,
+      0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF
+    };
+
+    //! We use this table to get around the compiler throwing a warning 
+    //! when bit shifting by a potentially negative number.
+    uint32_t const Shfts[32] =
+    {
+      0,  1,  2,  3,  4,  5,  6,  7,
+      8,  9,  10, 11, 12, 13, 14, 15,
+      16, 17, 18, 19, 20, 21, 22, 23,
+      24, 25, 26, 27, 28, 29, 30, 31
+    };
+
   }
 
 
@@ -103,6 +100,7 @@ namespace Dg
   public:
 
     FixedPoint() : m_val(0) {}
+    FixedPoint(I a_val) : m_val(a_val) {}
 
     //! Construct from floating point
     FixedPoint(float a_val)       { SetFromFloatingPoint<float>(a_val); }
@@ -117,7 +115,6 @@ namespace Dg
     operator long double() const { return static_cast<long double>(m_val) / Power2<F>::value; }
 
     operator I() const { return m_val; }
-    void SetBase(I a_val) { m_val = a_val; }
 
     ~FixedPoint() {}
     FixedPoint(FixedPoint const &);
@@ -194,19 +191,17 @@ namespace Dg
   FixedPoint<I, F>::operator FixedPoint<I2, F2>() const
   {
     I2 intPart = static_cast<I2>(m_val >> F);
-    I ifracPart = m_val & ((1 << F) - 1);
+    I ifracPart = m_val & static_cast<I>(impl::fBitMasks[F]);
     I2 i2fracPart;
     if (F2 > F)
     {
-      i2fracPart = static_cast<I2>(ifracPart << (F2 - F));
+      i2fracPart = static_cast<I2>(ifracPart) << impl::Shfts[F2 - F];
     }
     else
     {
-      i2fracPart = static_cast<I2>(ifracPart >> (F - F2));
+      i2fracPart = static_cast<I2>(ifracPart >> impl::Shfts[F - F2]);
     }
-    FixedPoint<I2, F2> result;
-    result.SetBase((intPart << F2) | i2fracPart);
-    return result;
+    return FixedPoint<I2, F2>((intPart << F2) | i2fracPart);
   }
 
   template<typename I, uint8_t F>
@@ -220,22 +215,30 @@ namespace Dg
   template<typename I, uint8_t F>
   FixedPoint<I, F> FixedPoint<I, F>::operator+(FixedPoint<I, F> a_rhs) const
   {
-    return m_val + a_rhs;
+    return FixedPoint<I, F>(m_val + a_rhs.m_val);
   }
 
 
   template<typename I, uint8_t F>
   FixedPoint<I, F> FixedPoint<I, F>::operator-(FixedPoint<I, F> a_rhs) const
   {
-    return m_val - a_rhs;
+    return FixedPoint<I, F>(m_val - a_rhs.m_val);
   }
 
 
-  //template<typename I, uint8_t F>
-  //FixedPoint<I, F> FixedPoint<I, F>::operator*(FixedPoint<I, F> a_rhs) const
-  //{
-  //  impl::Promote<I> result;
-  //}
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> FixedPoint<I, F>::operator*(FixedPoint<I, F> a_rhs) const
+  {
+    return FixedPoint<I, F>
+      (
+        static_cast<I>
+        (
+          (
+            static_cast<typename impl::QueryFPType<I, F>::PromoteType>(m_val) * a_rhs.m_val
+          ) >> F
+        )
+      );
+  }
 }
 
 
