@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\public\DgVector4.h" />
     <ClInclude Include="..\..\public\DgVQS.h" />
     <ClInclude Include="..\..\public\DgLineSegment.h" />
+    <ClInclude Include="..\..\public\impl\DgMath_impl.h" />
     <ClInclude Include="..\..\public\query\DgQueryLineSegmentLine.h" />
     <ClInclude Include="..\..\public\query\DgQueryLineSegmentLineSegment.h" />
     <ClInclude Include="..\..\public\query\DgQueryLineSegmentPlane.h" />
@@ -175,9 +176,6 @@
     <ClInclude Include="..\..\public\query\DgQueryRayLine.h" />
     <ClInclude Include="..\..\public\query\DgQueryLineSphere.h" />
     <ClInclude Include="..\..\public\query\DgTIQuery.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\public\DgMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

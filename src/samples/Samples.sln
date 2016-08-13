@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSystem", "ParticleSystem\ParticleSystem.vcxproj", "{052ABC9D-1140-46DD-A674-BE6D9387311A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PolygonDecomp", "PolygonDecomp\PolygonDecomp.vcxproj", "{2F810499-6327-496F-B2B6-24CD89EC99EB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -23,14 +21,6 @@ Global
 		{052ABC9D-1140-46DD-A674-BE6D9387311A}.Release|Win32.Build.0 = Release|Win32
 		{052ABC9D-1140-46DD-A674-BE6D9387311A}.Release|x64.ActiveCfg = Release|x64
 		{052ABC9D-1140-46DD-A674-BE6D9387311A}.Release|x64.Build.0 = Release|x64
-		{2F810499-6327-496F-B2B6-24CD89EC99EB}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2F810499-6327-496F-B2B6-24CD89EC99EB}.Debug|Win32.Build.0 = Debug|Win32
-		{2F810499-6327-496F-B2B6-24CD89EC99EB}.Debug|x64.ActiveCfg = Debug|x64
-		{2F810499-6327-496F-B2B6-24CD89EC99EB}.Debug|x64.Build.0 = Debug|x64
-		{2F810499-6327-496F-B2B6-24CD89EC99EB}.Release|Win32.ActiveCfg = Release|Win32
-		{2F810499-6327-496F-B2B6-24CD89EC99EB}.Release|Win32.Build.0 = Release|Win32
-		{2F810499-6327-496F-B2B6-24CD89EC99EB}.Release|x64.ActiveCfg = Release|x64
-		{2F810499-6327-496F-B2B6-24CD89EC99EB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

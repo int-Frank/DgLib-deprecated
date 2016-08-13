@@ -11,12 +11,24 @@ namespace Dg
     { 
     };
 
+    enum IntType
+    {
+      s8      = 1,
+      u8      = 2,
+      s16     = 8,
+      u16     = 16,
+      s32     = 32,
+      u32     = 64,
+      INVALID
+    };
+
     template<typename I, uint8_t F>
     struct QueryFPType 
     { 
       static bool const valid = false;
       static int const nIntegerBits = 0;
-      typedef Error_promote_type_not_specialized_for_this_type promoteType;
+      typedef Error_promote_type_not_specialized_for_this_type PromoteType;
+      static IntType const fpType = IntType::INVALID;
     };
 
     template<uint8_t F>
@@ -25,6 +37,7 @@ namespace Dg
       static bool const valid = (F <= 7);
       static int const nIntegerBits = 7 - F;
       typedef int16_t PromoteType;
+      static IntType const fpType = IntType::s8;
     };
 
     template<uint8_t F>
@@ -33,6 +46,7 @@ namespace Dg
       static bool const valid = (F <= 8);
       static int const nIntegerBits = 8 - F;
       typedef uint16_t PromoteType;
+      static IntType const fpType = IntType::u8;
     };
 
     template<uint8_t F>
@@ -41,6 +55,7 @@ namespace Dg
       static bool const valid = (F <= 15);
       static int const nIntegerBits = 15 - F;
       typedef int32_t PromoteType;
+      static IntType const fpType = IntType::s16;
     };
 
     template<uint8_t F>
@@ -49,6 +64,7 @@ namespace Dg
       static bool const valid = (F <= 16);
       static int const nIntegerBits = 16 - F;
       typedef uint32_t PromoteType;
+      static IntType const fpType = IntType::u16;
     };
 
     template<uint8_t F>
@@ -57,6 +73,7 @@ namespace Dg
       static bool const valid = (F <= 31);
       static int const nIntegerBits = 31 - F;
       typedef int64_t PromoteType;
+      static IntType const fpType = IntType::s32;
     };
 
     template<uint8_t F>
@@ -65,6 +82,7 @@ namespace Dg
       static bool const valid = (F <= 32);
       static int const nIntegerBits = 32 - F;
       typedef uint64_t PromoteType;
+      static IntType const fpType = IntType::u32;
     };
 
     uint32_t const fBitMasks[32] =
@@ -211,6 +229,15 @@ namespace Dg
     m_val = static_cast<I>(a_fval * static_cast<T>(Power2<F>::value) + (a_fval >= static_cast<T>(0.0) ? static_cast<T>(0.5) : static_cast<T>(-0.5)));
   }
 
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> FixedPoint<I, F>::operator-() const
+  {
+    static_assert(
+      impl::QueryFPType<I, F>::fpType & (impl::s8 | impl::s16 | impl::s32)
+      , "Cannot negate an unsigned type.");
+
+    return FixedPoint<I, F>(-m_val);
+  }
 
   template<typename I, uint8_t F>
   FixedPoint<I, F> FixedPoint<I, F>::operator+(FixedPoint<I, F> a_rhs) const
@@ -238,6 +265,60 @@ namespace Dg
           ) >> F
         )
       );
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> FixedPoint<I, F>::operator/(FixedPoint<I, F> a_rhs) const
+  {
+    return FixedPoint<I, F>
+      (
+        static_cast<I>
+        (
+          (
+            (static_cast<typename impl::QueryFPType<I, F>::PromoteType>(m_val) << F) / a_rhs.m_val
+          )
+        )
+      );
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> & FixedPoint<I, F>::operator+=(FixedPoint<I, F> a_rhs)
+  {
+    m_val += a_rhs.m_val;
+    return *this;
+  }
+
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> & FixedPoint<I, F>::operator-=(FixedPoint<I, F> a_rhs)
+  {
+    m_val -= a_rhs.m_val;
+    return *this;
+  }
+
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> & FixedPoint<I, F>::operator*=(FixedPoint<I, F> a_rhs)
+  {
+    m_val = static_cast<I>
+            (
+              (
+                static_cast<typename impl::QueryFPType<I, F>::PromoteType>(m_val) * a_rhs.m_val
+              ) >> F
+            );
+    return *this;
+  }
+  
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> & FixedPoint<I, F>::operator/=(FixedPoint<I, F> a_rhs)
+  {
+    m_val = static_cast<I>
+            (
+              (
+                (static_cast<typename impl::QueryFPType<I, F>::PromoteType>(m_val) << F)/ a_rhs.m_val
+              )
+            );
+    return *this;
   }
 }
 

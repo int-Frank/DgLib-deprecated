@@ -9,9 +9,10 @@
 
 #include <cmath>
 #include <stdint.h>
+#include <limits.h>
 
 #include "DgTypes.h"
-#include "DgMath.inl"
+#include "impl/DgMath_impl.h"
 
 //! @ingroup DgMath_constants
 #define USE_PRECISION_32
@@ -71,6 +72,26 @@ namespace Dg
   
   //! @ingroup DgMath_functions
   //! @{
+
+  //! Is the type an integer?
+  template<typename T>
+  bool IsInt()
+  {
+    return impl::IsIntType<T>::value;
+  }
+
+  //! Reverse bits of the integer
+  template<typename T>
+  T ReverseBits(T a_val)
+  {
+    static_assert(impl::IsIntType<T>::value, "Can only reverse bits of int types.");
+    T result(0);
+    for (int i = 0; i < sizeof(T); ++i)
+    {
+      result |= (BitReverseTable256[(v >> (i * CHAR_BIT)) & 0xff] << (sizeof(T) - i) * CHAR_BIT);
+    }
+    return result;
+  }
 
   //! Finds log base 2 of a 32-bit integer.
   uint32_t Log2(uint32_t input);

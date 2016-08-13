@@ -122,10 +122,8 @@
     <ClInclude Include="..\..\public\DgFixedPoint.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\public\DgMath.inl">
+    <ClInclude Include="..\..\public\impl\DgMath_impl.h">
       <Filter>Public Headers</Filter>
-    </None>
+    </ClInclude>
   </ItemGroup>
 </Project>
