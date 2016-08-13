@@ -14,21 +14,6 @@ namespace Dg
 {
   namespace impl
   {
-    template<typename T>
-    struct IsIntType
-    {
-      static bool const value = false;
-    };
-
-    template<> struct IsIntType<int8_t> { static bool const value = true; };
-    template<> struct IsIntType<uint8_t> { static bool const value = true; };
-    template<> struct IsIntType<int16_t> { static bool const value = true; };
-    template<> struct IsIntType<uint16_t> { static bool const value = true; };
-    template<> struct IsIntType<int32_t> { static bool const value = true; };
-    template<> struct IsIntType<uint32_t> { static bool const value = true; };
-    template<> struct IsIntType<int64_t> { static bool const value = true; };
-    template<> struct IsIntType<uint64_t> { static bool const value = true; };
-  
     unsigned char const BitReverseTable256[] =
     {
       0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,

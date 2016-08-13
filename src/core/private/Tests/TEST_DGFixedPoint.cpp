@@ -16,7 +16,7 @@ TEST(Stack_DgFixedPoint, creation_DgFixedPoint)
   CHECK(static_cast<double>(static_cast<Dg::FixedPoint<int32_t, 8>>(fp_u32_24)) == 13.375);
   CHECK(static_cast<double>(static_cast<Dg::FixedPoint<int32_t, 26>>(fp_u32_24)) == 13.375);
   CHECK(static_cast<double>(static_cast<Dg::FixedPoint<int32_t, 30>>(fp_u32_24)) == 1.375);
-
+  
   Dg::FixedPoint<int32_t, 24> fp_s32_24(-13.375);
   CHECK(static_cast<double>(fp_s32_24) == -13.375);
   

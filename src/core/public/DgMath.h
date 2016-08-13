@@ -73,13 +73,6 @@ namespace Dg
   //! @ingroup DgMath_functions
   //! @{
 
-  //! Is the type an integer?
-  template<typename T>
-  bool IsInt()
-  {
-    return impl::IsIntType<T>::value;
-  }
-
   //! Reverse bits of the integer
   template<typename T>
   T ReverseBits(T a_val)
