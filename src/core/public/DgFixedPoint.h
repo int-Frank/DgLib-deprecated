@@ -68,18 +68,6 @@ namespace Dg
       typedef uint64_t PromoteType;
     };
 
-    uint32_t const fBitMasks[33] =
-    {
-      0, 0x1, 0x3, 0x7, 0xF,
-      0x1F, 0x3F, 0x7F, 0xFF,
-      0x1FF, 0x3FF, 0x7FF, 0xFFF,
-      0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF,
-      0x1FFFF, 0x3FFFF, 0x7FFFF, 0xFFFFF,
-      0x1FFFFF, 0x3FFFFF, 0x7FFFFF, 0xFFFFFF,
-      0x1FFFFFF, 0x3FFFFFF, 0x7FFFFFF, 0xFFFFFFF,
-      0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF
-    };
-
     //! We use this table to get around the compiler throwing a warning 
     //! when bit shifting by a potentially negative number.
     uint32_t const Shfts[32] =
@@ -231,10 +219,8 @@ namespace Dg
   template<typename I2, uint8_t F2>
   FixedPoint<I, F>::operator FixedPoint<I2, F2>() const
   {
-    //Make sure we don't bit shift equal to or greater then the size of the type.
-    //This produces undefined behaviour.
     I2 intPart = (F >= sizeof(I) * CHAR_BIT) ? 0 : static_cast<I2>(m_val >> F);
-    I ifracPart = m_val & static_cast<I>(impl::fBitMasks[F]);
+    I ifracPart = m_val & ((F >= sizeof(I) * CHAR_BIT) ? -1 : ((1 << F) - 1));
     I2 i2fracPart(0);
     if (F2 > F)
     {
