@@ -118,12 +118,10 @@ namespace Dg
     Real LengthSquared() const;
 
     //! Squared distance between two points.
-    template<typename Real>
-    friend Real SquaredDistance(Vector4<Real> const &, Vector4<Real> const &);
+    friend Real Dg::SquaredDistance(Vector4<Real> const &, Vector4<Real> const &);
 
     //! Distance between two points.
-    template<typename Real>
-    friend Real Distance(Vector4<Real> const &, Vector4<Real> const &);
+    friend Real Dg::Distance(Vector4<Real> const &, Vector4<Real> const &);
 
     //! Access element-x by value
     Real x() const { return m_V[0]; }

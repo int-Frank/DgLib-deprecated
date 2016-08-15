@@ -141,8 +141,7 @@ namespace Dg
     const VQS& Inverse();
 
     //! Inverse.
-    template<typename T>
-    friend VQS<T> Inverse(VQS<T> const &);
+    friend VQS Dg::Inverse(VQS<Real> const &);
 
     //! Get the vector, quaternion and scalar
     void Get(Vector4<Real>& a_v, Quaternion<Real>& a_q, Real& a_s) const;

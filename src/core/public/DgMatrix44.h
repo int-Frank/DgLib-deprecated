@@ -49,7 +49,7 @@ namespace Dg
   template<typename Real>
   class Matrix44 : public Matrix < 4, 4, Real >
   {
-    friend class Quaternion < Real >;
+    friend class Quaternion<Real>;
     friend class VQS < Real >;
   public:
     //! Default constructor, initialized to identity matrix.
@@ -92,8 +92,7 @@ namespace Dg
     Matrix44& AffineInverse();
 
     //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
-    template<typename T>
-    friend Matrix44<T> AffineInverse(Matrix44<T> const &);
+    friend Matrix44 Dg::AffineInverse(Matrix44<Real> const &);
 
     //! Set as translation matrix based on vector
     Matrix44& Translation(Matrix<1, 4, Real> const &);

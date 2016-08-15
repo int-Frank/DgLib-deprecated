@@ -209,15 +209,13 @@ namespace Dg
     void Identity();		
 
     //! Compute complex conjugate.
-    template<typename T>
-    friend Quaternion<T> Conjugate(const Quaternion<T>&);
+    friend Quaternion Dg::Conjugate(const Quaternion<Real>&);
 
     //! Set self to complex conjugate.
     Quaternion const & Conjugate();
 
     //! Invert quaternion.
-    template<typename T>
-    friend Quaternion<T> Inverse(const Quaternion<T>&);
+    friend Quaternion Dg::Inverse(const Quaternion<Real>&);
 
     //! Set self to inverse.
     Quaternion const & Inverse();
@@ -238,8 +236,7 @@ namespace Dg
     Quaternion operator-() const;
 
     //! Scalar multiplication
-    template<typename T>
-    friend Quaternion<T> operator*(T scalar, const Quaternion<T>& vector);
+    friend Quaternion operator*<Real>(Real scalar, const Quaternion<Real>& vector);
 
     //! Scalar multiplication, assign to self
     Quaternion& operator*=(Real);
@@ -251,8 +248,7 @@ namespace Dg
     Quaternion& operator*=(Quaternion const &);
 
     //! Element-wise dot product
-    template<typename T>
-    friend T Dot(const Quaternion<T>&, const Quaternion<T>&);
+    friend Real Dg::Dot(const Quaternion<Real>&, const Quaternion<Real>&);
 
     //! Vector rotation.
     //! @pre Quaternion is normalized.
@@ -271,8 +267,10 @@ namespace Dg
     //! @param[in] a_start Start quaternion
     //! @param[in] a_end End quaternion
     //! @param[in] a_t Factor: 0 < t < 1
-    template<typename T>
-    friend void Lerp(Quaternion<T>& a_result, const Quaternion<T>& a_start, const Quaternion<T>& a_end, T a_t);
+    friend void Dg::Lerp(Quaternion<Real>& a_result
+                 , const Quaternion<Real>& a_start
+                 , const Quaternion<Real>& a_end
+                 , Real a_t);
     
     //! Spherical linearly interpolate two quaternions.
     //! This will always take the shorter path between them.
@@ -281,8 +279,10 @@ namespace Dg
     //! @param[in] a_start Start quaternion
     //! @param[in] a_end End quaternion
     //! @param[in] a_t Factor: 0 < t < 1
-    template<typename T>
-    friend void Slerp(Quaternion<T>& a_result, const Quaternion<T>& a_start, const Quaternion<T>& a_end, T a_t);
+    friend void Dg::Slerp(Quaternion<Real>& a_result
+                  , const Quaternion<Real>& a_start
+                  , const Quaternion<Real>& a_end
+                  , Real a_t);
 
     //! Approximate spherical linear interpolation of two quaternions.
     //! Based on "Hacking Quaternions", Jonathan Blow, Game Developer, March 2002.
@@ -292,8 +292,10 @@ namespace Dg
     //! @param[in] a_start Start quaternion
     //! @param[in] a_end End quaternion
     //! @param[in] a_t Factor: 0 < t < 1
-    template<typename T>
-    friend void ApproxSlerp(Quaternion<T>& a_result, const Quaternion<T>& a_start, const Quaternion<T>& a_end, T a_t);
+    friend void Dg::ApproxSlerp(Quaternion<Real>& a_result
+                        , const Quaternion<Real>& a_start
+                        , const Quaternion<Real>& a_end
+                        , Real a_t);
 
   private:
     // member variables

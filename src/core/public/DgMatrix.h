@@ -57,7 +57,7 @@ namespace Dg
   {
     static_assert(M > 0 && N > 0, "Matrix cannot have a zero dimension.");
 
-    template<size_t _M, size_t _N, typename T> friend class Matrix;
+    template<size_t _M, size_t _N, typename Real> friend class Matrix;
     template<typename Real> friend class Matrix44;
     template<typename Real> friend class Vector4;
 
@@ -172,8 +172,7 @@ namespace Dg
     Matrix operator/ (Real) const;
 
     //! Scalar multiplication
-    template<size_t _M, size_t _N, typename _Real>
-    friend Matrix<_M, _N, _Real> operator* (_Real, Matrix<_M, _N, _Real> const &);
+    friend Matrix operator*<M, N, Real> (Real, Matrix const &);
 
     //! Get pointer to internal data
     Real * GetData() { return &m_V[0]; }
