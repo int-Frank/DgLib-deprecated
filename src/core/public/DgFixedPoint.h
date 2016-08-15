@@ -122,7 +122,7 @@ namespace Dg
     operator long double()  const { return static_cast<long double>(m_val) / Power2<F>::value; }
 
     //! Integer conversion.
-    operator bool()         const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<bool>(m_val >> F); }
+    operator bool()         const { return m_val != 0; }
     operator int8_t()       const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int8_t>(m_val >> F); }
     operator uint8_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint8_t>(m_val >> F); }
     operator int16_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int16_t>(m_val >> F); }
@@ -142,13 +142,15 @@ namespace Dg
     bool operator !() const { return m_val == 0; }
     FixedPoint operator-() const;
 
-    FixedPoint operator++() const;
-    FixedPoint operator--() const;
+    FixedPoint operator++(int);
+    FixedPoint & operator++();
+    FixedPoint operator--(int);
+    FixedPoint & operator--();
 
-    FixedPoint operator<<(FixedPoint) const;
-    FixedPoint operator>>(FixedPoint) const;
-    FixedPoint operator<<=(FixedPoint) const;
-    FixedPoint operator>>=(FixedPoint) const;
+    FixedPoint operator<<(int) const;
+    FixedPoint operator>>(int) const;
+    FixedPoint & operator<<=(int);
+    FixedPoint & operator>>=(int);
 
     FixedPoint operator+(FixedPoint) const;
     FixedPoint operator-(FixedPoint) const;
@@ -255,6 +257,62 @@ namespace Dg
     return FixedPoint<I, F>(-m_val, true);
   }
 
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> & FixedPoint<I, F>::operator++()
+  {
+    m_val += Power2<F>::value;
+    return *this;
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> FixedPoint<I, F>::operator++(int)
+  {
+    FixedPoint<I, F> result(m_val, true);
+    m_val += Power2<F>::value;
+    return result;
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> & FixedPoint<I, F>::operator--()
+  {
+    m_val -= Power2<F>::value;
+    return *this;
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> FixedPoint<I, F>::operator--(int)
+  {
+    FixedPoint<I, F> result(m_val, true);
+    m_val -= Power2<F>::value;
+    return result;
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> FixedPoint<I, F>::operator<<(int a_shft) const
+  {
+    return FixedPoint<I, F>(m_val << a_shft, true);
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> FixedPoint<I, F>::operator>>(int a_shft) const
+  {
+    return FixedPoint<I, F>(m_val >> a_shft, true);
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> & FixedPoint<I, F>::operator<<=(int a_shft)
+  {
+    m_val <<= a_shft;
+    return *this;
+  }
+
+  template<typename I, uint8_t F>
+  FixedPoint<I, F> & FixedPoint<I, F>::operator>>=(int a_shft)
+  {
+    m_val >>= a_shft;
+    return *this;
+
+  }
   template<typename I, uint8_t F>
   FixedPoint<I, F> FixedPoint<I, F>::operator+(FixedPoint<I, F> a_rhs) const
   {

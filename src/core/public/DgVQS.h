@@ -172,14 +172,14 @@ namespace Dg
   template<typename Real>
   void VQS<Real>::Set(Matrix44<Real> const & a_m)
   {
-    m_v.m_x = a_m[12];
-    m_v.m_y = a_m[13];
-    m_v.m_z = a_m[14];
+    m_v.m_x = a_m.m_V[12];
+    m_v.m_y = a_m.m_V[13];
+    m_v.m_z = a_m.m_V[14];
 
     a_m.GetQuaternion(m_q);
 
     //Just use matrix x-scaling
-    m_s = sqrt((a_m[0] * a_m[0]) + (a_m[4] * a_m[4]) + (a_m[8] * a_m[8]));
+    m_s = sqrt((a_m.m_V[0] * a_m.m_V[0]) + (a_m.m_V[4] * a_m.m_V[4]) + (a_m.m_V[8] * a_m.m_V[8]));
 
   }	//End: VQS<Real>::Set()
 

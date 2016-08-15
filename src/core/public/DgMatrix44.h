@@ -49,7 +49,8 @@ namespace Dg
   template<typename Real>
   class Matrix44 : public Matrix < 4, 4, Real >
   {
-    friend class Quaternion < Real > ;
+    friend class Quaternion < Real >;
+    friend class VQS < Real >;
   public:
     //! Default constructor, initialized to identity matrix.
     Matrix44() { Identity(); }
@@ -549,15 +550,15 @@ namespace Dg
     Real cs = cos(a_angle);
     Real sn = sin(a_angle);
     Real oneMinusCos = ((Real)1) - cs;
-    Real x0sqr = a_axis[0] * a_axis[0];
-    Real x1sqr = a_axis[1] * a_axis[1];
-    Real x2sqr = a_axis[2] * a_axis[2];
-    Real x0x1m = a_axis[0] * a_axis[1] * oneMinusCos;
-    Real x0x2m = a_axis[0] * a_axis[2] * oneMinusCos;
-    Real x1x2m = a_axis[1] * a_axis[2] * oneMinusCos;
-    Real x0Sin = a_axis[0] * sn;
-    Real x1Sin = a_axis[1] * sn;
-    Real x2Sin = a_axis[2] * sn;
+    Real x0sqr = a_axis.m_V[0] * a_axis.m_V[0];
+    Real x1sqr = a_axis.m_V[1] * a_axis.m_V[1];
+    Real x2sqr = a_axis.m_V[2] * a_axis.m_V[2];
+    Real x0x1m = a_axis.m_V[0] * a_axis.m_V[1] * oneMinusCos;
+    Real x0x2m = a_axis.m_V[0] * a_axis.m_V[2] * oneMinusCos;
+    Real x1x2m = a_axis.m_V[1] * a_axis.m_V[2] * oneMinusCos;
+    Real x0Sin = a_axis.m_V[0] * sn;
+    Real x1Sin = a_axis.m_V[1] * sn;
+    Real x2Sin = a_axis.m_V[2] * sn;
 
     m_V[0] = x0sqr*oneMinusCos + cs;
     m_V[4] = x0x1m - x2Sin;
@@ -627,17 +628,17 @@ namespace Dg
   template<typename Real>
   Matrix44<Real>& Matrix44<Real>::Scaling(Matrix<1, 4, Real> const & a_scaleFactors)
   {
-    m_V[0] = a_scaleFactors[0];
+    m_V[0] = a_scaleFactors.m_V[0];
     m_V[1] = static_cast<Real>(0.0);
     m_V[2] = static_cast<Real>(0.0);
     m_V[3] = static_cast<Real>(0.0);
     m_V[4] = static_cast<Real>(0.0);
-    m_V[5] = a_scaleFactors[1];
+    m_V[5] = a_scaleFactors.m_V[1];
     m_V[6] = static_cast<Real>(0.0);
     m_V[7] = static_cast<Real>(0.0);
     m_V[8] = static_cast<Real>(0.0);
     m_V[9] = static_cast<Real>(0.0);
-    m_V[10] = a_scaleFactors[2];
+    m_V[10] = a_scaleFactors.m_V[2];
     m_V[11] = static_cast<Real>(0.0);
     m_V[12] = static_cast<Real>(0.0);
     m_V[13] = static_cast<Real>(0.0);
