@@ -6,6 +6,24 @@
 
 namespace Dg
 {
+  template<typename I, uint8_t F>
+  class FixedPoint;
+}
+
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> abs(Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> ceil(Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> floor(Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> mod(Dg::FixedPoint<I, F>, Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> modf(Dg::FixedPoint<I, F>, Dg::FixedPoint<I, F> *);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> exp(Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> log(Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> cos(Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> sin(Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> tan(Dg::FixedPoint<I, F>);
+template<typename I, uint8_t F> Dg::FixedPoint<I, F> sqrt(Dg::FixedPoint<I, F>);
+
+namespace Dg
+{
   namespace impl
   {
     struct Error_promote_type_not_specialized_for_this_type
@@ -66,6 +84,28 @@ namespace Dg
       static bool const valid = (F <= 32);
       static int const nIntegerBits = 32 - F;
       typedef uint64_t PromoteType;
+    };
+
+    //! We use this table to get around the compiler throwing a warning 
+    //! when bit shifting by a potentially negative number.
+    uint32_t const Shifts[32] =
+    {
+      0,  1,  2,  3,  4,  5,  6,  7,
+      8,  9,  10, 11, 12, 13, 14, 15,
+      16, 17, 18, 19, 20, 21, 22, 23,
+      24, 25, 26, 27, 28, 29, 30, 31
+    };
+
+    uint32_t const fBitMasks[33] =
+    {
+      0, 0x1, 0x3, 0x7, 0xF,
+      0x1F, 0x3F, 0x7F, 0xFF,
+      0x1FF, 0x3FF, 0x7FF, 0xFFF,
+      0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF,
+      0x1FFFF, 0x3FFFF, 0x7FFFF, 0xFFFFF,
+      0x1FFFFF, 0x3FFFFF, 0x7FFFFF, 0xFFFFFF,
+      0x1FFFFFF, 0x3FFFFFF, 0x7FFFFFF, 0xFFFFFFF,
+      0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF
     };
   }
 
@@ -162,16 +202,17 @@ namespace Dg
     FixedPoint & operator*=(FixedPoint);
     FixedPoint & operator/=(FixedPoint);
 
-    friend FixedPoint abs(FixedPoint);
-    friend FixedPoint ceil(FixedPoint);
-    friend FixedPoint floor(FixedPoint);
-    friend FixedPoint mod(FixedPoint, FixedPoint);
-    friend FixedPoint modf(FixedPoint, FixedPoint *);
-    friend FixedPoint exp(FixedPoint);
-    friend FixedPoint log(FixedPoint);
-    friend FixedPoint cos(FixedPoint);
-    friend FixedPoint sin(FixedPoint);
-    friend FixedPoint sqrt(FixedPoint);
+    friend FixedPoint (::abs<I, F>)(FixedPoint);
+    friend FixedPoint (::ceil<I, F>)(FixedPoint);
+    friend FixedPoint (::floor<I, F>)(FixedPoint);
+    friend FixedPoint (::mod<I, F>)(FixedPoint, FixedPoint);
+    friend FixedPoint (::modf<I, F>)(FixedPoint, FixedPoint *);
+    friend FixedPoint (::exp<I, F>)(FixedPoint);
+    friend FixedPoint (::log<I, F>)(FixedPoint);
+    friend FixedPoint (::cos<I, F>)(FixedPoint);
+    friend FixedPoint (::sin<I, F>)(FixedPoint);
+    friend FixedPoint (::tan<I, F>)(FixedPoint);
+    friend FixedPoint (::sqrt<I, F>)(FixedPoint);
 
   private:
 
@@ -212,27 +253,17 @@ namespace Dg
   template<typename I2, uint8_t F2>
   FixedPoint<I, F>::operator FixedPoint<I2, F2>() const
   {
-    //! We use this table to get around the compiler throwing a warning 
-    //! when bit shifting by a potentially negative number.
-    static uint32_t const Shfts[32] =
-    {
-      0,  1,  2,  3,  4,  5,  6,  7,
-      8,  9,  10, 11, 12, 13, 14, 15,
-      16, 17, 18, 19, 20, 21, 22, 23,
-      24, 25, 26, 27, 28, 29, 30, 31
-    };
-
     if (sizeof(I2) >= sizeof(I))
     {
       if (F2 > F)
       {
         int diff = F2 - F;
-        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) << Shfts[diff], true);
+        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) << impl::Shifts[diff], true);
       }
       else
       {
         int diff = F - F2;
-        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) >> Shfts[diff], true);
+        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) >> impl::Shifts[diff], true);
       }
     }
     else
@@ -240,12 +271,12 @@ namespace Dg
       if (F2 > F)
       {
         int diff = F2 - F;
-        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val << Shfts[diff]), true);
+        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val << impl::Shifts[diff]), true);
       }
       else
       {
         int diff = F - F2;
-        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val >> Shfts[diff]), true);
+        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val >> impl::Shifts[diff]), true);
       }
     }
   }
@@ -412,6 +443,26 @@ S & operator << (S & a_stream, Dg::FixedPoint<I, F> a_val)
   return a_stream;
 }
 
+template<typename I, uint8_t F>
+Dg::FixedPoint<I, F> abs(Dg::FixedPoint<I, F> a_val)
+{
+  return Dg::FixedPoint<I, F>(((a_val.m_val < 0) ? -a_val.m_val : a_val.m_val), true);
+}
+
+template<typename I, uint8_t F>
+Dg::FixedPoint<I, F> ceil(Dg::FixedPoint<I, F> a_val)
+{
+  I val = (a_val.m_val & ~Dg::impl::fBitMasks[F])
+  + ((a_val.m_val & Dg::impl::fBitMasks[F]) ? Dg::FixedPoint<I, F>::Power2<F>::value : 0);
+  return Dg::FixedPoint<I, F>(val, true);
+}
+
+template<typename I, uint8_t F>
+Dg::FixedPoint<I, F> floor(Dg::FixedPoint<I, F> a_val)
+{
+  I val = (a_val.m_val & ~Dg::impl::fBitMasks[F]);
+  return Dg::FixedPoint<I, F>(val, true);
+}
 
 /******************************************************************************/
 /*                                                                            */

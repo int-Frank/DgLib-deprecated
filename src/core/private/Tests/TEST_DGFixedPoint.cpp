@@ -93,9 +93,43 @@ TEST(Stack_DgFixedPoint, creation_DgFixedPoint)
 
   //Shifting
   Dg::FixedPoint<uint32_t, 8> forShifts = 40.0;
-  double res = static_cast<double>(forShifts << 2);
   CHECK(static_cast<double>(forShifts << 2) == 40.0 * 4.0);
   CHECK(static_cast<double>(forShifts >> 2) == 40.0 / 4.0);
   CHECK(static_cast<double>(forShifts <<= 2) == 40.0 * 4.0);
   CHECK(static_cast<double>(forShifts >>= 2) == 40.0);
+
+  double da = 5.0;
+  double db = -2.5;
+  a = da;
+  b = db;
+  CHECK(static_cast<double>(a + b) == da + db);
+  CHECK(static_cast<double>(a - b) == da - db);
+  CHECK(static_cast<double>(a * b) == da * db);
+  CHECK(static_cast<double>(a / b) == da / db);
+
+  a += b; da += db;
+  CHECK(static_cast<double>(a) == da);
+
+  a -= b; da -= db;
+  CHECK(static_cast<double>(a) == da);
+
+  a *= b; da *= db;
+  CHECK(static_cast<double>(a) == da);
+
+  a /= b; da /= db;
+  CHECK(static_cast<double>(a) == da);
+
+  //Functions
+  CHECK(static_cast<double>(abs(FP_s32_24(34.0))) == 34.0);
+  CHECK(static_cast<double>(abs(FP_s32_24(-34.0))) == 34.0);
+
+  CHECK(static_cast<double>(ceil(FP_s32_24(34.564357))) == 35.0);
+  CHECK(static_cast<double>(ceil(FP_s32_24(34.0))) == 34.0);
+  CHECK(static_cast<double>(ceil(FP_s32_24(-34.564357))) == -34.0);
+  CHECK(static_cast<double>(ceil(FP_s32_24(-34.0))) == -34.0);
+
+  CHECK(static_cast<double>(floor(FP_s32_24(34.564357))) == 34.0);
+  CHECK(static_cast<double>(floor(FP_s32_24(34.0))) == 34.0);
+  CHECK(static_cast<double>(floor(FP_s32_24(-34.564357))) == -35.0);
+  CHECK(static_cast<double>(floor(FP_s32_24(-34.0))) == -34.0);
 }
