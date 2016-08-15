@@ -184,6 +184,8 @@ namespace Dg
 
   private:
 
+    FixedPoint(I a_val, bool DUMMY) : m_val(a_val) {}
+
     template<int E>
     struct Power2
     {
@@ -219,27 +221,32 @@ namespace Dg
   template<typename I2, uint8_t F2>
   FixedPoint<I, F>::operator FixedPoint<I2, F2>() const
   {
-    I2 intPart = (F >= sizeof(I) * CHAR_BIT) ? 0 : static_cast<I2>(m_val >> F);
-    I ifracPart = m_val & ((F >= sizeof(I) * CHAR_BIT) ? -1 : ((1 << F) - 1));
-    I2 i2fracPart(0);
-    if (F2 > F)
+    if (sizeof(I2) >= sizeof(I))
     {
-      uint8_t diff = F2 - F;
-      i2fracPart = (diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(ifracPart) << impl::Shfts[F2 - F];
+      if (F2 > F)
+      {
+        int diff = F2 - F;
+        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) << impl::Shfts[diff], true);
+      }
+      else
+      {
+        int diff = F - F2;
+        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) >> impl::Shfts[diff], true);
+      }
     }
     else
     {
-      uint8_t diff = F - F2;
-      i2fracPart = (diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(ifracPart >> impl::Shfts[F - F2]);
+      if (F2 > F)
+      {
+        int diff = F2 - F;
+        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val << impl::Shfts[diff]), true);
+      }
+      else
+      {
+        int diff = F - F2;
+        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val >> impl::Shfts[diff]), true);
+      }
     }
-
-    FixedPoint<I2, F2> result;
-    if (F2 < sizeof(I2) * CHAR_BIT)
-    {
-      i2fracPart |= (intPart << F2);
-    }
-    result.m_val = i2fracPart;
-    return result;
   }
 
   template<typename I, uint8_t F>
