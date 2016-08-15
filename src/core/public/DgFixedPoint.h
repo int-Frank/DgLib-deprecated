@@ -67,17 +67,6 @@ namespace Dg
       static int const nIntegerBits = 32 - F;
       typedef uint64_t PromoteType;
     };
-
-    //! We use this table to get around the compiler throwing a warning 
-    //! when bit shifting by a potentially negative number.
-    uint32_t const Shfts[32] =
-    {
-      0,  1,  2,  3,  4,  5,  6,  7,
-      8,  9,  10, 11, 12, 13, 14, 15,
-      16, 17, 18, 19, 20, 21, 22, 23,
-      24, 25, 26, 27, 28, 29, 30, 31
-    };
-
   }
 
   //! I: base int type.
@@ -221,17 +210,27 @@ namespace Dg
   template<typename I2, uint8_t F2>
   FixedPoint<I, F>::operator FixedPoint<I2, F2>() const
   {
+    //! We use this table to get around the compiler throwing a warning 
+    //! when bit shifting by a potentially negative number.
+    static uint32_t const Shfts[32] =
+    {
+      0,  1,  2,  3,  4,  5,  6,  7,
+      8,  9,  10, 11, 12, 13, 14, 15,
+      16, 17, 18, 19, 20, 21, 22, 23,
+      24, 25, 26, 27, 28, 29, 30, 31
+    };
+
     if (sizeof(I2) >= sizeof(I))
     {
       if (F2 > F)
       {
         int diff = F2 - F;
-        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) << impl::Shfts[diff], true);
+        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) << Shfts[diff], true);
       }
       else
       {
         int diff = F - F2;
-        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) >> impl::Shfts[diff], true);
+        return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) >> Shfts[diff], true);
       }
     }
     else
@@ -239,12 +238,12 @@ namespace Dg
       if (F2 > F)
       {
         int diff = F2 - F;
-        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val << impl::Shfts[diff]), true);
+        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val << Shfts[diff]), true);
       }
       else
       {
         int diff = F - F2;
-        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val >> impl::Shfts[diff]), true);
+        return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val >> Shfts[diff]), true);
       }
     }
   }
@@ -253,22 +252,20 @@ namespace Dg
   FixedPoint<I, F> FixedPoint<I, F>::operator-() const
   {
     //Negating an unsigned FixedPoint has undefined behaviour.
-    FixedPoint<I, F> result;
-    result.m_val = -m_val;
-    return result;
+    return FixedPoint<I, F>(-m_val, true);
   }
 
   template<typename I, uint8_t F>
   FixedPoint<I, F> FixedPoint<I, F>::operator+(FixedPoint<I, F> a_rhs) const
   {
-    return FixedPoint<I, F>(m_val + a_rhs.m_val);
+    return FixedPoint<I, F>(m_val + a_rhs.m_val, true);
   }
 
 
   template<typename I, uint8_t F>
   FixedPoint<I, F> FixedPoint<I, F>::operator-(FixedPoint<I, F> a_rhs) const
   {
-    return FixedPoint<I, F>(m_val - a_rhs.m_val);
+    return FixedPoint<I, F>(m_val - a_rhs.m_val, true);
   }
 
 
@@ -282,7 +279,7 @@ namespace Dg
           (
             static_cast<typename impl::QueryFPType<I, F>::PromoteType>(m_val) * a_rhs.m_val
           ) >> F
-        )
+        ), true
       );
   }
 
@@ -296,7 +293,7 @@ namespace Dg
           (
             (static_cast<typename impl::QueryFPType<I, F>::PromoteType>(m_val) << F) / a_rhs.m_val
           )
-        )
+        ), true
       );
   }
 
