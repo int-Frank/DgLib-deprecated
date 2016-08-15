@@ -1,3 +1,43 @@
+//! @file DgFixedPoint.h
+//!
+//! @author: Frank B. Hart
+//! @date 21/05/2016
+//!
+//! Class declaration: FixedPoint
+
+/*******************************************************************************/
+/*                                                                             */
+/*  Copyright (c) 2007-2009: Peter Schregle,                                   */
+/*  All rights reserved.                                                       */
+/*                                                                             */
+/*  This file is part of the Fixed Point Math Library.                        */
+/*                                                                             */
+/*  Redistribution of the Fixed Point Math Library and use in source and      */
+/*  binary forms, with or without modification, are permitted provided that    */
+/*  the following conditions are met:                                          */
+/*  1. Redistributions of source code must retain the above copyright notice,  */
+/*     this list of conditions and the following disclaimer.                   */
+/*  2. Redistributions in binary form must reproduce the above copyright       */
+/*     notice, this list of conditions and the following disclaimer in the     */
+/*     documentation and/or other materials provided with the distribution.    */
+/*  3. Neither the name of Peter Schregle nor the names of other contributors  */
+/*     may be used to endorse or promote products derived from this software   */
+/*     without specific prior written permission.                              */
+/*                                                                             */
+/*  THIS SOFTWARE IS PROVIDED BY PETER SCHREGLE AND CONTRIBUTORS 'AS IS' AND   */
+/*  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE      */
+/*  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE */
+/*  ARE DISCLAIMED. IN NO EVENT SHALL PETER SCHREGLE OR CONTRIBUTORS BE LIABLE */
+/*  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL */
+/*  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS    */
+/*  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)      */
+/*  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,        */
+/*  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN   */
+/*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE            */
+/*  POSSIBILITY OF SUCH DAMAGE.                                                */
+/*                                                                             */
+/*******************************************************************************/
+
 #ifndef DGFIXEDPOINT_H
 #define DGFIXEDPOINT_H
 
@@ -30,6 +70,27 @@ namespace Dg
     { 
     };
 
+    //! When two 8 bit numbers are multiplied, a 16 bit result is produced.
+    //! When two 16 bit numbers are multiplied, a 32 bit result is produced.
+    //! When two 32 bit numbers are multiplied, a 64 bit result is produced.
+    //! Since the fixed_point class internally relies on integer 
+    //! multiplication, we need type promotion. After the multiplication we
+    //! need to adjust the position of the decimal point by shifting the
+    //! temporary result to the right an appropriate number of bits. 
+    //! However, if the temporary multiplication result is not kept in a big
+    //! enough variable, overflow errors will occur and lead to wrong 
+    //! results. A similar promotion needs to be done to the divisor in the
+    //! case of division, but here the divisor needs to be shifted to the
+    //! left an appropriate number of bits.
+    //!
+    //! Unfortunately the integral_promotion class of the boost type_traits
+    //! library could not be used, since it does not provide a promotion
+    //! from int/unsigned int (32 bit) to long long/unsigned long long 
+    //! (64 bit). However, this promotion is often needed, because it is 
+    //! quite common to use a 32 bit base type for the fixed_point type.
+    //!
+    //! Therefore, the Fixed Point Math Library defines its own promotions 
+    //! here in a set of private classes.
     template<typename I, uint8_t F>
     struct QueryFPType 
     { 
@@ -109,9 +170,41 @@ namespace Dg
     };
   }
 
-  //! I: base int type.
-  //! F: number of fraction bits.
-  template<typename I, uint8_t F>
+  template<
+    /// The base type. Must be an integer type. 
+    //!
+    //! If this is a signed type, the fixed_point number will behave signed too, 
+    //! if this is an unsigned type, the fixed_point number will behave 
+    //! unsigned.
+    typename I, 
+    /// Number of fraction bits. Must be between 0 and sizeof (I).
+    uint8_t F>
+  //! This type is designed to be a plug-in type to replace the floating point
+  //! types, such as float, double and long double. While it doesn't offer the
+  //! precision of these types, its operations are all implemented in integer
+  //! math, and it is therefore hoped that these operations are faster on non-
+  //! floating-point enabled hardware.
+  //!
+  //! The value uses 0/1 bits for the sign, I bits for the integer part and F bits
+  //! for the fractional part.
+  //!
+  //! Here is an example: a signed 8 bit 5:2 fixed_point type would have the 
+  //! following layout:
+  //!
+  //! fixed_point<signed char, 2>
+  //!
+  //!  sign           integer part \ / fractional part
+  //!	  |                           |
+  //! +----+----+----+----+----+----+----+----+
+  //! | S  | I4 | I3 | I2 | I1 | I0 | F0 | F1 |
+  //! +----+----+----+----+----+----+----+----+
+  //!
+  //! where S is the sign-bit, I0 to I4 is the integer part, and F0 to F1 is
+  //! the fractional part. The range of this type is from -32 to +31.75, the 
+  //! fractional part can encode multiples of 0.25.
+  //!
+  //! Note: This is a modified version of the fixed point library from Peter Schregle.
+  //! Retrieved from http://www.codeproject.com/Articles/37636/Fixed-Point-Class
   class FixedPoint
   {
     static_assert(impl::QueryFPType<I, F>::valid, "Invalid template argument. Check input type and number of fractional bits.");
@@ -130,46 +223,103 @@ namespace Dg
     /// The base type of this fixed_point class.
     typedef I base_type;
 
-    FixedPoint() : m_val(0) {}
+    //! Just as with built-in types no initialization is done. The value is
+    //! undetermined after executing this constructor.
+    FixedPoint() {}
     ~FixedPoint() {}
 
-    //! Construct from floating point
+    //! This constructor takes a numeric value of type float and converts it to 
+    //! this fixed_point type.
+    //!
+    //! The conversion is done by multiplication with 2^F and rounding to the 
+    //! next integer.
     FixedPoint(float a_val)       : m_val(static_cast<I>(a_val * static_cast<float>(Power2<F>::value) + (a_val >= 0.0f ? 0.5f : -0.5f))) {}
+    
+    //! This constructor takes a numeric value of type double and converts it to 
+    //! this fixed_point type.
+    //!
+    //! The conversion is done by multiplication with 2^F and rounding to the 
+    //! next integer.
     FixedPoint(double a_val)      : m_val(static_cast<I>(a_val * static_cast<double>(Power2<F>::value) + (a_val >= 0.0 ? 0.5 : -0.5))) {}
+    
+    //! This constructor takes a numeric value of type long double and converts it to 
+    //! this fixed_point type.
+    //!
+    //! The conversion is done by multiplication with 2^F and rounding to the 
+    //! next integer.
     FixedPoint(long double a_val) : m_val(static_cast<I>(a_val * static_cast<long double>(Power2<F>::value) + (a_val >= 0.0L ? 0.5L : -0.5L))) {}
 
-    //! Constructor from int types.
+    //! This constructor takes a numeric value of type bool and converts it to this fixed_point type.
     FixedPoint(bool a_val)     : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+
+    //! This constructor takes a numeric value of type int8_t and converts it to this fixed_point type.
     FixedPoint(int8_t a_val)   : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+
+    //! This constructor takes a numeric value of type uint8_t and converts it to this fixed_point type.
     FixedPoint(uint8_t a_val)  : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+
+    //! This constructor takes a numeric value of type int16_t and converts it to this fixed_point type.
     FixedPoint(int16_t a_val)  : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+
+    //! This constructor takes a numeric value of type uint16_t and converts it to this fixed_point type.
     FixedPoint(uint16_t a_val) : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+
+    //! This constructor takes a numeric value of type int32_t and converts it to this fixed_point type.
     FixedPoint(int32_t a_val)  : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+
+    //! This constructor takes a numeric value of type uint32_t and converts it to this fixed_point type.
     FixedPoint(uint32_t a_val) : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+
+    //! This constructor takes a numeric value of type int64_t and converts it to this fixed_point type.
     FixedPoint(int64_t a_val)  : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
+
+    //! This constructor takes a numeric value of type uint64_t and converts it to this fixed_point type.
     FixedPoint(uint64_t a_val) : m_val((F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<I>(a_val) << F) {}
 
     //! Constructor from another fixed point type.
     template<typename I2, uint8_t F2>
     explicit operator FixedPoint<I2, F2>() const;
 
+    //! Copy constructor
     FixedPoint(FixedPoint const &);
+
+    //! Assignment
     FixedPoint & operator=(FixedPoint const &);
 
-    //! Floating point conversion.
+    //! @return The value converted to float
     operator float()        const { return static_cast<float>(m_val) / Power2<F>::value; }
+    
+    //! @return The value converted to double
     operator double()       const { return static_cast<double>(m_val) / Power2<F>::value; }
+    
+    //! @return The value converted to long double
     operator long double()  const { return static_cast<long double>(m_val) / Power2<F>::value; }
 
-    //! Integer conversion.
+    //! @return The value converted to bool
     operator bool()         const { return m_val != 0; }
+    
+    //! @return The value converted to int8_t
     operator int8_t()       const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int8_t>(m_val >> F); }
+    
+    //! @return The value converted to uint8_t
     operator uint8_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint8_t>(m_val >> F); }
+    
+    //! @return The value converted to int16_t
     operator int16_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int16_t>(m_val >> F); }
+    
+    //! @return The value converted to uint16_t
     operator uint16_t()     const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint16_t>(m_val >> F); }
+    
+    //! @return The value converted to int32_t
     operator int32_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int32_t>(m_val >> F); }
+    
+    //! @return The value converted to uint32_t
     operator uint32_t()     const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint32_t>(m_val >> F); }
+    
+    //! @return The value converted to int64_t
     operator int64_t()      const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<int64_t>(m_val >> F); }
+    
+    //! @return The value converted to uint64_t
     operator uint64_t()     const { return (F >= sizeof(I) * CHAR_BIT)  ? 0 : static_cast<uint64_t>(m_val >> F); }
 
     bool operator==(FixedPoint const & a_other) const {return m_val == a_other.m_val;}
@@ -180,6 +330,14 @@ namespace Dg
     bool operator<=(FixedPoint const & a_other) const {return m_val <= a_other.m_val;}            
 
     bool operator !() const { return m_val == 0; }
+
+    //! For signed fixed-point types you can apply the unary minus operator to 
+    //! get the additive inverse. For unsigned fixed-point types, this operation 
+    //! is undefined. Also, shared with the integer base type B, the minimum 
+    //! value representable by the type cannot be inverted, since it would yield 
+    //! a positive value that is out of range and cannot be represented.
+    //!
+    //! /return The negative value.
     FixedPoint operator-() const;
 
     FixedPoint operator++(int);
@@ -216,14 +374,40 @@ namespace Dg
 
   private:
 
+    //! This constructor takes a value of type B and initializes the internal
+    //! representation of fixed_point<B, I, F> with it.
+    //!
+    //! @param[in] a_val Value to initialize to.
+    //! @param[in] DUMMY This value is not important, it's just here to differentiate from
+    //!                  the other constructors that convert its values.
     FixedPoint(I a_val, bool DUMMY) : m_val(a_val) {}
-
-    template<int E>
+    
+    //! The fixed_point class needs 2 to the power of P in several locations in
+    //! the code. However, the value depends on compile time constants only and
+    //! can therefore be calculated at compile time using this template 
+    //! trickery. There is no need to call the function pow(2., P) at runtime to
+    //! calculate this value.
+    //!
+    //! The value is calculated by recursively instantiating the power2 template
+    //! with successively decrementing P. Finally, 2 to the power of 0 is
+    //! terminating the recursion and set to 1.
+    template<
+      /// The power.
+      int E>
     struct Power2
     {
       static uint64_t const value = Power2<E - 1>::value * 2;
     };
 
+    //! The fixed_point class needs 2 to the power of P in several locations in
+    //! the code. However, the value depends on compile time constants only and
+    //! can therefore be calculated at compile time using this template 
+    //! trickery. There is no need to call the function pow(2., P) at runtime to
+    //! calculate this value.
+    //!
+    //! The value is calculated by recursively instantiating the power2 template
+    //! with successively decrementing P. Finally, 2 to the power of 0 is
+    //! terminating the recursion and set to 1.
     template<>
     struct Power2<0>
     {
@@ -427,28 +611,48 @@ namespace Dg
   }
 }
 
-
-
-// TODO
+//! A value is first input to type double and then the read value is converted
+//! to type fixed_point before it is returned.
+//!
+//! @return A reference to this input stream.
 template<typename S, typename I, uint8_t F>
 S & operator >> (S & a_stream, Dg::FixedPoint<I, F> & a_val)
 {
+  double d(0.0);
+  a_stream >> d;
+  if (a_stream)
+  {
+    a_val = d;
+  }
   return a_stream;
 }
 
-// TODO
+//! The fixed_point value is first converted to type double and then the output
+//! operator for type double is called.
+//!
+//! @return A reference to this output stream.
 template<typename S, typename I, uint8_t F>
 S & operator << (S & a_stream, Dg::FixedPoint<I, F> a_val)
 {
+  doubl d = static_cast<double>(a_val);
+  a_stream << d;
   return a_stream;
 }
 
+//! The abs function computes the absolute value of its argument.
+//!
+//! @return The absolute value of the argument.
 template<typename I, uint8_t F>
 Dg::FixedPoint<I, F> abs(Dg::FixedPoint<I, F> a_val)
 {
   return Dg::FixedPoint<I, F>(((a_val.m_val < 0) ? -a_val.m_val : a_val.m_val), true);
 }
 
+
+//! The ceil function computes the smallest integral value not less than 
+//! its argument.
+//!
+//! @return The smallest integral value not less than the argument.
 template<typename I, uint8_t F>
 Dg::FixedPoint<I, F> ceil(Dg::FixedPoint<I, F> a_val)
 {
@@ -457,6 +661,10 @@ Dg::FixedPoint<I, F> ceil(Dg::FixedPoint<I, F> a_val)
   return Dg::FixedPoint<I, F>(val, true);
 }
 
+//! The floor function computes the largest integral value not greater than 
+//! its argument.
+//!
+//! @return The largest integral value not greater than the argument.
 template<typename I, uint8_t F>
 Dg::FixedPoint<I, F> floor(Dg::FixedPoint<I, F> a_val)
 {
@@ -464,11 +672,17 @@ Dg::FixedPoint<I, F> floor(Dg::FixedPoint<I, F> a_val)
   return Dg::FixedPoint<I, F>(val, true);
 }
 
-/******************************************************************************/
-/*                                                                            */
-/* numeric_limits<Dg::FixedPoint<I, F> >                                */
-/*                                                                            */
-/******************************************************************************/
+
+//! The mod function computes the fixed point remainder of x/y.
+//!
+//! /return The fixed point remainder of x/y.
+template<typename I, uint8_t F>
+Dg::FixedPoint<I, F> mod(Dg::FixedPoint<I, F> a_x, Dg::FixedPoint<I, F> a_y)
+{
+  return Dg::FixedPoint<I, F>(a_x.m_val % a_y.m_val, true);
+}
+
+/// Numerical limits
 namespace std
 {
   template<typename I, uint8_t F>

@@ -3,7 +3,7 @@
 //! @author: Frank B. Hart
 //! @date 21/05/2016
 //!
-//! Class declaration: list_podod
+//! Class declaration: list_pod
 
 
 #ifndef DG_LIST_POD_H

@@ -132,4 +132,6 @@ TEST(Stack_DgFixedPoint, creation_DgFixedPoint)
   CHECK(static_cast<double>(floor(FP_s32_24(34.0))) == 34.0);
   CHECK(static_cast<double>(floor(FP_s32_24(-34.564357))) == -35.0);
   CHECK(static_cast<double>(floor(FP_s32_24(-34.0))) == -34.0);
+
+  CHECK(static_cast<double>(mod(FP_s32_24(85.5), FP_s32_24(8.125))) == 4.25);
 }
