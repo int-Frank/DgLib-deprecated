@@ -498,7 +498,7 @@ namespace Dg
     //Scale
     a_v.x *= m_s;
     a_v.y *= m_s;
-    pa_v.z *= m_s;
+    a_v.z *= m_s;
 
   }	//End: VQS<Real>::ScaleSelf()
 

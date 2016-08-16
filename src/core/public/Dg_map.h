@@ -8,11 +8,9 @@
 #ifndef DG_MAP_H
 #define DG_MAP_H
 
-#include <exception>
-#include <cstring>
 #include <stdexcept>
 
-#include "container_common.h"
+#define DG_CONTAINER_DEFAULT_SIZE 1024
 
 namespace Dg
 {
@@ -176,14 +174,14 @@ namespace Dg
 
     if (tempData == nullptr)
     {
-      throw std::bad_alloc();
+      //throw std::bad_alloc();
     }
 
     K * tempKeys = static_cast<K*>(malloc(sizeof(K) * a_size));
 
     if (tempKeys == nullptr)
     {
-      throw std::bad_alloc();
+      //throw std::bad_alloc();
     }
 
     m_data = tempData;
@@ -273,14 +271,14 @@ namespace Dg
 
     if (tempData == nullptr)
     {
-      throw std::bad_alloc();
+      //throw std::bad_alloc();
     }
 
     K * tempKeys = static_cast<K*>(realloc(m_keys, sizeof(K) * a_newSize));
 
     if (tempKeys == nullptr)
     {
-      throw std::bad_alloc();
+      //throw std::bad_alloc();
     }
 
     m_data = tempData;
@@ -348,7 +346,7 @@ namespace Dg
     //overflow, map full
     if (newSize <= m_arraySize)
     {
-      throw std::overflow_error("m_arraySize");
+      //throw std::overflow_error("m_arraySize");
     }
 
     resize(newSize);

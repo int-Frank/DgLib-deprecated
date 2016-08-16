@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\public\container_common.h" />
     <ClInclude Include="..\..\public\Dg_list_pod.h" />
     <ClInclude Include="..\..\public\Dg_map.h" />
     <ClInclude Include="..\..\public\Dg_map_pod.h" />

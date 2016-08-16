@@ -9,10 +9,10 @@
 #ifndef DG_LIST_POD_H
 #define DG_LIST_POD_H
 
-#include <stdexcept>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
-#include "container_common.h"
+#define DG_CONTAINER_DEFAULT_SIZE 1024
 
 namespace Dg
 {
@@ -438,7 +438,7 @@ namespace Dg
 
     if (tempPtr == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     m_data = tempPtr;
@@ -828,7 +828,7 @@ namespace Dg
 	
     if (new_size < m_arraySize)
     {
-      throw std::overflow_error("m_arraySize");
+      //TODO
     }
 
 	  //Create new array
@@ -836,7 +836,7 @@ namespace Dg
 
     if (new_data == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
 	  //Assign pointers

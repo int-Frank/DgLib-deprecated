@@ -8,10 +8,10 @@
 #ifndef DG_SET_POD_H
 #define DG_SET_POD_H
 
-#include <exception>
-#include <assert.h>
+#include <cstdlib>
+#include <cstring>
 
-#include "container_common.h"
+#define DG_CONTAINER_DEFAULT_SIZE 1024
 
 namespace Dg
 {
@@ -164,10 +164,7 @@ namespace Dg
     , m_arraySize(0)
     , m_currentSize(0)
   {
-    assert(a_newSize > 0);
-
     resize(a_newSize);
-
   }	//End: set_pod::set_pod()
 
 
@@ -234,14 +231,12 @@ namespace Dg
   template<class T>
   void set_pod<T>::resize(int a_newSize)
   {
-    assert(a_newSize > 0);
-
     //Delete old m_data
     T * tempPtr = static_cast<T *>(realloc(m_data, sizeof(T) * a_newSize));
 
     if (tempPtr == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     m_data = tempPtr;
@@ -307,13 +302,13 @@ namespace Dg
     //overflow, map_p full
     if (new_size <= m_arraySize)
     {
-      throw std::overflow_error("m_arraySize");
+      //TODO
     }
 
     T * tempPtr = static_cast<T*>(realloc(m_data, sizeof(T) * new_size));
     if (tempPtr == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     m_data = tempPtr;

@@ -8,10 +8,10 @@
 #ifndef DG_VECTOR_P_H
 #define DG_VECTOR_P_H
 
-#include <stdexcept>
+#include <cstdlib>
 #include <cstring>
 
-#include "container_common.h"
+#define DG_CONTAINER_DEFAULT_SIZE 1024
 
 namespace Dg
 {
@@ -123,7 +123,7 @@ namespace Dg
 
     if (m_pData == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
   }	//End: vector_pod::vector_pod()
@@ -143,7 +143,7 @@ namespace Dg
 
     if (m_pData == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
   }	//End: vector_pod::vector_pod()
@@ -171,7 +171,7 @@ namespace Dg
 
     if (tempPtr == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     m_pData = tempPtr;
@@ -218,7 +218,9 @@ namespace Dg
   T& vector_pod<T>::at(size_t index)
   {
     if (index >= m_currentSize)
-      throw std::out_of_range("vector_pod: range error");
+    {
+      //TODO
+    }
 
     return m_pData[index];
 
@@ -232,7 +234,9 @@ namespace Dg
   T const & vector_pod<T>::at(size_t index) const
   {
     if (index >= m_currentSize)
-      throw std::out_of_range("vector_pod: range error");
+    {
+      //TODO
+    }
 
     return m_pData[index];
 
@@ -298,7 +302,7 @@ namespace Dg
 
     if (tempPtr == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     m_pData = tempPtr;
@@ -322,7 +326,7 @@ namespace Dg
 
     if (newSize < m_arraySize)
     {
-      throw std::overflow_error("m_arraySize");
+      //TODO
     }
 
     resize(newSize);

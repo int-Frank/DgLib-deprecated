@@ -8,11 +8,10 @@
 #ifndef DG_MAP_POD_H
 #define DG_MAP_POD_H
 
-#include <exception>
+#include <cstdlib>
 #include <cstring>
-#include <stdexcept>
 
-#include "container_common.h"
+#define DG_CONTAINER_DEFAULT_SIZE 1024
 
 namespace Dg
 {
@@ -179,14 +178,14 @@ namespace Dg
 
     if (tempData == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     K * tempKeys = static_cast<K*>(malloc(sizeof(K) * a_size));
 
     if (tempKeys == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     m_data = tempData;
@@ -266,14 +265,14 @@ namespace Dg
 
     if (tempData == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     K * tempKeys = static_cast<K*>(realloc(m_keys, sizeof(K) * a_newSize));
 
     if (tempKeys == nullptr)
     {
-      throw std::bad_alloc();
+      //TODO
     }
 
     m_data = tempData;
@@ -341,7 +340,7 @@ namespace Dg
     //overflow, map_pod full
     if (newSize <= m_arraySize)
     {
-      throw std::overflow_error("m_arraySize");
+      //TODO
     }
 
     resize(newSize);
