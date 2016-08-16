@@ -93,6 +93,9 @@
     <ClCompile Include="TEST_DGFixedPoint.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="TEST_DgFrustum.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="testini.ini">

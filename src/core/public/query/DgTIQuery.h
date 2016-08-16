@@ -10,6 +10,16 @@
 
 namespace Dg
 {
+  struct TIResultType
+  {
+    enum
+    {
+      CompletelyOutside,
+      CompletelyInside,
+      Intersecting
+    };
+  };
+
   //! @ingroup DgMath_geoQueries
   //!
   //! Test for intersection queries.

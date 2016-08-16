@@ -125,5 +125,14 @@
     <ClInclude Include="..\..\public\impl\DgMath_impl.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgOBB.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgFrustum.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgQueryFrustumSphere.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -41,6 +41,8 @@ namespace Dg
 		
 		  DataContainer* next;
 		  DataContainer* previous;
+
+      //TODO Maybe not store the data with the pointers.
 		  T element;
 	  };
 

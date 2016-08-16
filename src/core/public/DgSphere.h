@@ -69,10 +69,10 @@ namespace Dg
     //! Set the center and radius.
     void Set(Vector4<Real> const & n, Real);
 
-    //! Transform the line
+    //! Transform the sphere
     Sphere GetTransformed(VQS<Real> const &) const;
 
-    //! Transform the line, assign to self
+    //! Transform the sphere, assign to self
     Sphere & TransformSelf(VQS<Real> const &);
 
     //! Get a random point inside the sphere

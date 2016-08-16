@@ -412,65 +412,22 @@ namespace Dg
                 Vector4<Real>& a_B_out,
                 Vector4<Real>& a_C_out)
   {
-    bool is_B_in_zero = a_B_in.IsZero();
-
-    //Check for zero vectors, handle separately
     if (a_A_in.IsZero())
     {
-      //Both A_in, B_in are zero vectors
-      if (is_B_in_zero)
-      {
-        a_A_out = Vector4<Real>::xAxis();
-        a_B_out = Vector4<Real>::yAxis();
-        a_C_out = Vector4<Real>::zAxis();
-        return;
-      }
-      //A_in only is zero vector
-      else
-      {
-        //Build the basis off B_in
-        a_A_out = a_B_in;
-        a_A_out.Normalize();
-
-        //Set B_out
-        a_B_out = Perpendicular(a_A_out);
-
-        //Find perpendicular vector to A_out, B_out.
-        a_C_out = Cross(a_A_out, a_B_out);
-
-        return;
-      }
+      a_A_out = Vector4<Real>::xAxis();
     }
-    //B_in only is zero vector
-    else if (is_B_in_zero)
+    else
     {
-      //Build the basis off A_in
       a_A_out = a_A_in;
       a_A_out.Normalize();
-
-      //Set B_out
-      a_B_out = Perpendicular(a_A_out);
-
-      //Find perpendicular vector to A_out, B_out.
-      a_C_out = Cross(a_A_out, a_B_out);
-
-      return;
     }
 
-    //Assign A_out
-    a_A_out = a_A_in;
-    a_A_out.Normalize();
-
-    //Calculate C_out
     a_C_out = Cross(a_A_out, a_B_in);
 
     //Test to see if A_in and B_in are parallel
     if (IsZero(a_C_out.LengthSquared()))
     {
-      //Find a perpendicular vector
       a_B_out = Perpendicular(a_A_out);
-
-      //Calculate C_out
       a_C_out = Cross(a_A_out, a_B_out);
     }
     else

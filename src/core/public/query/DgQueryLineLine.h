@@ -7,7 +7,7 @@
 #define DGQUERYLINELINE_H
 
 #include "DgCPQuery.h"
-#include "..\DgLine.h"
+#include "../DgLine.h"
 
 namespace Dg
 {

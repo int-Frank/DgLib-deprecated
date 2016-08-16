@@ -166,6 +166,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
     <ClCompile Include="TEST_DGFixedPoint.cpp" />
+    <ClCompile Include="TEST_DgFrustum.cpp" />
     <ClCompile Include="TEST_DGGrids.cpp" />
     <ClCompile Include="TEST_DgIDManager.cpp" />
     <ClCompile Include="TEST_DgLine.cpp" />
