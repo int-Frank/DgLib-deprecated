@@ -32,13 +32,17 @@ namespace Dg
   template<typename Real>
   Vector4<Real> GetRandomVector();
 
-  //! Creates an orthogonal basis from two input vectors
+  //! Creates an orthogonal basis from two input vectors. 
+  //!   - The vector 'A_in' is considered the principle axis.
+  //!   - If A_in is a zero vector, A_out will be set to Vector4<Real>::xAxis()
+  //!   - If A_in and B_in are parallel, or B_in is a Zero vector, B_out will be chosen such that it is orthogonal to A_in
+  //!   - Finally, C_out is created from A_out X B_out.
   template<typename Real>
-  void GetBasis(Vector4<Real> const & a0,
-                Vector4<Real> const & a1,
-                Vector4<Real>& x0,
-                Vector4<Real>& x1,
-                Vector4<Real>& x2);
+  void GetBasis(Vector4<Real> const & A_in,
+                Vector4<Real> const & B_in,
+                Vector4<Real>& A_out,
+                Vector4<Real>& B_out,
+                Vector4<Real>& C_out);
 
   //! Returns a perpendicular vector.
   template<typename Real>
@@ -402,79 +406,77 @@ namespace Dg
   //	@	GetBasis()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void GetBasis(Vector4<Real> const & a_a0,
-                Vector4<Real> const & a_a1,
-                Vector4<Real>& a_x0,
-                Vector4<Real>& a_x1,
-                Vector4<Real>& a_x2)
+  void GetBasis(Vector4<Real> const & a_A_in,
+                Vector4<Real> const & a_B_in,
+                Vector4<Real>& a_A_out,
+                Vector4<Real>& a_B_out,
+                Vector4<Real>& a_C_out)
   {
-    bool is_a1_zero = a_a1.IsZero();
+    bool is_B_in_zero = a_B_in.IsZero();
 
     //Check for zero vectors, handle separately
-    if (a_a0.IsZero())
+    if (a_A_in.IsZero())
     {
-      //Both x0, x1 are zero vectors
-      if (is_a1_zero)
+      //Both A_in, B_in are zero vectors
+      if (is_B_in_zero)
       {
-        a_x0[0] = a_x1[1] = a_x2[2] = static_cast<Real>(1.0);
-        a_x0[1] = a_x0[2] = a_x0[3] = static_cast<Real>(0.0);
-        a_x1[0] = a_x1[2] = a_x1[3] = static_cast<Real>(0.0);
-        a_x2[0] = a_x2[1] = a_x2[3] = static_cast<Real>(0.0);
-
+        a_A_out = Vector4<Real>::xAxis();
+        a_B_out = Vector4<Real>::yAxis();
+        a_C_out = Vector4<Real>::zAxis();
         return;
       }
-      //x0 only is zero vector
+      //A_in only is zero vector
       else
       {
-        //Build the basis off a_a1
-        a_x0 = a_a1;
-        a_x0.Normalize();
+        //Build the basis off B_in
+        a_A_out = a_B_in;
+        a_A_out.Normalize();
 
-        //Set x1
-        a_x1 = Perpendicular(a_x0);
+        //Set B_out
+        a_B_out = Perpendicular(a_A_out);
 
-        //Find perpendicular vector to x0, x1.
-        a_x2 = Cross(a_x0, a_x1);
+        //Find perpendicular vector to A_out, B_out.
+        a_C_out = Cross(a_A_out, a_B_out);
 
         return;
       }
     }
-    //x1 only is zero vector
-    else if (is_a1_zero)
+    //B_in only is zero vector
+    else if (is_B_in_zero)
     {
-      //Build the basis off a_a0
-      a_x0 = a_a0;
-      a_x0.Normalize();
+      //Build the basis off A_in
+      a_A_out = a_A_in;
+      a_A_out.Normalize();
 
-      //Set x1
-      a_x1 = Perpendicular(a_x0);
+      //Set B_out
+      a_B_out = Perpendicular(a_A_out);
 
-      //Find perpendicular vector to x0, x1.
-      a_x2 = Cross(a_x0, a_x1);
+      //Find perpendicular vector to A_out, B_out.
+      a_C_out = Cross(a_A_out, a_B_out);
 
       return;
     }
 
-    //Assign x0
-    a_x0 = a_a0;
-    a_x0.Normalize();
+    //Assign A_out
+    a_A_out = a_A_in;
+    a_A_out.Normalize();
 
-    //Calculate x2
-    a_x2 = Cross(a_x0, a_a1);
+    //Calculate C_out
+    a_C_out = Cross(a_A_out, a_B_in);
 
-    //Test to see if a_a0 and a_a1 are parallel
-    if (IsZero(a_x2.LengthSquared()))
+    //Test to see if A_in and B_in are parallel
+    if (IsZero(a_C_out.LengthSquared()))
     {
       //Find a perpendicular vector
-      a_x1 = Perpendicular(a_x0);
+      a_B_out = Perpendicular(a_A_out);
 
-      //Calculate x2
-      a_x2 = Cross(a_x0, a_x1);
+      //Calculate C_out
+      a_C_out = Cross(a_A_out, a_B_out);
     }
     else
     {
-      a_x2.Normalize();
-      a_x1 = Cross(a_x2, a_x0);
+      a_C_out.Normalize();
+      a_B_out = Cross(a_C_out, a_A_out);
     }
   } //End: GetBasis()
 
