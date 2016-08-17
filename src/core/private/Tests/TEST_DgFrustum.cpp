@@ -18,8 +18,6 @@ TEST(Stack_DgFrustum, DgFrustum)
   sphere s;
 
   Dg::TIFrustumSphere<Real> tiFS;
-  Dg::TIFrustumSphere<Real>::Result tiFS_res;
-
-  tiFS_res = tiFS(fData, s);
+  Dg::TIFrustumSphere<Real>::Result tiFS_res = tiFS(fData, s);
 
 }
