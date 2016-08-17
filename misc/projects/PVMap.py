@@ -9,28 +9,34 @@ Near        = 8
 Left        = 16
 Right       = 32
 
+scopeName = 'FDataConstants::'
+
 #Edge map
-array[Top + Far]        = 0
-array[Top + Near]       = 1
-array[Top + Left]       = 2
-array[Top + Right]      = 3
-array[Bottom + Far]     = 4
-array[Bottom + Near]    = 5
-array[Bottom + Left]    = 6
-array[Bottom + Right]   = 7
-array[Far + Left]       = 8
-array[Far + Right]      = 9
-array[Near + Left]      = 10
-array[Near+ Right]      = 11
+array[Top + Far]        = 'TopFar'
+array[Top + Near]       = 'TopNear'
+array[Top + Left]       = 'FTopLeft'
+array[Top + Right]      = 'TopRight'
+array[Bottom + Far]     = 'BottomFar'
+array[Bottom + Near]    = 'BottomNear'
+array[Bottom + Left]    = 'BottomLeft'
+array[Bottom + Right]   = 'BottomRight'
+array[Far + Left]       = 'FarLeft'
+array[Far + Right]      = 'FarRight'
+array[Near + Left]      = 'NearLeft'
+array[Near+ Right]      = 'NearRight'
 
 #Vertex map
-array[Top + Far + Left]         = 0
-array[Top + Far + Right]        = 1
-array[Top + Near + Left]        = 2
-array[Top + Near + Right]       = 3
-array[Bottom + Far + Left]      = 4
-array[Bottom + Far + Right]     = 5
-array[Bottom + Near + Left]     = 6
-array[Bottom + Near + Right]    = 7
+array[Top + Far + Left]         = 'TopFarLeft'
+array[Top + Far + Right]        = 'TopFarRight'
+array[Top + Near + Left]        = 'TopNearLeft'
+array[Top + Near + Right]       = 'TopNearRight'
+array[Bottom + Far + Left]      = 'BottomFarLeft'
+array[Bottom + Far + Right]     = 'BottomFarRight'
+array[Bottom + Near + Left]     = 'BottomNearLeft'
+array[Bottom + Near + Right]    = 'BottomNearRight'
 
-print(array)
+for e in array:
+    if e == 0:
+        print(str(e), end=', '),
+    else:
+        print('\n' + scopeName + str(e), end=', '),

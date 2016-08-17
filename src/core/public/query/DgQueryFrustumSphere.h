@@ -52,7 +52,7 @@ namespace Dg
     bool centerInside = true;
     for (int i = 0; i < 6; ++i)
     {
-      Real dist = a_fdata.planes[FrustumData<Real>::VPlanes[vertex][i]].SignedDistance(a_sphere.Center());
+      Real dist = a_fdata.planes[i].SignedDistance(a_sphere.Center());
       Real absDist = abs(dist);
       if (dist < static_cast<Real>(0.0))
       {
@@ -77,25 +77,18 @@ namespace Dg
       return result;
     }
 
+    int ind = FDataConstants::PVMap[touchingPlanes];
     if (nTouchingPlanes == 2)
     {
-
-    }
-
-
-    if (touchingPlanes != 7)
-    {
-      //Convert the flag to the relavent index in the edge list.
-      int ind = (touchingPlanes == 3) ? 0 : (touchingPlanes == 5) ? 2 : 3;
       TILineSphere<Real> query;
-      TILineSphere<Real>::Result queryRes(query(a_fdata.edges[FrustumData<Real>::VEdges[vertex][ind]], a_sphere));
+      TILineSphere<Real>::Result queryRes(query(a_fdata.edges[ind], a_sphere));
       result.isIntersecting = queryRes.isIntersecting;
       return result;
     }
 
     //Else the sphere must be intersecting all three planes.
     //Check if vertex is inside sphere.
-    result.isIntersecting = (SquaredDistance(a_sphere.Center(), a_fdata.vertices[vertex]) >= a_sphere.Radius() * a_sphere.Radius());
+    result.isIntersecting = (SquaredDistance(a_sphere.Center(), a_fdata.vertices[ind]) >= a_sphere.Radius() * a_sphere.Radius());
 
     return result;
   } //End: TIQuery::operator()
