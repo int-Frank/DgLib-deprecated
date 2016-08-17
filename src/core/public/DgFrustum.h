@@ -66,13 +66,15 @@ namespace Dg
       NearRight         = 11,
 
       //Planes
-      TopPlane          = 0,
-      BottomPlane       = 1,
-      FarPlane          = 2,
-      NearPlane         = 3,
-      LeftPlane         = 4,
-      RightPlane        = 5
+      TopPlane          = 0, //1
+      BottomPlane       = 1, //2
+      FarPlane          = 2, //4
+      NearPlane         = 3, //8
+      LeftPlane         = 4, //16
+      RightPlane        = 5  //32
     };
+
+    static int const PVMap[41];
 
     //The relevant edges touching each vertex.
     static int const VEdges[8][3];
@@ -87,6 +89,16 @@ namespace Dg
     Line<Real>      edges[12];    //as per enum
     Vector4<Real>   vertices[8];  //as per enum
   };
+
+  template<typename Real>
+  int const FrustumData<Real>::PVMap[41] = 
+  {
+    0, 0, 0, 0, 0,  0, 4, 0, 0, 1, 
+    5, 0, 0, 0, 0,  0, 0, 2, 6, 0, 
+    8, 0, 4, 0, 10, 2, 6, 0, 0, 0, 
+    0, 0, 0, 3, 7,  0, 9, 1, 5, 0, 
+    11, 3, 7
+  }
 
   template<typename Real>
   int const FrustumData<Real>::VEdges[8][3] =
