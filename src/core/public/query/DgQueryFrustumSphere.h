@@ -13,8 +13,6 @@
 #include "../DgFrustum.h"
 #include "../DgSphere.h"
 
-#define ROBUST_FRUSTUM_SPHERE
-
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
@@ -28,7 +26,7 @@ namespace Dg
     //! Query return data
     struct Result
     {
-      bool isIntersecting;
+      int value;
     };
 
     //! Perform the query
@@ -47,71 +45,23 @@ namespace Dg
     TIQuery<Real, FrustumData<Real>, Sphere<Real>>::operator()
     (FrustumData<Real> const & a_fdata, Sphere<Real> const & a_sphere)
   {
-#ifdef ROBUST_FRUSTUM_SPHERE
     Result result;
-
-    bool centerInside = true;
-    int nTouchingPlanes(0);
-    int flaggedEdges(0);
-    int flaggedVerts(0);
-    for (int i = 0; i < 6; ++i)
-    {
-      Real dist = a_fdata.planes[i].SignedDistance(a_sphere.Center());
-      Real absDist = abs(dist);
-      if (dist < static_cast<Real>(0.0))
-      {
-        if (absDist >= a_sphere.Radius())
-        {
-          result.isIntersecting = false;
-          return result;
-        }
-
-        flaggedEdges |= FDataConstants::PEMap[i];
-        flaggedVerts |= FDataConstants::PVMap[i];
-        ++nTouchingPlanes;
-        centerInside = false;
-        continue;
-      }
-
-      if (absDist < a_sphere.Radius())
-      {
-        flaggedEdges |= FDataConstants::PEMap[i];
-        flaggedVerts |= FDataConstants::PVMap[i];
-        ++nTouchingPlanes;
-      }
-    }
-
-    if (centerInside || nTouchingPlanes == 1)
-    {
-      result.isIntersecting = true;
-      return result;
-    }
-
-    //Check edges
-    for (int i = 1; i < (1 << 12); i << 1)
-    {
-      if (flaggedEdges & i)
-      {
-        Vector4<Real> cp();
-      }
-    }
-
-    return result;
-#else
-    Result result;
-    result.isIntersecting = true;
+    result.value = IntersectType::CompletelyInside;
     for (int i = 0; i < 6; ++i)
     {
       Real dist = a_fdata.planes[i].SignedDistance(a_sphere.Center());
       if (dist <= -a_sphere.Radius())
       {
-        result.isIntersecting = false;
+        result.value = IntersectType::CompletelyOutside;
         return result;
+      }
+
+      if (abs(dist) < a_sphere.Radius())
+      {
+        result.value = IntersectType::Intersecting;
       }
     }
     return result;
-#endif
-
   } //End: TIQuery::operator()
 }
 

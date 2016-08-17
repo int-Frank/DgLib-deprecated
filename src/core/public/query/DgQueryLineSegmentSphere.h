@@ -58,6 +58,7 @@ namespace Dg
       return result;
     }
 
+    //TODO Not complete
     Real irr = sqrt(b * b - static_cast<Real>(4.0) * a * c);
     Real u0 = (-b - irr) / (static_cast<Real>(2.0) * a);
     Real u1 = (-b + irr) / (static_cast<Real>(2.0) * a);

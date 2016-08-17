@@ -96,6 +96,10 @@ namespace Dg
     //! Set the current size to 0 and the reserve to new_size
     void resize(size_t new_size);
 
+    //! Erase the element at index by swapping in the last element.
+    //! Calling this on an empty vector will no doubt cause a crash.
+    void erase_swap(size_t);
+
   private:
     //! Exteneds the total size of the array (current + reserve) by a factor of 2
     void extend();
@@ -313,6 +317,20 @@ namespace Dg
     }
 
   }	//End: vector_pod::resize()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	vector_pod<T>::erase_swap()
+  //--------------------------------------------------------------------------------
+  template<class T>
+  void vector_pod<T>::erase_swap(size_t a_ind)
+  {
+    if (ind < m_currentSize - 1)
+    {
+      memcpy(&m_pData[ind], &m_pData[m_currentSize - 1], sizeof(T));
+    }
+    --m_currentSize;
+  }	//End: vector_pod::erase_swap()
 
 
   //--------------------------------------------------------------------------------

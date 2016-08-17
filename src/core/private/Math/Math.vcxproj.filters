@@ -134,7 +134,7 @@
     <ClInclude Include="..\..\public\query\DgQueryFrustumSphere.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\query\DgLineSegmentSphere.h">
+    <ClInclude Include="..\..\public\query\DgQueryLineSegmentSphere.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
   </ItemGroup>

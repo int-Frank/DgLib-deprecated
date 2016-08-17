@@ -9,8 +9,8 @@
 #define DGOBB_H
 
 #include "DgVector4.h"
-#include "DgLineSegment.h"
 #include "DgPlane.h"
+#include "DgSphere.h"
 #include "DgVQS.h"
 #include "dgmath.h"
 
@@ -19,63 +19,11 @@ namespace Dg
 {
   //! Data used for intersection testing.
   template<typename Real>
-  struct FrustumSpaceData
-  {
-    Plane<Real>     planes[4];    //[t, b, l, r]
-    Vector4<Real>   center;
-    Line<Real>      edges[4];    //[tl, tr, bl, br]
-    Vector4<Real>   vertices[8]; //[ftl, ftr, fbl, fbr, ntl, ntr, nbl, nbr ]
-  };
-
-  struct FDataConstants
-  {
-    enum
-    {
-      //Planes
-      Top               = 0,
-      Bottom            = 1,
-      Far               = 2,
-      Near              = 3,
-      Left              = 4,
-      Right             = 5,
-
-      //Edges
-      TopFar            = 0,
-      TopNear           = 1,
-      TopLeft           = 2,
-      TopRight          = 3,
-      BottomFar         = 4,
-      BottomNear        = 5,
-      BottomLeft        = 6,
-      BottomRight       = 7,
-      FarLeft           = 8,
-      FarRight          = 9,
-      NearLeft          = 10,
-      NearRight         = 11,
-    };
-
-    //static int const PVMap[43];
-    static int const PEMap[6];
-  };
-
-  int const FDataConstants::PEMap[6] = 
-  {
-    (1 << TopFar)    | (1 << TopNear)     | (1 << TopLeft)    | (1 << TopRight),
-    (1 << BottomFar) | (1 << BottomNear)  | (1 << BottomLeft) | (1 << BottomRight),
-    (1 << TopFar)    | (1 << BottomFar)   | (1 << FarLeft)    | (1 << FarRight),
-    (1 << TopNear)   | (1 << BottomNear)  | (1 << NearLeft)   | (1 << NearRight),
-    (1 << TopLeft)   | (1 << BottomLeft)  | (1 << FarLeft)    | (1 << NearLeft),
-    (1 << TopRight)  | (1 << BottomRight) | (1 << FarRight)   | (1 << NearRight)
-  };
-
-  //! Data used for intersection testing.
-  template<typename Real>
   struct FrustumData
   {
-    Plane<Real>            planes[6];    //as per enum
+    Plane<Real>            planes[6];    //[t, b, f, n, l, r]
     Vector4<Real>          origin;
     Vector4<Real>          basis[3];     //[f, l, u]
-    LineSegment<Real>      edges[12];    //as per enum
   };
 
 
@@ -138,6 +86,19 @@ namespace Dg
       m_nearHalfLengths[1] = a_other.m_nearHalfLengths[1];
     }
 
+    Sphere<Real> GetSphere() const
+    {
+      Real mul = (m_far + m_near) / m_near;
+      Real d = m_far - m_near;
+      Real avn = m_nearHalfLengths[0];
+      Real ahn = m_nearHalfLengths[1];
+      Real avf = avn * mul;
+      Real ahf = ahn * mul;
+      Real b = (avf*avf + ahf*ahf + d*d - avn*avn - ahn*ahn) / (static_cast<Real>(2.0) * d);
+      
+      return Sphere<Real>(m_origin + (m_near + b) * m_basis[0], sqrt(b*b + avn*avn + ahn*ahn));
+    }
+
     //! Get the Frustum center.
     void GetData(FrustumData<Real> & a_data) const
     {
@@ -147,8 +108,7 @@ namespace Dg
 
       a_data.origin = m_origin;
 
-      a_data.center = m_origin + (m_near + (m_far - m_near) / static_cast<Real>(2.0)) * m_basis[0];
-
+      //[f, n, t, b, l, r]
       Real eV = m_nearHalfLengths[0] / m_near;
       Real eH = m_nearHalfLengths[1] / m_near;
       a_data.planes[0].Set(-m_basis[0], m_origin + m_far * m_basis[0]);
@@ -157,62 +117,6 @@ namespace Dg
       a_data.planes[3].Set(m_basis[2] + (eV)* m_basis[0], m_origin);
       a_data.planes[4].Set(-m_basis[1] + (eH)* m_basis[0], m_origin);
       a_data.planes[5].Set(m_basis[1] + (eH)* m_basis[0], m_origin);
-
-      //TODO These vertices and edges are wrong
-      //Real farRatio = m_far / m_near;
-      //a_data.vertices[FrustumData<Real>::TopFarLeft] = m_origin
-      //  + m_far * m_basis[0] 
-      //  + m_nearHalfLengths[0] * farRatio * m_basis[2]
-      //  + m_nearHalfLengths[1] * farRatio * m_basis[1];
-      //
-      //a_data.vertices[FrustumData<Real>::TopFarRight] = m_origin
-      //  + m_far * m_basis[0]
-      //  + m_nearHalfLengths[0] * farRatio * m_basis[2]
-      //  - m_nearHalfLengths[1] * farRatio * m_basis[1];
-      //
-      //a_data.vertices[FrustumData<Real>::TopNearLeft] = m_origin
-      //  + m_far * m_basis[0]
-      //  - m_nearHalfLengths[0] * farRatio * m_basis[2]
-      //  + m_nearHalfLengths[1] * farRatio * m_basis[1];
-      //
-      //a_data.vertices[FrustumData<Real>::TopNearRight] = m_origin
-      //  + m_far * m_basis[0]
-      //  - m_nearHalfLengths[0] * farRatio * m_basis[2]
-      //  - m_nearHalfLengths[1] * farRatio * m_basis[1];
-      //
-      //a_data.vertices[FrustumData<Real>::BottomFarLeft] = m_origin
-      //  + m_far * m_basis[0]
-      //  + m_nearHalfLengths[0] * m_basis[2]
-      //  + m_nearHalfLengths[1] * m_basis[1];
-      //
-      //a_data.vertices[FrustumData<Real>::BottomFarRight] = m_origin
-      //  + m_far * m_basis[0]
-      //  + m_nearHalfLengths[0] * m_basis[2]
-      //  - m_nearHalfLengths[1] * m_basis[1];
-      //
-      //a_data.vertices[FrustumData<Real>::BottomNearLeft] = m_origin
-      //  + m_far * m_basis[0]
-      //  - m_nearHalfLengths[0] * m_basis[2]
-      //  + m_nearHalfLengths[1] * m_basis[1];
-      //
-      //a_data.vertices[FrustumData<Real>::BottomNearRight] = m_origin
-      //  + m_far * m_basis[0]
-      //  - m_nearHalfLengths[0] * m_basis[2]
-      //  - m_nearHalfLengths[1] * m_basis[1];
-      //
-      ////[ft, fb, fl, fr, nt, nb, nl, nr, tl, tr, bl, br]
-      //a_data.edges[FrustumData<Real>::TopFar] = Line<Real>(a_data.vertices[0], -m_basis[1]);
-      //a_data.edges[FrustumData<Real>::TopNear] = Line<Real>(a_data.vertices[2], -m_basis[1]);
-      //a_data.edges[FrustumData<Real>::TopLeft] = Line<Real>(a_data.vertices[0], -m_basis[2]);
-      //a_data.edges[FrustumData<Real>::TopRight] = Line<Real>(a_data.vertices[1], -m_basis[2]);
-      //a_data.edges[FrustumData<Real>::BottomFar] = Line<Real>(a_data.vertices[4], -m_basis[1]);
-      //a_data.edges[FrustumData<Real>::BottomNear] = Line<Real>(a_data.vertices[6], -m_basis[1]);
-      //a_data.edges[FrustumData<Real>::BottomLeft] = Line<Real>(a_data.vertices[4], -m_basis[2]);
-      //a_data.edges[FrustumData<Real>::BottomRight] = Line<Real>(a_data.vertices[5], -m_basis[2]);
-      //a_data.edges[FrustumData<Real>::FarLeft] = Line<Real>(a_data.vertices[4], a_data.vertices[0] - a_data.vertices[4]);
-      //a_data.edges[FrustumData<Real>::FarRight] = Line<Real>(a_data.vertices[5], a_data.vertices[1] - a_data.vertices[5]);
-      //a_data.edges[FrustumData<Real>::NearLeft] = Line<Real>(a_data.vertices[6], a_data.vertices[2] - a_data.vertices[6]);
-      //a_data.edges[FrustumData<Real>::NearRight] = Line<Real>(a_data.vertices[7], a_data.vertices[3] - a_data.vertices[7]);
     }
 
     //! Transform the Frustum

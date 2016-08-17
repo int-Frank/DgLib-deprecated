@@ -177,6 +177,7 @@
     <ClCompile Include="TEST_DgRay.cpp" />
     <ClCompile Include="TEST_DgSharedPtr.cpp" />
     <ClCompile Include="TEST_DgSphere.cpp" />
+    <ClCompile Include="TEST_dg_HASHTABLE.cpp" />
     <ClCompile Include="TEST_dg_list_pod.cpp" />
     <ClCompile Include="TEST_dg_map.cpp" />
     <ClCompile Include="TEST_dg_map_p.cpp" />

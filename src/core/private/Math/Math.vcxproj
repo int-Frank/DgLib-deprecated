@@ -161,7 +161,7 @@
     <ClInclude Include="..\..\public\DgVQS.h" />
     <ClInclude Include="..\..\public\DgLineSegment.h" />
     <ClInclude Include="..\..\public\impl\DgMath_impl.h" />
-    <ClInclude Include="..\..\public\query\DgLineSegmentSphere.h" />
+    <ClInclude Include="..\..\public\query\DgQueryLineSegmentSphere.h" />
     <ClInclude Include="..\..\public\query\DgQueryLineSegmentLine.h" />
     <ClInclude Include="..\..\public\query\DgQueryLineSegmentLineSegment.h" />
     <ClInclude Include="..\..\public\query\DgQueryLineSegmentPlane.h" />
