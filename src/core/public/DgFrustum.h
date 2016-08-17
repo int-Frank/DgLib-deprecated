@@ -9,7 +9,7 @@
 #define DGOBB_H
 
 #include "DgVector4.h"
-#include "DgLine.h"
+#include "DgLineSegment.h"
 #include "DgPlane.h"
 #include "DgVQS.h"
 #include "dgmath.h"
@@ -39,16 +39,6 @@ namespace Dg
       Left              = 4,
       Right             = 5,
 
-      //Vertices
-      TopFarLeft        = 0,
-      TopFarRight       = 1,
-      TopNearLeft       = 2,
-      TopNearRight      = 3,
-      BottomFarLeft     = 4,
-      BottomFarRight    = 5,
-      BottomNearLeft    = 6,
-      BottomNearRight   = 7,
-
       //Edges
       TopFar            = 0,
       TopNear           = 1,
@@ -61,47 +51,31 @@ namespace Dg
       FarLeft           = 8,
       FarRight          = 9,
       NearLeft          = 10,
-      NearRight         = 11
+      NearRight         = 11,
     };
 
-    static int const PVMap[43];
+    //static int const PVMap[43];
+    static int const PEMap[6];
   };
 
-  int const FDataConstants::PVMap[43] =
+  int const FDataConstants::PEMap[6] = 
   {
-    0, 0, 0, 0, 0,
-    FDataConstants::TopFar,
-    FDataConstants::BottomFar, 0, 0,
-    FDataConstants::TopNear,
-    FDataConstants::BottomNear, 0, 0, 0, 0, 0, 0,
-    FDataConstants::TopLeft,
-    FDataConstants::BottomLeft, 0,
-    FDataConstants::FarLeft,
-    FDataConstants::TopFarLeft,
-    FDataConstants::BottomFarLeft, 0,
-    FDataConstants::NearLeft,
-    FDataConstants::TopNearLeft,
-    FDataConstants::BottomNearLeft, 0, 0, 0, 0, 0, 0,
-    FDataConstants::TopRight,
-    FDataConstants::BottomRight, 0,
-    FDataConstants::FarRight,
-    FDataConstants::TopFarRight,
-    FDataConstants::BottomFarRight, 0,
-    FDataConstants::NearRight,
-    FDataConstants::TopNearRight,
-    FDataConstants::BottomNearRight
+    (1 << TopFar)    | (1 << TopNear)     | (1 << TopLeft)    | (1 << TopRight),
+    (1 << BottomFar) | (1 << BottomNear)  | (1 << BottomLeft) | (1 << BottomRight),
+    (1 << TopFar)    | (1 << BottomFar)   | (1 << FarLeft)    | (1 << FarRight),
+    (1 << TopNear)   | (1 << BottomNear)  | (1 << NearLeft)   | (1 << NearRight),
+    (1 << TopLeft)   | (1 << BottomLeft)  | (1 << FarLeft)    | (1 << NearLeft),
+    (1 << TopRight)  | (1 << BottomRight) | (1 << FarRight)   | (1 << NearRight)
   };
 
   //! Data used for intersection testing.
   template<typename Real>
   struct FrustumData
   {
-    Plane<Real>     planes[6];    //as per enum
-    Vector4<Real>   center;
-    Vector4<Real>   origin;
-    Vector4<Real>   basis[3];     //[f, l, u]
-    Line<Real>      edges[12];    //as per enum
-    Vector4<Real>   vertices[8];  //as per enum
+    Plane<Real>            planes[6];    //as per enum
+    Vector4<Real>          origin;
+    Vector4<Real>          basis[3];     //[f, l, u]
+    LineSegment<Real>      edges[12];    //as per enum
   };
 
 

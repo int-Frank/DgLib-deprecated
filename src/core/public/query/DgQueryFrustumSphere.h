@@ -13,6 +13,8 @@
 #include "../DgFrustum.h"
 #include "../DgSphere.h"
 
+#define ROBUST_FRUSTUM_SPHERE
+
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
@@ -45,11 +47,13 @@ namespace Dg
     TIQuery<Real, FrustumData<Real>, Sphere<Real>>::operator()
     (FrustumData<Real> const & a_fdata, Sphere<Real> const & a_sphere)
   {
+#ifdef ROBUST_FRUSTUM_SPHERE
     Result result;
 
-    int touchingPlanes(0);
-    int nTouchingPlanes(0);
     bool centerInside = true;
+    int nTouchingPlanes(0);
+    int flaggedEdges(0);
+    int flaggedVerts(0);
     for (int i = 0; i < 6; ++i)
     {
       Real dist = a_fdata.planes[i].SignedDistance(a_sphere.Center());
@@ -61,12 +65,18 @@ namespace Dg
           result.isIntersecting = false;
           return result;
         }
+
+        flaggedEdges |= FDataConstants::PEMap[i];
+        flaggedVerts |= FDataConstants::PVMap[i];
+        ++nTouchingPlanes;
         centerInside = false;
+        continue;
       }
 
-      if (absDist < a_sphere.Radius()) 
+      if (absDist < a_sphere.Radius())
       {
-        touchingPlanes |= (1 << i);
+        flaggedEdges |= FDataConstants::PEMap[i];
+        flaggedVerts |= FDataConstants::PVMap[i];
         ++nTouchingPlanes;
       }
     }
@@ -77,20 +87,31 @@ namespace Dg
       return result;
     }
 
-    //Check edge
-    int ind = FDataConstants::PVMap[touchingPlanes];
-    if (nTouchingPlanes == 2)
+    //Check edges
+    for (int i = 1; i < (1 << 12); i << 1)
     {
-      TILineSphere<Real> query;
-      TILineSphere<Real>::Result queryRes(query(a_fdata.edges[ind], a_sphere));
-      result.isIntersecting = queryRes.isIntersecting;
-      return result;
+      if (flaggedEdges & i)
+      {
+        Vector4<Real> cp();
+      }
     }
 
-    //Check vertex
-    result.isIntersecting = (SquaredDistance(a_sphere.Center(), a_fdata.vertices[ind]) >= a_sphere.Radius() * a_sphere.Radius());
-
     return result;
+#else
+    Result result;
+    result.isIntersecting = true;
+    for (int i = 0; i < 6; ++i)
+    {
+      Real dist = a_fdata.planes[i].SignedDistance(a_sphere.Center());
+      if (dist <= -a_sphere.Radius())
+      {
+        result.isIntersecting = false;
+        return result;
+      }
+    }
+    return result;
+#endif
+
   } //End: TIQuery::operator()
 }
 
