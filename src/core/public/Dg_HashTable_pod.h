@@ -1,47 +1,107 @@
-#ifndef DGHASHTABLE_POD
-#define DGHASHTABLE_POD
+#ifndef DGHashTable
+#define DGHashTable
 
 #include <cstdlib>
 
-#define DG_HASHTABLE_DEFAULT_POOL_SIZE 1024
-#define DG_DEFAULT_HASHTABLE_SIZE 1021
-
 namespace Dg
 {
-  template<typename K, typename T>
-  class HashTable_pod
+  //! Other hashers must derive from this
+  template<typename K>
+  struct Hasher
+  {
+    //! The default is no has is applied, although the key is always modded
+    //! against the (prime) number of buckets in the HashTable
+    virtual size_t operator()(K key)
+    {
+      return key;
+    }
+  };
+
+  template
+  <
+      typename K
+    , typename T
+    , bool POD = true
+  >
+  class HashTable
   {
     struct Node
     {
       K       key;
       Node *  pNext;
-      Node *  pPrev;
     };
+
+    static size_t const   s_minBuckets  = 13;
+    static float  const   s_defaultLF   = 1.0f;
+    static float  const   s_minSetLF    = 0.5f;
 
   public:
 
-    HashTable_pod()
+    HashTable()
       : m_dataPool(nullptr)
       , m_nodePool(nullptr)
-      , m_hashTable(nullptr)
+      , m_pBuckets(nullptr)
       , m_nextFree(nullptr)
       , m_poolSize(0)
-      , m_tableSize(0)
+      , m_nBuckets(0)
       , m_nItems(0)
+      , m_pHasher(new Hasher<K>())
+      , m_maxLoadFactor(s_defaultLF)
     {
-      reset(DG_DEFAULT_HASHTABLE_SIZE, DG_HASHTABLE_DEFAULT_POOL_SIZE);
+      init(DG_DEFAULT_MIN_N_BUCKETS);
     }
 
-    HashTable_pod(size_t a_tableSize, size_t a_poolSize)
+    explicit HashTable(size_t a_nBuckets)
       : m_dataPool(nullptr)
       , m_nodePool(nullptr)
-      , m_hashTable(nullptr)
+      , m_pBuckets(nullptr)
       , m_nextFree(nullptr)
       , m_poolSize(0)
-      , m_tableSize(0)
+      , m_nBuckets(0)
       , m_nItems(0)
+      , m_pHasher(new Hasher<K>())
+      , m_maxLoadFactor(s_defaultLF)
     {
-      reset(a_tableSize, a_poolSize);
+      init(a_nBuckets);
+    }
+
+    //! The constructor will take ownership of the hasher function
+    HashTable(size_t a_nBuckets, Hasher<K> * a_hf)
+      : m_dataPool(nullptr)
+      , m_nodePool(nullptr)
+      , m_pBuckets(nullptr)
+      , m_nextFree(nullptr)
+      , m_poolSize(0)
+      , m_nBuckets(0)
+      , m_nItems(0)
+      , m_pHasher(a_hf)
+      , m_maxLoadFactor(s_defaultLF)
+    {
+      if (!a_hf)
+      {
+        m_pHasher = new Hasher<K>();
+      }
+      init(a_nBuckets);
+    }
+
+    HashTable(HashTable const & a_other)
+    {
+
+    }
+
+    HashTable & operator=(HashTable const & a_other)
+    {
+
+    }
+
+    HashTable(HashTable && a_other)
+    {
+
+    }
+
+    HashTable & operator=(HashTable && a_other)
+    {
+
     }
 
     //! Returns element mapped to key. Will insert element
@@ -58,16 +118,16 @@ namespace Dg
       return m_dataPool[GetItemIndex(key)];
     }
 
-    bool exists(K a_key) const
+    bool at(K a_key) const
     {
       size_t ind = Hash(a_key);
 
-      if (m_hashTable[ind] == nullptr)
+      if (m_pBuckets[ind] == nullptr)
       {
         return false;
       }
 
-      Node * pItem = m_hashTable[ind];
+      Node * pItem = m_pBuckets[ind];
       while (true)
       {
         if (pItem->key == a_key)  return true;
@@ -87,30 +147,76 @@ namespace Dg
 
     }
 
-    void erase(K)
+    bool empty() const
+    {
+      return m_nItems == 0;
+    }
+
+    float load_factor()
+    {
+      return static_cast<float>(m_nItems) / m_nBuckets;
+    }
+
+    float max_load_factor()
+    {
+      return m_maxLoadFactor;
+    }
+
+    void max_load_factor(float a_val)
+    {
+      float prevLF = m_maxLoadFactor;
+      m_maxLoadFactor = (a_val > s_minSetLF) ? a_val : s_minSetLF;
+      if (prevLF < m_maxLoadFactor)
+      {
+        rehash();
+      }
+    }
+
+    size_t max_bucket_count() const
+    {
+
+    }
+
+    size_t max_size() const
+    {
+
+    }
+
+    void rehash(size_t)
+    {
+
+    }
+
+    void reserve(size_t)
+    {
+
+    }
+
+    void erase(K a_key)
     {
       size_t ind = Hash(a_key);
 
-      if (m_hashTable[ind] == nullptr)
+      if (m_pBuckets[ind] == nullptr)
       {
         return;
       }
 
-      Node * item = m_hashTable[ind];
+      Node * pItem = m_pBuckets[ind];
+      Node * pPrev(nullptr);
       while (true)
       {
         if (pItem->key == a_key)
         {
-          if (pItem->pPrev)
+          if (pPrev)
           {
-            pItem->pPrev->pNext = pItem->pNext;
-            pItem->pPrev = nullptr;
+            pPrev->pNext = pItem->pNext;
           }
           pItem->pNext = m_nextFree;
           m_nextFree = pItem;
           break;
         }
         if (!pItem->pNext) break;
+        pPrev = pItem;
         pItem = pItem->pNext;
       }
     }
@@ -120,13 +226,18 @@ namespace Dg
       return m_nItems;
     }
 
-  private:
-
-    size_t Hash(K a_key) 
+    size_t bucket_count() const
     {
-      return a_key % m_tableSize;
+      return m_nBuckets;
     }
 
+  private:
+
+    //Be sure to re-hash!!
+    void IncreaseNumBuckets()
+    {
+
+    }
 
     //Container must be full.
     void ExtendPool()
@@ -171,13 +282,13 @@ namespace Dg
     {
       size_t ind = Hash(a_key);
 
-      if (m_hashTable[ind] == nullptr)
+      if (m_pBuckets[ind] == nullptr)
       {
-        m_hashTable[ind] = GetNewNode(a_key);
-        return (m_hashTable[ind] - m_nodePool) / sizeof(Node*);
+        m_pBuckets[ind] = GetNewNode(a_key);
+        return (m_pBuckets[ind] - m_nodePool) / sizeof(Node*);
       }
 
-      Node * item = m_hashTable[ind];
+      Node * item = m_pBuckets[ind];
       while (true)
       {
         if (pItem->key == a_key)
@@ -191,49 +302,68 @@ namespace Dg
       return (GetNewNode(a_key) - m_nodePool) / sizeof(Node*);
     }
 
-    void reset(size_t a_hashTableSize, size_t a_poolSize)
+    bool IsPrime(size_t a_val)
+    {
+      for (size_t i = 2; i*i < a_val; ++i)
+      {
+        if (a_val % i == 0)
+        {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    void init(size_t a_nBuckets)
     {
       //Update values
-      m_poolSize = a_poolSize;
-      m_tableSize = a_hashTableSize;
+      while (!IsPrime(a_nBuckets))
+      {
+        ++a_nBuckets;
+      }
+      m_nBuckets = a_nBuckets;
+      if (m_nBuckets < s_minBuckets)
+      {
+        m_nBuckets = s_minBuckets;
+      }
       m_nItems = 0;
+      m_poolSize = static_cast<size_t>(static_cast<float>(m_nBuckets) / s_defaultLF);
+
 
       //Update data pool
       m_dataPool = static_cast<T*>(realloc(m_dataPool, m_poolSize * sizeof(T)));
       
       //Update bucket pool
       m_nodePool = static_cast<Node*>(realloc(m_nodePool, m_poolSize * sizeof(Node)));
-      for (size_t i = 1; i < m_poolSize; ++i)
-      {
-        m_nodePool[i].pPrev = &m_nodePool[i - 1];
-      }
       for (size_t i = 0; i < m_poolSize - 1; ++i)
       {
         m_nodePool[i].pNext = &m_nodePool[i + 1];
       }
-      m_nodePool[0].pPrev = nullptr;
-      m_nodePool[0].pNext = nullptr;
+      m_nodePool[m_poolSize - 1].pNext = nullptr;
 
       //Flag the next free bucket
       m_nextFree = &m_nodePool[0];
 
       //Create a new hash table
-      m_hashTable = static_cast<Node**>(realloc(m_hashTable, m_tableSize * sizeof(Node*)));
-      for (int i = 0; i < m_tableSize; ++i)
+      m_pBuckets = static_cast<Node**>(realloc(m_pBuckets, m_nBuckets * sizeof(Node*)));
+      for (int i = 0; i < m_nBuckets; ++i)
       {
-        m_hashTable[i] = nullptr;
+        m_pBuckets[i] = nullptr;
       }
     }
 
   private:
-    T *       m_dataPool;
-    Node *    m_nodePool;
-    size_t    m_poolSize;
+    float       m_maxLoadFactor;
+    Hasher<K> * m_pHasher;
 
-    Node *    m_nextFree;
-    Node **   m_hashTable;
-    size_t    m_tableSize; //Size of the hash table
-    size_t    m_nItems; //Number of curent elements
+    T *         m_dataPool;
+    Node *      m_nodePool;
+    size_t      m_poolSize;
+
+    Node *      m_nextFree;
+    Node **     m_pBuckets;
+    size_t      m_nBuckets; //Size of the hash table
+    size_t      m_nItems;   //Number of curent elements
   };
 }
 
