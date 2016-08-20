@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\public\Dg_HashTable_pod.h" />
+    <ClInclude Include="..\..\public\Dg_HashTable.h" />
     <ClInclude Include="..\..\public\DgQuadtree.h" />
     <ClInclude Include="..\..\public\Dg_list_pod.h" />
     <ClInclude Include="..\..\public\Dg_map.h" />
