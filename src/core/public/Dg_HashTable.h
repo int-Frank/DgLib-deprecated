@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "DgErrorHandler.h"
+
 #define ARRAY_SIZE(a) sizeof(a) / sizeof(*a)
 
 namespace Dg
@@ -19,24 +21,24 @@ namespace Dg
 
   namespace impl
   {
-    static size_t const validBucketCounts[65] = 
+    static size_t const validBucketCounts[] = 
     {
-      0x1, 0x2, 0x3, 0x7, 0xd, 
-      0x1f, 0x3d, 0x7f, 0xfb, 
-      0x1fd, 0x3fd, 0x7f7, 0xffd, 
-      0x1fff, 0x3ffd, 0x7fed, 0xfff1, 
-      0x1ffff, 0x3fffb, 0x7ffff, 0xffffd, 
-      0x1ffff7, 0x3ffffd, 0x7ffff1, 0xfffffd, 
-      0x1ffffd9, 0x3fffffb, 0x7ffffd9, 0xfffffc7, 
-      0x1ffffffd, 0x3fffffdd, 0x7fffffff, 0xfffffffb, 
-      0x1fffffff7, 0x3ffffffd7, 0x7ffffffe1, 0xffffffffb, 
-      0x1fffffffe7, 0x3fffffffd3, 0x7ffffffff9, 0xffffffffa9, 
-      0x1ffffffffeb, 0x3fffffffff5, 0x7ffffffffc7, 0xfffffffffef, 
-      0x1fffffffffc9, 0x3fffffffffeb, 0x7fffffffff8d, 0xffffffffffc5, 
-      0x1ffffffffffaf, 0x3ffffffffffe5, 0x7ffffffffff7f, 0xfffffffffffd1, 
-      0x1fffffffffff91, 0x3fffffffffffdf, 0x7fffffffffffc9, 0xfffffffffffffb, 
-      0x1fffffffffffff3, 0x3ffffffffffffe5, 0x7ffffffffffffc9, 0xfffffffffffffa3, 
-      0x1fffffffffffffff, 0x3fffffffffffffc7, 0x7fffffffffffffe7, 0xffffffffffffffc5
+      0x3, 0x5, 0x7, 0xb, 0xd,
+      0x13, 0x1f, 0x2b, 0x3d, 0x59, 0x7f, 0xb5, 0xfb,
+      0x167, 0x1fd, 0x2cf, 0x3fd, 0x5a7, 0x7f7, 0xb47, 0xffd,
+      0x169f, 0x1fff, 0x2d3b, 0x3ffd, 0x5a7f, 0x7fed, 0xb501, 0xfff1,
+      0x16a09, 0x1ffff, 0x2d413, 0x3fffb, 0x5a823, 0x7ffff, 0xb5037, 0xffffd,
+      0x16a09b, 0x1ffff7, 0x2d413b, 0x3ffffd, 0x5a8279, 0x7ffff1, 0xb504ef, 0xfffffd,
+      0x16a09e1, 0x1ffffd9, 0x2d413b7, 0x3fffffb, 0x5a82789, 0x7ffffd9, 0xb504f1b, 0xfffffc7,
+      0x16a09e57, 0x1ffffffd, 0x2d413cbf, 0x3fffffdd, 0x5a827975, 0x7fffffff, 0xb504f32d, 0xfffffffb,
+      0x16a09e655, 0x1fffffff7, 0x2d413ccab, 0x3ffffffd7, 0x5a827995d, 0x7ffffffe1, 0xb504f3321, 0xffffffffb,
+      0x16a09e665b, 0x1fffffffe7, 0x2d413cccd1, 0x3fffffffd3, 0x5a827999f9, 0x7ffffffff9, 0xb504f333ef, 0xffffffffa9,
+      0x16a09e667d7, 0x1ffffffffeb, 0x2d413cccfe1, 0x3fffffffff5, 0x5a827999fb3, 0x7ffffffffc7, 0xb504f333f99, 0xfffffffffef,
+      0x16a09e667f05, 0x1fffffffffc9, 0x2d413cccfe73, 0x3fffffffffeb, 0x5a827999fce9, 0x7fffffffff8d, 0xb504f333f9dd, 0xffffffffffc5,
+      0x16a09e667f3b3, 0x1ffffffffffaf, 0x2d413cccfe763, 0x3ffffffffffe5, 0x5a827999fcef9, 0x7ffffffffff7f, 0xb504f333f9d9b,
+      0x10000000000015, 0x16a09e667f3bc9, 0x20000000000039, 0x2d413cccfe77f1, 0x3fffffffffffdf, 0x5a827999fcefa9, 0x80000000000099, 0xb504f333f9dfe3,
+      0x100000000000213, 0x16a09e667f3bfdf, 0x200000000000429, 0x2d413cccfe77fd1, 0x4000000000008f1, 0x5a827999fcefff3, 0x8000000000011f9, 0xb504f333f9dfff7,
+      0x10000000000024f1, 0x16a09e667f3c00ef, 0x2000000000004be1, 0x2d413cccfe7803f7, 0x40000000000097f3, 0x5a827999fcf00bff, 0x80000000000137db, 0xb504f333f9e01ffb, 0x7fffffffffffffe7
     };
   }
 
@@ -48,37 +50,16 @@ namespace Dg
   >
   class HashTable
   {
-    class Node
+    struct Node
     {
-    public:
-
-      Node()
-        : pNext(nullptr)
-        , pPrev(nullptr)
-        , pData(nullptr)
-      {}
-
-      ~Node() {}
-
-      Node(Node const & a_other)
-        : pNext(a_other.pNext)
-        , pPrev(a_other.pPrev)
-        , pData(a_other.pData)
-        , key(a_other.key)
-      {}
-
-      Node & operator=(Node const & a_other)
-      {
-        pNext = a_other.pNext;
-        pPrev = a_other.pPrev;
-        pData = a_other.pData;
-        key = a_other.key;
-        return *this;
-      }
-
       K       key;
-      T *     pData;
+      T       data;
       Node *  pNext;
+    };
+
+    struct Bucket
+    {
+      Node * pBegin;
     };
 
     static float  const   s_defaultLF;
@@ -97,26 +78,16 @@ namespace Dg
     //! @date 21/05/2016
     class const_iterator
     {
-      friend class HashTable;
       friend class iterator;
 
-      const_iterator(Node * a_pNode
-      , size_t a_bucketIndex
-      , size_t a_bucketCount
-      , Node ** a_pBuckets)
+      const_iterator(Node * a_pNode)
         : m_pNode(a_pNode)
-        , m_bucketIndex(a_bucketIndex)
-        , m_bucketCount(a_bucketCount)
-        , m_pBuckets(a_pBuckets)
       {}
 
     public:
 
       const_iterator()
         : m_pNode(nullptr)
-        , m_bucketIndex(0)
-        , m_bucketCount(0)
-        , m_pBuckets(nullptr)
       {}
 
       ~const_iterator() {}
@@ -124,36 +95,30 @@ namespace Dg
       //! Copy constructor.
       const_iterator(const_iterator const & it)
         : m_pNode(it.m_pNode)
-        , m_bucketIndex(it.m_bucketIndex)
-        , m_bucketCount(it.m_bucketCount)
-        , m_pBuckets(it.m_pBuckets)
       {}
 
       //! Assignment.
       const_iterator& operator= (const_iterator const & it)
       {
         m_pNode = it.m_pNode;
-        m_bucketIndex = it.m_bucketIndex;
-        m_bucketCount = it.m_bucketCount;
-        m_pBuckets = it.m_pBuckets;
         return *this;
       }
 
       //! Comparison.
       bool operator==(const_iterator const & it) const
       {
-        return m_pNode == it.m_pNode
-          && m_pBuckets == it.m_pBuckets;
+        return m_pNode == it.m_pNode;
       }
 
       //! Comparison.
       bool operator!=(const_iterator const & it) const
       {
-        return m_pNode != it.m_pNode
-          || m_pBuckets != it.m_pBuckets;
+        return m_pNode != it.m_pNode;
       }
 
       //! Post increment
+      //! Iterating past the end of the pool will crash.
+      //! Iterating should not be past the 'end' iterator
       const_iterator operator++(int)
       {
         iterator result(*this);
@@ -162,34 +127,17 @@ namespace Dg
       }
 
       //! Pre increment
+      //! Iterating past the end of the pool will crash.
+      //! Iterating should not be past the 'end' iterator
       const_iterator & operator++()
       {
-        if (!m_pNode)
-        {
-          return *this;
-        }
-
-        if (m_pNode->pNext)
-        {
-          m_pNode = m_pNode->pNext;
-          return *this;
-        }
-
-        for (m_bucketIndex; m_bucketIndex++ < m_bucketCount;)
-        {
-          if (m_pBuckets[m_bucketIndex])
-          {
-            m_pNode = m_pBuckets[m_bucketIndex];
-            return *this;
-          }
-        }
-
-        //End
-        m_pNode = nullptr;
+        m_pNode = m_pNode->pNext;
         return *this;
       }
 
-      //! Post decrement
+      //! Post increment
+      //! Iterating past the end of the pool will crash.
+      //! Iterating should not be past the 'end' iterator
       const_iterator operator--(int)
       {
         iterator result(*this);
@@ -197,49 +145,23 @@ namespace Dg
         return result;
       }
 
-      //! Pre decrement
+      //! Pre increment
+      //! Iterating past the end of the pool will crash.
+      //! Iterating should not be past the 'end' iterator
       const_iterator & operator--()
       {
-        if (!m_pNode)
-        {
-          return *this;
-        }
-
-        for (m_bucketIndex; m_bucketIndex-- > 0;)
-        {
-          Node const * curNode = m_pBuckets[m_bucketIndex];
-          while (curNode)
-          {
-            if (curNode->pNext == m_pNode)
-            {
-              m_pNode = curNode;
-              return *this;
-            }
-            curNode = curNode->pNext;
-          }
-        }
-
-        //End
-        m_pNode = nullptr;
-        m_bucketIndex = m_bucketCount + 1;
+        m_pNode = m_pNode->pPrev;
         return *this;
+
       }
+      //! Conversion
+      T const * operator->() const { return &m_pNode->data; }
 
       //! Conversion
-      T const * operator->() const { return m_pNode->pData; }
-
-      //! Conversion
-      T const & operator*() const { return *(m_pNode->pData); }
+      T const & operator*() const { return m_pNode->data; }
 
     private:
 
-      /// The 'end' iterator is denoted by:
-      ///   m_pBuckets  = a valid pointer
-      ///   m_pNode     = nullptr
-
-      size_t                m_bucketIndex;
-      size_t                m_bucketCount;
-      Node const * const *  m_pBuckets;
       Node const *          m_pNode;
     };
 
@@ -252,98 +174,66 @@ namespace Dg
     //! @date 21/05/2016
     class iterator
     {
-      friend class HashTable;
+      friend class iterator;
 
-      iterator(Node * a_pNode
-        , size_t a_bucketIndex
-        , size_t a_bucketCount
-        , Node ** a_pBuckets)
-        : m_pNode(a_pNode)
-        , m_bucketIndex(a_bucketIndex)
-        , m_bucketCount(a_bucketCount)
-        , m_pBuckets(a_pBuckets)
+      iterator(Node * a_pThis)
+        : m_pNode(a_pThis)
       {}
 
     public:
 
-      iterator() 
+      iterator()
         : m_pNode(nullptr)
-        , m_bucketIndex(0)
-        , m_bucketCount(0)
-        , m_pBuckets(nullptr)
       {}
 
       ~iterator() {}
 
       //! Copy constructor.
-      iterator(iterator const & it) 
+      iterator(iterator const & it)
         : m_pNode(it.m_pNode)
-        , m_bucketIndex(it.m_bucketIndex)
-        , m_bucketCount(it.m_bucketCount)
-        , m_pBuckets(it.m_pBuckets)
       {}
 
       //! Assignment.
       iterator& operator= (iterator const & it)
       {
         m_pNode = it.m_pNode;
-        m_bucketIndex = it.m_bucketIndex;
-        m_bucketCount = it.m_bucketCount;
-        m_pBuckets = it.m_pBuckets;
         return *this;
       }
 
       //! Comparison.
-      bool operator==(iterator const & it) const 
-      { 
-        return m_pNode == it.m_pNode
-          && m_pBuckets == it.m_pBuckets;
+      bool operator==(iterator const & it) const
+      {
+        return m_pNode == it.m_pNode;
       }
 
       //! Comparison.
-      bool operator!=(iterator const & it) const 
-      { 
-        return m_pNode != it.m_pNode
-          || m_pBuckets != it.m_pBuckets; 
+      bool operator!=(iterator const & it) const
+      {
+        return m_pNode != it.m_pNode;
       }
 
       //! Post increment
+      //! Iterating past the end of the pool will crash.
+      //! Iterating should not be past the 'end' iterator
       iterator operator++(int)
       {
-        iterator result(*this);	
+        iterator result(*this);
         ++(*this);
         return result;
       }
 
       //! Pre increment
+      //! Iterating past the end of the pool will crash.
+      //! Iterating should not be past the 'end' iterator
       iterator & operator++()
       {
-        if (!m_pNode)
-        {
-          return *this;
-        }
-
-        if (m_pNode->pNext)
-        {
-          m_pNode = m_pNode->pNext;
-          return *this;
-        }
-
-        for (m_bucketIndex; m_bucketIndex++ < m_bucketCount ;)
-        {
-          if (m_pBuckets[m_bucketIndex])
-          {
-            m_pNode = m_pBuckets[m_bucketIndex];
-            return *this;
-          }
-        }
-        
-        //End
-        m_pNode = nullptr;
+        m_pNode = m_pNode->pNext;
         return *this;
       }
 
-      //! Post decrement
+      //! Post increment
+      //! Iterating past the end of the pool will crash.
+      //! Iterating should not be past the 'end' iterator
       iterator operator--(int)
       {
         iterator result(*this);
@@ -351,58 +241,30 @@ namespace Dg
         return result;
       }
 
-      //! Pre decrement
+      //! Pre increment
+      //! Iterating past the end of the pool will crash.
+      //! Iterating should not be past the 'end' iterator
       iterator & operator--()
       {
-        if (!m_pNode)
-        {
-          return *this;
-        }
-
-        for (m_bucketIndex; m_bucketIndex-- > 0 ;)
-        {
-          Node * curNode = m_pBuckets[m_bucketIndex];
-          while (curNode)
-          {
-            if (curNode->pNext == m_pNode)
-            {
-              m_pNode = curNode;
-              return *this;
-            }
-            curNode = curNode->pNext;
-          }
-        }
-
-        //End
-        m_pNode = nullptr;
-        m_bucketIndex = m_bucketCount + 1;
+        m_pNode = m_pNode->pPrev;
         return *this;
+
       }
 
       //! Conversion
-      /*operator const_iterator() const 
-      { 
-        return const_iterator(m_pNode
-                            , m_bucketIndex
-                            , m_bucketCount
-                            , m_pBuckets); 
-      }*/
+      operator const_iterator() const
+      {
+        return const_iterator(m_pNode);
+      }
 
       //! Conversion
-      T* operator->() const { return m_pNode->pData; }
+      T * operator->() { return &m_pNode->data; }
 
       //! Conversion
-      T& operator*() const { return *(m_pNode->pData); }
+      T & operator*() { return m_pNode->data; }
 
     private:
 
-      /// The 'end' iterator is denoted by:
-      ///   m_pBuckets  = a valid pointer
-      ///   m_pNode     = nullptr
-
-      size_t          m_bucketIndex;
-      size_t          m_bucketCount;
-      Node * const *  m_pBuckets;
       Node *          m_pNode;
     };
 
@@ -509,14 +371,14 @@ namespace Dg
     //! if does not exist.
     T & operator[](K key)
     {
-      return m_pData[GetItemIndex(key)];
+      return m_pData[GetDataItemIndex(key)];
     }
 
     //! Returns element mapped to key. Will insert element
     //! if does not exist.
     T const & operator[](K key) const
     {
-      return m_pData[GetItemIndex(key)];
+      return m_pData[GetDataItemIndex(key)];
     }
 
     iterator begin()
@@ -575,15 +437,19 @@ namespace Dg
     //! Will overwrite if exists
     void insert(K key, T const & val)
     {
-      m_pData[GetItemIndex(key)] = val;
+      if (POD)
+      {
+        m_pData[GetDataItemIndex(key)] = val;
+      }
+      else
+      {
+        memcpy(&m_pData[GetDataItemIndex(key)], &val, sizeof(T));
+      }
     }
 
     void clear()
     {
-      if (!POD)
-      {
-
-      }
+      
     }
 
     bool empty() const
@@ -621,12 +487,51 @@ namespace Dg
       return 0x8000000000000000;
     }
 
-    void rehash(size_t)
+    void rehash(size_t a_bucketCount)
+    {
+      size_t newBucketCountIndex = GetBucketCountIndex(a_bucketCount);
+      size_t newBucketCount = impl::validBucketCounts[newBucketCountIndex];
+      Node ** newBuckets = static_cast<Node**>(malloc(newBucketCount * sizeof(Node**)));
+      for (size_t bucket = 0; bucket < bucket_count(); ++bucket)
+      {
+        Node * in = m_pBuckets[bucket];
+        while (in)
+        {
+          //Get a new node
+          Node * newNode = GetNewNode();
+          newNode->key = in->key;
+          newNode->pData = in->pData;
+
+          //Add new node in the new bucket list
+          size_t ind = fHasher(in->key) % newBucketCount;
+          Node ** out = &newBuckets[ind];
+          while (*out) out = &out->pNext;
+          *out = newNode;
+
+          //Save the location of the next node to work with
+          Node * next = in->pNext;
+
+          //Remove from old bucket list
+          in->pNext = m_pNextFree;
+          m_pNextFree = in;
+
+          //Update iterator nodes
+          in = next;
+        }
+      }
+
+      //Assign new bucket list and bucket count
+      delete[] m_pBuckets;
+      m_pBuckets = newBuckets;
+      m_bucketCountIndex
+    }
+
+    void reserve(size_t)
     {
 
     }
 
-    void reserve(size_t)
+    iterator erase(iterator const &)
     {
 
     }
@@ -642,7 +547,7 @@ namespace Dg
 
       Node * pItem = m_pBuckets[ind];
       Node * pPrev(nullptr);
-      while (true)
+      do
       {
         if (pItem->key == a_key)
         {
@@ -657,7 +562,7 @@ namespace Dg
         if (!pItem->pNext) break;
         pPrev = pItem;
         pItem = pItem->pNext;
-      }
+      } while (pItem->pNext)
     }
 
     size_t size() const 
@@ -725,79 +630,110 @@ namespace Dg
       m_pNodes[m_poolSize - 1].pNext = nullptr;
 
       //Reset pointers to data
-      if (m_pNodes != pOldNodes || m_pData != pOldData)
+      if (m_pData != pOldData)
       {
         iterator it = begin();
         for (it; it != end(); ++it)
         {
-          it->~T();
+          it.m_pNode->pData = &m_pData[it.m_pNode - pOldNodes];
         }
       }
     }
 
-    Node * GetNewNode(K a_key)
+    //! No key, next pointer set to nullptr.
+    Node * InsertNewNodeAfter(Node const & a_node, K a_key)
     {
       if (m_pNextFree->pNext == nullptr)
       {
         ExtendPool();
       }
+
+      if (m_pNextFree->pPrev)
+      {
+        m_pNextFree->pPrev->pNext = m_pNextFree->pNext;
+      }
+      m_pNextFree->pNext->pPrev = m_pNextFree->pPrev;
       Node * pResult = m_pNextFree;
       m_pNextFree = m_pNextFree->pNext;
-      pResult->pNext = nullptr;
-      pResult->key = a_key;
+
+      a_node.pNext->pPrev = pResult;
+      pResult->pNext = a_node.pNext;
+      a_node.pNext = pResult;
+      pResult->pPrev = &a_node;
+
+      pResult.key = a_key;
       ++m_nItems;
       return pResult;
     }
 
+
     //Will create new item if does not exist
-    size_t GetItemIndex(K a_key)
+    Node * GetItem(K a_key)
     {
       size_t ind = m_fHasher(a_key);
       ind %= bucket_count();
 
-      if (m_pBuckets[ind] == nullptr)
+      //This will be the first item in this bucket.
+      Node * pNode = m_pBuckets[ind];
+      if (pNode == nullptr)
       {
         m_pBuckets[ind] = GetNewNode(a_key);
-        return (m_pBuckets[ind] - m_pNodes) / sizeof(Node*);
+        return m_pBuckets[ind];
       }
 
-      Node * item = m_pBuckets[ind];
+      //There are other items as well as this in the bucket
       while (true)
       {
-        if (pItem->key == a_key)
+        if (pNode->key == a_key)
         {
-          return item - m_pNodes;
+          return pNode;
         }
-        if (!pItem->pNext) break;
-        pItem = pItem->pNext;
+        if (!pNode->pNext) break;
+        pNode = pNode->pNext;
       }
 
-      return (GetNewNode(a_key) - m_pNodes) / sizeof(Node*);
+      //Item does not exist
+      float newLoadFactor = static_cast<float>(m_nItems + 1) / m_bucketCountIndex;
+      if (newLoadFactor > m_maxLoadFactor)
+      {
+        if (m_bucketCountIndex != (ARRAY_SIZE(impl::validBucketCounts) - 1))
+        {
+          rehash(impl::validBucketCounts[m_bucketCountIndex + 1]);
+        }
+      }
+
+      return GetNewNode(pNode, a_key);
     }
 
     void PostMove(HashTable & a_other)
     {
-      a_other.m_pData = nullptr;
       a_other.m_pNodes = nullptr;
       a_other.m_poolSize = 0;
       a_other.m_pNextFree = nullptr;
       a_other.m_pBuckets = nullptr;
-      a_other.m_bucketCountIndex = 0;
+      a_other.m_bucketCountIndex = s_invalidBucketIndex;
       a_other.m_nItems = 0;
+    }
+
+    //! @param[in] a_bucketCount Number of buckets you want
+    size_t GetBucketCountIndex(size_t a_bucketCount)
+    {
+      size_t result = ARRAY_SIZE(impl::validBucketCounts) - 1;
+      for (int i = 0; i < ARRAY_SIZE(impl::validBucketCounts); ++i)
+      {
+        if (a_bucketCount <= impl::validBucketCounts[i])
+        {
+          result = i;
+          break;
+        }
+      }
+      return result;
     }
 
     void init(size_t a_nBuckets)
     {
       //Update values
-      m_bucketCountIndex = ARRAY_SIZE(impl::validBucketCounts) - 1;
-      for (int i = 0; i < ARRAY_SIZE(impl::validBucketCounts); ++i)
-      {
-        if (a_nBuckets <= impl::validBucketCounts[i])
-        {
-          m_bucketCountIndex = i;
-          break;
-        }
-      }
+      m_bucketCountIndex = GetBucketCountIndex(a_nBuckets);
       m_nItems = 0;
       m_poolSize = s_minPoolSize;
 
@@ -805,15 +741,22 @@ namespace Dg
     }
 
     //! Prep method for moving or deleting. Clears all memory, sets pointers to null.
-    void Zero()
+    void Wipe()
     {
       //Delete current items
-      clear();
+      if (!POD)
+      {
+        iterator it = begin();
+        for (it; it != end(); ++it)
+        {
+          *it.data.~T();
+        }
+      }
 
-      delete[] m_pData; m_pData = nullptr;
-      delete[] m_pNodes; m_pNodes = nullptr;
+      free(m_pData); m_pData = nullptr;
+      free(m_pNodes); m_pNodes = nullptr;
+      free(m_pBuckets); m_pBuckets = nullptr;
       m_pNextFree = nullptr;
-      delete[] m_pBuckets; m_pBuckets = nullptr;
 
       m_poolSize = 0;
       m_bucketCountIndex = s_invalidBucketIndex;
@@ -822,11 +765,8 @@ namespace Dg
 
     void InitArrays()
     {
-      //Resize datablocks
-      m_pData = static_cast<T*>(malloc(m_poolSize * sizeof(T)));
-
       //Update bucket pool
-      m_pNodes = static_cast<Node*>(malloc(m_poolSize * sizeof(Node)));
+      DG_ASSERT(m_pNodes = static_cast<Node*>(malloc(m_poolSize * sizeof(Node))));
       for (size_t i = 0; i < m_poolSize - 1; ++i)
       {
         m_pNodes[i].pNext = &m_pNodes[i + 1];
@@ -834,65 +774,89 @@ namespace Dg
       m_pNodes[m_poolSize - 1].pNext = nullptr;
 
       //Create a new hash table
-      m_pBuckets = static_cast<Node**>(malloc(bucket_count() * sizeof(Node*)));
-      for (int i = 0; i < bucket_count(); ++i)
-      {
-        m_pBuckets[i] = nullptr;
-      }
-
+      DG_ASSERT(m_pBuckets = static_cast<Bucket*>(calloc(bucket_count() * sizeof(Bucket))));
+      
       //Flag the next free bucket
       m_pNextFree = &m_pNodes[0];
     }
 
+    Node * GetNewNode(Key a_key)
+    {
+      if (m_pNextFree->pNext == nullptr)
+      {
+        ExtendPool();
+      }
+
+      Node * pResult = m_pNextFree;
+      m_pNextFree = m_pNextFree->pNext;
+      pResult->pNext = nullptr;
+      pResult.key = a_key;
+      return pResult;
+    }
+
+
+    Node * GetNewNode(Node * pNode, Key a_key)
+    {
+      if (m_pNextFree->pNext == nullptr)
+      {
+        ExtendPool();
+      }
+
+      Node * pResult = m_pNextFree;
+      m_pNextFree = m_pNextFree->pNext;
+      pNode->pNext = pResult;
+      pResult->pNext = nullptr;
+      pResult.key = a_key;
+      return pResult;
+    }
 
     void init(HashTable const & a_other)
     {
       //Cleanup
-      if (!POD)
-      {
-        iterator it = begin();
-        for (it; it != end(); ++it)
-        {
-          it->~T();
-        }
-      }
+      Wipe();
 
       //Assign values
-      m_nItems = a_other.m_nItems;
-      m_bucketCountIndex = a_other.m_bucketCountIndex;
-      m_poolSize = a_other.m_poolSize;
       m_maxLoadFactor = a_other.m_maxLoadFactor;
+      m_fHasher = a_other.m_fHasher;
+      m_poolSize = a_other.m_poolSize;
+      m_bucketCountIndex = a_other.m_bucketCountIndex;
+      m_nItems = a_other.m_nItems;
 
       InitArrays();
 
       //Copy in from other
-      size_t currentAvailInd(0);
-      for (size_t i = 0; i < a_other.bucket_count(); ++i)
+      for (size_t bi = 0; bi < a_other.bucket_count(); ++bi)
       {
-        Node * n(a_other.m_pBuckets[i]);
-        if (n)
+        Node const * that_node(a_other.m_pBuckets[bi].pBegin);
+        if (that_node)
         {
+          m_pBuckets[bi].pBegin = GetNewNode(that_node.key);
+          Node * this_node(m_pBuckets[bi].pBegin);
           do
           {
-            if (!POD)
+            if (POD)
             {
-              new(&m_pData[currentAvailInd]) T(a_other.m_pData[n - a_other.m_pNodes]);
+              memcpy(&this_node->data, &that_node->data, sizeof(T));
             }
             else
             {
-              memcpy(&m_pData[currentAvailInd], &a_other.m_pData[n - a_other.m_pNodes], sizeof(T));
+              new(&this_node->data) T(that_node->data);
             }
-            if (!n->pNext)
+
+            that_node = that_node.pNext;
+
+            if (that_node)
             {
-              m_pNodes[currentAvailInd].pNext = nullptr;
+              this_node = GetNewNode(this_node, that_node.key);
             }
-            currentAvailInd++;
-          } while (n->pNext);
+            else
+            {
+              break;
+            }
+
+          } while (true);
         }
       }
-
-      //Flag the next free bucket
-      m_pNextFree = &m_pNodes[currentAvailInd];
     }
 
   private:
@@ -900,12 +864,11 @@ namespace Dg
     float       m_maxLoadFactor;
     fHasher<K>  m_fHasher;
 
-    T  *        m_pData;
     Node *      m_pNodes;
+    Node *      m_pNextFree;
     size_t      m_poolSize;
 
-    Node *      m_pNextFree;
-    Node **     m_pBuckets;
+    Bucket *    m_pBuckets;
     int         m_bucketCountIndex; //The bucket count is obtained from bucket_count()
     size_t      m_nItems;   //Number of curent elements
   };
