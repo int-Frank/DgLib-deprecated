@@ -14,21 +14,20 @@ class C
 {
 public:
 
-  C() : m(0), key(0) { g_constructors++; }
-  C(Key k, int a) : m(a), key(k) { g_constructors++; }
+  C() : m(0) { g_constructors++; }
+  C(int a) : m(a) { g_constructors++; }
   ~C() { g_destructors++; }
-  C(C const & a) : m(a.m), key(a.key) { g_copyConstructors++; }
+  C(C const & a) : m(a.m) { g_copyConstructors++; }
   C & operator=(C const & a) 
   { 
     m = a.m;
-    key = a.key;
     g_assignments++; 
+    return *this;
   }
 
   bool operator==(C const & a) const { return a.m == m; }
   bool operator!=(C const & a) const { return a.m != m; }
 
-  Key key;
   int m;
 };
 
@@ -65,7 +64,7 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   std::list<C>::iterator l_it = a_list.begin();
   while (l_it != a_list.end())
   {
-    if (!a_ht.at(l_it->key))
+    if (!a_ht.at(l_it->m))
     {
       return __LINE__;
     }
@@ -166,9 +165,45 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   return 0;
 }
 
+int AddNewItem(Key k, Dg::HashTable<Key, C> & a_ht, std::list<C> & a_list)
+{
+  if (a_ht.at(k))
+  {
+    return __LINE__;
+  }
+
+  float oldLF = a_ht.load_factor();
+  float nItems = float(a_ht.size());
+  float oldBucketCount = float(a_ht.bucket_count());
+  float maxLF = float(a_ht.max_load_factor());
+
+  bool shouldRehash = ((nItems + 1.0f) / oldBucketCount) >= maxLF;
+
+  //Insert dummy
+  a_ht.insert(k, C(-1));
+
+  if (!a_ht.at(k)) return __LINE__;
+  if (a_ht.at(k)->m != -1) return __LINE__;
+  if (a_ht.insert_no_overwrite(k, C(k))->m != -1) return __LINE__;
+
+  a_ht.erase(k);
+  if (a_ht.at(k)) return __LINE__;
+
+  //Insert real
+  a_ht.insert(k, C(k));
+  if (shouldRehash && a_ht.bucket_count() <= oldBucketCount) return __LINE__;
+
+  a_list.push_back(C(k));
+  return 0;
+}
+
 TEST(Stack_dg_HashTable_pod, creation_dg_HashTable_pod)
 {
-  Dg::HashTable<Key, C> ht;
-  std::list<C> compare;
-
+  Dg::HashTable<Key, C, true> ht;
+  std::list<C> lst;
+  for (int i = 0; i < 10; ++i)
+  {
+    CHECK(AddNewItem(i, ht, lst));
+  }
+  CHECK(Compare(ht, lst));
 }

@@ -1,0 +1,5 @@
+Assert failed!
+A message!
+File: c:\dev\projects\dglib\src\core\private\tests\test_boundedsnd.cpp
+Line: 23
+Function: run

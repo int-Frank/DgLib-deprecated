@@ -24,6 +24,9 @@
     <ClCompile Include="DgStringFunctions.cpp">
       <Filter>Public Headers</Filter>
     </ClCompile>
+    <ClCompile Include="DgErrorHandler.cpp">
+      <Filter>Public Headers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\public\DgPriorityMutex.h">
@@ -54,6 +57,9 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgMakeGrid.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgErrorHandler.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>
