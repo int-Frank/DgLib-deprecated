@@ -91,7 +91,8 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   //Make sure elments match, use iterator--
   newList = a_list;
   it = a_ht.end();
-  for (it; --it != a_ht.end();)
+  it--;
+  for (it; it != a_ht.end(); it--)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
     if (l_it == newList.end())
@@ -110,7 +111,7 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   Dg::HashTable<Key, C, true>::const_iterator cit = a_ht.cbegin();
   for (cit; cit != a_ht.cend(); cit++)
   {
-    std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
+    std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *cit);
     if (l_it == newList.end())
     {
       return __LINE__;
@@ -127,7 +128,7 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   cit = a_ht.cend();
   for (cit; --cit != a_ht.cend() ;)
   {
-    std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
+    std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *cit);
     if (l_it == newList.end())
     {
       return __LINE__;

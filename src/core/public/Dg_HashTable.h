@@ -185,17 +185,23 @@ namespace Dg
       //! Pre decrement
       const_iterator & operator--()
       {
-        if (!m_pNode)
+        Node * curNode = m_pBuckets[m_bucketIndex].pBegin;
+        while (curNode)
         {
-          return *this;
+          if (curNode->pNext == m_pNode)
+          {
+            m_pNode = curNode;
+            return *this;
+          }
+          curNode = curNode->pNext;
         }
 
-        for (m_bucketIndex++; m_bucketIndex-- > 0;)
+        for (m_bucketIndex; m_bucketIndex-- > 0;)
         {
           Node * curNode = m_pBuckets[m_bucketIndex].pBegin;
           while (curNode)
           {
-            if (curNode->pNext == m_pNode)
+            if (!curNode->pNext)
             {
               m_pNode = curNode;
               return *this;
@@ -211,10 +217,10 @@ namespace Dg
       }
 
       //! Conversion
-      T* operator->() const { return %m_pNode->data; }
+      T const * operator->() const { return &m_pNode->data; }
 
       //! Conversion
-      T& operator*() const { return m_pNode->data; }
+      T const & operator*() const { return m_pNode->data; }
 
     private:
 
@@ -341,17 +347,23 @@ namespace Dg
       //! Pre decrement
       iterator & operator--()
       {
-        if (!m_pNode)
+        Node * curNode = m_pBuckets[m_bucketIndex].pBegin;
+        while (curNode)
         {
-          return *this;
+          if (curNode->pNext == m_pNode)
+          {
+            m_pNode = curNode;
+            return *this;
+          }
+          curNode = curNode->pNext;
         }
 
-        for (m_bucketIndex++; m_bucketIndex-- > 0;)
+        for (m_bucketIndex; m_bucketIndex-- > 0;)
         {
           Node * curNode = m_pBuckets[m_bucketIndex].pBegin;
           while (curNode)
           {
-            if (curNode->pNext == m_pNode)
+            if (!curNode->pNext)
             {
               m_pNode = curNode;
               return *this;
@@ -543,12 +555,12 @@ namespace Dg
 
     iterator end()
     {
-      return iterator(nullptr, bucket_count() + 1, bucket_count(), m_pBuckets);
+      return iterator(nullptr, bucket_count() - 1, bucket_count(), m_pBuckets);
     }
 
     const_iterator cend() const
     {
-      return const_iterator(nullptr, bucket_count() + 1, bucket_count(), m_pBuckets);
+      return const_iterator(nullptr, bucket_count() - 1, bucket_count(), m_pBuckets);
     }
 
     T * at(K a_key)
@@ -964,19 +976,34 @@ namespace Dg
     void InitArrays()
     {
       //Update bucket pool
-      m_pNodes = static_cast<Node*>(malloc(m_poolSize * sizeof(Node)));
-      DG_ASSERT((m_pNodes == nullptr) ? 0 : 1);
-      for (size_t i = 0; i < m_poolSize - 1; ++i)
+      if (m_poolSize > 0)
       {
-        m_pNodes[i].pNext = &m_pNodes[i + 1];
+        m_pNodes = static_cast<Node*>(malloc(m_poolSize * sizeof(Node)));
+        DG_ASSERT((m_pNodes == nullptr) ? 0 : 1);
+        for (size_t i = 0; i < m_poolSize - 1; ++i)
+        {
+          m_pNodes[i].pNext = &m_pNodes[i + 1];
+        }
+        m_pNodes[m_poolSize - 1].pNext = nullptr;
       }
-      m_pNodes[m_poolSize - 1].pNext = nullptr;
+      else
+      {
+        m_pNodes = nullptr;
+      }
 
       //Create a new hash table
-      m_pBuckets = static_cast<Bucket*>(calloc(bucket_count(), sizeof(Bucket)));
-      DG_ASSERT((m_pBuckets == nullptr) ? 0 : 1);
-      //Flag the next free bucket
-      m_pNextFree = &m_pNodes[0];
+      if (bucket_count() > 0)
+      {
+        m_pBuckets = static_cast<Bucket*>(calloc(bucket_count(), sizeof(Bucket)));
+        DG_ASSERT((m_pBuckets == nullptr) ? 0 : 1);
+        //Flag the next free bucket
+        m_pNextFree = &m_pNodes[0];
+      }
+      else
+      {
+        m_pBuckets = nullptr;
+        m_pNextFree = nullptr;
+      }
     }
 
     Node * GetNewNode(K a_key)
@@ -1027,6 +1054,11 @@ namespace Dg
       m_bucketCountIndex = a_other.m_bucketCountIndex;
 
       InitArrays();
+
+      if (!m_pBuckets || !m_pNodes)
+      {
+        return;
+      }
 
       //Copy in from other
       for (size_t bi = 0; bi < a_other.bucket_count(); ++bi)
