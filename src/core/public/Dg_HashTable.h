@@ -315,7 +315,7 @@ namespace Dg
 
     ~HashTable()
     {
-      Zero();
+      Wipe();
     }
 
     HashTable(HashTable const & a_other)
@@ -350,7 +350,7 @@ namespace Dg
     {
       if (this != &a_other)
       {
-        Zero();
+        Wipe();
 
         m_pData = a_other.m_pData;
         m_pNodes = a_other.m_pNodes;
@@ -371,14 +371,19 @@ namespace Dg
     //! if does not exist.
     T & operator[](K key)
     {
-      return m_pData[GetDataItemIndex(key)];
-    }
-
-    //! Returns element mapped to key. Will insert element
-    //! if does not exist.
-    T const & operator[](K key) const
-    {
-      return m_pData[GetDataItemIndex(key)];
+      Node * pNode(nullptr);
+      if (!GetItem(key, pNode))
+      {
+        if (POD)
+        {
+          memset(&pNode->data, 0, sizeof(T));
+        }
+        else
+        {
+          new (&pNode->data) T();
+        }
+      }
+      return pNode->data;
     }
 
     iterator begin()
@@ -416,35 +421,56 @@ namespace Dg
       return const_iterator(nullptr, bucket_count() + 1, bucket_count(), m_pBuckets);
     }
 
-    bool at(K a_key) const
+    T * at(K a_key) const
     {
       size_t ind = m_fHasher(a_key);
-
-      if (m_pBuckets[ind] == nullptr)
-      {
-        return false;
-      }
+      ind %= bucket_count();
 
       Node * pItem = m_pBuckets[ind];
-      while (true)
+      while (pItem)
       {
-        if (pItem->key == a_key)  return true;
-        if (!pItem->pNext)        return false;
+        if (pItem->key == a_key)  return &pItem->data;
+        if (!pItem->pNext)        return nullptr;
         pItem = pItem->pNext;
       }
+      return nullptr;
     }
 
     //! Will overwrite if exists
-    void insert(K key, T const & val)
+    T * insert(K key, T const & val)
     {
-      if (POD)
+      Node * pNode(nullptr);
+      bool existed = GetItem(key, pNode);
+      if (!POD)
       {
-        m_pData[GetDataItemIndex(key)] = val;
+        if (existed)
+        {
+          pNode->data.~T();
+        }
+        new (&pNode->data) T();
       }
       else
       {
-        memcpy(&m_pData[GetDataItemIndex(key)], &val, sizeof(T));
+        memcpy(&pNode->data, &val, sizeof(T));
       }
+      return &pNode->data;
+    }
+
+    T * insert_no_overwrite(K key, T const & val)
+    {
+      Node * pNode(nullptr);
+      if (!GetItem(key, pNode))
+      {
+        if (!POD)
+        {
+          new (&pNode->data) T();
+        }
+        else
+        {
+          memcpy(&pNode->data, &val, sizeof(T));
+        }
+      }
+      return &pNode->data;
     }
 
     void clear()
@@ -580,21 +606,19 @@ namespace Dg
     void ExtendPool()
     {
       Node * pOldNodes = m_pNodes;
-      T * pOldData = m_pData;
       size_t oldPoolSize = m_poolSize;
       m_poolSize *= 2;
-      m_pData = static_cast<T*>(realloc(m_pData, m_poolSize * sizeof(T)));
-      m_pNodes = static_cast<Node*>(realloc(m_pNodes, m_poolSize * sizeof(Node)));
+      DG_ASSERT(m_pNodes = static_cast<Node*>(realloc(m_pNodes, m_poolSize * sizeof(Node))));
 
       //Reset node pointers
       if (m_pNodes != pOldNodes)
       {
         for (size_t i = 0; i < bucket_count(); ++i)
         {
-          if (m_pBuckets[i])
+          if (m_pBuckets[i].pBegin)
           {
-            m_pBuckets[i] = &m_pNodes[m_pBuckets[i] - pOldNodes];
-            Node * n(m_pBuckets[i]);
+            m_pBuckets[i].pBegin = &m_pNodes[m_pBuckets[i].pBegin - pOldNodes];
+            Node * n(m_pBuckets[i].pBegin);
             while (n->pNext)
             {
               n->pNext = &m_pNodes[n->pNext - pOldNodes];
@@ -622,74 +646,40 @@ namespace Dg
         freeTail = freeTail->pNext;
       }
 
-      freeTail->pNext = &m_pNodes[oldPoolSize];
-      for (size_t i = 0; i < m_poolSize - 1; ++i)
+      for (size_t i = oldPoolSize; i < m_poolSize; ++i)
       {
-        m_pNodes[i].pNext = &m_pNodes[i + 1];
+        freeTail->pNext = &m_pNodes[i];
+        freeTail = freeTail->pNext;
       }
       m_pNodes[m_poolSize - 1].pNext = nullptr;
-
-      //Reset pointers to data
-      if (m_pData != pOldData)
-      {
-        iterator it = begin();
-        for (it; it != end(); ++it)
-        {
-          it.m_pNode->pData = &m_pData[it.m_pNode - pOldNodes];
-        }
-      }
-    }
-
-    //! No key, next pointer set to nullptr.
-    Node * InsertNewNodeAfter(Node const & a_node, K a_key)
-    {
-      if (m_pNextFree->pNext == nullptr)
-      {
-        ExtendPool();
-      }
-
-      if (m_pNextFree->pPrev)
-      {
-        m_pNextFree->pPrev->pNext = m_pNextFree->pNext;
-      }
-      m_pNextFree->pNext->pPrev = m_pNextFree->pPrev;
-      Node * pResult = m_pNextFree;
-      m_pNextFree = m_pNextFree->pNext;
-
-      a_node.pNext->pPrev = pResult;
-      pResult->pNext = a_node.pNext;
-      a_node.pNext = pResult;
-      pResult->pPrev = &a_node;
-
-      pResult.key = a_key;
-      ++m_nItems;
-      return pResult;
     }
 
 
     //Will create new item if does not exist
-    Node * GetItem(K a_key)
+    //! @return true if item already existed
+    bool GetItem(K a_key, Node *& a_out)
     {
       size_t ind = m_fHasher(a_key);
       ind %= bucket_count();
 
       //This will be the first item in this bucket.
-      Node * pNode = m_pBuckets[ind];
-      if (pNode == nullptr)
+      a_out = m_pBuckets[ind].pBegin;
+      if (a_out == nullptr)
       {
-        m_pBuckets[ind] = GetNewNode(a_key);
-        return m_pBuckets[ind];
+        m_pBuckets[ind].pBegin = GetNewNode(a_key);
+        a_out = m_pBuckets[ind].pBegin;
+        return false;
       }
 
       //There are other items as well as this in the bucket
       while (true)
       {
-        if (pNode->key == a_key)
+        if (a_out->key == a_key)
         {
-          return pNode;
+          return true;
         }
         if (!pNode->pNext) break;
-        pNode = pNode->pNext;
+        a_out = a_out>pNext;
       }
 
       //Item does not exist
@@ -702,7 +692,8 @@ namespace Dg
         }
       }
 
-      return GetNewNode(pNode, a_key);
+      a_out = GetNewNode(a_out, a_key);
+      return false;
     }
 
     void PostMove(HashTable & a_other)
