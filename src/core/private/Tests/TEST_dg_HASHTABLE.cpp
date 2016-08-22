@@ -1,4 +1,5 @@
 #include <list>
+#include <iostream>
 
 #include "TestHarness.h"
 #include "Dg_HashTable.h"
@@ -142,21 +143,26 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
 
   //Construction
   Dg::HashTable<Key, C, true> newHT(a_ht);
+  if (newHT.PoolSlotsWasted()) return __LINE__;
   int res = HaveSameItems(a_ht, newHT);
   if (res != 0) return res;
 
   newHT = a_ht;
+  if (newHT.PoolSlotsWasted()) return __LINE__;
   res = HaveSameItems(a_ht, newHT);
   if (res != 0) return res;
 
   Dg::HashTable<Key, C, true> moved(std::move(newHT));
+  if (moved.PoolSlotsWasted()) return __LINE__;
   res = HaveSameItems(a_ht, moved);
   if (res != 0) return res;
   res = HaveSameItems(a_ht, newHT);
   if (res == 0) return res;
 
   newHT = moved;
+  if (newHT.PoolSlotsWasted()) return __LINE__;
   moved = std::move(newHT);
+  if (moved.PoolSlotsWasted()) return __LINE__;
   res = HaveSameItems(a_ht, moved);
   if (res != 0) return res;
   res = HaveSameItems(a_ht, newHT);
@@ -176,21 +182,28 @@ int AddNewItem(Key k, Dg::HashTable<Key, C> & a_ht, std::list<C> & a_list)
   float nItems = float(a_ht.size());
   float oldBucketCount = float(a_ht.bucket_count());
   float maxLF = float(a_ht.max_load_factor());
-
-  bool shouldRehash = ((nItems + 1.0f) / oldBucketCount) >= maxLF;
+  size_t oldSize = a_ht.size();
+  bool shouldRehash = ((nItems + 1.0f) / oldBucketCount) > maxLF;
 
   //Insert dummy
   a_ht.insert(k, C(-1));
+  if (a_ht.PoolSlotsWasted()) return __LINE__;
 
+  if (a_ht.size() != oldSize + 1) return __LINE__;
   if (!a_ht.at(k)) return __LINE__;
   if (a_ht.at(k)->m != -1) return __LINE__;
   if (a_ht.insert_no_overwrite(k, C(k))->m != -1) return __LINE__;
+  if (a_ht.PoolSlotsWasted()) return __LINE__;
 
   a_ht.erase(k);
+  if (a_ht.size() != oldSize) return __LINE__;
   if (a_ht.at(k)) return __LINE__;
 
   //Insert real
   a_ht.insert(k, C(k));
+  if (!a_ht.at(k)) return __LINE__;
+  if (a_ht.at(k)->m != k) return __LINE__;
+  if (a_ht.PoolSlotsWasted()) return __LINE__;
   if (shouldRehash && a_ht.bucket_count() <= oldBucketCount) return __LINE__;
 
   a_list.push_back(C(k));
@@ -201,9 +214,21 @@ TEST(Stack_dg_HashTable_pod, creation_dg_HashTable_pod)
 {
   Dg::HashTable<Key, C, true> ht;
   std::list<C> lst;
-  for (int i = 0; i < 10; ++i)
+  int failLine = 0;
+  for (int i = 0; i < 100; ++i)
   {
-    CHECK(AddNewItem(i, ht, lst));
+    failLine = AddNewItem(i, ht, lst);
+    std::cout << "\n\n" << ht;
+    if (failLine)
+    {
+      std::cout << "\n\nFAIL: " << failLine;
+    }
+    CHECK(failLine == 0);
   }
-  CHECK(Compare(ht, lst));
+  failLine = Compare(ht, lst);
+  if (failLine)
+  {
+    std::cout << "\n\nFAIL: " << failLine;
+  }
+  CHECK(failLine == 0);
 }

@@ -3,7 +3,10 @@
 
 #include <cstdlib>
 #include <cstring>
-
+#define DGHASHTABLE_OUTPUT
+#ifdef DGHASHTABLE_OUTPUT
+#include <iostream>
+#endif
 #include "DgErrorHandler.h"
 
 #define ARRAY_SIZE(a) sizeof(a) / sizeof(*a)
@@ -697,16 +700,12 @@ namespace Dg
 
     void erase(K a_key)
     {
-      size_t ind = m_fHasher(a_key);
+      size_t ind(m_fHasher(a_key));
+      ind %= bucket_count();
 
-      if (m_pBuckets[ind].pBegin == nullptr)
-      {
-        return;
-      }
-
-      Node * pItem = m_pBuckets[ind].pBegin;
+      Node * pItem(m_pBuckets[ind].pBegin);
       Node * pPrev(nullptr);
-      do
+      while (pItem)
       {
         if (pItem->key == a_key)
         {
@@ -714,14 +713,19 @@ namespace Dg
           {
             pPrev->pNext = pItem->pNext;
           }
+          else
+          {
+            m_pBuckets[ind].pBegin = nullptr;
+          }
           pItem->pNext = m_pNextFree;
           m_pNextFree = pItem;
+          m_nItems--;
           break;
         }
         if (!pItem->pNext) break;
         pPrev = pItem;
         pItem = pItem->pNext;
-      } while (pItem->pNext);
+      }
     }
 
     size_t size() const 
@@ -733,6 +737,54 @@ namespace Dg
     {
       return impl::validBucketCounts[m_bucketCountIndex];
     }
+
+    //DEBUG
+    size_t PoolSlotsWasted()
+    {
+      size_t total(0);
+
+      for (size_t i = 0; i < bucket_count(); ++i)
+      {
+        Node * n = m_pBuckets[i].pBegin;
+        while (n)
+        {
+          total++;
+          n = n->pNext;
+        }
+      }
+
+      Node * n = m_pNextFree;
+      while (n)
+      {
+        total++;
+        n = n->pNext;
+      }
+
+      return m_poolSize - total;
+    }
+
+#ifdef DGHASHTABLE_OUTPUT
+    friend std::ostream & operator<<(std::ostream & os
+                                   , HashTable<K, T, POD> const & ht) 
+    {
+      for (size_t i = 0; i < ht.bucket_count(); ++i)
+      {
+        os << i << ": ";
+        Node * n = ht.m_pBuckets[i].pBegin;
+        while (n)
+        {
+          os << n->key;
+          if (n->pNext)
+          {
+            os << ", ";
+          }
+          n = n->pNext;
+        }
+        os << '\n';
+      }
+      return os;
+    }
+#endif
 
   private:
 
@@ -787,6 +839,20 @@ namespace Dg
       m_pNodes[m_poolSize - 1].pNext = nullptr;
     }
 
+    //! @return true if had to rehash.
+    bool RehashIfOver(size_t a_number = 1)
+    {
+      float newLoadFactor = static_cast<float>(m_nItems + a_number) / bucket_count();
+      if (newLoadFactor > m_maxLoadFactor)
+      {
+        if (m_bucketCountIndex != (ARRAY_SIZE(impl::validBucketCounts) - 1))
+        {
+          rehash(impl::validBucketCounts[m_bucketCountIndex + 1]);
+          return true;
+        }
+      }
+      return false;
+    }
 
     //Will create new item if does not exist
     Node * GetItem(K a_key, bool & a_existed)
@@ -798,6 +864,10 @@ namespace Dg
       Node * pResult = m_pBuckets[ind].pBegin;
       if (pResult == nullptr)
       {
+        if (RehashIfOver())
+        {
+          return GetItem(a_key, a_existed);
+        }
         m_pBuckets[ind].pBegin = GetNewNode(a_key);
         pResult = m_pBuckets[ind].pBegin;
         a_existed = false;
@@ -817,15 +887,10 @@ namespace Dg
       }
 
       //Item does not exist
-      float newLoadFactor = static_cast<float>(m_nItems + 1) / m_bucketCountIndex;
-      if (newLoadFactor > m_maxLoadFactor)
+      if (RehashIfOver())
       {
-        if (m_bucketCountIndex != (ARRAY_SIZE(impl::validBucketCounts) - 1))
-        {
-          rehash(impl::validBucketCounts[m_bucketCountIndex + 1]);
-        }
+        return GetItem(a_key, a_existed);
       }
-
       pResult = GetNewNode(pResult, a_key);
       a_existed = false;
       return pResult;
@@ -917,6 +982,7 @@ namespace Dg
       m_pNextFree = m_pNextFree->pNext;
       pResult->pNext = nullptr;
       pResult->key = a_key;
+      m_nItems++;
       return pResult;
     }
 
@@ -925,7 +991,11 @@ namespace Dg
     {
       if (m_pNextFree->pNext == nullptr)
       {
+        //The pNode may become invalid once we extend, but it's
+        //index will not.
+        size_t nodeInd = pNode - m_pNodes;
         ExtendPool();
+        pNode = &m_pNodes[nodeInd];
       }
 
       Node * pResult = m_pNextFree;
@@ -933,6 +1003,7 @@ namespace Dg
       pNode->pNext = pResult;
       pResult->pNext = nullptr;
       pResult->key = a_key;
+      m_nItems++;
       return pResult;
     }
 
