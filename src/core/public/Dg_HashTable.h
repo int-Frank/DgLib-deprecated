@@ -19,7 +19,7 @@ namespace Dg
   template<typename K>
   size_t DefaultHasher(K key)
   {
-    return static_cast<size_t>(key) * 14695981039346656037;
+    return static_cast<size_t>(key);
   }
 
   namespace impl
@@ -442,6 +442,14 @@ namespace Dg
     }
 
     HashTable(HashTable const & a_other)
+      : m_pNodes(nullptr)
+      , m_pBuckets(nullptr)
+      , m_pNextFree(nullptr)
+      , m_poolSize(0)
+      , m_bucketCountIndex(s_invalidBucketIndex)
+      , m_nItems(0)
+      , m_fHasher(DefaultHasher)
+      , m_maxLoadFactor(s_defaultLF)
     {
       init(a_other);
     }
@@ -1017,7 +1025,6 @@ namespace Dg
       m_fHasher = a_other.m_fHasher;
       m_poolSize = a_other.m_poolSize;
       m_bucketCountIndex = a_other.m_bucketCountIndex;
-      m_nItems = a_other.m_nItems;
 
       InitArrays();
 

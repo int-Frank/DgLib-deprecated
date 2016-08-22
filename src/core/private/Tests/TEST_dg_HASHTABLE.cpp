@@ -63,7 +63,7 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
 
   //Have same items?
   std::list<C>::iterator l_it = a_list.begin();
-  while (l_it != a_list.end())
+  for (l_it; l_it != a_list.end(); ++l_it)
   {
     if (!a_ht.at(l_it->m))
     {
@@ -74,7 +74,7 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   //Make sure elments match, use interator++
   std::list<C> newList(a_list);
   Dg::HashTable<Key, C, true>::iterator it = a_ht.begin();
-  while (it != a_ht.end())
+  for(it; it != a_ht.end(); it++)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
     if (l_it == newList.end())
@@ -82,7 +82,6 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
       return __LINE__;
     }
     newList.erase(l_it);
-    it++;
   }
   if (newList.size() != 0)
   {
@@ -92,7 +91,7 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   //Make sure elments match, use iterator--
   newList = a_list;
   it = a_ht.end();
-  while (--it != a_ht.end())
+  for (it; --it != a_ht.end();)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
     if (l_it == newList.end())
@@ -109,7 +108,7 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   //Make sure elments match, use const_interator++
   newList = a_list;
   Dg::HashTable<Key, C, true>::const_iterator cit = a_ht.cbegin();
-  while (cit != a_ht.cend())
+  for (cit; cit != a_ht.cend(); cit++)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
     if (l_it == newList.end())
@@ -117,7 +116,6 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
       return __LINE__;
     }
     newList.erase(l_it);
-    it++;
   }
   if (newList.size() != 0)
   {
@@ -127,7 +125,7 @@ int Compare(Dg::HashTable<Key, C, true> a_ht, std::list<C> a_list)
   //Make sure elments match, use const_iterator--
   newList = a_list;
   cit = a_ht.cend();
-  while (--cit != a_ht.cend())
+  for (cit; --cit != a_ht.cend() ;)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
     if (l_it == newList.end())
@@ -218,11 +216,6 @@ TEST(Stack_dg_HashTable_pod, creation_dg_HashTable_pod)
   for (int i = 0; i < 100; ++i)
   {
     failLine = AddNewItem(i, ht, lst);
-    std::cout << "\n\n" << ht;
-    if (failLine)
-    {
-      std::cout << "\n\nFAIL: " << failLine;
-    }
     CHECK(failLine == 0);
   }
   failLine = Compare(ht, lst);
