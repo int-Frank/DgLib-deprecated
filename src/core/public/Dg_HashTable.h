@@ -589,7 +589,7 @@ namespace Dg
         {
           pNode->data.~T();
         }
-        new (&pNode->data) T();
+        new (&pNode->data) T(val);
       }
       else
       {
@@ -606,7 +606,7 @@ namespace Dg
       {
         if (!POD)
         {
-          new (&pNode->data) T();
+          new (&pNode->data) T(val);
         }
         else
         {
