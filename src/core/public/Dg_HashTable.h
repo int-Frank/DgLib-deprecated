@@ -802,7 +802,7 @@ namespace Dg
     //! system constraints or limitations on its library implementation.
     size_t max_size() const
     {
-      return size_t(0xFFFFFFFFFFFFFFFF) / sizeof(T);
+      return 0xFFFFFFFFFFFFFFFFLL / sizeof(T);
     }
 
     //! Sets the number of buckets in the container to a_bucketCount or more.
@@ -842,7 +842,7 @@ namespace Dg
     //! If n is lower than that, the function may have no effect.
     void reserve(size_t a_num)
     {
-      size_t bucketCount = static_cast<float>(a_num) / m_maxLoadFactor;
+      size_t bucketCount = static_cast<size_t>(static_cast<float>(a_num) / m_maxLoadFactor);
       if (bucketCount > bucket_count())
       {
         __rehash(bucketCount);

@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSystem", "ParticleSystem\ParticleSystem.vcxproj", "{052ABC9D-1140-46DD-A674-BE6D9387311A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TableGeneration", "TableGeneration\TableGeneration.vcxproj", "{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,14 @@ Global
 		{052ABC9D-1140-46DD-A674-BE6D9387311A}.Release|Win32.Build.0 = Release|Win32
 		{052ABC9D-1140-46DD-A674-BE6D9387311A}.Release|x64.ActiveCfg = Release|x64
 		{052ABC9D-1140-46DD-A674-BE6D9387311A}.Release|x64.Build.0 = Release|x64
+		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Debug|Win32.Build.0 = Debug|Win32
+		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Debug|x64.ActiveCfg = Debug|x64
+		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Debug|x64.Build.0 = Debug|x64
+		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Release|Win32.ActiveCfg = Release|Win32
+		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Release|Win32.Build.0 = Release|Win32
+		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Release|x64.ActiveCfg = Release|x64
+		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

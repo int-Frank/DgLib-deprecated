@@ -19,4 +19,23 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TableGenerator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TG_inverf.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TG_erf.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TG_HashTableBucketCounts.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="table.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

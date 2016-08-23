@@ -95,16 +95,16 @@ namespace Dg
   struct HighestSquare { static size_t const value; };
 
   //! Highest square number in an 64-bit number
-  template<> struct HighestSquare<64> { static uint64_t const value = uint64_t(0xFFFFFFFF) * 0xFFFFFFFF; };
+  template<> struct HighestSquare<64> { static uint64_t const value = 0xFFFFFFFFull * 0xFFFFFFFFull; };
 
   //! Highest square number in an 32-bit number
-  template<> struct HighestSquare<32> { static uint32_t const value = uint32_t(0xFFFF) * 0xFFFF; };
+  template<> struct HighestSquare<32> { static uint32_t const value = 0xFFFFu * 0xFFFFu; };
 
   //! Highest square number in an 16-bit number
-  template<> struct HighestSquare<16> { static uint16_t const value = uint16_t(0xFF) * 0xFF; };
+  template<> struct HighestSquare<16> { static uint16_t const value = 0xFF * 0xFF; };
 
   //! Highest square number in an 8-bit number
-  template<> struct HighestSquare<8> { static uint8_t const value = uint8_t(0xF) * 0xF; };
+  template<> struct HighestSquare<8> { static uint8_t const value = 0xF * 0xF; };
 
 
   //! Test to see if a number is prime
@@ -115,7 +115,7 @@ namespace Dg
     if (a_val <= 3) return true;
     if (a_val % 2 == 0 || a_val % 3 == 0) return false;
 
-    maxiSq = (a_val < HighestSquare<BitSize<T>>::value) ? a_val : HighestSquare<BitSize<T>>::value;
+    T maxiSq = (a_val < HighestSquare<BitSize<T>::value>::value) ? a_val : HighestSquare<BitSize<T>::value>::value;
     for (T i = 5; i*i < maxiSq; i += 6)
     {
       if (a_val % i == 0 || a_val % (i + 2) == 0)
