@@ -142,6 +142,7 @@
     <ClInclude Include="TG_inverf.h" />
     <ClInclude Include="TableGenerator.h" />
     <ClInclude Include="TG_HashTableBucketCounts.h" />
+    <ClInclude Include="TG_n_pow_i.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="table.txt" />

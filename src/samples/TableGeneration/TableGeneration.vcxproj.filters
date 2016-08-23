@@ -32,6 +32,9 @@
     <ClInclude Include="TG_HashTableBucketCounts.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="TG_n_pow_i.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="table.txt">
