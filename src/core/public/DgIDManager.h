@@ -94,7 +94,7 @@ namespace Dg
       T m_upper;
     };
     
-    list_pod<Interval>     m_intervals;
+    list_pod<Interval, true>     m_intervals;
     Interval               m_bounds;
   };
 
@@ -192,7 +192,7 @@ namespace Dg
       return static_cast<T>(0);
     }
  
-    list_pod<Interval>::iterator it = m_intervals.begin();
+    list_pod<Interval, true>::iterator it = m_intervals.begin();
     T result = it->m_lower;
     it->m_lower++;
     if (it->m_lower > it->m_upper)
@@ -216,7 +216,7 @@ namespace Dg
       return;
     }
 
-    list_pod<Interval>::iterator it = m_intervals.begin();
+    list_pod<Interval, true>::iterator it = m_intervals.begin();
     bool found = false;
     for (it; it != m_intervals.end(); ++it)
     {
@@ -236,7 +236,7 @@ namespace Dg
         }
         else
         {
-          list_pod<Interval>::iterator itp(it); --itp;
+          list_pod<Interval, true>::iterator itp(it); --itp;
           if (a_val == (itp->m_upper + static_cast<T>(1)))
           {
             itp->m_upper++;
@@ -285,7 +285,7 @@ namespace Dg
   template<typename T>
   bool IDManager<T>::MarkAsUsed(T a_val)
   {
-    list_pod<Interval>::iterator it = m_intervals.begin();
+    list_pod<Interval, true>::iterator it = m_intervals.begin();
     bool good = false;
     for (it; it != m_intervals.end(); ++it)
     {
@@ -330,7 +330,7 @@ namespace Dg
       return false;
     }
 
-    list_pod<Interval>::const_iterator it = m_intervals.cbegin();
+    list_pod<Interval, true>::const_iterator it = m_intervals.cbegin();
     for (it; it != m_intervals.cend(); ++it)
     {
       if (a_val <= it->m_upper)

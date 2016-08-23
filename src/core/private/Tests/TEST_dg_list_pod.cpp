@@ -4,7 +4,7 @@
 
 typedef int t;
 typedef std::list<t>       list;
-typedef Dg::list_pod<t>    DgList;
+typedef Dg::list_pod<t, true>    DgList;
 
 bool CheckState(list & a_list, DgList & a_dgList)
 {

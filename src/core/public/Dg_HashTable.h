@@ -8,10 +8,11 @@
 #ifndef DGHashTable
 #define DGHashTable
 
+#define DGHASHTABLE_ENABLE_OUTPUT
+
 #include <cstdlib>
 #include <cstring>
-#define DGHASHTABLE_OUTPUT
-#ifdef DGHASHTABLE_OUTPUT
+#ifdef DGHASHTABLE_ENABLE_OUTPUT
 #include <iostream>
 #endif
 #include "DgErrorHandler.h"
@@ -533,7 +534,6 @@ namespace Dg
     {
       if (this != &a_other)
       {
-        //Cleanup
         Wipe();
         init(a_other);
       }
@@ -798,11 +798,11 @@ namespace Dg
 
     //! Returns the maximum number of elements that the unordered_map container can have.
     //!
-    //! This is the maximum potential number of buckets the container can have due to 
+    //! This is the maximum potential number of elements the container can have due to 
     //! system constraints or limitations on its library implementation.
     size_t max_size() const
     {
-      return 0;
+      return size_t(0xFFFFFFFFFFFFFFFF) / sizeof(T);
     }
 
     //! Sets the number of buckets in the container to a_bucketCount or more.
@@ -831,9 +831,10 @@ namespace Dg
       }
     }
 
-    //!Request a capacity change
+    //! Request a capacity change.
     //! Sets the number of buckets in the container(bucket_count) to the most 
-    //! appropriate to contain at least a_num elements.
+    //! appropriate to contain at least a_num elements. The memory block reserved
+    //! for elements will also be extended to contain a_num elements.
     //!
     //! If a_num is greater than the current bucket_count multiplied by the max_load_factor, 
     //! the container's bucket_count is increased and a rehash is forced.
@@ -841,7 +842,20 @@ namespace Dg
     //! If n is lower than that, the function may have no effect.
     void reserve(size_t a_num)
     {
-
+      size_t bucketCount = static_cast<float>(a_num) / m_maxLoadFactor;
+      if (bucketCount > bucket_count())
+      {
+        __rehash(bucketCount);
+      }
+      if (a_num > m_poolSize)
+      {
+        size_t exp = 1;
+        while ((m_poolSize * (1 << exp)) < a_num)
+        {
+          exp++;
+        }
+        ExtendPool(exp);
+      }
     }
 
     //! Removes from the HashTable container a single element.
@@ -849,9 +863,8 @@ namespace Dg
     //! This effectively reduces the container size by 1.
     //!
     //! If not a POD, the element's destructor is called.
-    iterator erase(iterator const &)
+    iterator erase(iterator const & a_it)
     {
-
     }
 
     //! Removes from the HashTable container a single element.
@@ -934,7 +947,7 @@ namespace Dg
       return m_poolSize - total;
     }
 
-#ifdef DGHASHTABLE_OUTPUT
+#ifdef DGHASHTABLE_ENABLE_OUTPUT
     //! Output the HashTable for debugging.
     friend std::ostream & operator<<(std::ostream & os
                                    , HashTable<K, T, POD> const & ht) 
@@ -1002,11 +1015,13 @@ namespace Dg
     //! Extend the memory block reserved for elements (key, value).
     //! The order of nodes in the memory block wil NOT be changed.
     //! All indices to Nodes will remain valid.
-    void ExtendPool()
+    //!
+    //! @param[in] a_exp The memory block will be increased 2^a_exp
+    void ExtendPool(size_t a_exp = 1)
     {
       Node * pOldNodes = m_pNodes;
       size_t oldPoolSize = m_poolSize;
-      m_poolSize *= 2;
+      m_poolSize *= (size_t(1) << a_exp);
       m_pNodes = static_cast<Node*>(realloc(m_pNodes, m_poolSize * sizeof(Node)));
       DG_ASSERT((m_pNodes == nullptr) ? 0 : 1);
       //Reset node pointers

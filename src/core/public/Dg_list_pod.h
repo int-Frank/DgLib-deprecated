@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "DgErrorHandler.h"
+
 #define DG_CONTAINER_DEFAULT_SIZE 1024
 
 namespace Dg
@@ -29,21 +31,20 @@ namespace Dg
   //!
   //! @author Frank B. Hart
   //! @date 21/05/2016
-  template<typename T>
+  template<typename T, bool POD>
   class list_pod
   {
   private:
     
     //Container to hold the object and pointers
-	  struct DataContainer
+	  struct Node
 	  {
-		  DataContainer(): next(nullptr), previous(nullptr) {}
+		  Node(): pNext(nullptr), pPrev(nullptr) {}
 		
-		  DataContainer* next;
-		  DataContainer* previous;
+		  Node* pNext;
+		  Node* pPrev;
 
-      //TODO Maybe not store the data with the pointers.
-		  T element;
+		  T data;
 	  };
 
   public:
@@ -61,24 +62,24 @@ namespace Dg
 		
 	  private:
 		  //! Special constructor, not for external use
-		  const_iterator(DataContainer const * _ptr) {m_pData = _ptr;}
+		  const_iterator(Node const * _ptr) {m_pNode = _ptr;}
 
 	  public:
 
-		  const_iterator(): m_pData(nullptr) {}
+		  const_iterator(): m_pNode(nullptr) {}
 		  ~const_iterator(){}
 
 		  //! Copy constructor
-		  const_iterator(const_iterator const & it): m_pData(it.m_pData){}
+		  const_iterator(const_iterator const & it): m_pNode(it.m_pNode){}
 
       //! Assignment
 		  const_iterator& operator= (const_iterator const &);
 		
 		  //! Comparison.
-		  bool operator==(const_iterator const & it) const {return m_pData == it.m_pData;}
+		  bool operator==(const_iterator const & it) const {return m_pNode == it.m_pNode;}
 
       //! Comparison.
-		  bool operator!=(const_iterator const & it) const {return m_pData != it.m_pData;}
+		  bool operator!=(const_iterator const & it) const {return m_pNode != it.m_pNode;}
 
 		  //! Post increment
 		  const_iterator& operator++();
@@ -92,14 +93,14 @@ namespace Dg
       //! Pre decrement
 		  const_iterator operator--(int);
 
-		  //! Conversion. Returns pointer to element.
-		  T const * operator->() const {return &(m_pData->element);}
+		  //! Conversion. Returns pointer to data.
+		  T const * operator->() const {return &(m_pNode->data);}
 
-      //! Conversion. Returns reference to element.
-		  T const & operator*() const {return m_pData->element;}
+      //! Conversion. Returns reference to data.
+		  T const & operator*() const {return m_pNode->data;}
 
 	  private:
-		  DataContainer const * m_pData;
+		  Node const * m_pNode;
 
 	  };
 
@@ -116,24 +117,24 @@ namespace Dg
 
 	  private:
 		  //! Special constructor, not for external use
-		  iterator(DataContainer* _ptr) {m_pData = _ptr;}
+		  iterator(Node* _ptr) {m_pNode = _ptr;}
 
 	  public:
 
-		  iterator(): m_pData(nullptr) {}
+		  iterator(): m_pNode(nullptr) {}
 		  ~iterator(){}
 
 		  //! Copy constructor.
-		  iterator(iterator const & it): m_pData(it.m_pData){}
+		  iterator(iterator const & it): m_pNode(it.m_pNode){}
 		  
       //! Assignment.
       iterator& operator= (iterator const &);
 
 		  //! Comparison.
-		  bool operator==(iterator const & it) const {return m_pData == it.m_pData;}
+		  bool operator==(iterator const & it) const {return m_pNode == it.m_pNode;}
 
       //! Comparison.
-		  bool operator!=(iterator const & it) const {return m_pData != it.m_pData;}
+		  bool operator!=(iterator const & it) const {return m_pNode != it.m_pNode;}
 
 		  //! Post increment
 		  iterator& operator++();
@@ -148,16 +149,16 @@ namespace Dg
 		  iterator operator--(int);
 
 		  //! Conversion
-		  operator const_iterator() const {return const_iterator(m_pData);}
+		  operator const_iterator() const {return const_iterator(m_pNode);}
 
       //! Conversion
-		  T* operator->() const {return &(m_pData->element);}
+		  T* operator->() const {return &(m_pNode->data);}
 
       //! Conversion
-		  T& operator*() const {return m_pData->element;}
+		  T& operator*() const {return m_pNode->data;}
 
 	  private:
-		  DataContainer *m_pData;
+		  Node *m_pNode;
 
 	  };
 
@@ -179,94 +180,94 @@ namespace Dg
     //! Assignment
 	  list_pod & operator=(list_pod const &);
 
-	  //! Returns an iterator pointing to the first element in the list container.
+	  //! Returns an iterator pointing to the first data in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
     //! @return iterator
-	  iterator			  begin()		        {return iterator(m_rootContainer.next);}
+	  iterator			  begin()		        {return iterator(m_root.pNext);}
     
-    //! Returns an iterator referring to the <em>past-the-end</em> element in the list container.
+    //! Returns an iterator referring to the <em>past-the-end</em> data in the list container.
     //! This iterator shall not be dereferenced.
     //!
     //! @return iterator
-    iterator			  end()		          {return iterator(const_cast<DataContainer*>(&m_endContainer)); }
+    iterator			  end()		          {return iterator(const_cast<Node*>(&m_root)); }
 	  
-    //! Returns a const iterator pointing to the first element in the list container.
+    //! Returns a const iterator pointing to the first data in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
     //! @return const_iterator
-    const_iterator	cbegin()	  const {return const_iterator(m_rootContainer.next);}
+    const_iterator	cbegin()	  const {return const_iterator(m_root.pNext);}
     
-    //! Returns an iterator referring to the <em>past-the-end</em> element in the list container.
+    //! Returns an iterator referring to the <em>past-the-end</em> data in the list container.
     //! This iterator shall not be dereferenced.
     //!
     //! @return const_iterator
-    const_iterator	cend()		  const {return const_iterator(const_cast<DataContainer*>(&m_endContainer)); }
+    const_iterator	cend()		  const {return const_iterator(const_cast<Node*>(&m_root)); }
 	  
     //! Returns number of elements in the list.
-    size_t			    size()		  const {return m_currentSize;}
+    size_t			    size()		  const {return m_nItems;}
 	  
     //! Returns the maximum number of elements that can be held in the current allocated memory.
-    size_t 			    max_size()	const {return m_arraySize;}
+    size_t 			    max_size()	const {return m_poolSize;}
 
     //! Returns if the list is empty.
-	  bool 			      empty()		  const {return m_currentSize == 0;}
+	  bool 			      empty()		  const {return m_nItems == 0;}
 
-    //! Returns a reference to the last element in the list container.
+    //! Returns a reference to the last data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to data type
-    T &             back()	 	        { return m_endContainer.previous->element; }
+    T &             back()	 	        { return m_root.pPrev->data; }
      
-    //! Returns a reference to the first element in the list container.
+    //! Returns a reference to the first data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to data type
-    T &             front()		        { return m_rootContainer.next->element; }
+    T &             front()		        { return m_root.pNext->data; }
 
-    //! Returns a const reference to the last element in the list container.
+    //! Returns a const reference to the last data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to data type
-    T const &				back()		  const { return m_endContainer.previous->element; }
+    T const &				back()		  const { return m_root.pPrev->data; }
 
-    //! Returns a const reference to the first element in the list container.
+    //! Returns a const reference to the first data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to data type
-    T const &				front()		  const { return m_rootContainer.next->element; }
+    T const &				front()		  const { return m_root.pNext->data; }
 
-	  //! Add an element to the back of the list
+	  //! Add an data to the back of the list
     void push_back(T const &);
 
-    //! Add an element to the back of the list, but does not assign, nor
+    //! Add an data to the back of the list, but does not assign, nor
     //!	resize the array.
     //!
     //! @return false if allocated memory is full
 	  bool push_back();
 
-    //!Add an element to the front of the list
+    //!Add an data to the front of the list
     void push_front(T const &);
     
-    //! Add an element to the front of the list, but does not assign, nor
+    //! Add an data to the front of the list, but does not assign, nor
     //! resize the array.
     //!
     //! @return false if allocated memory is full
     bool push_front();
 
-    //! Add an element to the list at position. 
-    //! @return iterator to the newly inserted element
+    //! Add an data to the list at position. 
+    //! @return iterator to the newly inserted data
     iterator insert(iterator const &, T const &);
 
-    //! Erase last element
+    //! Erase last data
 	  void pop_back();
 
-    //! Erase last element
+    //! Erase last data
 	  void pop_front();
 
-    //! Erase an element from the list
-    //! @return An iterator pointing to the element that followed 
-    //!         the last element erased by the function call.
+    //! Erase an data from the list
+    //! @return An iterator pointing to the data that followed 
+    //!         the last data erased by the function call.
 	  iterator erase(iterator const &);
 	  
     //! Clear the list, retains allocated memory.
@@ -284,204 +285,198 @@ namespace Dg
 	  //Data members
 
 	  //Pre-allocated block of memory to hold elements
-	  DataContainer *m_data;
+	  Node *    m_pData;
 
 	  //Root and end objects, and pointers
-	  DataContainer m_rootContainer;
-	  DataContainer m_endContainer;
+    Node      m_root;
 
-	  //Next free element in the list;
-	  DataContainer* m_nextFree;		
+	  //Next free data in the list;
+	  Node *    m_pNextFree;		
 
 	  //Sizes
-	  size_t m_currentSize;
-	  size_t m_arraySize;
+	  size_t    m_nItems;
+	  size_t    m_poolSize;
 
   };
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::iterator::operator=()
+  //	@	list_pod<T, POD>::iterator::operator=()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::iterator& list_pod<T>::iterator::operator=
-	  (typename list_pod<T>::iterator const & other)
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::iterator& list_pod<T, POD>::iterator::operator=
+	  (typename list_pod<T, POD>::iterator const & other)
   {
-	  m_pData = other.m_pData;
+	  m_pNode = other.m_pNode;
 
 	  return *this;
-  }	//End:: list_pod<T>::iterator::operator=()
+  }	//End:: list_pod<T, POD>::iterator::operator=()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::iterator::operator++()
+  //	@	list_pod<T, POD>::iterator::operator++()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::iterator& list_pod<T>::iterator::operator++()
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::iterator& list_pod<T, POD>::iterator::operator++()
   {
-	  m_pData = m_pData->next;
+	  m_pNode = m_pNode->pNext;
 
 	  return *this;
-  }	//End: list_pod<T>::iterator::operator++()
+  }	//End: list_pod<T, POD>::iterator::operator++()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::iterator::operator++()
+  //	@	list_pod<T, POD>::iterator::operator++()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::iterator list_pod<T>::iterator::operator++(int)
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::iterator list_pod<T, POD>::iterator::operator++(int)
   {
 	  iterator result(*this);	// make a copy for result
       ++(*this);              // Now use the prefix version to do the work
       return result;			// return the copy (the old) value.
 
-  }	//End: list_pod<T>::iterator::operator++()
+  }	//End: list_pod<T, POD>::iterator::operator++()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::iterator::operator--()
+  //	@	list_pod<T, POD>::iterator::operator--()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::iterator& list_pod<T>::iterator::operator--()
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::iterator& list_pod<T, POD>::iterator::operator--()
   {
-	  m_pData = m_pData->previous;
+	  m_pNode = m_pNode->pPrev;
 
 	  return *this;
 
-  }	//End: list_pod<T>::iterator::operator++()
+  }	//End: list_pod<T, POD>::iterator::operator++()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::iterator::operator--()
+  //	@	list_pod<T, POD>::iterator::operator--()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::iterator list_pod<T>::iterator::operator--(int)
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::iterator list_pod<T, POD>::iterator::operator--(int)
   {
 	  iterator result(*this);	// make a copy for result
       --(*this);              // Now use the prefix version to do the work
       return result;			// return the copy (the old) value.
 
-  }	//End: list_pod<T>::iterator::operator--()
+  }	//End: list_pod<T, POD>::iterator::operator--()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::const_iterator::operator=()
+  //	@	list_pod<T, POD>::const_iterator::operator=()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::const_iterator& list_pod<T>::const_iterator::operator=
-	  (typename list_pod<T>::const_iterator const & other)
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::const_iterator& list_pod<T, POD>::const_iterator::operator=
+	  (typename list_pod<T, POD>::const_iterator const & other)
   {
-	  m_pData = other.m_pData;
+	  m_pNode = other.m_pNode;
 
 	  return *this;
 
-  }	//End::list_pod<T>::const_iterator::operator=()
+  }	//End::list_pod<T, POD>::const_iterator::operator=()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::const_iterator::operator++()
+  //	@	list_pod<T, POD>::const_iterator::operator++()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::const_iterator& list_pod<T>::const_iterator::operator++()
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::const_iterator& list_pod<T, POD>::const_iterator::operator++()
   {
-	  m_pData = m_pData->next;
+	  m_pNode = m_pNode->pNext;
 
 	  return *this;
 
-  }	//End: list_pod<T>::const_iterator::operator++()
+  }	//End: list_pod<T, POD>::const_iterator::operator++()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::const_iterator::operator=()
+  //	@	list_pod<T, POD>::const_iterator::operator=()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::const_iterator list_pod<T>::const_iterator::operator++(int)
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::const_iterator list_pod<T, POD>::const_iterator::operator++(int)
   {
 	  const_iterator result(*this);	// make a copy for result
       ++(*this);              // Now use the prefix version to do the work
       return result;			// return the copy (the old) value.
 
-  }	//End: list_pod<T>::const_iterator::operator++()
+  }	//End: list_pod<T, POD>::const_iterator::operator++()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::const_iterator::operator--()
+  //	@	list_pod<T, POD>::const_iterator::operator--()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::const_iterator& list_pod<T>::const_iterator::operator--()
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::const_iterator& list_pod<T, POD>::const_iterator::operator--()
   {
-	  m_pData = m_pData->previous;
+	  m_pNode = m_pNode->pPrev;
 
 	  return *this;
 
-  }	//End: list_pod<T>::const_iterator::operator--()
+  }	//End: list_pod<T, POD>::const_iterator::operator--()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::const_iterator::operator--()
+  //	@	list_pod<T, POD>::const_iterator::operator--()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::const_iterator list_pod<T>::const_iterator::operator--(int)
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::const_iterator list_pod<T, POD>::const_iterator::operator--(int)
   {
 	  const_iterator result(*this);	// make a copy for result
       --(*this);              // Now use the prefix version to do the work
       return result;			// return the copy (the old) value.
 
-  }	//End: list_pod<T>::const_iterator::operator--()
+  }	//End: list_pod<T, POD>::const_iterator::operator--()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::init()
+  //	@	list_pod<T, POD>::init()
   //--------------------------------------------------------------------------------
-  template<class T>
-  void list_pod<T>::init(size_t a_size) 
+  template<typename T, bool POD>
+  void list_pod<T, POD>::init(size_t a_size) 
   {
-    DataContainer * tempPtr = static_cast<DataContainer *>(realloc(m_data, a_size * sizeof(DataContainer)));
+    m_pData = static_cast<Node *>(realloc(m_pData, a_size * sizeof(Node)));
 
-    if (tempPtr == nullptr)
-    {
-      //TODO
-    }
-
-    m_data = tempPtr;
+    DG_ASSERT((m_pData == nullptr) ? 0 : 1);
 
 	  //Assign sizes
-    m_arraySize = a_size;
-	  m_currentSize = 0;
+    m_poolSize = a_size;
+	  m_nItems = 0;
 
-	  //Initialise m_data
-	  m_nextFree = &m_data[0];
+	  //Initialise m_pData
+	  m_pNextFree = &m_pData[0];
 
 	  //Set outer container pointers
-    m_rootContainer.next = &m_endContainer;
-    m_endContainer.previous = &m_rootContainer;
+    m_root.pNext = &m_root;
+    m_root.pPrev = &m_root;
 
 	  //Only need to assign forward pointers
-	  for (size_t i = 0; i < m_arraySize-1; i++)
+	  for (size_t i = 0; i < m_poolSize-1; i++)
 	  {
-		  m_data[i].next = &m_data[i+1];
+		  m_pData[i].pNext = &m_pData[i+1];
 	  }
 
   }	//End: list_pod::init()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::list_pod<T>()
+  //	@	list_pod<T, POD>::list_pod<T, POD>()
   //--------------------------------------------------------------------------------
-  template<class T>
-  list_pod<T>::list_pod() : m_data(nullptr), m_nextFree(nullptr)
+  template<typename T, bool POD>
+  list_pod<T, POD>::list_pod() : m_pData(nullptr), m_pNextFree(nullptr)
   {
-	  //Set m_data
+	  //Set m_pData
 	  init(DG_CONTAINER_DEFAULT_SIZE);
 
   }	//End: list_pod::list_pod()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::list_pod<T>()
+  //	@	list_pod<T, POD>::list_pod<T, POD>()
   //--------------------------------------------------------------------------------
-  template<class T>
-  list_pod<T>::list_pod(size_t a_size): m_data(nullptr), m_nextFree(nullptr)
+  template<typename T, bool POD>
+  list_pod<T, POD>::list_pod(size_t a_size): m_pData(nullptr), m_pNextFree(nullptr)
   {
 	  //Set up the list
     init(a_size);
@@ -490,27 +485,27 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::~list_pod<T>()
+  //	@	list_pod<T, POD>::~list_pod<T, POD>()
   //--------------------------------------------------------------------------------
-  template<class T>
-  list_pod<T>::~list_pod()
+  template<typename T, bool POD>
+  list_pod<T, POD>::~list_pod()
   {
-    free(m_data);
+    free(m_pData);
 
   }	//End: list_pod::~list_pod()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::list_pod<T>()
+  //	@	list_pod<T, POD>::list_pod<T, POD>()
   //--------------------------------------------------------------------------------
-  template<class T>
-  list_pod<T>::list_pod(list_pod const & other)
+  template<typename T, bool POD>
+  list_pod<T, POD>::list_pod(list_pod const & other)
   {
-	  //Initialise m_data
-	  init(other.m_arraySize);
+	  //Initialise m_pData
+	  init(other.m_poolSize);
 
-	  //Assign m_data
-	  list_pod<T>::const_iterator it = other.cbegin();
+	  //Assign m_pData
+	  list_pod<T, POD>::const_iterator it = other.cbegin();
 	  for (it; it != other.cend(); ++it)
 	  {
 		  push_back(*it);
@@ -520,19 +515,19 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::operator=()
+  //	@	list_pod<T, POD>::operator=()
   //--------------------------------------------------------------------------------
-  template<class T>
-  list_pod<T>& list_pod<T>::operator=(list_pod const & other)
+  template<typename T, bool POD>
+  list_pod<T, POD>& list_pod<T, POD>::operator=(list_pod const & other)
   {
 	  if (this == &other)
 		  return *this;
 
 	  //resize array
-	  resize(other.m_arraySize);
+	  resize(other.m_poolSize);
 
-	  //Assign m_data
-	  list_pod<T>::const_iterator it = other.cbegin();
+	  //Assign m_pData
+	  list_pod<T, POD>::const_iterator it = other.cbegin();
 	  for (it; it != other.cend(); ++it)
 	  {
 		  push_back(*it);
@@ -543,102 +538,102 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::clear()
+  //	@	list_pod<T, POD>::clear()
   //--------------------------------------------------------------------------------
-  template<class T>
-  void list_pod<T>::clear()
+  template<typename T, bool POD>
+  void list_pod<T, POD>::clear()
   {
-	  //Reset next free
-	  m_nextFree = &m_data[0];
+	  //Reset pNext free
+	  m_pNextFree = &m_pData[0];
 
 	  //Set outer container pointers
-    m_rootContainer.next = &m_endContainer;
-    m_endContainer.previous = &m_rootContainer;
+    m_root.pNext = &m_root;
+    m_root.pPrev = &m_root;
 
-	  //close the last element in the list
-	  m_data[m_arraySize-1].next = nullptr;
+	  //close the last data in the list
+	  m_pData[m_poolSize-1].pNext = nullptr;
 
 	  //Assign pointers
-	  for (size_t i = 0; i < m_arraySize-1; i++)
+	  for (size_t i = 0; i < m_poolSize-1; i++)
 	  {
-		  m_data[i].next = &m_data[i+1];
+		  m_pData[i].pNext = &m_pData[i+1];
 	  }
 
-	  m_currentSize = 0;
+	  m_nItems = 0;
 
-  }	//End: list_pod<T>::clear()
+  }	//End: list_pod<T, POD>::clear()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::resize()
+  //	@	list_pod<T, POD>::resize()
   //--------------------------------------------------------------------------------
-  template<class T>
-  void list_pod<T>::resize(size_t a_newSize)
+  template<typename T, bool POD>
+  void list_pod<T, POD>::resize(size_t a_newSize)
   {
 	  //Size must be at least 1
     if (a_newSize == 0) a_newSize = 1;
 
-	  //Initialise m_data
+	  //Initialise m_pData
 	  init(a_newSize);
 
-  }	//End: list_pod<T>::resize()
+  }	//End: list_pod<T, POD>::resize()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::push_back()
+  //	@	list_pod<T, POD>::push_back()
   //--------------------------------------------------------------------------------
-  template<class T>
-  void list_pod<T>::push_back(T const & a_item)
+  template<typename T, bool POD>
+  void list_pod<T, POD>::push_back(T const & a_item)
   {
 	  //Is the list full?
-	  if (m_currentSize == m_arraySize)
+	  if (m_nItems == m_poolSize)
 		  extend();
 
 	  //Get the list node to work on
-	  DataContainer *new_element = m_nextFree;
+	  Node *new_element = m_pNextFree;
 	
-	  //Move m_nextFree pointer to the next DataContainer
-	  m_nextFree = m_nextFree->next;
+	  //Move m_pNextFree pointer to the pNext Node
+	  m_pNextFree = m_pNextFree->pNext;
 
-	  //Assign the element
-    memcpy(&new_element->element, &a_item, sizeof(T));
+	  //Assign the data
+    memcpy(&new_element->data, &a_item, sizeof(T));
 
-	  //Add the current element to the back of the active list
-	  m_endContainer.previous->next = new_element;
-	  new_element->previous = m_endContainer.previous;
-    new_element->next = &m_endContainer;
-	  m_endContainer.previous = new_element;
+	  //Add the current data to the back of the active list
+	  m_root.pPrev->pNext = new_element;
+	  new_element->pPrev = m_root.pPrev;
+    new_element->pNext = &m_root;
+	  m_root.pPrev = new_element;
 
-	  //Increment m_currentSize
-	  m_currentSize++;
+	  //Increment m_nItems
+	  m_nItems++;
 
   }	//End: list_pod::push_back()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::push_back()
+  //	@	list_pod<T, POD>::push_back()
   //--------------------------------------------------------------------------------
-  template<class T>
-  bool list_pod<T>::push_back()
+  template<typename T, bool POD>
+  bool list_pod<T, POD>::push_back()
   {
 	  //Is the list full?
-	  if (m_currentSize == m_arraySize)
+	  if (m_nItems == m_poolSize)
 		  return false;
 
 	  //Get the list node to work on
-	  DataContainer *new_element = m_nextFree;
+	  Node *new_element = m_pNextFree;
 
-	  //Move m_nextFree pointer to the next DataContainer
-	  m_nextFree = m_nextFree->next;
+	  //Move m_pNextFree pointer to the pNext Node
+	  m_pNextFree = m_pNextFree->pNext;
 
-	  //Add the current element to the back of the active list
-	  m_endContainer.previous->next = new_element;
-	  new_element->previous = m_endContainer.previous;
-    new_element->next = &m_endContainer;
-	  m_endContainer.previous = new_element;
+	  //Add the current data to the back of the active list
+    m_root.pPrev->pNext = new_element;
+    new_element->pPrev = m_root.pPrev;
+    new_element->pNext = &m_root;
+    m_root.pPrev = new_element;
 
-	  //Increment m_currentSize
-	  m_currentSize++;
+	  //Increment m_nItems
+	  m_nItems++;
 
 	  return true;
 
@@ -646,29 +641,29 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::push_front()
+  //	@	list_pod<T, POD>::push_front()
   //--------------------------------------------------------------------------------
-  template<class T>
-  bool list_pod<T>::push_front()
+  template<typename T, bool POD>
+  bool list_pod<T, POD>::push_front()
   {
       //Is the list full?
-      if (m_currentSize == m_arraySize)
+      if (m_nItems == m_poolSize)
           return false;
 
       //Get the list node to work on
-      DataContainer *new_element = m_nextFree;
+      Node *new_element = m_pNextFree;
 
-      //Move m_nextFree pointer to the next DataContainer
-      m_nextFree = m_nextFree->next;
+      //Move m_pNextFree pointer to the pNext Node
+      m_pNextFree = m_pNextFree->pNext;
 
-      //Add the current element to the back of the active list
-      m_rootContainer.next->previous = new_element;
-      new_element->previous = &m_rootContainer;
-      new_element->next = m_rootContainer.next;
-      m_rootContainer.next = new_element;
+      //Add the current data to the back of the active list
+      m_root.pNext->pPrev = new_element;
+      new_element->pPrev = &m_root;
+      new_element->pNext = m_root.pNext;
+      m_root.pNext = new_element;
 
-      //Increment m_currentSize
-      m_currentSize++;
+      //Increment m_nItems
+      m_nItems++;
 
       return true;
 
@@ -676,115 +671,115 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::push_front()
+  //	@	list_pod<T, POD>::push_front()
   //--------------------------------------------------------------------------------
-  template<class T>
-  void list_pod<T>::push_front(T const & a_item)
+  template<typename T, bool POD>
+  void list_pod<T, POD>::push_front(T const & a_item)
   {
 	  //Is the list full?
-	  if (m_currentSize == m_arraySize)
+	  if (m_nItems == m_poolSize)
 		  extend();
 
 	  //Get the list node to work on
-	  DataContainer *new_element = m_nextFree;
+	  Node *new_element = m_pNextFree;
 	
-	  //Move m_nextFree pointer to the next DataContainer
-	  m_nextFree = m_nextFree->next;
+	  //Move m_pNextFree pointer to the pNext Node
+	  m_pNextFree = m_pNextFree->pNext;
 
-	  //Assign the element
-    memcpy(&new_element->element, &a_item, sizeof(T));
+	  //Assign the data
+    memcpy(&new_element->data, &a_item, sizeof(T));
 
-	  //Add the current element to the back of the active list
-	  m_rootContainer.next->previous = new_element;
-	  new_element->previous = &m_rootContainer;
-	  new_element->next = m_rootContainer.next;
-	  m_rootContainer.next = new_element;
+	  //Add the current data to the back of the active list
+    m_root.pNext->pPrev = new_element;
+    new_element->pPrev = &m_root;
+    new_element->pNext = m_root.pNext;
+    m_root.pNext = new_element;
 
-	  //Increment m_currentSize
-	  m_currentSize++;
+	  //Increment m_nItems
+	  m_nItems++;
 
   }	//End: list_pod::push_front()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::pop_back()
+  //	@	list_pod<T, POD>::pop_back()
   //--------------------------------------------------------------------------------
-  template<class T>
-  void list_pod<T>::pop_back()
+  template<typename T, bool POD>
+  void list_pod<T, POD>::pop_back()
   {
 	  //Range check
-    if (m_currentSize == 0) return;
+    if (m_nItems == 0) return;
 	
-	  //Get new last element
-    DataContainer* last = m_endContainer.previous->previous;
+	  //Get new last data
+    Node* last = m_root.pPrev->pPrev;
 
-	  //Assign next free
-	  m_endContainer.previous->next = m_nextFree;
-	  m_nextFree = m_endContainer.previous;
+	  //Assign pNext free
+	  m_root.pPrev->pNext = m_pNextFree;
+	  m_pNextFree = m_root.pPrev;
 
-	  //Break element from chain
-    last->next = &m_endContainer;			//prev points to next
-	  m_endContainer.previous = last;	//next points to previous
+	  //Break data from chain
+    last->pNext = &m_root;			//prev points to pNext
+	  m_root.pPrev = last;	//pNext points to pPrev
 
-	  //Deincrement m_currentSize
-	  m_currentSize--;
+	  //Deincrement m_nItems
+	  m_nItems--;
 
   }	//End: list_pod::pop_back()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::pop_front()
+  //	@	list_pod<T, POD>::pop_front()
   //--------------------------------------------------------------------------------
-  template<class T>
-  void list_pod<T>::pop_front()
+  template<typename T, bool POD>
+  void list_pod<T, POD>::pop_front()
   {
 	  //Range check
-    if (m_currentSize == 0) return;
+    if (m_nItems == 0) return;
 	
-	  //Get new first element
-    DataContainer* first = m_rootContainer.next->next;
+	  //Get new first data
+    Node* first = m_root.pNext->pNext;
 
-	  //Assign next free
-	  m_rootContainer.next->next = m_nextFree;
-	  m_nextFree = m_rootContainer.next;
+	  //Assign pNext free
+	  m_root.pNext->pNext = m_pNextFree;
+	  m_pNextFree = m_root.pNext;
 
-	  //Break element from chain
-    first->previous = &m_rootContainer;		//prev points to next
-	  m_rootContainer.next = first;	//next points to previous
+	  //Break data from chain
+    first->pPrev = &m_root;		//prev points to pNext
+	  m_root.pNext = first;	//pNext points to pPrev
 
-	  //Deincrement m_currentSize
-	  m_currentSize--;
+	  //Deincrement m_nItems
+	  m_nItems--;
 
   }	//End: list_pod::pop_front()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::insert()
+  //	@	list_pod<T, POD>::insert()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::iterator list_pod<T>::insert(typename list_pod<T>::iterator const & it, T const & a_item)
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::iterator list_pod<T, POD>::insert(typename list_pod<T, POD>::iterator const & it, T const & a_item)
   {
 	  //Is the list full?
-	  if (m_currentSize == m_arraySize)
+	  if (m_nItems == m_poolSize)
 		  extend();
 	
 	  //Get the list node to work on
-	  DataContainer *new_element = m_nextFree;
+	  Node *new_element = m_pNextFree;
 	
-	  //Move m_nextFree pointer to the next DataContainer
-	  m_nextFree = m_nextFree->next;
+	  //Move m_pNextFree pointer to the pNext Node
+	  m_pNextFree = m_pNextFree->pNext;
 
-	  //Insert next free
-	  it.m_pData->previous->next = new_element;
-	  new_element->previous = it.m_pData->previous;
-	  it.m_pData->previous = new_element;
-	  new_element->next = it.m_pData;
+	  //Insert pNext free
+	  it.m_pNode->pPrev->pNext = new_element;
+	  new_element->pPrev = it.m_pNode->pPrev;
+	  it.m_pNode->pPrev = new_element;
+	  new_element->pNext = it.m_pNode;
 
-	  //Set the element
-    memcpy(&new_element->element, &a_item, sizeof(T));
+	  //Set the data
+    memcpy(&new_element->data, &a_item, sizeof(T));
 
-	  //Increment m_currentSize
-	  m_currentSize++;
+	  //Increment m_nItems
+	  m_nItems++;
 
     return iterator(new_element);
 
@@ -792,49 +787,49 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::erase()
+  //	@	list_pod<T, POD>::erase()
   //--------------------------------------------------------------------------------
-  template<class T>
-  typename list_pod<T>::iterator list_pod<T>::erase(typename list_pod<T>::iterator const & it)
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::iterator list_pod<T, POD>::erase(typename list_pod<T, POD>::iterator const & it)
   {
-	  //Remember previous element
-	  DataContainer* next = it.m_pData->next;
+	  //Remember pPrev data
+	  Node* pNext = it.m_pNode->pNext;
 
-	  //Break element from chain
-	  it.m_pData->previous->next = it.m_pData->next;		//prev points to next
-	  it.m_pData->next->previous = it.m_pData->previous;	//next points to previous
+	  //Break data from chain
+	  it.m_pNode->pPrev->pNext = it.m_pNode->pNext;		//prev points to pNext
+	  it.m_pNode->pNext->pPrev = it.m_pNode->pPrev;	//pNext points to pPrev
 
 	  //Add this broken item to the begining of the free list
-	  it.m_pData->next = m_nextFree;				//put item in between m_nextFree and end of the list
+	  it.m_pNode->pNext = m_pNextFree;				//put item in between m_pNextFree and end of the list
 	
-	  //Reset m_nextFree
-	  m_nextFree = it.m_pData;
+	  //Reset m_pNextFree
+	  m_pNextFree = it.m_pNode;
 	
-	  //Deincrement m_currentSize
-	  m_currentSize--;
+	  //Deincrement m_nItems
+	  m_nItems--;
 
-	  //Return iterator to the next container
-	  return iterator(next);
+	  //Return iterator to the pNext container
+	  return iterator(pNext);
 
   }	//End: list_pod::erase()
 
 
   //--------------------------------------------------------------------------------
-  //	@	list_pod<T>::extend()
+  //	@	list_pod<T, POD>::extend()
   //--------------------------------------------------------------------------------
-  template<class T>
-  void list_pod<T>::extend()
+  template<typename T, bool POD>
+  void list_pod<T, POD>::extend()
   {
 	  //Calculate new size
-	  size_t new_size = m_arraySize << 1;
+	  size_t new_size = m_poolSize << 1;
 	
-    if (new_size < m_arraySize)
+    if (new_size < m_poolSize)
     {
       //TODO
     }
 
 	  //Create new array
-	  DataContainer* new_data = static_cast<DataContainer *>(malloc(new_size * sizeof(DataContainer)));
+	  Node* new_data = static_cast<Node *>(malloc(new_size * sizeof(Node)));
 
     if (new_data == nullptr)
     {
@@ -844,45 +839,45 @@ namespace Dg
 	  //Assign pointers
 	  for (size_t i = 0; i < new_size-1; i++)
 	  {
-		  new_data[i].next = &new_data[i+1];
+		  new_data[i].pNext = &new_data[i+1];
 	  }
-	  for (size_t i = 1; i < m_currentSize; i++)
+	  for (size_t i = 1; i < m_nItems; i++)
 	  {
-		  new_data[i].previous = &new_data[i-1];
+		  new_data[i].pPrev = &new_data[i-1];
 	  }
 
 	  //Assign values
 	  iterator it = begin();
 	  for (size_t i = 0; it != end(); ++it, ++i)
 	  {
-		  new_data[i].element = *it;
+		  new_data[i].data = *it;
 	  }
 
-	  //Assign m_data pointer
-	  free(m_data);
-	  m_data = new_data;
+	  //Assign m_pData pointer
+	  free(m_pData);
+	  m_pData = new_data;
 	
-	  //Assign next free pointer
-	  m_nextFree = &new_data[m_currentSize];
+	  //Assign pNext free pointer
+	  m_pNextFree = &new_data[m_nItems];
 	
 	  //Adjust sizes
-	  m_arraySize = new_size;
+	  m_poolSize = new_size;
 
 	  //Determine root and end pointers
-	  if (m_currentSize == 0)
+	  if (m_nItems == 0)
 	  {
-      m_rootContainer.next = &m_endContainer;
-      m_endContainer.previous = &m_rootContainer;
+      m_root.pNext = &m_root;
+      m_root.pPrev = &m_root;
 	  }
 	  else
 	  {
-		  m_rootContainer.next = &m_data[0];
-		  m_endContainer.previous = &m_data[m_currentSize-1];
-      new_data[0].previous = &m_rootContainer;
-      new_data[m_currentSize - 1].next = &m_endContainer;
+		  m_root.pNext = &m_pData[0];
+		  m_root.pPrev = &m_pData[m_nItems-1];
+      new_data[0].pPrev = &m_root;
+      new_data[m_nItems - 1].pNext = &m_root;
 	  }
 	
-  }	//End: list_pod<T>::extend()
+  }	//End: list_pod<T, POD>::extend()
 
 
   //--------------------------------------------------------------------------------
@@ -899,10 +894,10 @@ namespace Dg
   //!
   //! @return Iterator pointing to the val in the list_pod. If no item was found,
   //!         will return last.
-  template<class T>
-  typename list_pod<T>::iterator find (
-	  typename list_pod<T>::iterator first, 
-	  typename list_pod<T>::iterator last, 
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::iterator find (
+	  typename list_pod<T, POD>::iterator first, 
+	  typename list_pod<T, POD>::iterator last, 
 	  T const & val)
   {
     while (first!=last) 
@@ -928,10 +923,10 @@ namespace Dg
   //!
   //! @return Iterator pointing to the val in the list_pod. If no item was found,
   //!         will return last.
-  template<class T>
-  typename list_pod<T>::const_iterator find (
-	  typename list_pod<T>::const_iterator first, 
-	  typename list_pod<T>::const_iterator last, 
+  template<typename T, bool POD>
+  typename list_pod<T, POD>::const_iterator find (
+	  typename list_pod<T, POD>::const_iterator first, 
+	  typename list_pod<T, POD>::const_iterator last, 
 	  T const & val)
   {
     while (first!=last) 

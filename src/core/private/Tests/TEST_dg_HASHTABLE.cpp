@@ -235,10 +235,6 @@ TEST(Stack_dg_HashTable, creation_dg_HashTable)
   for (int i = 0; i < 100; ++i)
   {
     failLine = AddNewItem(i, ht, lst);
-    if (failLine)
-    {
-      char df = 0;
-    }
     CHECK(failLine == 0);
   }
   failLine = Compare(ht, lst);
