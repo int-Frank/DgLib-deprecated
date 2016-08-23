@@ -59,9 +59,12 @@ namespace Dg
     };
   }
 
-  //! @ ingroup DgContainers
+  //! @ingroup DgContainers
   //! 
-  //! Taken directly from http://www.cplusplus.com/reference/unordered_map/unordered_map/
+  //! Much of this documentation is taken directly from 
+  //! http://www.cplusplus.com/reference/unordered_map/unordered_map/
+  //! as these containers share a lot of the same functions.
+  //!
   //! HashTables are associative containers that store elements formed by 
   //! the combination of a key value and a mapped value, and which allows for 
   //! fast retrieval of individual elements based on their keys.
@@ -530,6 +533,8 @@ namespace Dg
     {
       if (this != &a_other)
       {
+        //Cleanup
+        Wipe();
         init(a_other);
       }
       return *this;
@@ -725,7 +730,7 @@ namespace Dg
     //! The load factor is the ratio between the number of elements in the 
     //! container(its size) and the number of buckets(bucket_count) :
     //!
-    //! @code load_factor = size / bucket_count
+    //!     load_factor = size / bucket_count
     //!
     //! The load factor influences the probability of collision in the HashTable
     //! (i.e., the probability of two elements being located in the same bucket).
@@ -745,7 +750,7 @@ namespace Dg
     //! The load factor is the ratio between the number of elements in the 
     //! container(its size) and the number of buckets(bucket_count) :
     //!
-    //! @code load_factor = size / bucket_count
+    //!     load_factor = size / bucket_count
     //!
     //! The load factor influences the probability of collision in the HashTable
     //! (i.e., the probability of two elements being located in the same bucket).
@@ -764,7 +769,7 @@ namespace Dg
     //! The load factor is the ratio between the number of elements in the 
     //! container(its size) and the number of buckets(bucket_count) :
     //!
-    //! @code load_factor = size / bucket_count
+    //!     load_factor = size / bucket_count
     //!
     //! The load factor influences the probability of collision in the HashTable
     //! (i.e., the probability of two elements being located in the same bucket).
@@ -797,7 +802,7 @@ namespace Dg
     //! system constraints or limitations on its library implementation.
     size_t max_size() const
     {
-      return 0x8000000000000000 / sizeof(Node);
+      return 0;
     }
 
     //! Sets the number of buckets in the container to a_bucketCount or more.
@@ -843,7 +848,7 @@ namespace Dg
     //!
     //! This effectively reduces the container size by 1.
     //!
-    //! If not a POD, the lement's destructor is called.
+    //! If not a POD, the element's destructor is called.
     iterator erase(iterator const &)
     {
 
@@ -853,7 +858,7 @@ namespace Dg
     //!
     //! This effectively reduces the container size by 1.
     //!
-    //! If not a POD, the lement's destructor is called.
+    //! If not a POD, the element's destructor is called.
     void erase(K a_key)
     {
       size_t ind(m_fHasher(a_key));
@@ -893,6 +898,10 @@ namespace Dg
     //! Returns the number of buckets in the HashTable.
     size_t bucket_count() const
     {
+      if (m_bucketCountIndex < 0)
+      {
+        return 0;
+      }
       return impl::validBucketCounts[m_bucketCountIndex];
     }
 
@@ -1237,12 +1246,9 @@ namespace Dg
       return pResult;
     }
 
-    // Initialise node from other.
+    // Initialise a zeroed HashTable from other.
     void init(HashTable const & a_other)
     {
-      //Cleanup
-      Wipe();
-
       //Assign values
       m_maxLoadFactor = a_other.m_maxLoadFactor;
       m_fHasher = a_other.m_fHasher;

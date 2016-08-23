@@ -1,4 +1,4 @@
-//! @file DgTIFrustumSphere.h
+//! @file DgQueryFrustumSphere.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
