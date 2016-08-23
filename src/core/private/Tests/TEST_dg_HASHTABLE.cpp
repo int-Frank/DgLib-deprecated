@@ -224,10 +224,6 @@ TEST(Stack_dg_HashTable_pod, creation_dg_HashTable_pod)
     CHECK(failLine == 0);
   }
   failLine = Compare(ht, lst);
-  if (failLine)
-  {
-    std::cout << "\n\nFAIL: " << failLine;
-  }
   CHECK(failLine == 0);
 }
 
@@ -246,9 +242,5 @@ TEST(Stack_dg_HashTable, creation_dg_HashTable)
     CHECK(failLine == 0);
   }
   failLine = Compare(ht, lst);
-  if (failLine)
-  {
-    std::cout << "\n\nFAIL: " << failLine;
-  }
   CHECK(failLine == 0);
 }

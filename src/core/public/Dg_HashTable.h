@@ -1,3 +1,10 @@
+//! @file Dg_HashTable.h
+//!
+//! @author Frank Hart
+//! @date 22/08/2016
+//!
+//! Class declaration: HashTable
+
 #ifndef DGHashTable
 #define DGHashTable
 
@@ -16,6 +23,11 @@ namespace Dg
   template<typename K>
   using fHasher = size_t(*)(K);
 
+  //! @ingroup DgContainers_functions
+  //!
+  //! The default hasher simply returns the key cast to a size_t. 
+  //! In a the table, the result will be modded against the (prime)
+  //! number of buckets. 
   template<typename K>
   size_t DefaultHasher(K key)
   {
@@ -24,6 +36,8 @@ namespace Dg
 
   namespace impl
   {
+    //! An array listing possible values for the number of buckets.
+    //! The ith value is the highest prime number closest to but below <2^(i/2 + 4)>
     static size_t const validBucketCounts[] = 
     {
       0x3, 0x5, 0x7, 0xb, 0xd,
@@ -45,10 +59,39 @@ namespace Dg
     };
   }
 
+  //! @ ingroup DgContainers
+  //! 
+  //! Taken directly from http://www.cplusplus.com/reference/unordered_map/unordered_map/
+  //! HashTables are associative containers that store elements formed by 
+  //! the combination of a key value and a mapped value, and which allows for 
+  //! fast retrieval of individual elements based on their keys.
+  //! 
+  //! In a HashTable, the key value is generally used to uniquely identify 
+  //! the element, while the mapped value is an object with the content 
+  //! associated to this key. Types of key and mapped value may differ.
+  //! 
+  //! Internally, the elements in the HashTable are not sorted in any 
+  //! particular order with respect to either their key or mapped values, 
+  //! but organized into buckets depending on their hash values to allow for 
+  //! fast access to individual elements directly by their key 
+  //! values (with a constant average time complexity on average).
+  //!
+  //! HashTable containers are faster than map containers to access individual 
+  //! elements by their key, although they are generally less efficient for 
+  //! range iteration through a subset of their elements.
+  //!
+  //! HashTables implement the direct access operator (operator[]) which 
+  //! allows for direct access of the mapped value using its key value as argument.
+  //!
+  //! @author Frank Hart
+  //! @date 22/08/2016
   template
   <
+    //! Key type
       typename K
+    //! Data type
     , typename T
+    //! Plain Old Data. If not POD, constructors and destructors will be called.
     , bool POD = true
   >
   class HashTable
@@ -72,17 +115,20 @@ namespace Dg
 
   public:
 
-
     //! @class const_iterator
     //!
-    //! Iterator for the HashMap.
+    //! Constant iterator for the HashTable. Iterating past the last element in the HashTable
+    //! or before the first element will result in returning the HashTable::cend() iterator.
+    //! Incrementing past the HashTable::cend() iterator will do nothing. Decrementing the 
+    //! HashTable::cend() will give the last element in the list.
     //!
-    //! @author Frank B. Hart
-    //! @date 21/05/2016
+    //! @author Frank Hart
+    //! @date 22/08/2016
     class const_iterator
     {
       friend class HashTable;
 
+      //! Private constructor.
       const_iterator(Node * a_pNode
         , size_t a_bucketIndex
         , size_t a_bucketCount
@@ -95,6 +141,7 @@ namespace Dg
 
     public:
 
+      //! Default constructor.
       const_iterator()
         : m_pNode(nullptr)
         , m_bucketIndex(0)
@@ -136,7 +183,9 @@ namespace Dg
           || m_pBuckets != it.m_pBuckets;
       }
 
-      //! Post increment
+      //! Post increment. Iterating past the last element in the HashTable will result in 
+      //! returning the HashTable::cend() iterator. Incrementing past the HashTable::cend() 
+      //! iterator will do nothing. 
       const_iterator operator++(int)
       {
         const_iterator result(*this);
@@ -144,7 +193,9 @@ namespace Dg
         return result;
       }
 
-      //! Pre increment
+      //! Pre increment. Iterating past the last element in the HashTable will result in 
+      //! returning the HashTable::cend() iterator. Incrementing past the HashTable::cend() 
+      //! iterator will do nothing. 
       const_iterator & operator++()
       {
         if (!m_pNode)
@@ -174,7 +225,8 @@ namespace Dg
         return *this;
       }
 
-      //! Post decrement
+      //! Post decrement. Decrementing the HashTable::cbegin() iterator will result in returning the 
+      //! HashTable::cend() iterator.
       const_iterator operator--(int)
       {
         const_iterator result(*this);
@@ -182,7 +234,8 @@ namespace Dg
         return result;
       }
 
-      //! Pre decrement
+      //! Pre decrement. Decrementing the HashTable::cbegin() iterator will result in returning the 
+      //! HashTable::cend() iterator.
       const_iterator & operator--()
       {
         Node * curNode = m_pBuckets[m_bucketIndex].pBegin;
@@ -237,14 +290,18 @@ namespace Dg
 
     //! @class iterator
     //!
-    //! Iterator for the HashMap.
+    //! Iterator for the HashTable. Iterating past the last element in the HashTable
+    //! or before the first element will result in returning the HashTable::end() iterator.
+    //! Incrementing past the HashTable::end() iterator will do nothing. Decrementing the 
+    //! HashTable::end() will give the last element in the list.
     //!
-    //! @author Frank B. Hart
-    //! @date 21/05/2016
+    //! @author Frank Hart
+    //! @date 22/08/2016
     class iterator
     {
       friend class HashTable;
 
+      //! Private constructor.
       iterator(Node * a_pNode
         , size_t a_bucketIndex
         , size_t a_bucketCount
@@ -257,6 +314,7 @@ namespace Dg
 
     public:
 
+      //! Default constructor.
       iterator()
         : m_pNode(nullptr)
         , m_bucketIndex(0)
@@ -298,7 +356,9 @@ namespace Dg
           || m_pBuckets != it.m_pBuckets;
       }
 
-      //! Post increment
+      //! Post increment. Iterating past the last element in the HashTable will result in 
+      //! returning the HashTable::end() iterator. Incrementing past the HashTable::end() 
+      //! iterator will do nothing. 
       iterator operator++(int)
       {
         iterator result(*this);
@@ -306,7 +366,9 @@ namespace Dg
         return result;
       }
 
-      //! Pre increment
+      //! Pre increment. Iterating past the last element in the HashTable will result in 
+      //! returning the HashTable::end() iterator. Incrementing past the HashTable::end() 
+      //! iterator will do nothing. 
       iterator & operator++()
       {
         if (!m_pNode)
@@ -336,7 +398,8 @@ namespace Dg
         return *this;
       }
 
-      //! Post decrement
+      //! Post decrement. Decrementing the HashTable::begin() iterator will result in returning the 
+      //! HashTable::end() iterator.
       iterator operator--(int)
       {
         iterator result(*this);
@@ -344,7 +407,8 @@ namespace Dg
         return result;
       }
 
-      //! Pre decrement
+      //! Pre decrement. Decrementing the HashTable::begin() iterator will result in returning the 
+      //! HashTable::end() iterator.
       iterator & operator--()
       {
         Node * curNode = m_pBuckets[m_bucketIndex].pBegin;
@@ -378,7 +442,7 @@ namespace Dg
         return *this;
       }
 
-      //! Conversion
+      //! Conversion to const_iterator.
       operator const_iterator() const
       {
       return const_iterator(m_pNode
@@ -408,6 +472,7 @@ namespace Dg
 
   public:
 
+    //! Default constructor.
     HashTable()
       : m_pNodes(nullptr)
       , m_pBuckets(nullptr)
@@ -421,21 +486,13 @@ namespace Dg
       init(impl::validBucketCounts[0]);
     }
 
-    explicit HashTable(size_t a_nBuckets)
-      : m_pNodes(nullptr)
-      , m_pBuckets(nullptr)
-      , m_pNextFree(nullptr)
-      , m_poolSize(0)
-      , m_bucketCountIndex(s_invalidBucketIndex)
-      , m_nItems(0)
-      , m_fHasher(DefaultHasher)
-      , m_maxLoadFactor(s_defaultLF)
-    {
-      init(a_nBuckets);
-    }
-
-    //! The constructor will take ownership of the hasher function
-    HashTable(size_t a_nBuckets, fHasher<K> * a_hf)
+    //! Constructor.
+    //!
+    //! @param[in] a_nBuckets Request the buckets to initialise the table with.
+    //!                       The actual number will be from impl::validBucketCounts,
+    //!                       and will be the value closest to but not below a_nBuckets.
+    //! @param[in] a_hf       A custom hash function.
+    HashTable(size_t a_nBuckets, fHasher<K> * a_hf = DefaultHasher)
       : m_pNodes(nullptr)
       , m_pBuckets(nullptr)
       , m_pNextFree(nullptr)
@@ -448,11 +505,13 @@ namespace Dg
       init(a_nBuckets);
     }
 
+    //! Destructor.
     ~HashTable()
     {
       Wipe();
     }
 
+    //! Copy constructor.
     HashTable(HashTable const & a_other)
       : m_pNodes(nullptr)
       , m_pBuckets(nullptr)
@@ -466,6 +525,7 @@ namespace Dg
       init(a_other);
     }
 
+    //! Assignment.
     HashTable & operator=(HashTable const & a_other)
     {
       if (this != &a_other)
@@ -475,6 +535,7 @@ namespace Dg
       return *this;
     }
 
+    //! Copy move operator.
     HashTable(HashTable && a_other)
       : m_pNodes(a_other.m_pNodes)
       , m_pBuckets(a_other.m_pBuckets)
@@ -488,6 +549,7 @@ namespace Dg
       PostMove(a_other);
     }
 
+    //! Assignment move operator.
     HashTable & operator=(HashTable && a_other)
     {
       if (this != &a_other)
@@ -508,8 +570,8 @@ namespace Dg
       return *this;
     }
 
-    //! Returns element mapped to key. Will insert element
-    //! if does not exist.
+    //! Accessor. Returns element mapped to the key. Will insert element
+    //! if the key is not present in the HashTable.
     T & operator[](K key)
     {
       bool existed(false);
@@ -528,6 +590,8 @@ namespace Dg
       return pNode->data;
     }
 
+    //! Get iterator to the first element of the HashTable.
+    //! Returns HashTable::end() if the HashTable is empty.
     iterator begin()
     {
       for (size_t i = 0; i < bucket_count(); ++i)
@@ -540,7 +604,8 @@ namespace Dg
       return end();
     }
 
-
+    //! Get const_iterator to the first element of the HashTable.
+    //! Returns HashTable::cend() if the HashTable is empty.
     const_iterator cbegin() const
     {
       for (size_t i = 0; i < bucket_count(); ++i)
@@ -553,16 +618,20 @@ namespace Dg
       return cend();
     }
 
+    //! Get iterator to one past the last element in the HashTable.
     iterator end()
     {
       return iterator(nullptr, bucket_count() - 1, bucket_count(), m_pBuckets);
     }
 
+    //! Get const_iterator to one past the last element in the HashTable.
     const_iterator cend() const
     {
       return const_iterator(nullptr, bucket_count() - 1, bucket_count(), m_pBuckets);
     }
 
+    //! Returns a pointer to the element in the map which matches the key.
+    //! Returns a nullptr if there is no match.
     T * at(K a_key)
     {
       size_t ind = m_fHasher(a_key);
@@ -578,7 +647,10 @@ namespace Dg
       return nullptr;
     }
 
-    //! Will overwrite if exists
+    //! Insert a mapped value into the HashTable. This function will overwrite 
+    //! any existing element mapped to this key.
+    //!
+    //! @return Pointer to the newly inserted element.
     T * insert(K key, T const & val)
     {
       bool existed(false);
@@ -598,6 +670,10 @@ namespace Dg
       return &pNode->data;
     }
 
+    //! Insert a mapped value into the HashTable. This function will NOT overwrite 
+    //! any existing element mapped to this key.
+    //!
+    //! @return Pointer to eith  the newly inserted element, or existing.
     T * insert_no_overwrite(K key, T const & val)
     {
       bool existed(false);
@@ -616,6 +692,9 @@ namespace Dg
       return &pNode->data;
     }
 
+    //! Clear all elements. For non-POD HashTables, this function will call
+    //! destructors of all current element items in the HashTable. For POD types,
+    //! essentially, the item counts are set to 0.
     void clear()
     {
       if (!POD)
@@ -635,42 +714,245 @@ namespace Dg
       m_nItems = 0;
     }
 
+    //! Is the HashTable empty?
     bool empty() const
     {
       return m_nItems == 0;
     }
 
+    //! Returns the current load factor in the unordered_map container.
+    //!
+    //! The load factor is the ratio between the number of elements in the 
+    //! container(its size) and the number of buckets(bucket_count) :
+    //!
+    //! @code load_factor = size / bucket_count
+    //!
+    //! The load factor influences the probability of collision in the HashTable
+    //! (i.e., the probability of two elements being located in the same bucket).
+    //!
+    //! The container automatically increases the number of buckets to keep the 
+    //! load factor below a specific threshold(its max_load_factor), causing a 
+    //! rehash each time an expansion is needed.
+    //!
+    //! To retrieve or change this threshold, use member function max_load_factor.
     float load_factor()
     {
       return static_cast<float>(m_nItems) / m_bucketCountIndex;
     }
 
+    //! Returns the current maximum load factor for the HashTable container.
+    //!
+    //! The load factor is the ratio between the number of elements in the 
+    //! container(its size) and the number of buckets(bucket_count) :
+    //!
+    //! @code load_factor = size / bucket_count
+    //!
+    //! The load factor influences the probability of collision in the HashTable
+    //! (i.e., the probability of two elements being located in the same bucket).
+    //!
+    //! The container automatically increases the number of buckets to keep the 
+    //! load factor below a specific threshold(its max_load_factor), causing a 
+    //! rehash each time an expansion is needed.
     float max_load_factor()
     {
       return m_maxLoadFactor;
     }
 
+    //! Set the maximum load factor for the HashTable container. There is a minimum 
+    //! load factor: HashTable::s_minSetLF
+    //!
+    //! The load factor is the ratio between the number of elements in the 
+    //! container(its size) and the number of buckets(bucket_count) :
+    //!
+    //! @code load_factor = size / bucket_count
+    //!
+    //! The load factor influences the probability of collision in the HashTable
+    //! (i.e., the probability of two elements being located in the same bucket).
+    //!
+    //! The container automatically increases the number of buckets to keep the 
+    //! load factor below a specific threshold(its max_load_factor), causing a 
+    //! rehash each time an expansion is needed.
     void max_load_factor(float a_val)
     {
       float prevLF = m_maxLoadFactor;
       m_maxLoadFactor = (a_val > s_minSetLF) ? a_val : s_minSetLF;
       if (prevLF < m_maxLoadFactor)
       {
-        rehash();
+        __rehash();
       }
     }
 
+    //! Returns the maximum number of buckets that the unordered_map container can have.
+    //!
+    //! This is the maximum potential number of buckets the container can have due to 
+    //! system constraints or limitations on its library implementation.
     size_t max_bucket_count() const
     {
       impl::validBucketCounts[ARRAY_SIZE(impl::validBucketCounts) - 1];
     }
 
+    //! Returns the maximum number of elements that the unordered_map container can have.
+    //!
+    //! This is the maximum potential number of buckets the container can have due to 
+    //! system constraints or limitations on its library implementation.
     size_t max_size() const
     {
-      return 0x8000000000000000;
+      return 0x8000000000000000 / sizeof(Node);
     }
 
+    //! Sets the number of buckets in the container to a_bucketCount or more.
+    //!
+    //! If a_bucketCount is greater than the current number of buckets in the 
+    //! container(bucket_count), a rehash is forced. The new bucket count can 
+    //! either be equal or greater than a_bucketCount.
+    //!
+    //! If a_bucketCount is lower than the current number of buckets in the 
+    //! container(bucket_count), the function may have no effect on the bucket 
+    //! count and may not force a rehash.
+    //!
+    //! A rehash is the reconstruction of the hash table : All the elements in 
+    //! the container are rearranged according to their hash value into the new 
+    //! set of buckets.This may alter the order of iteration of elements within 
+    //! the container.
+    //!
+    //! Rehashes are automatically performed by the container whenever its load 
+    //! factor is going to surpass its max_load_factor in an operation.
     void rehash(size_t a_bucketCount)
+    {
+      float newLF = static_cast<float>(m_nItems) / static_cast<float>(a_bucketCount);
+      if (newLF < m_maxLoadFactor)
+      {
+        __rehash();
+      }
+    }
+
+    //!Request a capacity change
+    //! Sets the number of buckets in the container(bucket_count) to the most 
+    //! appropriate to contain at least a_num elements.
+    //!
+    //! If a_num is greater than the current bucket_count multiplied by the max_load_factor, 
+    //! the container's bucket_count is increased and a rehash is forced.
+    //!
+    //! If n is lower than that, the function may have no effect.
+    void reserve(size_t a_num)
+    {
+
+    }
+
+    //! Removes from the HashTable container a single element.
+    //!
+    //! This effectively reduces the container size by 1.
+    //!
+    //! If not a POD, the lement's destructor is called.
+    iterator erase(iterator const &)
+    {
+
+    }
+
+    //! Removes from the HashTable container a single element.
+    //!
+    //! This effectively reduces the container size by 1.
+    //!
+    //! If not a POD, the lement's destructor is called.
+    void erase(K a_key)
+    {
+      size_t ind(m_fHasher(a_key));
+      ind %= bucket_count();
+
+      Node * pItem(m_pBuckets[ind].pBegin);
+      Node * pPrev(nullptr);
+      while (pItem)
+      {
+        if (pItem->key == a_key)
+        {
+          if (pPrev)
+          {
+            pPrev->pNext = pItem->pNext;
+          }
+          else
+          {
+            m_pBuckets[ind].pBegin = nullptr;
+          }
+          pItem->pNext = m_pNextFree;
+          m_pNextFree = pItem;
+          m_nItems--;
+          break;
+        }
+        if (!pItem->pNext) break;
+        pPrev = pItem;
+        pItem = pItem->pNext;
+      }
+    }
+
+    //! Returns the number of elements in the HashTable.
+    size_t size() const 
+    {
+      return m_nItems;
+    }
+
+    //! Returns the number of buckets in the HashTable.
+    size_t bucket_count() const
+    {
+      return impl::validBucketCounts[m_bucketCountIndex];
+    }
+
+    //! For debugging. The HashTable operates over a fixed memory block.
+    //! The memory is essentially a linked list, with elements drawn from the
+    //! list when items are inserted into the HashTable. This function returns the
+    //! total number of used and unused elements in the linked list compared to the 
+    //! size of the memory block. 
+    size_t PoolSlotsWasted()
+    {
+      size_t total(0);
+
+      for (size_t i = 0; i < bucket_count(); ++i)
+      {
+        Node * n = m_pBuckets[i].pBegin;
+        while (n)
+        {
+          total++;
+          n = n->pNext;
+        }
+      }
+
+      Node * n = m_pNextFree;
+      while (n)
+      {
+        total++;
+        n = n->pNext;
+      }
+
+      return m_poolSize - total;
+    }
+
+#ifdef DGHASHTABLE_OUTPUT
+    //! Output the HashTable for debugging.
+    friend std::ostream & operator<<(std::ostream & os
+                                   , HashTable<K, T, POD> const & ht) 
+    {
+      for (size_t i = 0; i < ht.bucket_count(); ++i)
+      {
+        os << i << ": ";
+        Node * n = ht.m_pBuckets[i].pBegin;
+        while (n)
+        {
+          os << n->key;
+          if (n->pNext)
+          {
+            os << ", ";
+          }
+          n = n->pNext;
+        }
+        os << '\n';
+      }
+      return os;
+    }
+#endif
+
+  private:
+
+    //! Force a rehash.
+    void __rehash(size_t a_bucketCount)
     {
       int newBucketCountIndex = GetBucketCountIndex(a_bucketCount);
       size_t newBucketCount = impl::validBucketCounts[newBucketCountIndex];
@@ -708,106 +990,9 @@ namespace Dg
       m_bucketCountIndex = newBucketCountIndex;
     }
 
-    void reserve(size_t)
-    {
-
-    }
-
-    iterator erase(iterator const &)
-    {
-
-    }
-
-    void erase(K a_key)
-    {
-      size_t ind(m_fHasher(a_key));
-      ind %= bucket_count();
-
-      Node * pItem(m_pBuckets[ind].pBegin);
-      Node * pPrev(nullptr);
-      while (pItem)
-      {
-        if (pItem->key == a_key)
-        {
-          if (pPrev)
-          {
-            pPrev->pNext = pItem->pNext;
-          }
-          else
-          {
-            m_pBuckets[ind].pBegin = nullptr;
-          }
-          pItem->pNext = m_pNextFree;
-          m_pNextFree = pItem;
-          m_nItems--;
-          break;
-        }
-        if (!pItem->pNext) break;
-        pPrev = pItem;
-        pItem = pItem->pNext;
-      }
-    }
-
-    size_t size() const 
-    {
-      return m_nItems;
-    }
-
-    size_t bucket_count() const
-    {
-      return impl::validBucketCounts[m_bucketCountIndex];
-    }
-
-    //DEBUG
-    size_t PoolSlotsWasted()
-    {
-      size_t total(0);
-
-      for (size_t i = 0; i < bucket_count(); ++i)
-      {
-        Node * n = m_pBuckets[i].pBegin;
-        while (n)
-        {
-          total++;
-          n = n->pNext;
-        }
-      }
-
-      Node * n = m_pNextFree;
-      while (n)
-      {
-        total++;
-        n = n->pNext;
-      }
-
-      return m_poolSize - total;
-    }
-
-#ifdef DGHASHTABLE_OUTPUT
-    friend std::ostream & operator<<(std::ostream & os
-                                   , HashTable<K, T, POD> const & ht) 
-    {
-      for (size_t i = 0; i < ht.bucket_count(); ++i)
-      {
-        os << i << ": ";
-        Node * n = ht.m_pBuckets[i].pBegin;
-        while (n)
-        {
-          os << n->key;
-          if (n->pNext)
-          {
-            os << ", ";
-          }
-          n = n->pNext;
-        }
-        os << '\n';
-      }
-      return os;
-    }
-#endif
-
-  private:
-
+    //! Extend the memory block reserved for elements (key, value).
+    //! The order of nodes in the memory block wil NOT be changed.
+    //! All indices to Nodes will remain valid.
     void ExtendPool()
     {
       Node * pOldNodes = m_pNodes;
@@ -859,22 +1044,23 @@ namespace Dg
       m_pNodes[m_poolSize - 1].pNext = nullptr;
     }
 
-    //! @return true if had to rehash.
-    bool RehashIfOver(size_t a_number = 1)
+    //! Returns true if had to rehash.
+    bool RehashIfOver(size_t a_nItems)
     {
-      float newLoadFactor = static_cast<float>(m_nItems + a_number) / bucket_count();
+      float newLoadFactor = static_cast<float>(a_nItems) / bucket_count();
       if (newLoadFactor > m_maxLoadFactor)
       {
         if (m_bucketCountIndex != (ARRAY_SIZE(impl::validBucketCounts) - 1))
         {
-          rehash(impl::validBucketCounts[m_bucketCountIndex + 1]);
+          __rehash(impl::validBucketCounts[m_bucketCountIndex + 1]);
           return true;
         }
       }
       return false;
     }
 
-    //Will create new item if does not exist
+    // Get the Node associated with the key, or create a new one if it
+    //! is not in the map.
     Node * GetItem(K a_key, bool & a_existed)
     {
       size_t ind = m_fHasher(a_key);
@@ -884,7 +1070,8 @@ namespace Dg
       Node * pResult = m_pBuckets[ind].pBegin;
       if (pResult == nullptr)
       {
-        if (RehashIfOver())
+        //If we rehash, we need to start this function again.
+        if (RehashIfOver(m_nItems + 1))
         {
           return GetItem(a_key, a_existed);
         }
@@ -907,7 +1094,8 @@ namespace Dg
       }
 
       //Item does not exist
-      if (RehashIfOver())
+      //If we rehash, we need to start this function again.
+      if (RehashIfOver(m_nItems + 1))
       {
         return GetItem(a_key, a_existed);
       }
@@ -916,6 +1104,7 @@ namespace Dg
       return pResult;
     }
 
+    // Zero all members we have moved from.
     void PostMove(HashTable & a_other)
     {
       a_other.m_pNodes = nullptr;
@@ -926,7 +1115,8 @@ namespace Dg
       a_other.m_nItems = 0;
     }
 
-    //! @param[in] a_bucketCount Number of buckets you want
+    //! Returns the index to the first valid bucket count index greater than 
+    //! a_bucketCount. Valid bucket counts are taken from impl::validBucketCounts.
     int GetBucketCountIndex(size_t a_bucketCount)
     {
       int result = ARRAY_SIZE(impl::validBucketCounts) - 1;
@@ -941,6 +1131,7 @@ namespace Dg
       return result;
     }
 
+    // Init the HashTabe.
     void init(size_t a_nBuckets)
     {
       //Update values
@@ -951,7 +1142,8 @@ namespace Dg
       InitArrays();
     }
 
-    //! Prep method for moving or deleting. Clears all memory, sets pointers to null.
+    //! Prep method for moving, assigning or deleting. Clears all memory, sets pointers to null,
+    //! Calls destructors if not POD.
     void Wipe()
     {
       //Delete current items
@@ -973,6 +1165,7 @@ namespace Dg
       m_nItems = 0;
     }
 
+    // Initialise all arrays based on current member values.
     void InitArrays()
     {
       //Update bucket pool
@@ -1006,6 +1199,7 @@ namespace Dg
       }
     }
 
+    // Get a new node form the list of unused elements.
     Node * GetNewNode(K a_key)
     {
       if (m_pNextFree->pNext == nullptr)
@@ -1021,7 +1215,8 @@ namespace Dg
       return pResult;
     }
 
-
+    // Get a new node form the list of unused elements. Places it as the 
+    // next node to pNode.
     Node * GetNewNode(Node * pNode, K a_key)
     {
       if (m_pNextFree->pNext == nullptr)
@@ -1042,6 +1237,7 @@ namespace Dg
       return pResult;
     }
 
+    // Initialise node from other.
     void init(HashTable const & a_other)
     {
       //Cleanup
@@ -1105,8 +1301,8 @@ namespace Dg
     size_t      m_poolSize;
 
     Bucket *    m_pBuckets;
-    int         m_bucketCountIndex; //The bucket count is obtained from bucket_count()
-    size_t      m_nItems;   //Number of curent elements
+    int         m_bucketCountIndex; //Index to impl::validBucketCounts
+    size_t      m_nItems;           //Number of curent elements
   };
 
   template<typename K, typename T, bool POD = true>
