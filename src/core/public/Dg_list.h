@@ -12,8 +12,13 @@
 #include <cstdlib>
 #include <cstring>
 #include <type_traits>
-
 #include "DgErrorHandler.h"
+
+//#define DG_DEBUG
+#ifdef DG_DEBUG
+#include <iostream>
+#include <cstddef>
+#endif
 
 //! Must be minimum of 2!
 #define DG_CONTAINER_DEFAULT_SIZE 2
@@ -184,25 +189,25 @@ namespace Dg
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
     //! @return iterator
-	  iterator			  begin()		        {return iterator(m_pData[0].pNext);}
+	  iterator			  begin()		        {return iterator(m_pData->pNext);}
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the list container.
     //! This iterator shall not be dereferenced.
     //!
     //! @return iterator
-    iterator			  end()		          {return iterator(const_cast<Node*>(&m_pData[0])); }
+    iterator			  end()		          {return iterator(const_cast<Node*>(m_pData)); }
 	  
     //! Returns a const iterator pointing to the first data in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
     //! @return const_iterator
-    const_iterator	cbegin()	  const {return const_iterator(m_pData[0].pNext);}
+    const_iterator	cbegin()	  const {return const_iterator(m_pData->pNext);}
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the list container.
     //! This iterator shall not be dereferenced.
     //!
     //! @return const_iterator
-    const_iterator	cend()		  const {return const_iterator(const_cast<Node*>(&m_pData[0])); }
+    const_iterator	cend()		  const {return const_iterator(const_cast<Node*>(m_pData)); }
 	  
     //! Returns number of elements in the list.
     size_t			    size()		  const {return m_nItems;}
@@ -217,25 +222,25 @@ namespace Dg
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to data type
-    T &             back()	 	        { return m_pData[0].pPrev->data; }
+    T &             back()	 	        { return m_pData->pPrev->data; }
      
     //! Returns a reference to the first data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to data type
-    T &             front()		        { return m_pData[0].pNext->data; }
+    T &             front()		        { return m_pData->pNext->data; }
 
     //! Returns a const reference to the last data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to data type
-    T const &				back()		  const { return m_pData[0].pPrev->data; }
+    T const &				back()		  const { return m_pData->pPrev->data; }
 
     //! Returns a const reference to the first data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to data type
-    T const &				front()		  const { return m_pData[0].pNext->data; }
+    T const &				front()		  const { return m_pData->pNext->data; }
 
 	  //! Add an data to the back of the list
     void push_back(T const &);
@@ -278,6 +283,46 @@ namespace Dg
     //! Resizes the list. This function also clears the list.
 	  void resize(size_t);
 
+#ifdef DG_DEBUG
+    void Print(char const * a_title) const
+    {
+      std::cout << "\n\t" << a_title << "\n\n pNext:\n";
+      for (size_t i = 0; i < m_poolSize; ++i)
+      {
+        std::cout << "[" << i << "] -> ";
+        if (m_pData[i].pNext == nullptr)
+        {
+          std::cout << "NULL\n";
+        }
+        else
+        {
+          std::cout << "[" << (m_pData[i].pNext - m_pData) << "]\n";
+        }
+      }
+      std::cout << "\n\npPrev:\n";
+      for (size_t i = 0; i < m_poolSize; ++i)
+      {
+        std::cout << "[" << i << "] -> ";
+        if (m_pData[i].pPrev == nullptr)
+        {
+          std::cout << "NULL\n";
+        }
+        else
+        {
+          std::cout << "[" << (m_pData[i].pPrev - m_pData) << "]\n";
+        }
+      }
+      std::cout << "\nNext free: ";
+      if (m_pNextFree == nullptr)
+      {
+        std::cout << "NULL\n";
+      }
+      else
+      {
+        std::cout << "[" << (m_pNextFree - m_pData) << "]\n";
+      }
+    }
+#endif
   private:
     // Increases the size of the underlying arrays by a factor of 2
     void Extend();
@@ -285,6 +330,8 @@ namespace Dg
     void DestructAll();
 
     void init(size_t new_size);
+
+    void AssignPointersToEmpty();
 
   private:
 	  //Data members
@@ -436,6 +483,27 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
+  //	@	list<T>::AssignPointersToEmpty()
+  //--------------------------------------------------------------------------------
+  template<typename T>
+  void list<T>::AssignPointersToEmpty()
+  {
+    //Initialise m_pData
+    m_pNextFree = &m_pData[1];
+
+    //Set outer container pointers
+    m_pData->pNext = m_pData;
+    m_pData->pPrev = m_pData;
+
+    for (size_t i = 1; i < m_poolSize - 1; i++)
+    {
+      m_pData[i].pNext = &m_pData[i + 1];
+    }
+    m_pData[m_poolSize - 1].pNext = nullptr;
+  }	//End: list::AssignPointersToEmpty()
+
+
+  //--------------------------------------------------------------------------------
   //	@	list<T>::init()
   //--------------------------------------------------------------------------------
   template<typename T>
@@ -448,20 +516,8 @@ namespace Dg
 
 	  //Assign sizes
 	  m_nItems = 0;
-
-	  //Initialise m_pData
-	  m_pNextFree = &m_pData[1];
-
-	  //Set outer container pointers
-    m_pData[0].pNext = &m_pData[0];
-    m_pData[0].pPrev = &m_pData[0];
-
-	  //Only need to assign forward pointers
-	  for (size_t i = 1; i < m_poolSize - 1; i++)
-	  {
-		  m_pData[i].pNext = &m_pData[i+1];
-	  }
-    m_pData[m_poolSize - 1].pNext = nullptr;
+    AssignPointersToEmpty();
+    //Print("init");
   }	//End: list::init()
 
 
@@ -543,6 +599,7 @@ namespace Dg
 		  push_back(*it);
 	  }
 
+    //Print("operator =");
 	  return *this;
   }	//End: list::operator=()
 
@@ -558,24 +615,9 @@ namespace Dg
       DestructAll();
     }
 
-	  //Reset pNext free
-	  m_pNextFree = &m_pData[1];
-
-	  //Set outer container pointers
-    m_pData[0].pNext = &m_pData[0];
-    m_pData[0].pPrev = &m_pData[0];
-
-	  //close the last data in the list
-	  m_pData[m_poolSize-1].pNext = nullptr;
-
-	  //Assign pointers
-	  for (size_t i = 1; i < m_poolSize-1; i++)
-	  {
-		  m_pData[i].pNext = &m_pData[i+1];
-	  }
-
-	  m_nItems = 0;
-
+    m_nItems = 0;
+    AssignPointersToEmpty();
+    //Print("Clear");
   }	//End: list<T>::clear()
 
 
@@ -595,6 +637,7 @@ namespace Dg
 
 	  //Initialise m_pData
 	  init(a_newSize);
+    //Print("Resize");
 
   }	//End: list<T>::resize()
 
@@ -628,13 +671,14 @@ namespace Dg
     }
 
 	  //Add the current data to the back of the active list
-	  m_pData[0].pPrev->pNext = new_element;
-	  new_element->pPrev = m_pData[0].pPrev;
-    new_element->pNext = &m_pData[0];
-	  m_pData[0].pPrev = new_element;
+	  m_pData->pPrev->pNext = new_element;
+	  new_element->pPrev = m_pData->pPrev;
+    new_element->pNext = m_pData;
+	  m_pData->pPrev = new_element;
 
 	  //Increment m_nItems
 	  m_nItems++;
+    //Print("push_back");
 
   }	//End: list::push_back()
 
@@ -646,7 +690,7 @@ namespace Dg
   bool list<T>::push_back()
   {
 	  //Is the list full?
-	  if (m_nItems == (m_poolSize - 1))
+	  if (m_nItems >= (m_poolSize - 2))
 		  return false;
 
 	  //Get the list node to work on
@@ -656,10 +700,10 @@ namespace Dg
 	  m_pNextFree = m_pNextFree->pNext;
 
 	  //Add the current data to the back of the active list
-    m_pData[0].pPrev->pNext = new_element;
-    new_element->pPrev = m_pData[0].pPrev;
-    new_element->pNext = &m_pData[0];
-    m_pData[0].pPrev = new_element;
+    m_pData->pPrev->pNext = new_element;
+    new_element->pPrev = m_pData->pPrev;
+    new_element->pNext = m_pData;
+    m_pData->pPrev = new_element;
 
     if (!std::is_pod<T>::value)
     {
@@ -681,7 +725,7 @@ namespace Dg
   bool list<T>::push_front()
   {
       //Is the list full?
-      if (m_nItems == (m_poolSize - 1))
+      if (m_nItems >= (m_poolSize - 2))
           return false;
 
       //Get the list node to work on
@@ -691,10 +735,10 @@ namespace Dg
       m_pNextFree = m_pNextFree->pNext;
 
       //Add the current data to the back of the active list
-      m_pData[0].pNext->pPrev = new_element;
-      new_element->pPrev = &m_pData[0];
-      new_element->pNext = m_pData[0].pNext;
-      m_pData[0].pNext = new_element;
+      m_pData->pNext->pPrev = new_element;
+      new_element->pPrev = m_pData;
+      new_element->pNext = m_pData->pNext;
+      m_pData->pNext = new_element;
 
       if (!std::is_pod<T>::value)
       {
@@ -738,13 +782,14 @@ namespace Dg
     }
 
 	  //Add the current data to the back of the active list
-    m_pData[0].pNext->pPrev = new_element;
-    new_element->pPrev = &m_pData[0];
-    new_element->pNext = m_pData[0].pNext;
-    m_pData[0].pNext = new_element;
+    m_pData->pNext->pPrev = new_element;
+    new_element->pPrev = m_pData;
+    new_element->pNext = m_pData->pNext;
+    m_pData->pNext = new_element;
 
 	  //Increment m_nItems
 	  m_nItems++;
+    //Print("push_front");
 
   }	//End: list::push_front()
 
@@ -755,27 +800,25 @@ namespace Dg
   template<typename T>
   void list<T>::pop_back()
   {
-	  //Range check
-    if (m_nItems == 0) return;
-	
     if (!std::is_pod<T>::value)
     {
-      m_pData[0].pPrev->data.~T();
+      m_pData->pPrev->data.~T();
     }
 
 	  //Get new last data
-    Node* last = m_pData[0].pPrev->pPrev;
+    Node* last = m_pData->pPrev->pPrev;
 
 	  //Assign pNext free
-	  m_pData[0].pPrev->pNext = m_pNextFree;
-	  m_pNextFree = m_pData[0].pPrev;
+	  m_pData->pPrev->pNext = m_pNextFree;
+	  m_pNextFree = m_pData->pPrev;
 
 	  //Break data from chain
-    last->pNext = &m_pData[0];			//prev points to pNext
-	  m_pData[0].pPrev = last;	//pNext points to pPrev
+    last->pNext = m_pData;			//prev points to pNext
+	  m_pData->pPrev = last;	//pNext points to pPrev
 
 	  //Deincrement m_nItems
 	  m_nItems--;
+    //Print("pop_back");
 
   }	//End: list::pop_back()
 
@@ -786,27 +829,25 @@ namespace Dg
   template<typename T>
   void list<T>::pop_front()
   {
-	  //Range check
-    if (m_nItems == 0) return;
-
     if (!std::is_pod<T>::value)
     {
-      m_pData[0].pNext->data.~T();
+      m_pData->pNext->data.~T();
     }
 
 	  //Get new first data
-    Node* first = m_pData[0].pNext->pNext;
+    Node* first = m_pData->pNext->pNext;
 
 	  //Assign pNext free
-	  m_pData[0].pNext->pNext = m_pNextFree;
-	  m_pNextFree = m_pData[0].pNext;
+	  m_pData->pNext->pNext = m_pNextFree;
+	  m_pNextFree = m_pData->pNext;
 
 	  //Break data from chain
-    first->pPrev = &m_pData[0];		//prev points to pNext
-	  m_pData[0].pNext = first;	//pNext points to pPrev
+    first->pPrev = m_pData;		//prev points to pNext
+	  m_pData->pNext = first;	//pNext points to pPrev
 
 	  //Deincrement m_nItems
 	  m_nItems--;
+    //Print("pop_front");
 
   }	//End: list::pop_front()
 
@@ -849,6 +890,7 @@ namespace Dg
       Extend();
     }
     return iterator(&m_pData[index]);
+    //Print("insert");
 
   }	//End: list::insert()
 
@@ -882,6 +924,7 @@ namespace Dg
 
 	  //Return iterator to the pNext container
 	  return iterator(pNext);
+    //Print("erase");
 
   }	//End: list::erase()
 
@@ -905,15 +948,14 @@ namespace Dg
   template<typename T>
   void list<T>::Extend()
   {
-	  //Calculate new size
     size_t oldSize(m_poolSize);
     Node * pOldData(m_pData);
-	  size_t new_size = (m_poolSize - 1) * 2 + 1;
+    size_t new_size = (m_poolSize - 1) * 2 + 1;
 
     DG_ASSERT(new_size > m_poolSize);
     m_poolSize = new_size;
 
-	  //Create new array
+    //Create new array
     m_pData = static_cast<Node *>(realloc(m_pData, new_size * sizeof(Node)));
     DG_ASSERT(m_pData != nullptr);
 
@@ -949,6 +991,7 @@ namespace Dg
       m_pData[i].pNext = &m_pData[i + 1];
     }
     m_pData[m_poolSize - 1].pNext = nullptr;
+    //Print("Extend");
   }	//End: list<T>::Extend()
 
 
