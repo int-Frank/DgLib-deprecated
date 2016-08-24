@@ -27,9 +27,6 @@
     <ClCompile Include="TEST_dg_map.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_dg_set_p.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="TEST_DgMatrix.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
@@ -94,6 +91,9 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_dg_HASHTABLE.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_dg_set.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>

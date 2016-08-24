@@ -13,9 +13,6 @@
     <ClInclude Include="..\..\public\Dg_map.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dg_set_pod.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\Dg_shared_ptr.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -27,6 +24,9 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\Dg_list.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\Dg_set.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>

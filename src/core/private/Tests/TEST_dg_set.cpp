@@ -1,10 +1,11 @@
 #include "TestHarness.h"
-#include "dg_set_pod.h"
+#include "dg_set.h"
 #include <vector>
 #include <algorithm>
 
-typedef std::vector<int>   vec;
-typedef Dg::set_pod<int>     DgSet;
+typedef int                Int;
+typedef std::vector<Int>   vec;
+typedef Dg::set<Int>       DgSet;
 
 bool CheckState(vec v, DgSet m)
 {
@@ -96,7 +97,7 @@ bool CheckState(vec v, DgSet m)
   return true;
 }
 
-bool InsertAndCheck(vec & v, DgSet & m, int newT)
+bool InsertAndCheck(vec & v, DgSet & m, Int newT)
 {
   if (!m.insert_unique(newT))
   {
@@ -114,6 +115,60 @@ bool InsertAndCheck(vec & v, DgSet & m, int newT)
   DgSet newM = m;
 
   return CheckState(v, newM);
+}
+
+bool CheckEraseAll(int num)
+{
+  DgSet m;
+  vec v;
+
+  //Item in within the set
+  m.insert(1);
+  v.push_back(1);
+  m.insert(3);
+  v.push_back(3);
+  for (int i = 0; i < num; ++i)
+  {
+    m.insert(2);
+  }
+  m.erase_all(2);
+  if (!CheckState(v, m)) return false;
+
+  //Item at the beginning of the set
+  m.clear();
+  v.clear();
+  m.insert(3);
+  v.push_back(3);
+  for (int i = 0; i < num; ++i)
+  {
+    m.insert(2);
+  }
+  m.erase_all(2);
+  if (!CheckState(v, m)) return false;
+
+  //Item at the end of the set
+  m.clear();
+  v.clear();
+  m.insert(1);
+  v.push_back(1);
+  for (int i = 0; i < num; ++i)
+  {
+    m.insert(2);
+  }
+  m.erase_all(2);
+  if (!CheckState(v, m)) return false;
+
+  //Only the item is in the set
+  m.clear();
+  v.clear();
+  for (int i = 0; i < num; ++i)
+  {
+    m.insert(2);
+  }
+  m.erase_all(2);
+  if (!CheckState(v, m)) return false;
+
+  return true;
 }
 
 //--------------------------------------------------------------------------------
@@ -141,5 +196,9 @@ TEST(Stack_dg_set_p, creation_dg_set_p)
   CHECK(InsertAndCheck(v, m, 7));
   CHECK(InsertAndCheck(v, m, 6));
   CHECK(InsertAndCheck(v, m, 0));
+
+  CHECK(CheckEraseAll(1));
+  CHECK(CheckEraseAll(2));
+  CHECK(CheckEraseAll(3));
 
 }

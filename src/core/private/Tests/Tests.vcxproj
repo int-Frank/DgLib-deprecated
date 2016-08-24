@@ -180,7 +180,7 @@
     <ClCompile Include="TEST_dg_HASHTABLE.cpp" />
     <ClCompile Include="TEST_dg_list_pod.cpp" />
     <ClCompile Include="TEST_dg_map.cpp" />
-    <ClCompile Include="TEST_dg_set_p.cpp" />
+    <ClCompile Include="TEST_dg_set.cpp" />
     <ClCompile Include="TEST_dg_vector_pod2.cpp" />
     <ClCompile Include="TEST_math.cpp" />
     <ClCompile Include="TEST_Matrix44.cpp" />
