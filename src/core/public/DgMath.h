@@ -86,26 +86,6 @@ namespace Dg
     return result;
   }
 
-  //! Get the size in bits of the type
-  template<typename T>
-  struct BitSize { static int const value = CHAR_BIT * sizeof(T); };
-
-  //! Base struct for finding highest square numbers.
-  template<unsigned S>
-  struct HighestSquare { static size_t const value; };
-
-  //! Highest square number in an 64-bit number
-  template<> struct HighestSquare<64> { static uint64_t const value = 0xFFFFFFFFull * 0xFFFFFFFFull; };
-
-  //! Highest square number in an 32-bit number
-  template<> struct HighestSquare<32> { static uint32_t const value = 0xFFFFu * 0xFFFFu; };
-
-  //! Highest square number in an 16-bit number
-  template<> struct HighestSquare<16> { static uint16_t const value = 0xFF * 0xFF; };
-
-  //! Highest square number in an 8-bit number
-  template<> struct HighestSquare<8> { static uint8_t const value = 0xF * 0xF; };
-
   //! Test to see if a number is prime
   template<typename T>
   bool IsPrime(T a_val)
@@ -114,10 +94,10 @@ namespace Dg
     if (a_val <= 3) return true;
     if (a_val % 2 == 0 || a_val % 3 == 0) return false;
 
-    if (a_val >= HighestSquare<BitSize<T>::value>::value)
+    T maxi = (T(1) << ((CHAR_BIT * sizeof(T)) / 2)) - 1; //Root of the highest square T can hold before overflow.
+    if (a_val >= maxi * maxi)
     {
-      T maxi = (T(1) << ((CHAR_BIT * sizeof(T)) / 2)) - 1;
-      for (T i = 5; i < maxi; i += 6)
+      for (T i = 5; i <= maxi; i += 6)
       {
         if (a_val % i == 0 || a_val % (i + 2) == 0)
         {
