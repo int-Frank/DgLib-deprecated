@@ -1,10 +1,10 @@
 #include "TestHarness.h"
-#include "dg_list_pod.h"
+#include "dg_list.h"
 #include <list>
 
 typedef int t;
 typedef std::list<t>       list;
-typedef Dg::list_pod<t, true>    DgList;
+typedef Dg::list<t>        DgList;
 
 bool CheckState(list & a_list, DgList & a_dgList)
 {
@@ -62,6 +62,8 @@ TEST(Stack_dg_list_pod, creation_dg_list_pod)
   t tMax = 20;
   for (t i = 0; i < tMax; ++i)
   {
+    dglst.push_back(i);
+    dglst.pop_back();
     dglst.push_back(i);
     lst.push_back(i);
     CHECK(CheckState(lst, dglst));

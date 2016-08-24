@@ -26,7 +26,7 @@
 //! @param[in] lineNumber Line number supplied by macro
 //! @param[in] fileName File name supplied by macro
 //! @param[in] functionName Function name supplied by macro
-void __DG_ASSERT(int val 
+void __DG_ASSERT(bool val 
                , char const * message
                , int lineNumber
                , char const * fileName

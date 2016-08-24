@@ -10,6 +10,7 @@
 
 #define DGHASHTABLE_ENABLE_OUTPUT
 
+#include <type_traits>
 #include <cstdlib>
 #include <cstring>
 #ifdef DGHASHTABLE_ENABLE_OUTPUT
@@ -95,8 +96,6 @@ namespace Dg
       typename K
     //! Data type
     , typename T
-    //! Plain Old Data. If not POD, constructors and destructors will be called.
-    , bool POD = true
   >
   class HashTable
   {
@@ -583,7 +582,7 @@ namespace Dg
       Node * pNode(GetItem(key, existed));
       if (!existed)
       {
-        if (POD)
+        if (std::is_pod<T>::value)
         {
           memset(&pNode->data, 0, sizeof(T));
         }
@@ -660,7 +659,7 @@ namespace Dg
     {
       bool existed(false);
       Node * pNode(GetItem(key, existed));
-      if (!POD)
+      if (!std::is_pod<T>::value)
       {
         if (existed)
         {
@@ -685,7 +684,7 @@ namespace Dg
       Node * pNode(GetItem(key, existed));
       if (!existed)
       {
-        if (!POD)
+        if (!std::is_pod<T>::value)
         {
           new (&pNode->data) T(val);
         }
@@ -697,12 +696,12 @@ namespace Dg
       return &pNode->data;
     }
 
-    //! Clear all elements. For non-POD HashTables, this function will call
-    //! destructors of all current element items in the HashTable. For POD types,
+    //! Clear all elements. For non-pod HashTables, this function will call
+    //! destructors of all current element items in the HashTable. For pod types,
     //! essentially, the item counts are set to 0.
     void clear()
     {
-      if (!POD)
+      if (!std::is_pod<T>::value)
       {
         iterator it = begin();
         for (it; it != end(); ++it)
@@ -950,7 +949,7 @@ namespace Dg
 #ifdef DGHASHTABLE_ENABLE_OUTPUT
     //! Output the HashTable for debugging.
     friend std::ostream & operator<<(std::ostream & os
-                                   , HashTable<K, T, POD> const & ht) 
+                                   , HashTable<K, T> const & ht) 
     {
       for (size_t i = 0; i < ht.bucket_count(); ++i)
       {
@@ -979,7 +978,7 @@ namespace Dg
       int newBucketCountIndex = GetBucketCountIndex(a_bucketCount);
       size_t newBucketCount = impl::validBucketCounts[newBucketCountIndex];
       Bucket * newBuckets = static_cast<Bucket*>(calloc(newBucketCount, sizeof(Bucket*)));
-      DG_ASSERT((newBuckets == nullptr) ? 0 : 1);
+      DG_ASSERT(newBuckets != nullptr);
       for (size_t bucket = 0; bucket < bucket_count(); ++bucket)
       {
         Node * in = m_pBuckets[bucket].pBegin;
@@ -1023,7 +1022,7 @@ namespace Dg
       size_t oldPoolSize = m_poolSize;
       m_poolSize *= (size_t(1) << a_exp);
       m_pNodes = static_cast<Node*>(realloc(m_pNodes, m_poolSize * sizeof(Node)));
-      DG_ASSERT((m_pNodes == nullptr) ? 0 : 1);
+      DG_ASSERT(m_pNodes != nullptr);
       //Reset node pointers
       if (m_pNodes != pOldNodes)
       {
@@ -1171,7 +1170,7 @@ namespace Dg
     void Wipe()
     {
       //Delete current items
-      if (!POD)
+      if (!std::is_pod<T>::value)
       {
         iterator it = begin();
         for (it; it != end(); ++it)
@@ -1196,7 +1195,7 @@ namespace Dg
       if (m_poolSize > 0)
       {
         m_pNodes = static_cast<Node*>(malloc(m_poolSize * sizeof(Node)));
-        DG_ASSERT((m_pNodes == nullptr) ? 0 : 1);
+        DG_ASSERT(m_pNodes != nullptr);
         for (size_t i = 0; i < m_poolSize - 1; ++i)
         {
           m_pNodes[i].pNext = &m_pNodes[i + 1];
@@ -1212,7 +1211,7 @@ namespace Dg
       if (bucket_count() > 0)
       {
         m_pBuckets = static_cast<Bucket*>(calloc(bucket_count(), sizeof(Bucket)));
-        DG_ASSERT((m_pBuckets == nullptr) ? 0 : 1);
+        DG_ASSERT(m_pBuckets != nullptr);
         //Flag the next free bucket
         m_pNextFree = &m_pNodes[0];
       }
@@ -1287,7 +1286,7 @@ namespace Dg
           Node * this_node(m_pBuckets[bi].pBegin);
           do
           {
-            if (POD)
+            if (std::is_pod<T>::value)
             {
               memcpy(&this_node->data, &that_node->data, sizeof(T));
             }
@@ -1326,17 +1325,17 @@ namespace Dg
     size_t      m_nItems;           //Number of curent elements
   };
 
-  template<typename K, typename T, bool POD = true>
-  float  const HashTable<K, T, POD>::s_defaultLF = 1.0f;
+  template<typename K, typename T>
+  float  const HashTable<K, T>::s_defaultLF = 1.0f;
 
-  template<typename K, typename T, bool POD = true>
-  float  const HashTable<K, T, POD>::s_minSetLF = 0.5f;
+  template<typename K, typename T>
+  float  const HashTable<K, T>::s_minSetLF = 0.5f;
 
-  template<typename K, typename T, bool POD = true>
-  size_t const HashTable<K, T, POD>::s_minPoolSize = 1;
+  template<typename K, typename T>
+  size_t const HashTable<K, T>::s_minPoolSize = 1;
 
-  template<typename K, typename T, bool POD = true>
-  int const HashTable<K, T, POD>::s_invalidBucketIndex = -1;
+  template<typename K, typename T>
+  int const HashTable<K, T>::s_invalidBucketIndex = -1;
 
 }
 

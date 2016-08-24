@@ -3,7 +3,7 @@
 
 #include "DgErrorHandler.h"
 
-void __DG_ASSERT(int a_val
+void __DG_ASSERT(bool a_val
                , char const * a_message
                , int a_lineNumber
                , char const * a_fileName
