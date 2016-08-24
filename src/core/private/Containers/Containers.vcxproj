@@ -25,7 +25,7 @@
     <ClInclude Include="..\..\public\Dg_map.h" />
     <ClInclude Include="..\..\public\Dg_set.h" />
     <ClInclude Include="..\..\public\Dg_shared_ptr.h" />
-    <ClInclude Include="..\..\public\Dg_vector_pod.h" />
+    <ClInclude Include="..\..\public\Dg_vector.h" />
     <ClInclude Include="..\..\public\impl\DgContainerBase.h" />
   </ItemGroup>
   <ItemGroup>

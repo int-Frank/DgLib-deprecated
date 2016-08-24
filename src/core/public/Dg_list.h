@@ -26,8 +26,6 @@
 #define COMMENT / ## /
 #endif
 
-#define DG_CONTAINER_DEFAULT_SIZE 2
-
 namespace Dg
 {
   //! @ingroup DgContainers
@@ -598,6 +596,8 @@ namespace Dg
   {
 	  if (this == &other)
 		  return *this;
+
+    ContainerBase::operator=(other);
 
 	  //resize array
 	  resize(other.pool_size());

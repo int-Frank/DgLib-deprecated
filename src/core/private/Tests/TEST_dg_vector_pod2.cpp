@@ -1,10 +1,10 @@
 #include "TestHarness.h"
-#include "dg_vector_pod.h"
+#include "dg_vector.h"
 #include <vector>
 
 typedef int t;
-typedef std::vector<t>       vector;
-typedef Dg::vector_pod<t>    DgVec;
+typedef std::vector<t>   vector;
+typedef Dg::vector<t>    DgVec;
 
 bool CheckState(vector & a_vec, DgVec & a_dgVec)
 {
@@ -78,7 +78,6 @@ TEST(Stack_dg_vector_pod, creation_dg_vector_pod)
   CHECK(CheckState(lst, newlst2));
 
   DgVec newlst3(666);
-  CHECK(newlst3.max_size() == 666);
   CHECK(newlst3.size() == 0);
   newlst3 = dglst;
   CHECK(CheckState(lst, newlst3));

@@ -28,8 +28,6 @@ namespace Dg
   //! store m_pData, therefore is best used for very small m_pData types (ie literals) 
   //! and types with cheap assignment operators.
   //!
-  //! Assumed types are POD, so no construction / assignment operators called
-  //!
   //! @author Frank B. Hart
   //! @date 23/05/2016
   template<class T>
@@ -234,6 +232,7 @@ namespace Dg
       return *this;
 
     clear();
+    ContainerBase::operator=(a_other);
     init(other);
 
     return *this;

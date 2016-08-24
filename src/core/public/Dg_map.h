@@ -12,9 +12,8 @@
 #include <new>
 #include <type_traits>
 
+#include "impl/DgContainerBase.h"
 #include "DgErrorHandler.h"
-
-#define DG_CONTAINER_DEFAULT_SIZE 1
 
 namespace Dg
 {
@@ -27,7 +26,7 @@ namespace Dg
   //! @author Frank B. Hart
   //! @date 2/5/2015
   template<typename K, typename T>
-  class map
+  class map : public ContainerBase
   {
   public:
 
@@ -47,6 +46,12 @@ namespace Dg
 
     //! Assigns new contents to the container, replacing its current content.
     map& operator= (map const &);
+
+    //! Move constructor.
+    map(map &&);
+
+    //! Move assignment
+    map& operator= (map &&);
 
     //! Returns a reference to the \a i<SUP>th</SUP> element in the map. 
     //! This function does not perform a range check.
@@ -69,9 +74,6 @@ namespace Dg
 
     //! Returns whether the map is empty.
     bool empty() const	{ return m_nItems == 0; }
-
-    //! Returns number of elements the map can hold before resizing.
-    int max_size() const	{ return m_poolSize; }
 
     //! Returns the key of the ith element in the map.
     //! This function does not perform a range check.
@@ -144,7 +146,6 @@ namespace Dg
     K*  m_pKeys;
     T*  m_pData;
 
-    int m_poolSize;
     int m_nItems;
   };
 
@@ -154,12 +155,12 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
   map<K, T>::map()
-    : m_pData(nullptr)
+    : ContainerBase()
+    , m_pData(nullptr)
     , m_pKeys(nullptr)
-    , m_poolSize(0)
     , m_nItems(0)
   {
-    resize(DG_CONTAINER_DEFAULT_SIZE);
+    resize(static_cast<int>(pool_size()));
 
   }	//End: map::map()
 
@@ -169,18 +170,16 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
   map<K, T>::map(int a_size)
-    : m_pData(nullptr)
+    : ContainerBase(a_size)
+    , m_pData(nullptr)
     , m_pKeys(nullptr)
-    , m_poolSize(0)
     , m_nItems(0)
   {
-    m_pData = static_cast<T*>(malloc(sizeof(T) * a_size));
+    m_pData = static_cast<T*>(malloc(sizeof(T) * pool_size()));
     DG_ASSERT(m_pData != nullptr);
 
-    m_pKeys = static_cast<K*>(malloc(sizeof(K) * a_size));
+    m_pKeys = static_cast<K*>(malloc(sizeof(K) * pool_size()));
     DG_ASSERT(m_pKeys != nullptr);
-
-    m_poolSize = a_size;
 
   }	//End: map::map()
 
@@ -205,7 +204,7 @@ namespace Dg
   template<typename K, typename T>
   void map<K, T>::init(map const & a_other)
   {
-    resize(a_other.m_poolSize);
+    resize(static_cast<int>(a_other.pool_size()));
     m_nItems = a_other.m_nItems;
 
     if (std::is_pod<K>::value)
@@ -239,9 +238,9 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
   map<K, T>::map(map const & a_other)
-    : m_pData(nullptr)
+    : ContainerBase(a_other)
+    , m_pData(nullptr)
     , m_pKeys(nullptr)
-    , m_poolSize(0)
     , m_nItems(0)
   {
     init(a_other);
@@ -259,6 +258,7 @@ namespace Dg
       return *this;
 
     clear();
+    ContainerBase::operator=(a_other);
     init(a_other);
 
     return *this;
@@ -272,32 +272,32 @@ namespace Dg
   template<typename K, typename T>
   void map<K, T>::resize(int a_newSize)
   {
-    if (a_newSize < m_nItems)
+    int newSize = static_cast<int>(pool_size(a_newSize));
+
+    if (newSize < m_nItems)
     {
       if (!std::is_pod<K>::value)
       {
-        for (int i = a_newSize; i < m_nItems; ++i)
+        for (int i = newSize; i < m_nItems; ++i)
         {
           m_pKeys[i].~K();
         }
       }
       if (!std::is_pod<T>::value)
       {
-        for (int i = a_newSize; i < m_nItems; ++i)
+        for (int i = newSize; i < m_nItems; ++i)
         {
           m_pData[i].~T();
         }
       }
-      m_nItems = a_newSize;
+      m_nItems = newSize;
     }
 
-    m_pData = static_cast<T*>(realloc(m_pData, sizeof(T) * a_newSize));
+    m_pData = static_cast<T*>(realloc(m_pData, sizeof(T) * newSize));
     DG_ASSERT(m_pData != nullptr);
 
-    m_pKeys = static_cast<K*>(realloc(m_pKeys, sizeof(K) * a_newSize));
+    m_pKeys = static_cast<K*>(realloc(m_pKeys, sizeof(K) * newSize));
     DG_ASSERT(m_pKeys != nullptr);
-
-    m_poolSize = a_newSize;
   }	//End: map::resize()
 
 
@@ -349,12 +349,12 @@ namespace Dg
   void map<K, T>::extend()
   {
     //Calculate new size
-    int newSize = (m_poolSize * 2);
+    int oldPoolSize = static_cast<int>(pool_size());
 
     //overflow, map full
-    DG_ASSERT(newSize > m_poolSize);
+    DG_ASSERT(oldPoolSize < set_next_pool_size());
 
-    resize(newSize);
+    resize(static_cast<int>(pool_size()));
 
   }	//End: map::extend()
 
@@ -371,7 +371,7 @@ namespace Dg
       return false;	//element already exists
 
     //Range check
-    if (m_nItems == m_poolSize)
+    if (m_nItems == pool_size())
       extend();
 
     //shift all RHS objects to the right by one.

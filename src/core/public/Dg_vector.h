@@ -1,9 +1,9 @@
-//! @file Dg_vector_pod.h
+//! @file Dg_vector.h
 //!
 //! @author Frank Hart
 //! @date 22/07/2016
 //!
-//! Class header: vector_pod<>
+//! Class header: vector<>
 
 #ifndef DG_VECTOR_P_H
 #define DG_VECTOR_P_H
@@ -13,15 +13,14 @@
 #include <new>
 #include <type_traits>
 
+#include "impl/DgContainerBase.h"
 #include "DgErrorHandler.h"
-
-#define DG_CONTAINER_DEFAULT_SIZE 1024
 
 namespace Dg
 {
   //! @ingroup DgContainers
   //!
-  //! @class vector_pod
+  //! @class vector
   //!
   //! @brief Contiguous array, similar to std::vector.
   //!
@@ -33,21 +32,27 @@ namespace Dg
   //! @author Frank Hart
   //! @date 7/01/2014
   template<class T>
-  class vector_pod
+  class vector : public ContainerBase
   {
   public:
     //Constructor / destructor
-    vector_pod();
+    vector();
 
     //! Construct with a set size
-    vector_pod(size_t);
-    ~vector_pod();
+    vector(size_t);
+    ~vector();
 
     //! Copy constructor
-    vector_pod(vector_pod const &);
+    vector(vector const &);
 
     //! Assignment
-    vector_pod& operator= (vector_pod const &);
+    vector& operator= (vector const &);
+
+    //! Move constructor
+    vector(vector &&);
+
+    //! Move assignment
+    vector& operator= (vector &&);
 
     //! Access element
     T & operator[](size_t i)				{ return m_pData[i]; }
@@ -72,9 +77,6 @@ namespace Dg
 
     //! Is the array empty
     bool empty()		const			{ return m_nItems == 0; }
-
-    //! Size of the reserved memory.
-    size_t max_size()	const			{ return m_poolSize; }
 
     //! Get pointer to first element.
     T* data()							{ return m_pData; }
@@ -102,52 +104,51 @@ namespace Dg
     //! Exteneds the total size of the array (current + reserve) by a factor of 2
     void extend();
 
-    void init(vector_pod const &);
+    void init(vector const &);
 
   private:
     //Data members
     T* m_pData;
-    size_t m_poolSize;
     size_t m_nItems;
   };
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::vector_pod()
+  //	@	vector<T>::vector()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector_pod<T>::vector_pod() 
-    : m_pData(nullptr)
-    , m_poolSize(DG_CONTAINER_DEFAULT_SIZE)
+  vector<T>::vector() 
+    : ContainerBase()
+    , m_pData(nullptr)
     , m_nItems(0)
   {
-    m_pData = static_cast<T*>(malloc(m_poolSize * sizeof(T)));
+    m_pData = static_cast<T*>(malloc(pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
 
-  }	//End: vector_pod::vector_pod()
+  }	//End: vector::vector()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::vector_pod()
+  //	@	vector<T>::vector()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector_pod<T>::vector_pod(size_t a_size)
-    : m_pData(nullptr)
+  vector<T>::vector(size_t a_size)
+    : ContainerBase(a_size)
+    , m_pData(nullptr)
     , m_nItems(0)
-    , m_poolSize(a_size)
   {
     //Initialise pointers
-    m_pData = static_cast<T*>(malloc(m_poolSize * sizeof(T)));
+    m_pData = static_cast<T*>(malloc(pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
 
-  }	//End: vector_pod::vector_pod()
+  }	//End: vector::vector()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::~vector_pod()
+  //	@	vector<T>::~vector()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector_pod<T>::~vector_pod()
+  vector<T>::~vector()
   {
     if (!std::is_pod<T>::value)
     {
@@ -159,21 +160,19 @@ namespace Dg
 
     free(m_pData);
 
-  }	//End: vector_pod::~vector_pod()
+  }	//End: vector::~vector()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::init()
+  //	@	vector<T>::init()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::init(vector_pod const & a_other)
+  void vector<T>::init(vector const & a_other)
   {
-    m_pData = static_cast<T*>(realloc(m_pData, a_other.m_poolSize * sizeof(T)));
-    DG_ASSERT(m_pData != nullptr);
-
-    //Set sizes
-    m_poolSize = a_other.m_poolSize;
+    pool_size(a_other.pool_size());
     m_nItems = a_other.m_nItems;
+    m_pData = static_cast<T*>(realloc(m_pData, pool_size() * sizeof(T)));
+    DG_ASSERT(m_pData != nullptr);
 
     if (!std::is_pod<T>::value)
     {
@@ -187,44 +186,47 @@ namespace Dg
       memcpy(m_pData, a_other.m_pData, a_other.m_nItems * sizeof(T));
     }
 
-  }	//End: vector_pod<T>::init()
+  }	//End: vector<T>::init()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::vector_pod()
+  //	@	vector<T>::vector()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector_pod<T>::vector_pod(vector_pod const & other) : m_pData(nullptr)
+  vector<T>::vector(vector const & other) 
+    : ContainerBase(other)
+    , m_pData(nullptr)
   {
     init(other);
 
-  }	//End: vector_pod::vector_pod()
+  }	//End: vector::vector()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::operator=()
+  //	@	vector<T>::operator=()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector_pod<T>& vector_pod<T>::operator=(vector_pod const & other)
+  vector<T>& vector<T>::operator=(vector const & other)
   {
     if (this == &other)
       return *this;
 
     clear();
+    ContainerBase::operator=(other);
     init(other);
 
     return *this;
-  }	//End: vector_pod::operator=()
+  }	//End: vector::operator=()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::push_back()
+  //	@	vector<T>::push_back()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::push_back(T const & a_item)
+  void vector<T>::push_back(T const & a_item)
   {
     //Range check
-    if (m_nItems == m_poolSize)
+    if (m_nItems == pool_size())
     {
       extend();
     }
@@ -235,14 +237,14 @@ namespace Dg
     //increment current size
     ++m_nItems;
 
-  }	//End: vector_pod<T>::push_back()
+  }	//End: vector<T>::push_back()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::pop_back
+  //	@	vector<T>::pop_back
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::pop_back()
+  void vector<T>::pop_back()
   {
     //Range check
     if (m_nItems == 0)
@@ -251,75 +253,73 @@ namespace Dg
     //Deincrement current size
     --m_nItems;
 
-  }	//End: vector_pod<T>::pop_back()
+  }	//End: vector<T>::pop_back()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::clear()
+  //	@	vector<T>::clear()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::clear()
+  void vector<T>::clear()
   {
     //Set current size to 0
     m_nItems = 0;
 
-  }	//End: vector_pod::clear()
+  }	//End: vector::clear()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::resize()
+  //	@	vector<T>::resize()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::resize(size_t a_size)
+  void vector<T>::resize(size_t a_size)
   {
-    T * tempPtr = static_cast<T*>(realloc(m_pData, a_size * sizeof(T)));
+    pool_size(a_size);
 
-    if (tempPtr == nullptr)
+    if (pool_size() < m_nItems)
     {
-      //TODO
+      if (std::is_pod<T>::value)
+      {
+        for (size_t i = pool_size(); i < m_nItems; i++)
+        {
+          m_pData[i].~T();
+        }
+      }
+      m_nItems = pool_size();
     }
 
-    m_pData = tempPtr;
-    m_poolSize = a_size;
-    if (a_size < m_nItems)
-    {
-      m_nItems = a_size;
-    }
-
-  }	//End: vector_pod::resize()
+    m_pData = static_cast<T*>(realloc(m_pData, a_size * sizeof(T)));
+    DG_ASSERT(m_pData != nullptr);
+  }	//End: vector::resize()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::erase_swap()
+  //	@	vector<T>::erase_swap()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::erase_swap(size_t a_ind)
+  void vector<T>::erase_swap(size_t a_ind)
   {
     if (ind < m_nItems - 1)
     {
+      if (std::is_pod<T>::value)
+      {
+        m_pData[a_ind].~T();
+      }
       memcpy(&m_pData[ind], &m_pData[m_nItems - 1], sizeof(T));
     }
     --m_nItems;
-  }	//End: vector_pod::erase_swap()
+  }	//End: vector::erase_swap()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::extend()
+  //	@	vector<T>::extend()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector_pod<T>::extend()
+  void vector<T>::extend()
   {
-    //Calculate new size 
-    size_t newSize = m_poolSize << 1;
+    resize(set_next_pool_size());
 
-    if (newSize < m_poolSize)
-    {
-      //TODO
-    }
-
-    resize(newSize);
-
-  }	//End: vector_pod::extend()
+  }	//End: vector::extend()
 
 
 
@@ -337,7 +337,7 @@ namespace Dg
   //! @param container vector to search
   //! @param val Item to search for
   template<class T>
-  T* find(vector_pod<T>& container, T const & val)
+  T* find(vector<T>& container, T const & val)
   {
     for (size_t i = 0; i < container.size(); ++i)
     {
@@ -357,7 +357,7 @@ namespace Dg
   //! @param container Target container
   //! @param val value to fill set each element
   template<class T>
-  void fill(vector_pod<T>& container, T const & val)
+  void fill(vector<T>& container, T const & val)
   {
     for (size_t i = 0; i < container.size(); ++i)
     {

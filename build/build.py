@@ -82,7 +82,7 @@ DoxygenPath         = os.path.abspath(_3rdPartyDir + "/doxygen/doxygen.exe")
 DgLibFilePath       = os.path.abspath("../DgLib.sln")
 SamplesFilePath     = os.path.abspath("../src/samples/Samples.sln")
 
-Libs                = ["Engine", "Math", "Utility"]
+Libs                = ["Engine", "Math", "Utility", "Containers"]
 
 FinalLibName        = "DgLib"
 LogFileName         = "log__" + time.strftime("%Y-%m-%d__%I-%M-%S.txt")

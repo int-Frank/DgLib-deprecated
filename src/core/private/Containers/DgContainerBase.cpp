@@ -1,9 +1,15 @@
 #include "impl/DgContainerBase.h"
 
+
+#define ARRAY_SIZE(a) sizeof(a) / sizeof(*a)
+
+
 namespace Dg
 {
   namespace impl
   {
+    //! The memory pool sizes in the containers can only be a size from this table.
+    //! These sizes start at 16 and go up by multiples of sqrt(2).
     size_t const validContainerPoolSizes[] =
     {
       0x10ull, 0x16ull, 0x20ull, 0x2dull, 0x40ull, 0x5aull, 0x80ull, 0xb5ull,
@@ -24,46 +30,73 @@ namespace Dg
     };
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::ContainerBase()
+  //--------------------------------------------------------------------------------
   ContainerBase::ContainerBase() : m_poolSizeIndex(0)
   {
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::~ContainerBase()
+  //--------------------------------------------------------------------------------
   ContainerBase::~ContainerBase()
   {
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::ContainerBase()
+  //--------------------------------------------------------------------------------
   ContainerBase::ContainerBase(size_t a_nItems) : m_poolSizeIndex(0)
   {
     pool_size(a_nItems);
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::ContainerBase()
+  //--------------------------------------------------------------------------------
   ContainerBase::ContainerBase(ContainerBase const & a_other) 
     : m_poolSizeIndex(a_other.m_poolSizeIndex)
   {
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::operator=()
+  //--------------------------------------------------------------------------------
   ContainerBase & ContainerBase::operator=(ContainerBase const & a_other)
   {
     m_poolSizeIndex = a_other.m_poolSizeIndex;
     return *this;
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::ContainerBase()
+  //--------------------------------------------------------------------------------
   ContainerBase::ContainerBase(ContainerBase && a_other)
     : m_poolSizeIndex(a_other.m_poolSizeIndex)
   {
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::operator=()
+  //--------------------------------------------------------------------------------
   ContainerBase & ContainerBase::operator=(ContainerBase && a_other)
   {
     m_poolSizeIndex = a_other.m_poolSizeIndex;
     return *this;
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::pool_size()
+  //--------------------------------------------------------------------------------
   size_t ContainerBase::pool_size() const
   {
     return impl::validContainerPoolSizes[m_poolSizeIndex];
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::pool_size()
+  //--------------------------------------------------------------------------------
   size_t ContainerBase::pool_size(size_t a_nItems)
   {
     for (int i = 0; i < ARRAY_SIZE(impl::validContainerPoolSizes); ++i)
@@ -78,6 +111,9 @@ namespace Dg
     return pool_size();
   }
 
+  //--------------------------------------------------------------------------------
+  //	@	ContainerBase::set_next_pool_size()
+  //--------------------------------------------------------------------------------
   size_t ContainerBase::set_next_pool_size()
   {
     if (m_poolSizeIndex == ARRAY_SIZE(impl::validContainerPoolSizes))
