@@ -12,15 +12,20 @@
 #include <cstdlib>
 #include <cstring>
 #include <type_traits>
+
+#include "impl/DgContainerBase.h"
 #include "DgErrorHandler.h"
 
 //#define DG_DEBUG
+
 #ifdef DG_DEBUG
 #include <iostream>
 #include <cstddef>
+#define COMMENT
+#else
+#define COMMENT / ## /
 #endif
 
-//! Must be minimum of 2!
 #define DG_CONTAINER_DEFAULT_SIZE 2
 
 namespace Dg
@@ -37,7 +42,7 @@ namespace Dg
   //! @author Frank B. Hart
   //! @date 21/05/2016
   template<typename T>
-  class list
+  class list : public ContainerBase
   {
   private:
     
@@ -185,6 +190,12 @@ namespace Dg
     //! Assignment
 	  list & operator=(list const &);
 
+    //! Move constructor
+    list(list &&);
+
+    //! Move assignment
+    list & operator=(list &&);
+
 	  //! Returns an iterator pointing to the first data in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
@@ -212,9 +223,6 @@ namespace Dg
     //! Returns number of elements in the list.
     size_t			    size()		  const {return m_nItems;}
 	  
-    //! Returns the maximum number of elements that can be held in the current allocated memory.
-    size_t 			    max_size()	const {return m_poolSize - 1;}
-
     //! Returns if the list is empty.
 	  bool 			      empty()		  const {return m_nItems == 0;}
 
@@ -287,7 +295,7 @@ namespace Dg
     void Print(char const * a_title) const
     {
       std::cout << "\n\t" << a_title << "\n\n pNext:\n";
-      for (size_t i = 0; i < m_poolSize; ++i)
+      for (size_t i = 0; i < pool_size() + 1; ++i)
       {
         std::cout << "[" << i << "] -> ";
         if (m_pData[i].pNext == nullptr)
@@ -300,7 +308,7 @@ namespace Dg
         }
       }
       std::cout << "\n\npPrev:\n";
-      for (size_t i = 0; i < m_poolSize; ++i)
+      for (size_t i = 0; i < pool_size() + 1; ++i)
       {
         std::cout << "[" << i << "] -> ";
         if (m_pData[i].pPrev == nullptr)
@@ -339,16 +347,11 @@ namespace Dg
 	  //Pre-allocated block of memory to hold elements
 	  Node *    m_pData;
 
-	  //Root and end objects, and pointers
-    //Node      m_root;
-
 	  //Next free data in the list;
 	  Node *    m_pNextFree;		
 
 	  //Sizes
 	  size_t    m_nItems;
-	  size_t    m_poolSize;  //Inclues the root at m_pData[0]
-
   };
 
 
@@ -495,11 +498,11 @@ namespace Dg
     m_pData->pNext = m_pData;
     m_pData->pPrev = m_pData;
 
-    for (size_t i = 1; i < m_poolSize - 1; i++)
+    for (size_t i = 1; i < pool_size(); i++)
     {
       m_pData[i].pNext = &m_pData[i + 1];
     }
-    m_pData[m_poolSize - 1].pNext = nullptr;
+    m_pData[pool_size()].pNext = nullptr;
   }	//End: list::AssignPointersToEmpty()
 
 
@@ -509,15 +512,15 @@ namespace Dg
   template<typename T>
   void list<T>::init(size_t a_size) 
   {
-    m_poolSize = a_size + 1;
-    m_pData = static_cast<Node *>(realloc(m_pData, m_poolSize * sizeof(Node)));
+    pool_size(a_size + 1);
+    m_pData = static_cast<Node *>(realloc(m_pData, (pool_size() + 1) * sizeof(Node)));
 
     DG_ASSERT(m_pData != nullptr);
 
 	  //Assign sizes
 	  m_nItems = 0;
     AssignPointersToEmpty();
-    //Print("init");
+    COMMENT Print("init");
   }	//End: list::init()
 
 
@@ -525,10 +528,13 @@ namespace Dg
   //	@	list<T>::list<T>()
   //--------------------------------------------------------------------------------
   template<typename T>
-  list<T>::list() : m_pData(nullptr), m_pNextFree(nullptr)
+  list<T>::list() 
+    : ContainerBase()
+    , m_pData(nullptr)
+    , m_pNextFree(nullptr)
   {
 	  //Set m_pData
-	  init(DG_CONTAINER_DEFAULT_SIZE);
+	  init(pool_size());
 
   }	//End: list::list()
 
@@ -537,10 +543,13 @@ namespace Dg
   //	@	list<T>::list<T>()
   //--------------------------------------------------------------------------------
   template<typename T>
-  list<T>::list(size_t a_size): m_pData(nullptr), m_pNextFree(nullptr)
+  list<T>::list(size_t a_size)
+    : ContainerBase(a_size)
+    , m_pData(nullptr)
+    , m_pNextFree(nullptr)
   {
 	  //Set up the list
-    init(a_size);
+    init(pool_size());
 
   }	//End: list::list()
 
@@ -566,9 +575,10 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename T>
   list<T>::list(list const & other)
+    : ContainerBase(other)
   {
 	  //Initialise m_pData
-	  init(other.m_poolSize);
+	  init(other.pool_size());
 
 	  //Assign m_pData
 	  list<T>::const_iterator it = other.cbegin();
@@ -590,7 +600,7 @@ namespace Dg
 		  return *this;
 
 	  //resize array
-	  resize(other.m_poolSize);
+	  resize(other.pool_size());
 
 	  //Assign m_pData
 	  list<T>::const_iterator it = other.cbegin();
@@ -599,7 +609,7 @@ namespace Dg
 		  push_back(*it);
 	  }
 
-    //Print("operator =");
+    COMMENT Print("operator =");
 	  return *this;
   }	//End: list::operator=()
 
@@ -617,7 +627,7 @@ namespace Dg
 
     m_nItems = 0;
     AssignPointersToEmpty();
-    //Print("Clear");
+    COMMENT Print("Clear");
   }	//End: list<T>::clear()
 
 
@@ -637,7 +647,7 @@ namespace Dg
 
 	  //Initialise m_pData
 	  init(a_newSize);
-    //Print("Resize");
+    COMMENT Print("Resize");
 
   }	//End: list<T>::resize()
 
@@ -649,7 +659,7 @@ namespace Dg
   void list<T>::push_back(T const & a_item)
   {
 	  //Is the list full?
-    if (m_nItems >= (m_poolSize - 2))
+    if (m_nItems >= (pool_size() - 1))
     {
       Extend();
     }
@@ -678,7 +688,7 @@ namespace Dg
 
 	  //Increment m_nItems
 	  m_nItems++;
-    //Print("push_back");
+    COMMENT Print("push_back");
 
   }	//End: list::push_back()
 
@@ -690,7 +700,7 @@ namespace Dg
   bool list<T>::push_back()
   {
 	  //Is the list full?
-	  if (m_nItems >= (m_poolSize - 2))
+	  if (m_nItems >= (pool_size() - 1))
 		  return false;
 
 	  //Get the list node to work on
@@ -725,7 +735,7 @@ namespace Dg
   bool list<T>::push_front()
   {
       //Is the list full?
-      if (m_nItems >= (m_poolSize - 2))
+      if (m_nItems >= (pool_size() - 1))
           return false;
 
       //Get the list node to work on
@@ -760,7 +770,7 @@ namespace Dg
   void list<T>::push_front(T const & a_item)
   {
 	  //Is the list full?
-    if (m_nItems >= (m_poolSize - 2))
+    if (m_nItems >= (pool_size() - 1))
     {
       Extend();
     }
@@ -789,7 +799,7 @@ namespace Dg
 
 	  //Increment m_nItems
 	  m_nItems++;
-    //Print("push_front");
+    COMMENT Print("push_front");
 
   }	//End: list::push_front()
 
@@ -818,7 +828,7 @@ namespace Dg
 
 	  //Deincrement m_nItems
 	  m_nItems--;
-    //Print("pop_back");
+    COMMENT Print("pop_back");
 
   }	//End: list::pop_back()
 
@@ -847,7 +857,7 @@ namespace Dg
 
 	  //Deincrement m_nItems
 	  m_nItems--;
-    //Print("pop_front");
+    COMMENT Print("pop_front");
 
   }	//End: list::pop_front()
 
@@ -885,12 +895,12 @@ namespace Dg
 
     //Is the list full?
     size_t index(new_element - m_pData);
-    if (m_nItems >= (m_poolSize - 2))
+    if (m_nItems >= (pool_size() - 1))
     {
       Extend();
     }
     return iterator(&m_pData[index]);
-    //Print("insert");
+    COMMENT Print("insert");
 
   }	//End: list::insert()
 
@@ -924,7 +934,7 @@ namespace Dg
 
 	  //Return iterator to the pNext container
 	  return iterator(pNext);
-    //Print("erase");
+    COMMENT Print("erase");
 
   }	//End: list::erase()
 
@@ -948,18 +958,17 @@ namespace Dg
   template<typename T>
   void list<T>::Extend()
   {
-    size_t oldSize(m_poolSize);
+    size_t oldSize(pool_size());
     Node * pOldData(m_pData);
-    size_t new_size = (m_poolSize - 1) * 2 + 1;
+    set_next_pool_size();
 
-    DG_ASSERT(new_size > m_poolSize);
-    m_poolSize = new_size;
+    DG_ASSERT(pool_size() > oldSize);
 
     //Create new array
-    m_pData = static_cast<Node *>(realloc(m_pData, new_size * sizeof(Node)));
+    m_pData = static_cast<Node *>(realloc(m_pData, (pool_size() + 1) * sizeof(Node)));
     DG_ASSERT(m_pData != nullptr);
 
-    for (size_t i = 0; i < oldSize; ++i)
+    for (size_t i = 0; i <= oldSize; ++i)
     {
       m_pData[i].pPrev = &m_pData[m_pData[i].pPrev - pOldData];
       if (m_pData[i].pNext == nullptr)
@@ -986,12 +995,12 @@ namespace Dg
       m_pNextFree = &m_pData[oldSize];
     }
 
-    for (size_t i = oldSize; i < m_poolSize - 1; ++i)
+    for (size_t i = oldSize; i < pool_size(); ++i)
     {
       m_pData[i].pNext = &m_pData[i + 1];
     }
-    m_pData[m_poolSize - 1].pNext = nullptr;
-    //Print("Extend");
+    m_pData[pool_size()].pNext = nullptr;
+    COMMENT Print("Extend");
   }	//End: list<T>::Extend()
 
 

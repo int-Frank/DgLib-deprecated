@@ -10,6 +10,10 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <new>
+#include <type_traits>
+
+#include "DgErrorHandler.h"
 
 #define DG_CONTAINER_DEFAULT_SIZE 1024
 
@@ -55,28 +59,22 @@ namespace Dg
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to item in the vector
-    T& back() { return m_pData[m_currentSize - 1]; }
+    T& back() { return m_pData[m_nItems - 1]; }
 
     //! Get last element
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to item in the vector
-    T const & back() const { return m_pData[m_currentSize - 1]; }
-
-    //! Accessor with range check.
-    T& at(size_t);
-
-    //! Accessor with range check.
-    T const & at(size_t) const;
+    T const & back() const { return m_pData[m_nItems - 1]; }
 
     //! Current size of the array
-    size_t size()		const			{ return m_currentSize; }
+    size_t size()		const			{ return m_nItems; }
 
     //! Is the array empty
-    bool empty()		const			{ return m_currentSize == 0; }
+    bool empty()		const			{ return m_nItems == 0; }
 
     //! Size of the reserved memory.
-    size_t max_size()	const			{ return m_arraySize; }
+    size_t max_size()	const			{ return m_poolSize; }
 
     //! Get pointer to first element.
     T* data()							{ return m_pData; }
@@ -109,8 +107,8 @@ namespace Dg
   private:
     //Data members
     T* m_pData;
-    size_t m_arraySize;
-    size_t m_currentSize;
+    size_t m_poolSize;
+    size_t m_nItems;
   };
 
 
@@ -120,15 +118,11 @@ namespace Dg
   template<class T>
   vector_pod<T>::vector_pod() 
     : m_pData(nullptr)
-    , m_arraySize(DG_CONTAINER_DEFAULT_SIZE)
-    , m_currentSize(0)
+    , m_poolSize(DG_CONTAINER_DEFAULT_SIZE)
+    , m_nItems(0)
   {
-    m_pData = static_cast<T*>(malloc(m_arraySize * sizeof(T)));
-
-    if (m_pData == nullptr)
-    {
-      //TODO
-    }
+    m_pData = static_cast<T*>(malloc(m_poolSize * sizeof(T)));
+    DG_ASSERT(m_pData != nullptr);
 
   }	//End: vector_pod::vector_pod()
 
@@ -139,16 +133,12 @@ namespace Dg
   template<class T>
   vector_pod<T>::vector_pod(size_t a_size)
     : m_pData(nullptr)
-    , m_currentSize(0)
-    , m_arraySize(a_size)
+    , m_nItems(0)
+    , m_poolSize(a_size)
   {
     //Initialise pointers
-    m_pData = static_cast<T*>(malloc(m_arraySize * sizeof(T)));
-
-    if (m_pData == nullptr)
-    {
-      //TODO
-    }
+    m_pData = static_cast<T*>(malloc(m_poolSize * sizeof(T)));
+    DG_ASSERT(m_pData != nullptr);
 
   }	//End: vector_pod::vector_pod()
 
@@ -159,7 +149,14 @@ namespace Dg
   template<class T>
   vector_pod<T>::~vector_pod()
   {
-    //Free memory
+    if (!std::is_pod<T>::value)
+    {
+      for (size_t i = 0; i < m_nItems; i++)
+      {
+        m_pData[i].~T();
+      }
+    }
+
     free(m_pData);
 
   }	//End: vector_pod::~vector_pod()
@@ -171,20 +168,24 @@ namespace Dg
   template<class T>
   void vector_pod<T>::init(vector_pod const & a_other)
   {
-    T * tempPtr = static_cast<T*>(realloc(m_pData, a_other.m_arraySize * sizeof(T)));
-
-    if (tempPtr == nullptr)
-    {
-      //TODO
-    }
-
-    m_pData = tempPtr;
+    m_pData = static_cast<T*>(realloc(m_pData, a_other.m_poolSize * sizeof(T)));
+    DG_ASSERT(m_pData != nullptr);
 
     //Set sizes
-    m_arraySize = a_other.m_arraySize;
-    m_currentSize = a_other.m_currentSize;
+    m_poolSize = a_other.m_poolSize;
+    m_nItems = a_other.m_nItems;
 
-    memcpy(m_pData, a_other.m_pData, a_other.m_currentSize * sizeof(T));
+    if (!std::is_pod<T>::value)
+    {
+      for (size_t i = 0; i < m_nItems; i++)
+      {
+        new (&m_pData[i]) T(a_other.m_pData[i]);
+      }
+    }
+    else
+    {
+      memcpy(m_pData, a_other.m_pData, a_other.m_nItems * sizeof(T));
+    }
 
   }	//End: vector_pod<T>::init()
 
@@ -209,42 +210,11 @@ namespace Dg
     if (this == &other)
       return *this;
 
+    clear();
     init(other);
 
     return *this;
   }	//End: vector_pod::operator=()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::at()
-  //--------------------------------------------------------------------------------
-  template<class T>
-  T& vector_pod<T>::at(size_t index)
-  {
-    if (index >= m_currentSize)
-    {
-      //TODO
-    }
-
-    return m_pData[index];
-
-  }	//End: vector_pod<T>::at()
-
-
-  //--------------------------------------------------------------------------------
-  //	@	vector_pod<T>::at()
-  //--------------------------------------------------------------------------------
-  template<class T>
-  T const & vector_pod<T>::at(size_t index) const
-  {
-    if (index >= m_currentSize)
-    {
-      //TODO
-    }
-
-    return m_pData[index];
-
-  }	//End: vector_pod<T>::at()
 
 
   //--------------------------------------------------------------------------------
@@ -254,16 +224,16 @@ namespace Dg
   void vector_pod<T>::push_back(T const & a_item)
   {
     //Range check
-    if (m_currentSize == m_arraySize)
+    if (m_nItems == m_poolSize)
     {
       extend();
     }
 
     //Set element
-    memcpy(&m_pData[m_currentSize], &a_item, sizeof(T));
+    memcpy(&m_pData[m_nItems], &a_item, sizeof(T));
 
     //increment current size
-    ++m_currentSize;
+    ++m_nItems;
 
   }	//End: vector_pod<T>::push_back()
 
@@ -275,11 +245,11 @@ namespace Dg
   void vector_pod<T>::pop_back()
   {
     //Range check
-    if (m_currentSize == 0)
+    if (m_nItems == 0)
       return;
 
     //Deincrement current size
-    --m_currentSize;
+    --m_nItems;
 
   }	//End: vector_pod<T>::pop_back()
 
@@ -291,7 +261,7 @@ namespace Dg
   void vector_pod<T>::clear()
   {
     //Set current size to 0
-    m_currentSize = 0;
+    m_nItems = 0;
 
   }	//End: vector_pod::clear()
 
@@ -310,10 +280,10 @@ namespace Dg
     }
 
     m_pData = tempPtr;
-    m_arraySize = a_size;
-    if (a_size < m_currentSize)
+    m_poolSize = a_size;
+    if (a_size < m_nItems)
     {
-      m_currentSize = a_size;
+      m_nItems = a_size;
     }
 
   }	//End: vector_pod::resize()
@@ -325,11 +295,11 @@ namespace Dg
   template<class T>
   void vector_pod<T>::erase_swap(size_t a_ind)
   {
-    if (ind < m_currentSize - 1)
+    if (ind < m_nItems - 1)
     {
-      memcpy(&m_pData[ind], &m_pData[m_currentSize - 1], sizeof(T));
+      memcpy(&m_pData[ind], &m_pData[m_nItems - 1], sizeof(T));
     }
-    --m_currentSize;
+    --m_nItems;
   }	//End: vector_pod::erase_swap()
 
 
@@ -340,9 +310,9 @@ namespace Dg
   void vector_pod<T>::extend()
   {
     //Calculate new size 
-    size_t newSize = m_arraySize << 1;
+    size_t newSize = m_poolSize << 1;
 
-    if (newSize < m_arraySize)
+    if (newSize < m_poolSize)
     {
       //TODO
     }

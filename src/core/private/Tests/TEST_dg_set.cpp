@@ -183,7 +183,6 @@ TEST(Stack_dg_set_p, creation_dg_set_p)
 
   CHECK(m.size() == 0);
   CHECK(m.empty() == true);
-  CHECK(m.max_size() == 1);
   CHECK(m.find(0, index) == false);
 
   CHECK(InsertAndCheck(v, m, 3));

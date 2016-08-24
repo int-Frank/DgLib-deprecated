@@ -143,7 +143,6 @@ TEST(Stack_dg_list_pod, creation_dg_list_pod)
   CHECK(CheckState(lst, newlst2));
 
   DgList newlst3(666);
-  CHECK(newlst3.max_size() == 666);
   CHECK(newlst3.size() == 0);
   newlst3 = dglst;
   CHECK(CheckState(lst, newlst3));

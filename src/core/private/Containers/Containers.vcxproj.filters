@@ -8,6 +8,9 @@
     <Filter Include="Public Headers">
       <UniqueIdentifier>{f655ddc5-302d-4e45-b3ac-588d082502b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private">
+      <UniqueIdentifier>{079ad136-b0e6-44f3-bbcc-34b01fe1fe93}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\public\Dg_map.h">
@@ -29,5 +32,13 @@
     <ClInclude Include="..\..\public\Dg_set.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgContainerBase.h">
+      <Filter>Private</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DgContainerBase.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

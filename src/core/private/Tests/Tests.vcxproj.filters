@@ -75,9 +75,6 @@
     <ClCompile Include="TEST_DgIDManager.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_dg_list_pod.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="TEST_dg_vector_pod2.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
@@ -94,6 +91,9 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_dg_set.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_dg_list.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>

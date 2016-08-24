@@ -13,6 +13,7 @@
 #include <new>
 #include <type_traits>
 
+#include "impl/DgContainerBase.h"
 #include "DgErrorHandler.h"
 
 #define DG_CONTAINER_DEFAULT_SIZE 1024
@@ -32,7 +33,7 @@ namespace Dg
   //! @author Frank B. Hart
   //! @date 23/05/2016
   template<class T>
-  class set
+  class set : public ContainerBase
   {
   public:
     //! Constructor 
@@ -48,6 +49,12 @@ namespace Dg
 
     //! Copy constructor.
     set(set const &);
+
+    //! Move constructor
+    set(set &&);
+
+    //! Move assignment
+    set & operator=(set &&);
 
     //! Assigns new contents to the container, replacing its current content.
     set& operator= (set const &);
@@ -73,9 +80,6 @@ namespace Dg
 
     //! Returns whether the set is empty.
     bool empty() const	{ return m_nItems == 0; }
-
-    //! Returns number of elements the set can hold before resizing.
-    int max_size() const	{ return m_poolSize; }
 
     //! Searches the set for an element equivalent to \a t.
     //! @return True if the element was found with \a index being set to the 
@@ -139,10 +143,7 @@ namespace Dg
   private:
     //m_pData members
     T* m_pData;
-
-    int m_poolSize;
     int m_nItems;
-
   };
 
 
@@ -151,8 +152,8 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<class T>
   set<T>::set()
-    : m_pData(nullptr)
-    , m_poolSize(0)
+    : ContainerBase()
+    , m_pData(nullptr)
     , m_nItems(0)
   {
     resize(DG_CONTAINER_DEFAULT_SIZE);
@@ -164,8 +165,8 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<class T>
   set<T>::set(size_t a_newSize)
-    : m_pData(nullptr)
-    , m_poolSize(0)
+    : ContainerBase(a_newSize)
+    , m_pData(nullptr)
     , m_nItems(0)
   {
     resize(a_newSize);
@@ -178,7 +179,6 @@ namespace Dg
   template<class T>
   set<T>::~set()
   {
-    //Free memory
     free( m_pData );
 
   }	//End: set::~set()
@@ -191,7 +191,7 @@ namespace Dg
   void set<T>::init(set const & a_other)
   {
     //Resize lists
-    resize(a_other.m_poolSize);
+    resize(static_cast<int>(a_other.pool_size()));
 
     if (std::is_pod<T>::value)
     {
@@ -215,8 +215,8 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<class T>
   set<T>::set(set const & other) 
-    : m_pData(nullptr)
-    , m_poolSize(0)
+    : ContainerBase(other)
+    , m_pData(nullptr)
     , m_nItems(0)
   {
     init(other);
@@ -247,23 +247,22 @@ namespace Dg
   template<class T>
   void set<T>::resize(int a_newSize)
   {
-    if (a_newSize < m_nItems)
+    pool_size(a_newSize);
+    if (pool_size() < m_nItems)
     {
       if (!std::is_pod<T>::value)
       {
-        for (int i = a_newSize; i < m_nItems; ++i)
+        for (int i = static_cast<int>(pool_size()); i < m_nItems; ++i)
         {
           m_pData[i].~T();
         }
       }
-      m_nItems = a_newSize;
+      m_nItems = static_cast<int>(pool_size());
     }
 
     //Delete old m_pData
-    m_pData = static_cast<T *>(realloc(m_pData, sizeof(T) * a_newSize));
+    m_pData = static_cast<T *>(realloc(m_pData, sizeof(T) * pool_size()));
     DG_ASSERT(m_pData != nullptr);
-
-    m_poolSize = a_newSize;
 
   }	//End: set::resize()
 
@@ -315,8 +314,8 @@ namespace Dg
   template<class T>
   void set<T>::extend()
   {
-    int new_size = m_poolSize * 2;
-    DG_ASSERT(new_size > m_poolSize);
+    int new_size = static_cast<int>(set_next_pool_size());
+    DG_ASSERT(new_size > static_cast<int>(pool_size()));
     resize(new_size);
 
   }	//End: set::extend()
@@ -333,7 +332,7 @@ namespace Dg
     find(a_item, index);
 
     //Range check
-    if (m_nItems == m_poolSize)
+    if (m_nItems == pool_size())
       extend();
 
     //shift all RHS objects to the right by one.
@@ -366,7 +365,7 @@ namespace Dg
       return false;
 
     //Range check
-    if (m_nItems == m_poolSize)
+    if (m_nItems == pool_size())
       extend();
 
     //shift all RHS objects to the right by one.
