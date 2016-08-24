@@ -106,7 +106,6 @@ namespace Dg
   //! Highest square number in an 8-bit number
   template<> struct HighestSquare<8> { static uint8_t const value = 0xF * 0xF; };
 
-
   //! Test to see if a number is prime
   template<typename T>
   bool IsPrime(T a_val)
@@ -115,12 +114,25 @@ namespace Dg
     if (a_val <= 3) return true;
     if (a_val % 2 == 0 || a_val % 3 == 0) return false;
 
-    T maxiSq = (a_val < HighestSquare<BitSize<T>::value>::value) ? a_val : HighestSquare<BitSize<T>::value>::value;
-    for (T i = 5; i*i < maxiSq; i += 6)
+    if (a_val >= HighestSquare<BitSize<T>::value>::value)
     {
-      if (a_val % i == 0 || a_val % (i + 2) == 0)
+      T maxi = (T(1) << ((CHAR_BIT * sizeof(T)) / 2)) - 1;
+      for (T i = 5; i < maxi; i += 6)
       {
-        return false;
+        if (a_val % i == 0 || a_val % (i + 2) == 0)
+        {
+          return false;
+        }
+      }
+    }
+    else
+    {
+      for (T i = 5; i*i <= a_val; i += 6)
+      {
+        if (a_val % i == 0 || a_val % (i + 2) == 0)
+        {
+          return false;
+        }
       }
     }
     return true;
