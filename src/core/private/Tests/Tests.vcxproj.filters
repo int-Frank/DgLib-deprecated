@@ -27,9 +27,6 @@
     <ClCompile Include="TEST_dg_map.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_dg_map_p.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="TEST_dg_set_p.cpp">
       <Filter>Tests</Filter>
     </ClCompile>

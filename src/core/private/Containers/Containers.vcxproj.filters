@@ -13,9 +13,6 @@
     <ClInclude Include="..\..\public\Dg_map.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dg_map_pod.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\Dg_set_pod.h">
       <Filter>Public Headers</Filter>
     </ClInclude>

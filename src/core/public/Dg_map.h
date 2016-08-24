@@ -8,9 +8,13 @@
 #ifndef DG_MAP_H
 #define DG_MAP_H
 
-#include <stdexcept>
+#include <cstring>
+#include <new>
+#include <type_traits>
 
-#define DG_CONTAINER_DEFAULT_SIZE 1024
+#include "DgErrorHandler.h"
+
+#define DG_CONTAINER_DEFAULT_SIZE 1
 
 namespace Dg
 {
@@ -50,7 +54,7 @@ namespace Dg
     //! @return Reference to the item
     //!
     //! @param[in] i Index of the item
-    T& operator[](int i)	{ return m_data[i]; }
+    T& operator[](int i)	{ return m_pData[i]; }
 
     //! Returns a const reference to the \a i<SUP>th</SUP> element in the map. 
     //! This function does not perform a range check.
@@ -58,16 +62,16 @@ namespace Dg
     //! @return const reference to the item
     //!
     //! @param[in] i Index of the item
-    T const & operator[](int i) const { return m_data[i]; }
+    T const & operator[](int i) const { return m_pData[i]; }
 
     //! Return number of elements in the map.
-    int size() const	{ return m_currentSize; }
+    int size() const	{ return m_nItems; }
 
     //! Returns whether the map is empty.
-    bool empty() const	{ return m_currentSize == 0; }
+    bool empty() const	{ return m_nItems == 0; }
 
     //! Returns number of elements the map can hold before resizing.
-    int max_size() const	{ return m_arraySize; }
+    int max_size() const	{ return m_poolSize; }
 
     //! Returns the key of the ith element in the map.
     //! This function does not perform a range check.
@@ -75,7 +79,7 @@ namespace Dg
     //! @return Key
     //!
     //! @param[in] i Index of item to query
-    K const & query_key(int i)	const { return m_keys[i]; }
+    K const & query_key(int i)	const { return m_pKeys[i]; }
 
     //! Searches the map for an element with a key equivalent to \a k.
     //! @return True if the element was found with \a index being set to the 
@@ -137,11 +141,11 @@ namespace Dg
 
   private:
     //Data members
-    K*  m_keys;
-    T*  m_data;
+    K*  m_pKeys;
+    T*  m_pData;
 
-    int m_arraySize;
-    int m_currentSize;
+    int m_poolSize;
+    int m_nItems;
   };
 
 
@@ -150,10 +154,10 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
   map<K, T>::map()
-    : m_data(nullptr)
-    , m_keys(nullptr)
-    , m_arraySize(0)
-    , m_currentSize(0)
+    : m_pData(nullptr)
+    , m_pKeys(nullptr)
+    , m_poolSize(0)
+    , m_nItems(0)
   {
     resize(DG_CONTAINER_DEFAULT_SIZE);
 
@@ -165,29 +169,18 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
   map<K, T>::map(int a_size)
-    : m_data(nullptr)
-    , m_keys(nullptr)
-    , m_arraySize(0)
-    , m_currentSize(0)
+    : m_pData(nullptr)
+    , m_pKeys(nullptr)
+    , m_poolSize(0)
+    , m_nItems(0)
   {
-    T * tempData = static_cast<T*>(malloc(sizeof(T) * a_size));
+    m_pData = static_cast<T*>(malloc(sizeof(T) * a_size));
+    DG_ASSERT(m_pData != nullptr);
 
-    if (tempData == nullptr)
-    {
-      //throw std::bad_alloc();
-    }
+    m_pKeys = static_cast<K*>(malloc(sizeof(K) * a_size));
+    DG_ASSERT(m_pKeys != nullptr);
 
-    K * tempKeys = static_cast<K*>(malloc(sizeof(K) * a_size));
-
-    if (tempKeys == nullptr)
-    {
-      //throw std::bad_alloc();
-    }
-
-    m_data = tempData;
-    m_keys = tempKeys;
-    m_arraySize = a_size;
-    m_currentSize = 0;
+    m_poolSize = a_size;
 
   }	//End: map::map()
 
@@ -198,14 +191,10 @@ namespace Dg
   template<typename K, typename T>
   map<K, T>::~map()
   {
-    for (int i = 0; i < m_currentSize; ++i)
-    {
-      m_keys[i].~K();
-      m_data[i].~T();
-    }
+    clear();
 
-    free(m_data);
-    free(m_keys);
+    free(m_pData);
+    free(m_pKeys);
 
   }	//End: map::~map()
 
@@ -216,17 +205,32 @@ namespace Dg
   template<typename K, typename T>
   void map<K, T>::init(map const & a_other)
   {
-    clear();
-    resize(a_other.m_arraySize);
+    resize(a_other.m_poolSize);
+    m_nItems = a_other.m_nItems;
 
-    for (int i = 0; i < a_other.m_currentSize; ++i)
+    if (std::is_pod<K>::value)
     {
-      new (&m_keys[i]) K(a_other.m_keys[i]);
-      new (&m_data[i]) T(a_other.m_data[i]);
+      memcpy(m_pKeys, a_other.m_pKeys, m_nItems * sizeof(K));
+    }
+    else
+    {
+      for (int i = 0; i < a_other.m_nItems; ++i)
+      {
+        new (&m_pKeys[i]) K(a_other.m_pKeys[i]);
+      }
     }
 
-    m_currentSize = a_other.m_currentSize;
-
+    if (std::is_pod<T>::value)
+    {
+      memcpy(m_pData, a_other.m_pData, m_nItems * sizeof(T));
+    }
+    else
+    {
+      for (int i = 0; i < a_other.m_nItems; ++i)
+      {
+        new (&m_pData[i]) T(a_other.m_pData[i]);
+      }
+    }
   }	//End: map::init()
 
 
@@ -235,10 +239,10 @@ namespace Dg
   //--------------------------------------------------------------------------------
   template<typename K, typename T>
   map<K, T>::map(map const & a_other)
-    : m_data(nullptr)
-    , m_keys(nullptr)
-    , m_arraySize(0)
-    , m_currentSize(0)
+    : m_pData(nullptr)
+    , m_pKeys(nullptr)
+    , m_poolSize(0)
+    , m_nItems(0)
   {
     init(a_other);
 
@@ -254,6 +258,7 @@ namespace Dg
     if (this == &a_other)
       return *this;
 
+    clear();
     init(a_other);
 
     return *this;
@@ -267,29 +272,32 @@ namespace Dg
   template<typename K, typename T>
   void map<K, T>::resize(int a_newSize)
   {
-    T * tempData = static_cast<T*>(realloc(m_data, sizeof(T) * a_newSize));
-
-    if (tempData == nullptr)
+    if (a_newSize < m_nItems)
     {
-      //throw std::bad_alloc();
+      if (!std::is_pod<K>::value)
+      {
+        for (int i = a_newSize; i < m_nItems; ++i)
+        {
+          m_pKeys[i].~K();
+        }
+      }
+      if (!std::is_pod<T>::value)
+      {
+        for (int i = a_newSize; i < m_nItems; ++i)
+        {
+          m_pData[i].~T();
+        }
+      }
+      m_nItems = a_newSize;
     }
 
-    K * tempKeys = static_cast<K*>(realloc(m_keys, sizeof(K) * a_newSize));
+    m_pData = static_cast<T*>(realloc(m_pData, sizeof(T) * a_newSize));
+    DG_ASSERT(m_pData != nullptr);
 
-    if (tempKeys == nullptr)
-    {
-      //throw std::bad_alloc();
-    }
+    m_pKeys = static_cast<K*>(realloc(m_pKeys, sizeof(K) * a_newSize));
+    DG_ASSERT(m_pKeys != nullptr);
 
-    m_data = tempData;
-    m_keys = tempKeys;
-    m_arraySize = a_newSize;
-
-    if (a_newSize < m_currentSize)
-    {
-      m_currentSize = a_newSize;
-    }
-
+    m_poolSize = a_newSize;
   }	//End: map::resize()
 
 
@@ -299,7 +307,7 @@ namespace Dg
   template<typename K, typename T>
   bool map<K, T>::find(K a_key, int& a_index, int a_lower) const
   {
-    return find(a_key, a_index, a_lower, (m_currentSize - 1));
+    return find(a_key, a_index, a_lower, (m_nItems - 1));
 
   }	//End: map::find()
 
@@ -316,10 +324,10 @@ namespace Dg
       a_index = ((a_upper + a_lower) >> 1);
 
       // determine which subarray to search
-      if (m_keys[a_index] < a_key)
+      if (m_pKeys[a_index] < a_key)
         // change min index to search upper subarray
         a_lower = a_index + 1;
-      else if (m_keys[a_index] > a_key)
+      else if (m_pKeys[a_index] > a_key)
         // change max index to search lower subarray
         a_upper = a_index - 1;
       else
@@ -341,13 +349,10 @@ namespace Dg
   void map<K, T>::extend()
   {
     //Calculate new size
-    int newSize = (m_arraySize << 1);
+    int newSize = (m_poolSize * 2);
 
     //overflow, map full
-    if (newSize <= m_arraySize)
-    {
-      //throw std::overflow_error("m_arraySize");
-    }
+    DG_ASSERT(newSize > m_poolSize);
 
     resize(newSize);
 
@@ -366,20 +371,35 @@ namespace Dg
       return false;	//element already exists
 
     //Range check
-    if (m_currentSize == m_arraySize)
+    if (m_nItems == m_poolSize)
       extend();
 
     //shift all RHS objects to the right by one.
-    memmove(&m_data[index + 2], &m_data[index + 1], (m_currentSize - index - 1) * sizeof(T));
-    memmove(&m_keys[index + 2], &m_keys[index + 1], (m_currentSize - index - 1) * sizeof(K));
+    memmove(&m_pData[index + 2], &m_pData[index + 1], (m_nItems - index - 1) * sizeof(T));
+    memmove(&m_pKeys[index + 2], &m_pKeys[index + 1], (m_nItems - index - 1) * sizeof(K));
 
     index++;
 
     //Construct new element.
-    new (&m_keys[index]) K(a_key);
-    new (&m_data[index]) T(a_item);
+    if (std::is_pod<K>::value)
+    {
+      memcpy(&m_pKeys[index], &a_key, sizeof(K));
+    }
+    else
+    {
+      new (&m_pKeys[index]) K(a_key);
+    }
 
-    m_currentSize++;
+    if (std::is_pod<T>::value)
+    {
+      memcpy(&m_pData[index], &a_item, sizeof(T));
+    }
+    else
+    {
+      new (&m_pData[index]) T(a_item);
+    }
+
+    m_nItems++;
 
     return true;
 
@@ -399,14 +419,20 @@ namespace Dg
       return;
     }
 
-    //Destroy element
-    m_keys[index].~K();
-    m_data[index].~T();
+    if (!std::is_pod<K>::value)
+    {
+      m_pKeys[index].~K();
+    }
 
-    memmove(&m_data[index], &m_data[index + 1], (m_currentSize - index - 1) * sizeof(T));
-    memmove(&m_keys[index], &m_keys[index + 1], (m_currentSize - index - 1) * sizeof(K));
+    if (!std::is_pod<T>::value)
+    {
+      m_pData[index].~T();
+    }
 
-    m_currentSize--;
+    memmove(&m_pData[index], &m_pData[index + 1], (m_nItems - index - 1) * sizeof(T));
+    memmove(&m_pKeys[index], &m_pKeys[index + 1], (m_nItems - index - 1) * sizeof(K));
+
+    m_nItems--;
 
   }	//End: map::erase()
 
@@ -424,7 +450,7 @@ namespace Dg
       return false;	//element does not exist
     }
 
-    m_data[index] = a_item;
+    m_pData[index] = a_item;
 
     return true;
 
@@ -449,13 +475,13 @@ namespace Dg
   template<typename K, typename T>
   void map<K, T>::clear()
   {
-    for (int i = 0; i < m_currentSize; ++i)
+    for (int i = 0; i < m_nItems; ++i)
     {
-      m_keys[i].~K();
-      m_data[i].~T();
+      if (!std::is_pod<K>::value) m_pKeys[i].~K();
+      if (!std::is_pod<T>::value) m_pData[i].~T();
     }
 
-    m_currentSize = 0;
+    m_nItems = 0;
 
   }	//End: map::clear()
 };

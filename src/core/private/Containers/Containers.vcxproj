@@ -23,7 +23,6 @@
     <ClInclude Include="..\..\public\DgQuadtree.h" />
     <ClInclude Include="..\..\public\Dg_list.h" />
     <ClInclude Include="..\..\public\Dg_map.h" />
-    <ClInclude Include="..\..\public\Dg_map_pod.h" />
     <ClInclude Include="..\..\public\Dg_set_pod.h" />
     <ClInclude Include="..\..\public\Dg_shared_ptr.h" />
     <ClInclude Include="..\..\public\Dg_vector_pod.h" />
