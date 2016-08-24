@@ -19,7 +19,6 @@
     <ClInclude Include="..\..\public\Dg_shared_ptr.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgQuadtree.h" />
     <ClInclude Include="..\..\public\Dg_HashTable.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
