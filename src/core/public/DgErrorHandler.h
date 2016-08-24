@@ -19,7 +19,7 @@
 
 //! @ingroup DgUtility_functions
 //!
-//! Writes output to crash file and aborts program.
+//! Writes output to a crash file and aborts program.
 //!
 //! @param[in] val Value to be tested (0 fails)
 //! @param[in] message Optional message to write.

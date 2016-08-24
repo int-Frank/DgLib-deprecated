@@ -606,7 +606,10 @@ namespace Dg
   void list<T>::push_back(T const & a_item)
   {
 	  //Is the list full?
-    Extend();
+    if (m_nItems >= (m_poolSize - 2))
+    {
+      Extend();
+    }
 
 	  //Get the list node to work on
 	  Node *new_element = m_pNextFree;
@@ -713,7 +716,10 @@ namespace Dg
   void list<T>::push_front(T const & a_item)
   {
 	  //Is the list full?
-    Extend();
+    if (m_nItems >= (m_poolSize - 2))
+    {
+      Extend();
+    }
 
 	  //Get the list node to work on
 	  Node *new_element = m_pNextFree;
@@ -838,7 +844,10 @@ namespace Dg
 
     //Is the list full?
     size_t index(new_element - m_pData);
-    Extend();
+    if (m_nItems >= (m_poolSize - 2))
+    {
+      Extend();
+    }
     return iterator(&m_pData[index]);
 
   }	//End: list::insert()
@@ -896,11 +905,6 @@ namespace Dg
   template<typename T>
   void list<T>::Extend()
   {
-    if (m_nItems < (m_poolSize - 2))
-    {
-      return;
-    }
-
 	  //Calculate new size
     size_t oldSize(m_poolSize);
     Node * pOldData(m_pData);
