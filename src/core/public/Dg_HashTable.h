@@ -16,6 +16,8 @@
 #ifdef DGHASHTABLE_ENABLE_OUTPUT
 #include <iostream>
 #endif
+
+#include "impl/DgContainerBase.h"
 #include "DgErrorHandler.h"
 
 #define ARRAY_SIZE(a) sizeof(a) / sizeof(*a)
@@ -97,7 +99,7 @@ namespace Dg
     //! Data type
     , typename T
   >
-  class HashTable
+  class HashTable : public ContainerBase
   {
     struct Node
     {
@@ -477,10 +479,10 @@ namespace Dg
 
     //! Default constructor.
     HashTable()
-      : m_pNodes(nullptr)
+      : ContainerBase()
+      , m_pNodes(nullptr)
       , m_pBuckets(nullptr)
       , m_pNextFree(nullptr)
-      , m_poolSize(0)
       , m_bucketCountIndex(s_invalidBucketIndex)
       , m_nItems(0)
       , m_fHasher(DefaultHasher)
@@ -496,10 +498,10 @@ namespace Dg
     //!                       and will be the value closest to but not below a_nBuckets.
     //! @param[in] a_hf       A custom hash function.
     HashTable(size_t a_nBuckets, fHasher<K> * a_hf = DefaultHasher)
-      : m_pNodes(nullptr)
+      : ContainerBase()
+      , m_pNodes(nullptr)
       , m_pBuckets(nullptr)
       , m_pNextFree(nullptr)
-      , m_poolSize(0)
       , m_bucketCountIndex(s_invalidBucketIndex)
       , m_nItems(0)
       , m_fHasher(a_hf)
@@ -516,10 +518,10 @@ namespace Dg
 
     //! Copy constructor.
     HashTable(HashTable const & a_other)
-      : m_pNodes(nullptr)
+      : ContainerBase(a_other)
+      , m_pNodes(nullptr)
       , m_pBuckets(nullptr)
       , m_pNextFree(nullptr)
-      , m_poolSize(0)
       , m_bucketCountIndex(s_invalidBucketIndex)
       , m_nItems(0)
       , m_fHasher(DefaultHasher)
@@ -534,6 +536,7 @@ namespace Dg
       if (this != &a_other)
       {
         Wipe();
+        ContainerBase::operator=(a_other);
         init(a_other);
       }
       return *this;
@@ -541,10 +544,10 @@ namespace Dg
 
     //! Copy move operator.
     HashTable(HashTable && a_other)
-      : m_pNodes(a_other.m_pNodes)
+      : ContainerBase(a_other)
+      , m_pNodes(a_other.m_pNodes)
       , m_pBuckets(a_other.m_pBuckets)
       , m_pNextFree(a_other.m_pNextFree)
-      , m_poolSize(a_other.m_poolSize)
       , m_bucketCountIndex(a_other.m_bucketCountIndex)
       , m_nItems(a_other.m_nItems)
       , m_fHasher(a_other.m_fHasher)
@@ -560,10 +563,11 @@ namespace Dg
       {
         Wipe();
 
+        ContainerBase::operator=(a_other);
         m_pNodes = a_other.m_pNodes;
         m_pBuckets = a_other.m_pBuckets;
         m_pNextFree = a_other.m_pNextFree;
-        m_poolSize = a_other.m_poolSize;
+        pool_size(a_other.pool_size());
         m_bucketCountIndex = a_other.m_bucketCountIndex;
         m_nItems = a_other.m_nItems;
         m_fHasher = a_other.m_fHasher;
@@ -709,11 +713,11 @@ namespace Dg
           *it.~T();
         }
       }
-      for (size_t i = 0; i < m_poolSize - 1; ++i)
+      for (size_t i = 0; i < pool_size() - 1; ++i)
       {
         m_pNodes[i].pNext = &m_pNodes[i + 1];
       }
-      m_pNodes[m_poolSize - 1].pNext - nullptr;
+      m_pNodes[pool_size() - 1].pNext - nullptr;
       memset(m_pBuckets, 0, bucket_count() * sizeof(Bucket));
       m_nItems = 0;
     }
@@ -846,14 +850,9 @@ namespace Dg
       {
         __rehash(bucketCount);
       }
-      if (a_num > m_poolSize)
+      if (a_num > pool_size())
       {
-        size_t exp = 1;
-        while ((m_poolSize * (1 << exp)) < a_num)
-        {
-          exp++;
-        }
-        ExtendPool(exp);
+        ExtendPool(a_num);
       }
     }
 
@@ -943,7 +942,7 @@ namespace Dg
         n = n->pNext;
       }
 
-      return m_poolSize - total;
+      return pool_size() - total;
     }
 
 #ifdef DGHASHTABLE_ENABLE_OUTPUT
@@ -1015,13 +1014,13 @@ namespace Dg
     //! The order of nodes in the memory block wil NOT be changed.
     //! All indices to Nodes will remain valid.
     //!
-    //! @param[in] a_exp The memory block will be increased 2^a_exp
-    void ExtendPool(size_t a_exp = 1)
+    //! @param[in] a_num The memory block will be increased to hold at least this number.
+    void ExtendPool(size_t a_num)
     {
       Node * pOldNodes = m_pNodes;
-      size_t oldPoolSize = m_poolSize;
-      m_poolSize *= (size_t(1) << a_exp);
-      m_pNodes = static_cast<Node*>(realloc(m_pNodes, m_poolSize * sizeof(Node)));
+      size_t oldPoolSize = pool_size();
+      pool_size(a_num);
+      m_pNodes = static_cast<Node*>(realloc(m_pNodes, pool_size() * sizeof(Node)));
       DG_ASSERT(m_pNodes != nullptr);
       //Reset node pointers
       if (m_pNodes != pOldNodes)
@@ -1059,12 +1058,12 @@ namespace Dg
         freeTail = freeTail->pNext;
       }
 
-      for (size_t i = oldPoolSize; i < m_poolSize; ++i)
+      for (size_t i = oldPoolSize; i < pool_size(); ++i)
       {
         freeTail->pNext = &m_pNodes[i];
         freeTail = freeTail->pNext;
       }
-      m_pNodes[m_poolSize - 1].pNext = nullptr;
+      m_pNodes[pool_size() - 1].pNext = nullptr;
     }
 
     //! Returns true if had to rehash.
@@ -1131,7 +1130,7 @@ namespace Dg
     void PostMove(HashTable & a_other)
     {
       a_other.m_pNodes = nullptr;
-      a_other.m_poolSize = 0;
+      a_other.pool_size(0);
       a_other.m_pNextFree = nullptr;
       a_other.m_pBuckets = nullptr;
       a_other.m_bucketCountIndex = s_invalidBucketIndex;
@@ -1160,7 +1159,6 @@ namespace Dg
       //Update values
       m_bucketCountIndex = GetBucketCountIndex(a_nBuckets);
       m_nItems = 0;
-      m_poolSize = s_minPoolSize;
 
       InitArrays();
     }
@@ -1183,7 +1181,7 @@ namespace Dg
       free(m_pBuckets); m_pBuckets = nullptr;
       m_pNextFree = nullptr;
 
-      m_poolSize = 0;
+      //pool_size() = 0;
       m_bucketCountIndex = s_invalidBucketIndex;
       m_nItems = 0;
     }
@@ -1192,15 +1190,15 @@ namespace Dg
     void InitArrays()
     {
       //Update bucket pool
-      if (m_poolSize > 0)
+      if (pool_size() > 0)
       {
-        m_pNodes = static_cast<Node*>(malloc(m_poolSize * sizeof(Node)));
+        m_pNodes = static_cast<Node*>(malloc(pool_size() * sizeof(Node)));
         DG_ASSERT(m_pNodes != nullptr);
-        for (size_t i = 0; i < m_poolSize - 1; ++i)
+        for (size_t i = 0; i < pool_size() - 1; ++i)
         {
           m_pNodes[i].pNext = &m_pNodes[i + 1];
         }
-        m_pNodes[m_poolSize - 1].pNext = nullptr;
+        m_pNodes[pool_size() - 1].pNext = nullptr;
       }
       else
       {
@@ -1227,7 +1225,7 @@ namespace Dg
     {
       if (m_pNextFree->pNext == nullptr)
       {
-        ExtendPool();
+        ExtendPool(pool_size() + 1);
       }
 
       Node * pResult = m_pNextFree;
@@ -1247,7 +1245,7 @@ namespace Dg
         //The pNode may become invalid once we extend, but it's
         //index will not.
         size_t nodeInd = pNode - m_pNodes;
-        ExtendPool();
+        ExtendPool(pool_size() + 1);
         pNode = &m_pNodes[nodeInd];
       }
 
@@ -1266,7 +1264,7 @@ namespace Dg
       //Assign values
       m_maxLoadFactor = a_other.m_maxLoadFactor;
       m_fHasher = a_other.m_fHasher;
-      m_poolSize = a_other.m_poolSize;
+      pool_size(a_other.pool_size());
       m_bucketCountIndex = a_other.m_bucketCountIndex;
 
       InitArrays();
@@ -1318,7 +1316,6 @@ namespace Dg
 
     Node *      m_pNodes;
     Node *      m_pNextFree;
-    size_t      m_poolSize;
 
     Bucket *    m_pBuckets;
     int         m_bucketCountIndex; //Index to impl::validBucketCounts
