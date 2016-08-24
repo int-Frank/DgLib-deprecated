@@ -106,7 +106,7 @@ bool Renderer::Init(Dg::ParticleData<float> * a_parData)
     0.0f, gridSize * 0.5,  -gridSize * 0.5
   };
 
-  Dg::vector_pod<float> vLines;
+  Dg::vector<float> vLines;
   Dg::MakeLineGrid<float, 3>(vLines, s_gridDim, bounds);
   memcpy(&lines[(s_nLinesGlobal + s_nLinesPoint + s_nLinesLine + 3) * 3 * 2], vLines.Data(), vLines.size() * sizeof(float));
 
