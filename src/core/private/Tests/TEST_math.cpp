@@ -99,9 +99,10 @@ TEST(Stack_math, creation_math)
     0, 1, 0, 0, 0,    0
   };
 
-  for (uint8_t i = 2; i < 255; ++i)
+  for (int i = 2; i <= 255; ++i)
   {
-    CHECK(Dg::IsPrime(i) == (isPrime[i] == 1));
+    CHECK(Dg::IsPrime(uint8_t(i)) == (isPrime[i] == 1));
   }
 
+  CHECK(Dg::IsPrime(uint32_t(0xFFFFFFFB)));
 }
