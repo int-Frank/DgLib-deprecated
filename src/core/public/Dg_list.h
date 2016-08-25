@@ -33,12 +33,30 @@ namespace Dg
   //! @class list
   //!
   //! Pre-allocated Linked list. Similar to std::list with similarly named methods
-  //! and functionality. The underlying arrays are preallocated and only change in
+  //! and functionality. The underlying array is preallocated and only change in
   //! size if extending list past that allocated, or manually resizing. This makes
   //! for fast insertion/erasing of elements.
   //!
+  //! A typicall list might look like this in memory. The first element in the pool is always the
+  //! root. The end method will return an iterator pointing to this element. The begin
+  //! method will return an iterator built from whatever element 0 is pointing to next.
+  //! For empty lists, this will be itself. When adding items to the list, the element
+  //! pointed to by the m_pNextFree free pointer will be broken from the sub-list of free
+  //! elements and added to the list of current items.
+  //!
+  //!     v------------------------|   
+  //!    |0|->|1|->|2|->|3|->|4|->|5|  |6|->|7|->|8|->NULL
+  //!    | |<-| |<-| |<-| |<-| |<-| |  | |  | |  | |
+  //!     |------------------------^    ^
+  //!     ^                             Next free    
+  //!     Root node
+  //!
+  //! Constructors and destructors will be called if the elements types are not pod.
+  //!
+  //! The pool is extended when there is only one element left in the list of free elements.
+  //!
   //! @author Frank B. Hart
-  //! @date 21/05/2016
+  //! @date 25/08/2016
   template<typename T>
   class list : public ContainerBase
   {
