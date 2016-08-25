@@ -231,10 +231,7 @@ namespace Dg
       extend();
     }
 
-    //Set element
     memcpy(&m_pData[m_nItems], &a_item, sizeof(T));
-
-    //increment current size
     ++m_nItems;
 
   }	//End: vector<T>::push_back()
@@ -246,11 +243,10 @@ namespace Dg
   template<class T>
   void vector<T>::pop_back()
   {
-    //Range check
-    if (m_nItems == 0)
-      return;
-
-    //Deincrement current size
+    if (std::is_pod<T>::value)
+    {
+      m_pData[pool_size() - 1].~T();
+    }
     --m_nItems;
 
   }	//End: vector<T>::pop_back()
@@ -262,7 +258,13 @@ namespace Dg
   template<class T>
   void vector<T>::clear()
   {
-    //Set current size to 0
+    if (std::is_pod<T>::value)
+    {
+      for (size_t i = 0; i < pool_size(); i++)
+      {
+        m_pData[i].~T();
+      }
+    }
     m_nItems = 0;
 
   }	//End: vector::clear()

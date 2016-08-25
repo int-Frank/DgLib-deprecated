@@ -16,8 +16,6 @@
 #include "impl/DgContainerBase.h"
 #include "DgErrorHandler.h"
 
-#define DG_CONTAINER_DEFAULT_SIZE 1024
-
 namespace Dg
 {
   //! @ingroup DgContainers
@@ -154,7 +152,7 @@ namespace Dg
     , m_pData(nullptr)
     , m_nItems(0)
   {
-    resize(DG_CONTAINER_DEFAULT_SIZE);
+    resize(pool_size());
   }	//End: set::set()
 
 
