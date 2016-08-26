@@ -218,25 +218,25 @@ namespace Dg
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
     //! @return iterator
-	  iterator			  begin()		        {return iterator(m_pData->pNext);}
+	  iterator			  begin()		        {return iterator(m_pData[0].pNext);}
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the list container.
     //! This iterator shall not be dereferenced.
     //!
     //! @return iterator
-    iterator			  end()		          {return iterator(const_cast<Node*>(m_pData)); }
+    iterator			  end()		          {return iterator(const_cast<Node*>(&m_pData[0])); }
 	  
     //! Returns a const iterator pointing to the first data in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
     //! @return const_iterator
-    const_iterator	cbegin()	  const {return const_iterator(m_pData->pNext);}
+    const_iterator	cbegin()	  const {return const_iterator(m_pData[0].pNext);}
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the list container.
     //! This iterator shall not be dereferenced.
     //!
     //! @return const_iterator
-    const_iterator	cend()		  const {return const_iterator(const_cast<Node*>(m_pData)); }
+    const_iterator	cend()		  const {return const_iterator(const_cast<Node*>(&m_pData[0])); }
 	  
     //! Returns number of elements in the list.
     size_t			    size()		  const {return m_nItems;}
@@ -248,25 +248,25 @@ namespace Dg
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to data type
-    T &             back()	 	        { return m_pData->pPrev->data; }
+    T &             back()	 	        { return m_pData[0].pPrev->data; }
      
     //! Returns a reference to the first data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to data type
-    T &             front()		        { return m_pData->pNext->data; }
+    T &             front()		        { return m_pData[0].pNext->data; }
 
     //! Returns a const reference to the last data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to data type
-    T const &				back()		  const { return m_pData->pPrev->data; }
+    T const &				back()		  const { return m_pData[0].pPrev->data; }
 
     //! Returns a const reference to the first data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to data type
-    T const &				front()		  const { return m_pData->pNext->data; }
+    T const &				front()		  const { return m_pData[0].pNext->data; }
 
 	  //! Add an data to the back of the list
     void push_back(T const &);
@@ -513,8 +513,8 @@ namespace Dg
     m_pNextFree = &m_pData[1];
 
     //Set outer container pointers
-    m_pData->pNext = m_pData;
-    m_pData->pPrev = m_pData;
+    m_pData[0].pNext = m_pData;
+    m_pData[0].pPrev = m_pData;
 
     for (size_t i = 1; i < pool_size(); i++)
     {
@@ -701,10 +701,10 @@ namespace Dg
     }
 
 	  //Add the current data to the back of the active list
-	  m_pData->pPrev->pNext = new_element;
-	  new_element->pPrev = m_pData->pPrev;
+	  m_pData[0].pPrev->pNext = new_element;
+	  new_element->pPrev = m_pData[0].pPrev;
     new_element->pNext = m_pData;
-	  m_pData->pPrev = new_element;
+	  m_pData[0].pPrev = new_element;
 
 	  //Increment m_nItems
 	  m_nItems++;
@@ -730,10 +730,10 @@ namespace Dg
 	  m_pNextFree = m_pNextFree->pNext;
 
 	  //Add the current data to the back of the active list
-    m_pData->pPrev->pNext = new_element;
-    new_element->pPrev = m_pData->pPrev;
+    m_pData[0].pPrev->pNext = new_element;
+    new_element->pPrev = m_pData[0].pPrev;
     new_element->pNext = m_pData;
-    m_pData->pPrev = new_element;
+    m_pData[0].pPrev = new_element;
 
     if (!std::is_trivial<T>::value)
     {
@@ -765,10 +765,10 @@ namespace Dg
       m_pNextFree = m_pNextFree->pNext;
 
       //Add the current data to the back of the active list
-      m_pData->pNext->pPrev = new_element;
+      m_pData[0].pNext->pPrev = new_element;
       new_element->pPrev = m_pData;
-      new_element->pNext = m_pData->pNext;
-      m_pData->pNext = new_element;
+      new_element->pNext = m_pData[0].pNext;
+      m_pData[0].pNext = new_element;
 
       if (!std::is_trivial<T>::value)
       {
@@ -812,10 +812,10 @@ namespace Dg
     }
 
 	  //Add the current data to the back of the active list
-    m_pData->pNext->pPrev = new_element;
+    m_pData[0].pNext->pPrev = new_element;
     new_element->pPrev = m_pData;
-    new_element->pNext = m_pData->pNext;
-    m_pData->pNext = new_element;
+    new_element->pNext = m_pData[0].pNext;
+    m_pData[0].pNext = new_element;
 
 	  //Increment m_nItems
 	  m_nItems++;
@@ -832,19 +832,19 @@ namespace Dg
   {
     if (!std::is_trivially_destructible<T>::value)
     {
-      m_pData->pPrev->data.~T();
+      m_pData[0].pPrev->data.~T();
     }
 
 	  //Get new last data
-    Node* last = m_pData->pPrev->pPrev;
+    Node* last = m_pData[0].pPrev->pPrev;
 
 	  //Assign pNext free
-	  m_pData->pPrev->pNext = m_pNextFree;
-	  m_pNextFree = m_pData->pPrev;
+	  m_pData[0].pPrev->pNext = m_pNextFree;
+	  m_pNextFree = m_pData[0].pPrev;
 
 	  //Break data from chain
     last->pNext = m_pData;			//prev points to pNext
-	  m_pData->pPrev = last;	//pNext points to pPrev
+	  m_pData[0].pPrev = last;	//pNext points to pPrev
 
 	  //Deincrement m_nItems
 	  m_nItems--;
@@ -861,19 +861,19 @@ namespace Dg
   {
     if (!std::is_trivially_destructible<T>::value)
     {
-      m_pData->pNext->data.~T();
+      m_pData[0].pNext->data.~T();
     }
 
 	  //Get new first data
-    Node* first = m_pData->pNext->pNext;
+    Node* first = m_pData[0].pNext->pNext;
 
 	  //Assign pNext free
-	  m_pData->pNext->pNext = m_pNextFree;
-	  m_pNextFree = m_pData->pNext;
+	  m_pData[0].pNext->pNext = m_pNextFree;
+	  m_pNextFree = m_pData[0].pNext;
 
 	  //Break data from chain
     first->pPrev = m_pData;		//prev points to pNext
-	  m_pData->pNext = first;	//pNext points to pPrev
+	  m_pData[0].pNext = first;	//pNext points to pPrev
 
 	  //Deincrement m_nItems
 	  m_nItems--;

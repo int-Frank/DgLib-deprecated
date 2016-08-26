@@ -276,16 +276,13 @@ namespace Dg
 
     if (newSize < m_nItems)
     {
-      if (!std::is_trivially_destructible<K>::value)
+      for (int i = newSize; i < m_nItems; ++i)
       {
-        for (int i = newSize; i < m_nItems; ++i)
+        if (!std::is_trivially_destructible<K>::value)
         {
           m_pKeys[i].~K();
         }
-      }
-      if (!std::is_trivially_destructible<T>::value)
-      {
-        for (int i = newSize; i < m_nItems; ++i)
+        if (!std::is_trivially_destructible<T>::value)
         {
           m_pData[i].~T();
         }

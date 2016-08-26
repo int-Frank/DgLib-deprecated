@@ -708,7 +708,7 @@ namespace Dg
     //! essentially, the item counts are set to 0.
     void clear()
     {
-      if (!std::is_pod<T>::value)
+      if (!std::is_trivially_destructible<T>::value)
       {
         iterator it = begin();
         for (it; it != end(); ++it)

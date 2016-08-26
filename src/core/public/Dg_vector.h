@@ -174,7 +174,7 @@ namespace Dg
     m_pData = static_cast<T*>(realloc(m_pData, pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
 
-    if (!std::is_trivially_destructible<T>::value)
+    if (!std::is_trivially_copy_constructible<T>::value)
     {
       for (size_t i = 0; i < m_nItems; i++)
       {
@@ -335,14 +335,11 @@ namespace Dg
   template<class T>
   void vector<T>::erase_swap(size_t a_ind)
   {
-    if (ind < m_nItems - 1)
+    if (!std::is_trivially_destructible<T>::value)
     {
-      if (!std::is_trivially_destructible<T>::value)
-      {
-        m_pData[a_ind].~T();
-      }
-      memcpy(&m_pData[ind], &m_pData[m_nItems - 1], sizeof(T));
+      m_pData[a_ind].~T();
     }
+    memmove(&m_pData[ind], &m_pData[m_nItems - 1], sizeof(T));
     --m_nItems;
   }	//End: vector::erase_swap()
 
