@@ -2,13 +2,22 @@
 #include "dg_vector.h"
 #include <vector>
 
+#include "NonPODTests.h"
+
 typedef int t;
 typedef std::vector<t>   vector;
 typedef Dg::vector<t>    DgVec;
 
+
+
 bool CheckState(vector & a_vec, DgVec & a_dgVec)
 {
   if (a_vec.size() != a_dgVec.size())
+  {
+    return false;
+  }
+
+  if (a_vec.empty() != a_dgVec.empty())
   {
     return false;
   }
@@ -33,9 +42,6 @@ bool CheckState(vector & a_vec, DgVec & a_dgVec)
 }
 
 
-//--------------------------------------------------------------------------------
-//	Dg::map_s
-//--------------------------------------------------------------------------------
 TEST(Stack_dg_vector_pod, creation_dg_vector_pod)
 {
   DgVec       dglst;
@@ -54,16 +60,23 @@ TEST(Stack_dg_vector_pod, creation_dg_vector_pod)
     CHECK(CheckState(lst, dglst));
   }
 
+  lst.clear();
+  dglst.clear();
+  CHECK(CheckState(lst, dglst));
+
+  for (t i = 0; i < tMax; ++i)
+  {
+    dglst.push_back(i);
+    lst.push_back(i);
+    CHECK(CheckState(lst, dglst));
+  }
+
   for (t i = 0; i < tMax; ++i)
   {
     dglst.pop_back();
     lst.pop_back();
     CHECK(CheckState(lst, dglst));
   }
-
-  lst.clear();
-  dglst.clear();
-  CHECK(CheckState(lst, dglst));
 
   for (t i = 0; i < tMax; ++i)
   {

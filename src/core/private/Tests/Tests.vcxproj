@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NonPODTests.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
     <ClCompile Include="TEST_DGFixedPoint.cpp" />
     <ClCompile Include="TEST_DgFrustum.cpp" />
@@ -181,7 +182,7 @@
     <ClCompile Include="TEST_dg_list.cpp" />
     <ClCompile Include="TEST_dg_map.cpp" />
     <ClCompile Include="TEST_dg_set.cpp" />
-    <ClCompile Include="TEST_dg_vector_pod2.cpp" />
+    <ClCompile Include="TEST_dg_vector.cpp" />
     <ClCompile Include="TEST_math.cpp" />
     <ClCompile Include="TEST_Matrix44.cpp" />
     <ClCompile Include="TEST_ParticleSystems.cpp" />
@@ -212,6 +213,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="testini.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="NonPODTests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -207,7 +207,7 @@ namespace Dg
     resize(static_cast<int>(a_other.pool_size()));
     m_nItems = a_other.m_nItems;
 
-    if (std::is_pod<K>::value)
+    if (std::is_trivially_copy_constructible<K>::value)
     {
       memcpy(m_pKeys, a_other.m_pKeys, m_nItems * sizeof(K));
     }
@@ -219,7 +219,7 @@ namespace Dg
       }
     }
 
-    if (std::is_pod<T>::value)
+    if (std::is_trivially_copy_constructible<T>::value)
     {
       memcpy(m_pData, a_other.m_pData, m_nItems * sizeof(T));
     }
@@ -276,14 +276,14 @@ namespace Dg
 
     if (newSize < m_nItems)
     {
-      if (!std::is_pod<K>::value)
+      if (!std::is_trivially_destructible<K>::value)
       {
         for (int i = newSize; i < m_nItems; ++i)
         {
           m_pKeys[i].~K();
         }
       }
-      if (!std::is_pod<T>::value)
+      if (!std::is_trivially_destructible<T>::value)
       {
         for (int i = newSize; i < m_nItems; ++i)
         {
@@ -381,7 +381,7 @@ namespace Dg
     index++;
 
     //Construct new element.
-    if (std::is_pod<K>::value)
+    if (std::is_trivially_copy_constructible<K>::value)
     {
       memcpy(&m_pKeys[index], &a_key, sizeof(K));
     }
@@ -390,7 +390,7 @@ namespace Dg
       new (&m_pKeys[index]) K(a_key);
     }
 
-    if (std::is_pod<T>::value)
+    if (std::is_trivially_copy_constructible<T>::value)
     {
       memcpy(&m_pData[index], &a_item, sizeof(T));
     }
@@ -419,12 +419,12 @@ namespace Dg
       return;
     }
 
-    if (!std::is_pod<K>::value)
+    if (!std::is_trivially_destructible<K>::value)
     {
       m_pKeys[index].~K();
     }
 
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       m_pData[index].~T();
     }
@@ -477,8 +477,8 @@ namespace Dg
   {
     for (int i = 0; i < m_nItems; ++i)
     {
-      if (!std::is_pod<K>::value) m_pKeys[i].~K();
-      if (!std::is_pod<T>::value) m_pData[i].~T();
+      if (!std::is_trivially_destructible<K>::value) m_pKeys[i].~K();
+      if (!std::is_trivially_destructible<T>::value) m_pData[i].~T();
     }
 
     m_nItems = 0;

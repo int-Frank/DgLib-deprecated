@@ -9,8 +9,8 @@
 #ifndef DG_LIST_POD_H
 #define DG_LIST_POD_H
 
-#include <cstdlib>
 #include <cstring>
+#include <new>
 #include <type_traits>
 
 #include "impl/DgContainerBase.h"
@@ -37,19 +37,21 @@ namespace Dg
   //! size if extending list past that allocated, or manually resizing. This makes
   //! for fast insertion/erasing of elements.
   //!
-  //! A typicall list might look like this in memory. The first element in the pool is always the
-  //! root. The end method will return an iterator pointing to this element. The begin
-  //! method will return an iterator built from whatever element 0 is pointing to next.
-  //! For empty lists, this will be itself. When adding items to the list, the element
-  //! pointed to by the m_pNextFree free pointer will be broken from the sub-list of free
-  //! elements and added to the list of current items.
+  //! A list with a memory pool the size of 8 item might typicall look like this in memory. 
+  //! The first element in the pool is always the root. The end method will return an 
+  //! iterator pointing to this element. The begin method will return an iterator built 
+  //! from whatever element 0 is pointing to next. For empty lists, this will be itself. 
+  //! When adding items to the list, the element pointed to by the m_pNextFree free pointer 
+  //! will be broken from the sub-list of free elements and added to the list of current items.
+  //
+  //!       v--------------------------------------------|   
+  //!    |     |->|     |->|     |->|     |->|     |->|     |     |->|     |->|     |->|     |->NULL
+  //!    |  0  |  |  1  |  |  2  |  |  3  |  |  4  |  |  5  |  6  |  |  7  |  |  8  |  |  9  |
+  //!    |     |<-|     |<-|     |<-|     |<-|     |<-|     |     |  |     |  |     |  |     |
+  //!       |--------------------------------------------^     ^
+  //!                                                         Next free
   //!
-  //!     v------------------------|   
-  //!    |0|->|1|->|2|->|3|->|4|->|5|  |6|->|7|->|8|->NULL
-  //!    | |<-| |<-| |<-| |<-| |<-| |  | |  | |  | |
-  //!     |------------------------^    ^
-  //!     ^                             Next free    
-  //!     Root node
+  //!     Root node = [0]. The list begins at element [1].
   //!
   //! Constructors and destructors will be called if the elements types are not pod.
   //!
@@ -576,7 +578,7 @@ namespace Dg
   template<typename T>
   list<T>::~list()
   {
-    if (std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       DestructAll();
     }
@@ -638,7 +640,7 @@ namespace Dg
   template<typename T>
   void list<T>::clear()
   {
-    if (std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       DestructAll();
     }
@@ -655,7 +657,7 @@ namespace Dg
   template<typename T>
   void list<T>::resize(size_t a_newSize)
   {
-    if (std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       DestructAll();
     }
@@ -689,13 +691,13 @@ namespace Dg
 	  m_pNextFree = m_pNextFree->pNext;
 
 	  //Assign the data
-    if (std::is_pod<T>::value)
+    if (std::is_trivially_copy_constructible<T>::value)
     {
       memcpy(&new_element->data, &a_item, sizeof(T));
     }
     else
     {
-      new_element->data = a_item;
+      new (&(new_element->data)) T(a_item);
     }
 
 	  //Add the current data to the back of the active list
@@ -733,7 +735,7 @@ namespace Dg
     new_element->pNext = m_pData;
     m_pData->pPrev = new_element;
 
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivial<T>::value)
     {
       new(&(new_element->data)) T();
     }
@@ -768,7 +770,7 @@ namespace Dg
       new_element->pNext = m_pData->pNext;
       m_pData->pNext = new_element;
 
-      if (!std::is_pod<T>::value)
+      if (!std::is_trivial<T>::value)
       {
         new(&(new_element->data)) T();
       }
@@ -800,13 +802,13 @@ namespace Dg
 	  m_pNextFree = m_pNextFree->pNext;
 
 	  //Assign the data
-    if (std::is_pod<T>::value)
+    if (std::is_trivially_copy_constructible<T>::value)
     {
       memcpy(&new_element->data, &a_item, sizeof(T));
     }
     else
     {
-      new_element->data = a_item;
+      new (&new_element->data) T(a_item);
     }
 
 	  //Add the current data to the back of the active list
@@ -828,7 +830,7 @@ namespace Dg
   template<typename T>
   void list<T>::pop_back()
   {
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       m_pData->pPrev->data.~T();
     }
@@ -857,7 +859,7 @@ namespace Dg
   template<typename T>
   void list<T>::pop_front()
   {
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       m_pData->pNext->data.~T();
     }
@@ -899,13 +901,13 @@ namespace Dg
 	  new_element->pNext = it.m_pNode;
 
 	  //Set the data
-    if (std::is_pod<T>::value)
+    if (std::is_trivially_copy_constructible<T>::value)
     {
       memcpy(&new_element->data, &a_item, sizeof(T));
     }
     else
     {
-      new_element->data = a_item;
+      new (&(new_element->data))  T(a_item);
     }
 
 	  //Increment m_nItems
@@ -929,7 +931,7 @@ namespace Dg
   template<typename T>
   typename list<T>::iterator list<T>::erase(typename list<T>::iterator const & it)
   {
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       it.m_pNode->data.~T();
     }

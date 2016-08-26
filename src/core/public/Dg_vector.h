@@ -150,7 +150,7 @@ namespace Dg
   template<class T>
   vector<T>::~vector()
   {
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       for (size_t i = 0; i < m_nItems; i++)
       {
@@ -174,7 +174,7 @@ namespace Dg
     m_pData = static_cast<T*>(realloc(m_pData, pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
 
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       for (size_t i = 0; i < m_nItems; i++)
       {
@@ -193,12 +193,46 @@ namespace Dg
   //	@	vector<T>::vector()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector<T>::vector(vector const & other) 
+  vector<T>::vector(vector<T> const & other)
     : ContainerBase(other)
     , m_pData(nullptr)
   {
     init(other);
 
+  }	//End: vector::vector()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	vector<T>::vector()
+  //--------------------------------------------------------------------------------
+  template<class T>
+  vector<T>::vector(vector<T> && other) 
+    : ContainerBase(std::move(other))
+    , m_pData(other.m_pData)
+  {
+    other.m_pData = nullptr;
+    other.m_nItems = 0;
+  }	//End: vector::vector()
+
+
+  //--------------------------------------------------------------------------------
+  //	@	vector<T>::vector()
+  //--------------------------------------------------------------------------------
+  template<class T>
+  vector<T> & vector<T>::operator=(vector<T> && other)
+  {
+    if (this != &other)
+    {
+      //Assign to this
+      m_nItems = other.m_nItems;
+      m_pData = other.m_pData;
+      pool_size(other.pool_size());
+
+      //Clear other
+      other.m_pData = nullptr;
+      other.m_nItems = 0;
+    }
+    return *this;
   }	//End: vector::vector()
 
 
@@ -243,7 +277,7 @@ namespace Dg
   template<class T>
   void vector<T>::pop_back()
   {
-    if (std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       m_pData[pool_size() - 1].~T();
     }
@@ -258,7 +292,7 @@ namespace Dg
   template<class T>
   void vector<T>::clear()
   {
-    if (std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       for (size_t i = 0; i < pool_size(); i++)
       {
@@ -280,7 +314,7 @@ namespace Dg
 
     if (pool_size() < m_nItems)
     {
-      if (std::is_pod<T>::value)
+      if (!std::is_trivially_destructible<T>::value)
       {
         for (size_t i = pool_size(); i < m_nItems; i++)
         {
@@ -303,7 +337,7 @@ namespace Dg
   {
     if (ind < m_nItems - 1)
     {
-      if (std::is_pod<T>::value)
+      if (!std::is_trivially_destructible<T>::value)
       {
         m_pData[a_ind].~T();
       }

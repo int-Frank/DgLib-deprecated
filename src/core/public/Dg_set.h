@@ -152,7 +152,7 @@ namespace Dg
     , m_pData(nullptr)
     , m_nItems(0)
   {
-    resize(pool_size());
+    resize(static_cast<int>(pool_size()));
   }	//End: set::set()
 
 
@@ -189,7 +189,7 @@ namespace Dg
     //Resize lists
     resize(static_cast<int>(a_other.pool_size()));
 
-    if (std::is_pod<T>::value)
+    if (std::is_trivially_copy_constructible<T>::value)
     {
       memcpy(m_pData, a_other.m_pData, a_other.m_nItems * sizeof(T));
     }
@@ -247,7 +247,7 @@ namespace Dg
     pool_size(a_newSize);
     if (pool_size() < m_nItems)
     {
-      if (!std::is_pod<T>::value)
+      if (!std::is_trivially_destructible<T>::value)
       {
         for (int i = static_cast<int>(pool_size()); i < m_nItems; ++i)
         {
@@ -337,7 +337,7 @@ namespace Dg
 
     index++;
 
-    if (std::is_pod<T>::value)
+    if (std::is_trivially_copy_constructible<T>::value)
     {
       memcpy(&m_pData[index], &a_item, sizeof(T));
     }
@@ -370,7 +370,7 @@ namespace Dg
 
     index++;
 
-    if (std::is_pod<T>::value)
+    if (std::is_trivially_copy_constructible<T>::value)
     {
       memcpy(&m_pData[index], &a_item, sizeof(T));
     }
@@ -397,7 +397,7 @@ namespace Dg
     if (!find(a_item, index))
       return;	//element not found
 
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       m_pData[index].~T();
     }
@@ -436,7 +436,7 @@ namespace Dg
     //Number of elements to remove
     int num = upperInd - lowerInd + 1;
 
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       for (int i = lowerInd; i <= upperInd; i++)
       {
@@ -470,7 +470,7 @@ namespace Dg
   template<class T>
   void set<T>::clear()
   {
-    if (!std::is_pod<T>::value)
+    if (!std::is_trivially_destructible<T>::value)
     {
       for (int i = 0; i < m_nItems; i++)
       {
