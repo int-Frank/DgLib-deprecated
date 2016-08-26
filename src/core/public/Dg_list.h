@@ -43,13 +43,13 @@ namespace Dg
   //! from whatever element 0 is pointing to next. For empty lists, this will be itself. 
   //! When adding items to the list, the element pointed to by the m_pNextFree free pointer 
   //! will be broken from the sub-list of free elements and added to the list of current items.
-  //
-  //!       v--------------------------------------------|   
-  //!    |     |->|     |->|     |->|     |->|     |->|     |     |->|     |->|     |->|     |->NULL
-  //!    |  0  |  |  1  |  |  2  |  |  3  |  |  4  |  |  5  |  6  |  |  7  |  |  8  |  |  9  |
-  //!    |     |<-|     |<-|     |<-|     |<-|     |<-|     |     |  |     |  |     |  |     |
-  //!       |--------------------------------------------^     ^
-  //!                                                         Next free
+  //!     
+  //!      v------------------------------------------------|   
+  //!     |     |->|     |->|     |->|     |->|     |->|     |     |  |     |  |     |  |     |
+  //!     |  0  |  |  1  |  |  2  |  |  3  |  |  4  |  |  5  |  6  |->|  7  |->|  8  |->|  9  |->NULL
+  //!     |     |<-|     |<-|     |<-|     |<-|     |<-|     |     |  |     |  |     |  |     |
+  //!      |------------------------------------------------^   ^
+  //!                                                           Next free
   //!
   //!     Root node = [0]. The list begins at element [1].
   //!
