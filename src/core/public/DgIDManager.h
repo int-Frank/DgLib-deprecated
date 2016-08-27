@@ -67,23 +67,6 @@ namespace Dg
         , m_upper(a_upper)
       {}
 
-      Interval()
-        : m_lower(static_cast<T>(1))
-        , m_upper(static_cast<T>(1))
-      {}
-
-      Interval(Interval const & a_other)
-        : m_lower(a_other.m_lower)
-        , m_upper(a_other.m_upper)
-      {}
-
-      Interval & operator=(Interval const & a_other)
-      {
-        m_lower = a_other.m_lower;
-        m_upper = a_other.m_upper;
-        return *this;
-      }
-
       bool IsOne() const { return m_lower == m_upper; }
 
       bool operator<(Interval const &) const;
