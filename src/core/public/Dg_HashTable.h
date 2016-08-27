@@ -288,7 +288,7 @@ namespace Dg
 
       size_t          m_bucketIndex;
       size_t          m_bucketCount;
-      Bucket *        m_pBuckets;
+      Bucket const *        m_pBuckets;
       Node const *    m_pNode;
     };
 

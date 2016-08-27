@@ -76,7 +76,7 @@ TEST(Stack_dg_list_pod, creation_dg_list_pod)
     CHECK(CheckState(lst, dglst));
   }
 
-  for (t i = 0; i < tMax; ++i)
+  for (t i = 300; i < 300 + tMax; ++i)
   {
     dglst.push_front(i);
     lst.push_front(i);
@@ -99,27 +99,31 @@ TEST(Stack_dg_list_pod, creation_dg_list_pod)
   list::iterator lit = lst.begin();
   DgList::iterator dgit = dglst.begin();
 
-  lit = lst.insert(lit, 2); 
+  lit = lst.insert(lit, 2);
   dgit = dglst.insert(dgit, 2);
   CHECK(*lit == *dgit);
+  CHECK(CheckState(lst, dglst));
 
   lit++; ++lit;
   dgit++; ++dgit;
   lit = lst.insert(lit, 23);
   dgit = dglst.insert(dgit, 23);
   CHECK(*lit == *dgit);
+  CHECK(CheckState(lst, dglst));
 
   lit++; ++lit;
   dgit++; ++dgit;
   lit = lst.erase(lit);
   dgit = dglst.erase(dgit);
   CHECK(*lit == *dgit);
+  CHECK(CheckState(lst, dglst));
 
   lit++; ++lit;
   dgit++; ++dgit;
   lit = lst.erase(lit);
   dgit = dglst.erase(dgit);
   CHECK(*lit == *dgit);
+  CHECK(CheckState(lst, dglst));
 
   lit--; --lit;
   dgit--; --dgit;
