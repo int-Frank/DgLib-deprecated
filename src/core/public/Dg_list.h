@@ -730,7 +730,7 @@ namespace Dg
   {
     for (iterator it = begin(); it != end(); ++it)
     {
-      (*it).~T();
+      it.m_pNode->DestructData();
     } 
   }
 
