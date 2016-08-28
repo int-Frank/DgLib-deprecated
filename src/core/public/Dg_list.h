@@ -294,7 +294,7 @@ namespace Dg
     //! This iterator shall not be dereferenced.
     //!
     //! @return iterator
-    iterator end( {return iterator(&m_pData[0]); }
+    iterator end() {return iterator(&m_pData[0]); }
 	  
     //! Returns a const iterator pointing to the first data in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
