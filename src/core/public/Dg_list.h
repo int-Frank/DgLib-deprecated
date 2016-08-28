@@ -100,7 +100,7 @@ namespace Dg
       }
 
       //! Breaks a node out its chain.
-      //! Assumes pNext and pPrev are valid pointers
+      //! Assumes pNext and pPrev are valid pointers.
       inline void Break()
       {
         pNext->pPrev = pPrev;
@@ -288,55 +288,55 @@ namespace Dg
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
     //! @return iterator
-	  iterator			  begin()		        {return iterator(m_pData[0].Next());}
+	  iterator begin() {return iterator(m_pData[0].Next());}
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the list container.
     //! This iterator shall not be dereferenced.
     //!
     //! @return iterator
-    iterator			  end()		          {return iterator(&m_pData[0]); }
+    iterator end( {return iterator(&m_pData[0]); }
 	  
     //! Returns a const iterator pointing to the first data in the list container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
     //!
     //! @return const_iterator
-    const_iterator	cbegin()	  const {return const_iterator(m_pData[0].Next());}
+    const_iterator cbegin() const {return const_iterator(m_pData[0].Next());}
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the list container.
     //! This iterator shall not be dereferenced.
     //!
     //! @return const_iterator
-    const_iterator	cend()		  const {return const_iterator(&m_pData[0]); }
+    const_iterator cend() const {return const_iterator(&m_pData[0]); }
 	  
     //! Returns number of elements in the list.
-    size_t			    size()		  const {return m_nItems;}
+    size_t size() const {return m_nItems;}
 	  
     //! Returns if the list is empty.
-	  bool 			      empty()		  const {return m_nItems == 0;}
+	  bool empty() const {return m_nItems == 0;}
 
     //! Returns a reference to the last data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to data type
-    T &             back()	 	        { return m_pData[0].Prev()->GetData(); }
+    T & back() { return m_pData[0].Prev()->GetData(); }
      
     //! Returns a reference to the first data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return Reference to data type
-    T &             front()		        { return m_pData[0].Next()->GetData(); }
+    T & front() { return m_pData[0].Next()->GetData(); }
 
     //! Returns a const reference to the last data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to data type
-    T const &				back()		  const { return m_pData[0].Prev()->GetData(); }
+    T const & back() const { return m_pData[0].Prev()->GetData(); }
 
     //! Returns a const reference to the first data in the list container.
     //! Calling this function on an empty container causes undefined behavior.
     //!
     //! @return const reference to data type
-    T const &				front()		  const { return m_pData[0].Next()->GetData(); }
+    T const & front() const { return m_pData[0].Next()->GetData(); }
 
 	  //! Add an data to the back of the list
     void push_back(T const &);

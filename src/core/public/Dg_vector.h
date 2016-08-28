@@ -265,7 +265,15 @@ namespace Dg
       extend();
     }
 
-    memcpy(&m_pData[m_nItems], &a_item, sizeof(T));
+    if (std::is_trivially_copy_constructible<T>::value)
+    {
+      memcpy(&m_pData[m_nItems], &a_item, sizeof(T));
+    }
+    else
+    {
+      new(&m_pData[m_nItems]) T(a_item);
+    }
+
     ++m_nItems;
 
   }	//End: vector<T>::push_back()
