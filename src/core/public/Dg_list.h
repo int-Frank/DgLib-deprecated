@@ -81,15 +81,6 @@ namespace Dg
         }
       }
 
-      //! Initialise the data if a constructor exists for the type.
-      inline void InitData()
-      {
-        if (!std::is_trivially_constructible<T>::value)
-        {
-          new (&data) T();
-        }
-      }
-
       //! Destruct the data is a destructor exists for the type.
       inline void DestructData()
       {
@@ -637,14 +628,15 @@ namespace Dg
   template<typename T>
   typename list<T>::Node * list<T>::InsertNewAfter(Node * a_pNode, T const & a_data)
   {
-    Node * newNode(m_pNextFree);
     if (m_nItems >= (pool_size() - 1))
     {
-      size_t index = newNode - m_pData;
+      //Extending might invalidate a_pNode, so we need to record its index in the pool.
+      size_t index(a_pNode - m_pData);
       Extend();
-      newNode = &m_pData[index];
+      a_pNode = &m_pData[index]; //Reset the pointer in case we have extended.
     }
 
+    Node * newNode(m_pNextFree);
     m_pNextFree = m_pNextFree->Next();
     newNode->InitData(a_data);
     newNode->InsertAfter(a_pNode);
@@ -742,6 +734,7 @@ namespace Dg
   {
     size_t oldSize(pool_size());
     Node * pOldData(m_pData);
+    size_t nextFreeInd(m_pNextFree - m_pData); //This assumes m_pNextFree is always valid
     set_next_pool_size();
 
     DG_ASSERT(pool_size() > oldSize);
@@ -759,9 +752,10 @@ namespace Dg
       }
     }
 
-    m_pNextFree = &m_pData[oldSize]; //This assumes m_pNextFree is always valid
+    m_pNextFree = &m_pData[nextFreeInd];
+    m_pNextFree->Next(&m_pData[oldSize + 1]);
     
-    for (size_t i = oldSize; i < pool_size(); ++i)
+    for (size_t i = oldSize + 1; i < pool_size(); ++i)
     {
       m_pData[i].Next(&m_pData[i + 1]);
     }
