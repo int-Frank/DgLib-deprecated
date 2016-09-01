@@ -28,7 +28,7 @@ namespace Dg
   //!
   //! @class list
   //!
-  //! Pre-allocated Linked list. Similar to std::list with similarly named methods
+  //! Circular, pre-allocated doubly linked list. Similar to std::list with similarly named methods
   //! and functionality. The underlying array is preallocated and only change in
   //! size if extending list past that allocated, or manually resizing. This makes
   //! for fast insertion/erasing of elements.
@@ -39,11 +39,12 @@ namespace Dg
   //! from whatever element 0 is pointing to next. For empty lists, this will be itself. 
   //! When adding items to the list, the element pointed to by the m_pNextFree free pointer 
   //! will be broken from the sub-list of free elements and added to the list of current items.
+  //! The last element in the pool is never used; the pool is always extended before it is used.
   //!     
   //!      v------------------------------------------------|   
   //!     |     |->|     |->|     |->|     |->|     |->|     ||     |  |     |  |     |  |     |
   //!     |  0  |  |  1  |  |  2  |  |  3  |  |  4  |  |  5  ||  6  |->|  7  |->|  8  |->|  9  |->NULL
-  //!     | Root|<-|     |<-|     |<-|     |<-|     |<-|     ||     |  |     |  |     |  |     |
+  //!     |     |<-|     |<-|     |<-|     |<-|     |<-|     ||     |  |     |  |     |  |     |
   //!      |------------------------------------------------^   ^
   //!                                                           Next free
   //!
@@ -743,17 +744,16 @@ namespace Dg
     m_pData = static_cast<Node *>(realloc(m_pData, (pool_size() + 1) * sizeof(Node)));
     DG_ASSERT(m_pData != nullptr);
 
-    for (size_t i = 0; i <= oldSize; ++i)
+    for (size_t i = 0; i < oldSize; ++i)
     {
       m_pData[i].Prev(&m_pData[m_pData[i].Prev() - pOldData]);
-      if (m_pData[i].Next() != nullptr)
-      {
-        m_pData[i].Next(&m_pData[m_pData[i].Next() - pOldData]);
-      }
+      m_pData[i].Next(&m_pData[m_pData[i].Next() - pOldData]);
     }
 
+    m_pData[oldSize].Prev(&m_pData[m_pData[oldSize].Prev() - pOldData]);
+    m_pData[oldSize].Next(&m_pData[oldSize + 1]);
+
     m_pNextFree = &m_pData[nextFreeInd];
-    m_pNextFree->Next(&m_pData[oldSize + 1]);
     
     for (size_t i = oldSize + 1; i < pool_size(); ++i)
     {
