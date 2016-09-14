@@ -81,7 +81,7 @@ namespace Dg
     T result(0);
     for (int i = 0; i < sizeof(T); ++i)
     {
-      result |= (BitReverseTable256[(v >> (i * CHAR_BIT)) & 0xff] << (sizeof(T) - i) * CHAR_BIT);
+      result |= (BitReverseTable256[(a_val >> (i * CHAR_BIT)) & 0xff] << (sizeof(T) - i) * CHAR_BIT);
     }
     return result;
   }
