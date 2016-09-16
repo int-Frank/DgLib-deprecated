@@ -157,6 +157,7 @@
     <ClInclude Include="..\..\public\DgRay.h" />
     <ClInclude Include="..\..\public\DgRNG.h" />
     <ClInclude Include="..\..\public\DgSphere.h" />
+    <ClInclude Include="..\..\public\DgVector2.h" />
     <ClInclude Include="..\..\public\DgVector4.h" />
     <ClInclude Include="..\..\public\DgVQS.h" />
     <ClInclude Include="..\..\public\DgLineSegment.h" />
