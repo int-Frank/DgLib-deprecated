@@ -4,6 +4,7 @@
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleGenerator.h"
 #include "DgMath.h"
+#include "DgVector4_ancillary.h"
 
 //! Updates particle color
 template<typename Real>

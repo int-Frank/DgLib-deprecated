@@ -12,6 +12,7 @@
 #include "..\DgVQS.h"
 #include "DgParticleUpdater.h"
 #include "DgMath.h"
+#include "DgVector4_ancillary.h"
 
 namespace Dg
 {

@@ -1,5 +1,6 @@
 #include "TestHarness.h"
 #include "DgVector4.h"
+#include "DgVector4_ancillary.h"
 
 typedef Dg::Vector4 < float > vec4;
 

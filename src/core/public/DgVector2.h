@@ -39,7 +39,7 @@ namespace Dg
   //!
   //! @class Vector2
   //!
-  //! @brief Three dimensional homogeneous vector class [x, y, z, w].
+  //! @brief Two dimensional vector class [x, y].
   //!
   //! @author Frank Hart
   //! @date 4/10/2015

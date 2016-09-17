@@ -8,7 +8,6 @@
 #ifndef DGVECTOR4_H
 #define DGVECTOR4_H
 
-#include "DgRNG.h"
 #include "DgMatrix.h"
 #include "dgmath.h"
 
@@ -28,10 +27,6 @@ namespace Dg
   template<typename Real>
   Vector4<Real> Cross(Vector4<Real> const &, Vector4<Real> const &);
 
-  //! Returns a random unit vector.
-  template<typename Real>
-  Vector4<Real> GetRandomVector();
-
   //! Creates an orthogonal basis from two input vectors. 
   //!   - The vector 'A_in' is considered the principle axis.
   //!   - If A_in is a zero vector, A_out will be set to Vector4<Real>::xAxis()
@@ -47,25 +42,6 @@ namespace Dg
   //! Returns a perpendicular vector.
   template<typename Real>
   Vector4<Real> Perpendicular(Vector4<Real> const & axis);
-
-  //! Returns a random orthonormal vector to an axis.
-  //! @pre Input must be a unit vector.
-  //!
-  //! @return Vector
-  //!
-  //! @param axis Resulting vector will be orthormal to this
-  template<typename Real>
-  Vector4<Real> GetRandomOrthonormalVector(Vector4<Real> const & axis);
-
-  //! Returns a random vector at an angle to an axis.
-  //! @pre Input axis must be a unit vector.
-  //!
-  //! @return Vector
-  //!
-  //! @param axis Axis
-  //! @param angle Angle
-  template<typename Real>
-  Vector4<Real> GetRandomVector(Vector4<Real> const & axis, Real angle);
 
   //! Squared distance between two points.
   template<typename Real>
@@ -464,63 +440,6 @@ namespace Dg
     result.Normalize();
     return result;
   }	//End: Perpendicular()
-
-
-  //-------------------------------------------------------------------------------
-  //		@	GetRandomVector()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> GetRandomVector()
-  {
-    RNG generator;
-
-    Real theta = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(2.0) * static_cast<Real>(Dg::PI_d));
-    Real rho = generator.GetUniform<Real>(static_cast<Real>(-1.0), static_cast<Real>(1.0));
-
-    Real val = sqrt(static_cast<Real>(1.0) - rho * rho);
-
-    Real x = val * cos(theta);
-    Real y = val * sin(theta);
-    Real z = rho;
-
-    return Vector4<Real>({ x, y, z, static_cast<Real>(0.0) });
-  }	//End: GetRandomVector()
-
-
-  //-------------------------------------------------------------------------------
-  //		@ GetRandomOrthonormalVector()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> GetRandomOrthonormalVector(Vector4<Real> const & a_axis)
-  {
-    RNG gen;
-    Vector4<Real> perp = Perpendicular(a_axis);
-    Vector4<Real> crs = Cross(a_axis, perp);
-    Real phi = gen.GetUniform(static_cast<Real>(0.0)
-                            , static_cast<Real>(Dg::PI_d * 2.0));
-
-    return (cos(phi) * perp + sin(phi) * crs);
-  }	//End: GetRandomOrthonormalVector()
-
-
-  //-------------------------------------------------------------------------------
-  //		@ GetRandomVector()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Vector4<Real> GetRandomVector(Vector4<Real> const & a_axis, Real theta)
-  {
-    RNG generator;
-
-    Dg::WrapNumber(static_cast<Real>(0.0)
-                 , static_cast<Real>(Dg::PI_d)
-                 , theta);
-
-    Real bound = cos(static_cast<Real>(Dg::PI_d) - theta);
-    Real x = generator.GetUniform(static_cast<Real>(-1.0), bound);
-    Real phi = static_cast<Real>(Dg::PI_d) - acos(x);
-    return (cos(phi) * a_axis + sin(phi) * GetRandomOrthonormalVector(a_axis));
-  }	//End: GetRandomVector()
-
 }
 
 
