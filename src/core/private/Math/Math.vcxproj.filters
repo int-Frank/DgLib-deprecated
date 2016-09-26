@@ -149,5 +149,8 @@
     <ClInclude Include="..\..\public\PolygonDecomp.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgPolygon2D.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,6 +7,8 @@
 #include "DgVector3.h"
 #include "DgTypes.h"
 
+#include "Dg_vector.h"
+
 namespace Dg
 {
 
@@ -49,7 +51,7 @@ namespace Dg
 
   private:
 
-    void Init(Vector3<Real> const *, size_t);
+    ErrorCode Init(Vector3<Real> const *, size_t);
     ErrorCode Decompose(Node *);
 
   private:
@@ -64,11 +66,16 @@ namespace Dg
 
   //Must be at least 1 point
   template<typename Real>
-  void PolygonDecomp<Real>::Init(Vector3<Real> const * a_points, size_t a_pointCount)
+  ErrorCode PolygonDecomp<Real>::Init(Vector3<Real> const * a_pPoints, size_t a_pointCount)
   {
+    if (a_pPoints == nullptr || a_pointCount == 0)
+    {
+      return ErrorCode::BadInput;
+    }
+
     m_pPolys.clear();
     m_nodePoolSize = a_pointCount * 3; //TODO work out what this number will be
-    m_pNodePool = static_cast<Node*>(realloc(m_pNodePool, m_nodePoolSize);
+    m_pNodePool = static_cast<Node*>(realloc(m_pNodePool, sizeof(Node) * m_nodePoolSize);
 
     //Assign pointers
     for (size_t i = 0; i < m_nodePoolSize - 1; i++)
@@ -76,26 +83,35 @@ namespace Dg
       m_pNodePool[i].m_next = &m_pNodePool[i + 1];
     }
 
-    //Close off polygon
-    m_pNodePool[a_pointCount - 1].m_pNext = &m_pNodePool[0];
-    m_pNextFree = &m_pNodePool[a_pointCount];
-
-    //Copy data
-    for (size_t i = 0; i < a_pointCount; i++)
+    //Copy data, discarding successive duplicate points.
+    m_pNodePool[0] = a_pPoints[0];
+    size_t lastInd = 0;
+    for (size_t i = 1; i < a_pointCount; i++)
     {
-      m_pNodePool[i].m_point = a_points[i];
+      if (a_pPoints[i] != m_pNodePool[lastInd].m_point)
+      {
+        lastInd++;
+        m_pNodePool[lastInd].m_point = a_pPoints[i];
+      }
     }
 
-    m_pPolys = static_cast<Polygon*>(realloc(m_pPolys, a_pointCount / 2); //TODO work out what how large this will be
+    m_pPolys = static_cast<Polygon*>(realloc(m_pPolys, sizeof(Polygon) * a_pointCount / 2 + 1); //TODO work out what how large this will be
     m_pPolys[0].pHead = &m_pNodePool[0];
-    m_pPolys[0].size = a_pointCount;
+    m_pNodePool[lastInd].m_pNext = &m_pNodePool[0];
+    m_pNextFree = &m_pNodePool[lastInd + 1];
     m_polyCount = 1;
+
+    return ErrorCode::None;
   }
 
   template<typename Real>
   ErrorCode PolygonDecomp<Real>::Decompose(Vector3<Real> const * a_points, size_t a_pointCount)
   {
-    Init(a_points, a_pointCount);
+    ErrorCode result = Init(a_points, a_pointCount);
+    if (result != ErrorCode::None)
+    {
+      return result;
+    }
     return Decompose(&m_pNodePool[0]);
   }
 

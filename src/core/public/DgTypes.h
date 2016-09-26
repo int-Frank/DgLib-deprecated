@@ -17,7 +17,8 @@ namespace Dg
     Undefined,
     OutOfBounds,
     Duplicate,
-    FailedToOpenFile
+    FailedToOpenFile,
+    BadInput
   };
 }
 

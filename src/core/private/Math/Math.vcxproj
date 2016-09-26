@@ -153,6 +153,7 @@
     <ClInclude Include="..\..\public\DgMatrix44.h" />
     <ClInclude Include="..\..\public\DgOBB.h" />
     <ClInclude Include="..\..\public\DgPlane.h" />
+    <ClInclude Include="..\..\public\DgPolygon2D.h" />
     <ClInclude Include="..\..\public\DgQuaternion.h" />
     <ClInclude Include="..\..\public\DgRay.h" />
     <ClInclude Include="..\..\public\DgRNG.h" />
