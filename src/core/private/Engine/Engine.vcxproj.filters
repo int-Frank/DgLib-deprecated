@@ -18,6 +18,9 @@
     <Filter Include="Particle System">
       <UniqueIdentifier>{92eb167f-473e-4fa0-8f72-af65816a662e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Binary file io">
+      <UniqueIdentifier>{da1052cd-b62e-419f-9c44-35ac3d6a5ca5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceHandle.cpp">
@@ -54,6 +57,10 @@
     </ClInclude>
     <ClInclude Include="..\..\public\particle_system\DgParticleSystem.h">
       <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="DgHeader.h" />
+    <ClInclude Include="..\..\public\binary_file_io\DgBinaryFileTypes.h">
+      <Filter>Binary file io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
