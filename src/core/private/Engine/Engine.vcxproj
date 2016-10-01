@@ -148,7 +148,6 @@
     <ClCompile Include="ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\public\binary_file_io\DgBinaryFileTypes.h" />
     <ClInclude Include="..\..\public\particle_system\DgAttractor.h" />
     <ClInclude Include="..\..\public\particle_system\DgParticleEmitter.h" />
     <ClInclude Include="..\..\public\particle_system\DgParticleGenerator.h" />
@@ -157,7 +156,6 @@
     <ClInclude Include="..\..\public\particle_system\DgParticleUpdater.h" />
     <ClInclude Include="..\..\public\ResourceManager.h" />
     <ClInclude Include="..\..\public\ResourceTypes.h" />
-    <ClInclude Include="DgHeader.h" />
     <ClInclude Include="ResourceManager_private.h" />
   </ItemGroup>
   <ItemGroup>

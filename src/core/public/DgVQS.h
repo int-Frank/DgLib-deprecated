@@ -79,6 +79,7 @@ namespace Dg
     void Set(Matrix44<Real> const &);
 
     //! Set VQS from vector, quaternion and scalar
+    //! Inputs are NOT validated
     void Set(Vector4<Real> const &, Quaternion<Real> const &, Real);
     
     //! Set vector of the vqs
@@ -190,7 +191,6 @@ namespace Dg
   void VQS<Real>::SetV(Vector4<Real> const & a_v)
   {
     m_v = a_v;
-    m_v.m_V[3] = static_cast<Real>(0.0);
 
   }	//End: VQS<Real>::Set()
 
@@ -202,7 +202,6 @@ namespace Dg
   void VQS<Real>::SetQ(Quaternion<Real> const & a_q)
   {
     m_q = a_q;
-    m_q.MakeValid();
 
   }	//End: VQS<Real>::Set()
 
@@ -213,7 +212,7 @@ namespace Dg
   template<typename Real>
   void VQS<Real>::SetS(Real a_s)
   {
-    m_s = (a_s < Dg::EPSILON) ? static_cast<Real>(0.0) : a_s;
+    m_s = a_s;
 
   }	//End: VQS<Real>::Set()
 
@@ -227,7 +226,6 @@ namespace Dg
   void VQS<Real>::UpdateV(Vector4<Real> const & a_v)
   {
     m_v += a_v;
-    m_v.m_w = static_cast<Real>(0.0);
 
   }	//End: VQS<Real>::UpdateV()
 
@@ -474,6 +472,8 @@ namespace Dg
     a_v.y += m_v.y;
     a_v.z += m_v.z;
 
+    return a_v;
+
   }	//End: VQS<Real>::TranslateSelf()
 
 
@@ -485,6 +485,8 @@ namespace Dg
   {
     //Rotate;
     m_q.RotateSelf(a_v);
+
+    return a_v;
 
   }	//End: VQS<Real>::RotateSelf()
 
@@ -500,6 +502,8 @@ namespace Dg
     a_v.y *= m_s;
     a_v.z *= m_s;
 
+    return a_v;
+
   }	//End: VQS<Real>::ScaleSelf()
 
 
@@ -511,11 +515,9 @@ namespace Dg
                       Quaternion<Real> const & a_q, 
                       Real                     a_s)
   {
-    m_v = a_v;
-    m_q = a_q;
-    m_s = a_s;
-
-    MakeValid();
+    SetV(a_v);
+    SetQ(a_q);
+    SetS(a_s);
 
   }	//End: VQS<Real>::Set()
 
