@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSystem", "ParticleS
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TableGeneration", "TableGeneration\TableGeneration.vcxproj", "{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VQSDemo", "VQSDemo\VQSDemo.vcxproj", "{BC34A977-36CE-4B8B-9543-A49F615FEFA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,14 @@ Global
 		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Release|Win32.Build.0 = Release|Win32
 		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Release|x64.ActiveCfg = Release|x64
 		{3817EDF8-EDB6-48DD-96D2-2A3C76FCD194}.Release|x64.Build.0 = Release|x64
+		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Debug|Win32.Build.0 = Debug|Win32
+		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Debug|x64.ActiveCfg = Debug|x64
+		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Debug|x64.Build.0 = Debug|x64
+		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Release|Win32.ActiveCfg = Release|Win32
+		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Release|Win32.Build.0 = Release|Win32
+		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Release|x64.ActiveCfg = Release|x64
+		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
