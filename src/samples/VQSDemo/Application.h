@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "DgIDManager.h"
 #include "EventManager.h"
+#include "Model.h"
 
 class Application
 {
@@ -42,7 +43,7 @@ private:
 
   std::string const         m_configFileName = "config.ini";
 
-  AppInfo		            m_info;
+  AppInfo		                m_info;
   GLFWwindow*               m_window;
   Renderer                  m_renderer;
 
@@ -61,6 +62,8 @@ private:
 
   bool                      m_camCanRotate;
 
+  ArmSkeleton               m_model;
+
   bool                      m_shouldQuit;
 
 private:
@@ -70,6 +73,8 @@ private:
   void ResetCamera();
   void GetConfiguration();
   bool InitGL();
+  void GetRenderTransforms(Dg::Matrix44<float> & a_mv
+                         , Dg::Matrix44<float> & a_proj);
 
   void UI_NewFrame();
   void HandleEvents();

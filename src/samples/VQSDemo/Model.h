@@ -13,7 +13,7 @@ typedef Dg::Vector4<Real>     Vec4;
 struct T_Bone
 {
   VQS     TPM;    //Model-to-Parent transform
-  VQS     TVM;    //Model-to-Camera transform
+  VQS     TVM;    //Model-to-View transform
   Quat    qBegin;
   Quat    qEnd;
 };
@@ -34,7 +34,7 @@ public:
   {}
 
   void AddChild(Bone const & a_bone) { m_children.push_back(a_bone); }
-  void Update();
+  void Update(VQS const & a_TVP);
 
 private:
   
@@ -44,6 +44,7 @@ private:
 
 class ArmSkeleton
 {
+public:
   enum BoneID
   {
     //Humerus
@@ -104,12 +105,13 @@ public:
 
   void Update(float a_time);
   void SetPose(Pose);
+  void SetViewTransform(VQS const & a_TVW);
+  void SetMatrices(Mat44[BONE_COUNT]);
 
 private:
 
   void InitBoneHeirarchy();
   void InitBoneTransforms();
-  void InitDefaultPose();
 
 private:
 

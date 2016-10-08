@@ -2,43 +2,49 @@
 #include <fstream>
 
 #include "Renderer.h"
-#include "particle_system/DgParticleData.h"
-#include "DgMatrix44.h"
-#include "DgMakeGrid.h"
 #include "Types.h"
 #include "UI.h"
 
 
 bool Renderer::Init()
 {
-  m_shaderProgram = CompileShaders("vs.glsl", "fs.glsl");
-  glGenBuffers(2, m_buffer);
+  glGenBuffers(1, &m_buffer);
 
   //Verts
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
 
-  float const tri[12] =
-  {
-    -1.0f,  -1.0f,   0.0f,  1.0f,
-    1.0f,   -1.0f,   0.0f,  1.0f, 
-    0.0f,    1.0f,   0.0f,  1.0f
-  };
+  m_shaderProgram = CompileShaders("vs.glsl", "fs.glsl");
 
-  GLushort inds[3] =
+  float const bone[48] =
   {
-    0, 1, 2
-  };
+    0.0f,  0.0f,   0.0f,
+    0.25f,  0.125f,   0.0f,
+    0.25f,  0.125f,   0.0f,
+    1.0f,  0.0f,   0.0f,
 
-  glBindBuffer(GL_ARRAY_BUFFER, m_buffer[0]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(tri), tri, GL_STATIC_DRAW);
+    0.0f,  0.0f,   0.0f,
+    0.25f,  -0.125f,   0.0f,
+    0.25f,  -0.125f,   0.0f,
+    1.0f,  0.0f,   0.0f,
+
+    0.0f,  0.0f,   0.0f,
+    0.25f,  0.0f,   0.125f,
+    0.25f,  0.0f,   0.125f,
+    1.0f,  0.0f,   0.0f,
+
+    0.0f,  0.0f,   0.0f,
+    0.25f,  0.0f,   -0.125f,
+    0.25f,  0.0f,   -0.125f,
+    1.0f,  0.0f,   0.0f,
+  };
+  size_t fg = sizeof(bone);
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(bone), bone, GL_STATIC_DRAW);
 
   GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
-  glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(vPosition);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer[1]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(inds), inds, GL_STATIC_DRAW);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
@@ -52,25 +58,35 @@ void Renderer::Update()
 }
 
 
-void Renderer::Render()
+void Renderer::Render(Dg::Matrix44<float> const & a_proj
+                    , Dg::Matrix44<float> const * a_pMV
+                    , int a_nObjects)
 {
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
   glBindVertexArray(m_vao);
   glUseProgram(m_shaderProgram);
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+
+  GLuint proj_loc = glGetUniformLocation(m_shaderProgram, "proj_matrix");
+  GLuint mv_loc = glGetUniformLocation(m_shaderProgram, "mv_matrix");
+
+  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_proj.GetData());
+
+  for (int i = 0; i < a_nObjects; ++i)
+  {
+    glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_pMV[i].GetData());
+    glDrawArrays(GL_LINES, 0, 16);
+  }
+
   glBindVertexArray(0);
 }
 
 void Renderer::ShutDown()
 {
-  for (int i = 0; i < 2; ++i)
+  if (m_buffer != 0)
   {
-    if (m_buffer[i] != 0)
-    {
-      glDeleteBuffers(1, &m_buffer[i]);
-      m_buffer[i] = 0;
-    }
+    glDeleteBuffers(1, &m_buffer);
+    m_buffer = 0;
   }
 
   glDeleteVertexArrays(1, &m_vao);

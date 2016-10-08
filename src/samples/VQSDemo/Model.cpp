@@ -6,7 +6,6 @@ ArmSkeleton::ArmSkeleton()
   m_pRoot = new Bone(&m_tBone[H]);
   InitBoneHeirarchy();
   InitBoneTransforms();
-  InitDefaultPose();
 }
 
 ArmSkeleton::~ArmSkeleton()
@@ -73,6 +72,7 @@ void ArmSkeleton::InitBoneHeirarchy()
 void ArmSkeleton::InitBoneTransforms()
 {
   //Sizes
+  /*
   m_tBone[H].TPM.SetS(0.23f);
 
   m_tBone[F].TPM.SetS(0.25f);
@@ -100,7 +100,7 @@ void ArmSkeleton::InitBoneTransforms()
   m_tBone[L1].TPM.SetS(0.04f);
   m_tBone[L2].TPM.SetS(0.02f);
   m_tBone[L3].TPM.SetS(0.02f);
-
+  */
   //Place at the end of the parent bone
   m_tBone[H].TPM.SetV(Vec4(0.0f, 0.0f, 0.0f, 0.0f));
 
@@ -143,4 +143,28 @@ void ArmSkeleton::InitBoneTransforms()
 
   q.SetRotationY(-Dg::PI_f / 9.0f);
   m_tBone[L0].TPM.SetQ(q);
+
+  m_pRoot->Update(VQS());
+}
+
+void Bone::Update(VQS const & a_TVP)
+{
+  m_pTBone->TVM = a_TVP * m_pTBone->TPM;
+  for (size_t i = 0; i < m_children.size(); ++i)
+  {
+    m_children[i].Update(m_pTBone->TVM);
+  }
+}
+
+void ArmSkeleton::SetMatrices(Mat44 a_out[BONE_COUNT])
+{
+  for (int i = 0; i < BONE_COUNT; ++i)
+  {
+     m_tBone[i].TVM.GetMatrix(a_out[i]);
+  }
+}
+
+void ArmSkeleton::SetViewTransform(VQS const & a_TVW)
+{
+  m_pRoot->Update(a_TVW);
 }

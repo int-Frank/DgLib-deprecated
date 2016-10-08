@@ -7,6 +7,7 @@
 #include "UI.h"
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
+#include "dgvqs.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
@@ -203,9 +204,68 @@ void Application::DoLogic(double a_dt)
   }
 }
 
+void Application::GetRenderTransforms(Dg::Matrix44<float> & a_mv
+                                    , Dg::Matrix44<float> & a_proj)
+{
+  
+}
+
 void Application::Render()
 {
-  m_renderer.Render();
+  Dg::Matrix44<float> mv, proj;
+
+  float camHeight = 2.0f;
+  float fov = 1.5f;
+  float nearClip = 0.1f;
+  float farClip = 1000.0f;
+
+  Dg::VQS<float> TVW;
+  Dg::Quaternion<float> q;
+  q.SetRotation(float(Dg::PI_d + m_camRotX)
+    , 0.0f
+    , float(m_camRotZ)
+    , Dg::EulerOrder::ZYX);
+  //q.SetRotation(float(Dg::PI_d + m_camRotX)
+  //  , 0.0f
+  //  , float(m_camRotZ)
+  //  , Dg::EulerOrder::ZYX);
+  TVW.SetQ(q);
+  TVW.SetV(Dg::Vector4<float>(0.0f, -camHeight, float(-m_camZoom), 0.0f));
+  TVW.GetMatrix(mv);
+
+  m_model.SetViewTransform(TVW);
+  Dg::Matrix44<float> mats[ArmSkeleton::BONE_COUNT];
+  m_model.SetMatrices(mats);
+
+  ///
+
+  /*Dg::Matrix44<float> translate, rotate, t;
+  translate.Translation(Dg::Vector4<float>(0.0f, -camHeight, float(-m_camZoom), 0.0f));
+  rotate.Rotation(float(Dg::PI_d + m_camRotX)
+    , 0.0f
+    , float(m_camRotZ)
+    , Dg::EulerOrder::ZYX);
+  t = rotate * translate;
+  for (int i = 0; i < ArmSkeleton::BONE_COUNT; ++i)
+  {
+    mats[i] = mats[i] * t;
+  }*/
+
+  ///
+
+  //Set up the viewport
+  float ratio;
+  int width, height;
+
+  glfwGetFramebufferSize(m_window, &width, &height);
+  ratio = width / (float)height;
+
+  glViewport(0, 0, width, height);
+
+  //Set up the perspective matrix;
+  proj.Perspective(fov, ratio, nearClip, farClip);
+
+  m_renderer.Render(proj, mats, ArmSkeleton::BONE_COUNT);
 }
 
 void Application::GetConfiguration()

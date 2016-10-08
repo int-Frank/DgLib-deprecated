@@ -172,9 +172,9 @@ namespace Dg
   template<typename Real>
   void VQS<Real>::Set(Matrix44<Real> const & a_m)
   {
-    m_v.m_x = a_m.m_V[12];
-    m_v.m_y = a_m.m_V[13];
-    m_v.m_z = a_m.m_V[14];
+    m_v.x() = a_m.m_V[12];
+    m_v.y() = a_m.m_V[13];
+    m_v.z() = a_m.m_V[14];
 
     a_m.GetQuaternion(m_q);
 
@@ -551,9 +551,9 @@ namespace Dg
     a_out.m_V[9] *= m_s;
     a_out.m_V[10] *= m_s;
 
-    a_out.m_V[12] = m_v.m_x *= m_s;
-    a_out.m_V[13] = m_v.m_y *= m_s;
-    a_out.m_V[14] = m_v.m_z *= m_s;
+    a_out.m_V[12] = m_v.x() * m_s;
+    a_out.m_V[13] = m_v.y() * m_s;
+    a_out.m_V[14] = m_v.z() * m_s;
 
   }	//End: VQS<Real>::Get()
 

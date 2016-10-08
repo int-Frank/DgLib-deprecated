@@ -1,18 +1,11 @@
-#version 430 core
+#version 330 core
 
 in vec4 position;
 
-out VS_OUT
-{
-	vec4 color;	
-} vs_out;
-
-//uniform int       nTypes;
-//uniform int[256]  IDs;
-//uniform vec4[256] colors;
+uniform mat4 mv_matrix;
+uniform mat4 proj_matrix;
 
 void main(void)
 {
-	gl_Position = position;
-  vs_out.color = vec4(1.0, 0.0, 1.0, 1.0);
+	gl_Position = proj_matrix * mv_matrix * position;
 }

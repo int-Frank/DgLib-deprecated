@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Types.h"
+#include "DgMatrix44.h"
 
 class Renderer
 {
@@ -14,7 +15,9 @@ public:
 
   bool Init();
   void Update();
-  void Render();
+  void Render(Dg::Matrix44<float> const & a_proj
+            , Dg::Matrix44<float> const * a_pMV
+            , int a_nObjects);
   void ShutDown();
 
 private:
@@ -23,7 +26,7 @@ private:
 
 private:
   GLuint              m_vao;
-  GLuint              m_buffer[2];
+  GLuint              m_buffer;
   GLuint              m_shaderProgram;
 };
 
