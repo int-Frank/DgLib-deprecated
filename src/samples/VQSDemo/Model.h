@@ -12,8 +12,8 @@ typedef Dg::Vector4<Real>     Vec4;
 
 struct T_Bone
 {
-  VQS     TPM;    //Model-to-Parent transform
-  VQS     TVM;    //Model-to-View transform
+  VQS     T_MP;    //Model-to-Parent transform
+  VQS     T_MV;    //Model-to-View transform
   Quat    qBegin;
   Quat    qEnd;
 };
@@ -103,9 +103,9 @@ public:
   ArmSkeleton();
   ~ArmSkeleton();
 
-  void Update(float a_time);
+  void Update(float a_dt);
   void SetPose(Pose);
-  void SetViewTransform(VQS const & a_TVW);
+  void SetTransform(VQS const &);
   void SetMatrices(Mat44[BONE_COUNT]);
 
 private:
@@ -113,9 +113,17 @@ private:
   void InitBoneHeirarchy();
   void InitBoneTransforms();
 
+  void SetPoseRelaxed();
+  void SetPoseMuscle();
+  void SetPoseSalute() {}
+  void SetPoseThumbsUp() {}
+  void SetPoseThumbsDown() {}
+  void SetPoseOK() {}
+  void SetPoseStop() {}
+
 private:
 
-  float     m_startPoseTime;
+  float     m_time;
   bool      m_newPose;
 
   Mat44     m_TVM[BONE_COUNT];

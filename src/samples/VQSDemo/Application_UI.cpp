@@ -54,11 +54,15 @@ void Application::ShowMainGUIWindow()
     ImGui::EndPopup();
   }
 
-  ImGui::Checkbox("Example Gui", &UI::showExampleWindow);
-
-  ImGui::Text("x rot: %f", m_camRotX);
-  ImGui::Text("z rot: %f", m_camRotZ);
-  ImGui::Text("zoom : %f", m_camZoom);
+  //ImGui::Checkbox("Example Gui", &UI::showExampleWindow);
+  if (ImGui::Button("Relaxed"))
+  {
+    m_model.SetPose(ArmSkeleton::Relaxed);
+  }
+  if (ImGui::Button("Muscle"))
+  {
+    m_model.SetPose(ArmSkeleton::Muscle);
+  }
 
   ImGui::End();
 }

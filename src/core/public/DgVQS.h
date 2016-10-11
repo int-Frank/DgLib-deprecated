@@ -564,20 +564,9 @@ namespace Dg
   template<typename Real>
   VQS<Real> VQS<Real>::operator*(VQS<Real> const & a_rhs) const
   {
-    VQS<Real> result(*this);
-
-    //Combine translation vectors
-    result.m_v += (m_q.Rotate(a_rhs.m_v)*m_s);
-
-    //Combine quaternions
-    result.m_q *= a_rhs.m_q;
-
-    //Combine scales
-    result.m_s *= a_rhs.m_s;
-
-    //Return result
-    return result;
-
+    return VQS(a_rhs.m_q.Rotate(m_v)*a_rhs.m_s + a_rhs.m_v
+             , m_q * a_rhs.m_q
+             , m_s * a_rhs.m_s);
   }	//End: VQS<Real>::operator*()
 
 
@@ -587,15 +576,9 @@ namespace Dg
   template<typename Real>
   VQS<Real>& VQS<Real>::operator*=(VQS<Real> const & a_rhs)
   {
-    //Combine translation vectors
-    m_v += (m_q.Rotate(a_rhs.m_v)*m_s);
-
-    //Combine quaternions
-    m_q *= a_rhs.m_q;
-
-    //Combine scales
+    m_v = a_rhs.m_q.Rotate(m_v)*a_rhs.m_s + a_rhs.m_v;
+    m_q = m_q * a_rhs.m_q;
     m_s *= a_rhs.m_s;
-
     return *this;
 
   }	//End: VQS<Real>::operator*=()

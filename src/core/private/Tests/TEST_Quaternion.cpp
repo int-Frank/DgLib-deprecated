@@ -1,9 +1,11 @@
 #include "TestHarness.h"
 #include "DgVector4.h"
 #include "DgQuaternion.h"
+#include "DgMatrix44.h"
 
 typedef Dg::Quaternion < float >  quat;
 typedef Dg::Vector4 < float >     vec4;
+typedef Dg::Matrix44<float>       mat44;
 
 //--------------------------------------------------------------------------------
 //	Quaternion Construction
@@ -309,4 +311,23 @@ TEST(Stack_Quaternion_Slerp, creation_Quaternion_Slerp)
 
   Dg::ApproxSlerp(q2, q0, q1, 1.0f);
   CHECK(q2 == q1);
+}
+
+
+//-------------------------------------------------------------------------------
+//		Get matrix
+//-------------------------------------------------------------------------------
+TEST(Stack_Quaternion_Matrix, creation_Quaternion_Matrix)
+{
+  mat44 m;
+  quat q;
+  vec4 v(0.5f, 0.5f, 0.5f, 0.0f);
+
+  q.SetRotation(0.1f, 0.2f, 0.3f, Dg::EulerOrder::XYZ);
+  m.Rotation(0.1f, 0.2f, 0.3f, Dg::EulerOrder::XYZ);
+
+  CHECK(q.Rotate(v) == v * m);
+
+  m.Rotation(q);
+  CHECK(q.Rotate(v) == v * m);
 }

@@ -494,7 +494,7 @@ namespace Dg
     m_w = static_cast<Real>(cos(a_rx));
     m_x = static_cast<Real>(sin(a_rx));
     m_y = static_cast<Real>(0.0);
-    m_z = m_y;
+    m_z = static_cast<Real>(0.0);
 
   }   // End of Quaternion::SetRotationX()
 
@@ -510,7 +510,7 @@ namespace Dg
     m_w = static_cast<Real>(cos(a_ry));
     m_x = static_cast<Real>(0.0);
     m_y = static_cast<Real>(sin(a_ry));
-    m_z = m_x;
+    m_z = static_cast<Real>(0.0);
 
   }   // End of Quaternion::SetRotationZ()
 
@@ -525,7 +525,7 @@ namespace Dg
 
     m_w = static_cast<Real>(cos(a_rz));
     m_x = static_cast<Real>(0.0);
-    m_y = m_x;
+    m_y = static_cast<Real>(0.0);
     m_z = static_cast<Real>(sin(a_rz));
 
   }   // End of Quaternion::SetRotationZ()
