@@ -54,16 +54,7 @@ void Application::ShowMainGUIWindow()
     ImGui::EndPopup();
   }
 
-  ImGui::Checkbox("Example Gui", &UI::showExampleWindow);
-
-  /*if (ImGui::Button("Relaxed"))
-  {
-    m_model.SetPose(ArmSkeleton::Relaxed);
-  }
-  if (ImGui::Button("Muscle"))
-  {
-    m_model.SetPose(ArmSkeleton::Muscle);
-  }*/
+  //ImGui::Checkbox("Example Gui", &UI::showExampleWindow);
 
   ImGui::End();
 }

@@ -232,7 +232,7 @@ void ArmSkeleton::SetTransform(VQS const & a_T)
   }
 
   ImGui::Separator();
-  static bool edit = true;
+  static bool edit = false;
   ImGui::Checkbox("Edit", &edit);
   if (edit)
   {
