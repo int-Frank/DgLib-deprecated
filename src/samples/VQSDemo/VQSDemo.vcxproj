@@ -153,6 +153,7 @@
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="imgui_impl_glfw_gl3.cpp" />
+    <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -169,6 +170,8 @@
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="json\json-forwards.h" />
+    <ClInclude Include="json\json.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Types.h" />
@@ -176,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fs.glsl" />
+    <None Include="poses.dgd" />
     <None Include="vs.glsl" />
     <None Include="config.ini" />
   </ItemGroup>

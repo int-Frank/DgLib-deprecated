@@ -3,6 +3,7 @@
 #include "Dg_vector.h"
 #include "DgVQS.h"
 #include "DgMatrix44.h"
+#include "./json/json.h"
 
 typedef float Real;
 typedef Dg::Quaternion<Real>  Quat;
@@ -104,7 +105,6 @@ public:
   ~ArmSkeleton();
 
   void Update(float a_dt);
-  void SetPose(Pose);
   void SetTransform(VQS const &);
   void SetMatrices(Mat44[BONE_COUNT]);
 
@@ -112,16 +112,15 @@ private:
 
   void InitBoneHeirarchy();
   void InitBoneTransforms();
-
-  void SetPoseRelaxed();
-  void SetPoseMuscle();
-  void SetPoseSalute() {}
-  void SetPoseThumbsUp() {}
-  void SetPoseThumbsDown() {}
-  void SetPoseOK() {}
-  void SetPoseStop() {}
+  float GetRunTime() const;
 
 private:
+
+  float const m_changeTime = 1.5f;
+
+private:
+
+  Json::Value               m_jsRoot;
 
   float     m_time;
   bool      m_newPose;

@@ -196,6 +196,8 @@ void Application::HandleEvents()
 
 void Application::DoLogic(double a_dt)
 {
+  m_model.Update(a_dt);
+
   //Zoom the camera
   if (abs(m_camZoomTarget - m_camZoom) > 0.01)
   {
@@ -285,7 +287,8 @@ void Application::Render()
     , Dg::EulerOrder::ZYX);
   T.SetQ(q);
   T.SetV(Dg::Vector4<float>(0.0f, -camHeight, float(-m_camZoom), 0.0f));
-  
+  T.SetS(2.0f);
+
   m_model.SetTransform(T);
   Dg::Matrix44<float> mats[ArmSkeleton::BONE_COUNT];
   m_model.SetMatrices(mats);

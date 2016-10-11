@@ -19,6 +19,9 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{6560bf71-f14f-4536-a321-19a149811a04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Json">
+      <UniqueIdentifier>{d270a1a8-76e2-48a0-a092-e3ed0b182ec8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application_main.cpp">
@@ -56,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jsoncpp.cpp">
+      <Filter>Json</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +107,12 @@
     <ClInclude Include="Model.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="json\json.h">
+      <Filter>Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json-forwards.h">
+      <Filter>Json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini">
@@ -111,6 +123,9 @@
     </None>
     <None Include="vs.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="poses.dgd">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>
