@@ -1,9 +1,15 @@
 #version 330 core
 
 in vec4 position;
+in vec4 normal;
 
 uniform mat4 mv_matrix;
 uniform mat4 proj_matrix;
+
+out VS_OUT
+{
+	vec4 normal;	
+} vs_out;
 
 void main(void)
 {
@@ -15,6 +21,6 @@ void main(void)
   position.y = position.y * sy;
   position.z = position.z * sz;
   
-	gl_Position = proj_matrix * mv_matrix * position;
-
+  gl_Position = proj_matrix * mv_matrix * position;
+  vs_out.normal = normalize(normal);
 }

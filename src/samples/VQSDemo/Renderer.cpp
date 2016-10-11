@@ -5,46 +5,35 @@
 #include "Types.h"
 #include "UI.h"
 
+#include "Segment.inl"
 
 bool Renderer::Init()
 {
-  glGenBuffers(1, &m_buffer);
+  glGenBuffers(3, m_buffer);
 
   //Verts
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
 
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+
   m_shaderProgram = CompileShaders("vs.glsl", "fs.glsl");
 
-  float const bone[48] =
-  {
-    0.0f,  0.0f,   0.0f,
-    0.25f,  0.125f,   0.0f,
-    0.25f,  0.125f,   0.0f,
-    1.0f,  0.0f,   0.0f,
-
-    0.0f,  0.0f,   0.0f,
-    0.25f,  -0.125f,   0.0f,
-    0.25f,  -0.125f,   0.0f,
-    1.0f,  0.0f,   0.0f,
-
-    0.0f,  0.0f,   0.0f,
-    0.25f,  0.0f,   0.125f,
-    0.25f,  0.0f,   0.125f,
-    1.0f,  0.0f,   0.0f,
-
-    0.0f,  0.0f,   0.0f,
-    0.25f,  0.0f,   -0.125f,
-    0.25f,  0.0f,   -0.125f,
-    1.0f,  0.0f,   0.0f,
-  };
-  size_t fg = sizeof(bone);
-  glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(bone), bone, GL_STATIC_DRAW);
+  //Vertices
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffer[0]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(seg_v), seg_v, GL_STATIC_DRAW);
 
   GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
   glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(vPosition);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer[1]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(seg_fv), seg_fv, GL_STATIC_DRAW);
+
+  //Normals
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
@@ -75,7 +64,7 @@ void Renderer::Render(Dg::Matrix44<float> const & a_proj
   for (int i = 0; i < a_nObjects; ++i)
   {
     glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_pMV[i].GetData());
-    glDrawArrays(GL_LINES, 0, 16);
+	glDrawElements(GL_TRIANGLES, sizeof(seg_fv) / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
   }
 
   glBindVertexArray(0);
@@ -83,11 +72,7 @@ void Renderer::Render(Dg::Matrix44<float> const & a_proj
 
 void Renderer::ShutDown()
 {
-  if (m_buffer != 0)
-  {
-    glDeleteBuffers(1, &m_buffer);
-    m_buffer = 0;
-  }
+  glDeleteBuffers(3, m_buffer);
 
   glDeleteVertexArrays(1, &m_vao);
   glDeleteProgram(m_shaderProgram);

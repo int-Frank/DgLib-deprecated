@@ -26,7 +26,7 @@ private:
 
 private:
   GLuint              m_vao;
-  GLuint              m_buffer;
+  GLuint              m_buffer[3];
   GLuint              m_shaderProgram;
 };
 

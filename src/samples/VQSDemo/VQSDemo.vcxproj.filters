@@ -127,5 +127,8 @@
     <None Include="poses.dgd">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Segment.inl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

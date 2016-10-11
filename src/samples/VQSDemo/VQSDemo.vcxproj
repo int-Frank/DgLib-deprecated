@@ -180,6 +180,7 @@
   <ItemGroup>
     <None Include="fs.glsl" />
     <None Include="poses.dgd" />
+    <None Include="Segment.inl" />
     <None Include="vs.glsl" />
     <None Include="config.ini" />
   </ItemGroup>
