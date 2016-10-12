@@ -247,7 +247,7 @@ void Application::Render()
 void Application::GetConfiguration()
 {
   //Set defaults
-  strcpy_s(m_info.title, "Dg Paricle System Example");
+  strcpy_s(m_info.title, "VQS (vector, quaternion, scalar) Demo");
   m_info.windowWidth = 800;
   m_info.windowHeight = 600;
   m_info.majorVersion = 4;
