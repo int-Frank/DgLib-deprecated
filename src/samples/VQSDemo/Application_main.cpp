@@ -108,8 +108,8 @@ void Application::ResetCamera()
 	m_mouseSpeed = 0.01;
 	m_camRotZ = 0.0;
   m_camRotX = Dg::PI * 0.5;
-	m_camZoom = 5.0;
-	m_camZoomTarget = 5.0;
+	m_camZoom = 7.0;
+	m_camZoomTarget = 7.0;
 	glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentX);
 	m_mousePrevX = m_mouseCurrentX;
 	m_mousePrevY = m_mouseCurrentY;
@@ -206,78 +206,13 @@ void Application::DoLogic(double a_dt)
   }
 }
 
-void Application::GetRenderTransforms(Dg::Matrix44<float> & a_mv
-                                    , Dg::Matrix44<float> & a_proj)
-{
-  
-}
-
-//void Application::Render()
-//{
-//  float camHeight = 2.0f;
-//  float fov = 1.5f;
-//  float nearClip = 0.1f;
-//  float farClip = 1000.0f;
-//
-//  static float r1[3] = {0.0f, 0.0f, 0.0f};
-//  static float v1[3] = {1.0f, 0.0f, 0.0f};
-//  static float s0 = 1.0f, s1 = 1.0f;
-//  ImGui::Begin("Editor");
-//  //ImGui::SliderFloat3("RH", r0, 0.0f, 2 * Dg::PI_f, "%.3f");
-//  ImGui::SliderFloat3("RF", r1, 0.0f, 2 * Dg::PI_f, "%.3f");
-//  //ImGui::SliderFloat3("VH", v0, -1.0f, 1.0f, "%.2f");
-//  ImGui::SliderFloat3("VF", v1, -2.0f, 2.0f, "%.2f");
-//  ImGui::SliderFloat("SH", &s0, 0.1f, 2.0f, "%0.2f");
-//  ImGui::SliderFloat("SF", &s1, 0.1f, 2.0f, "%0.2f");
-//  if (ImGui::Button("Reset"))
-//  {
-//    r1[0] = r1[1] = r1[2] = 0.0f;
-//    v1[0] = 1.0f;
-//    v1[1] = v1[2] = 0.0f;
-//    s0 = s1 = 1.0f;
-//    m_camRotX = m_camRotZ = 0.0f;
-//  }
-//  ImGui::End();
-//
-//  Dg::VQS<float> TVW, TW0, T01;
-//  Dg::Quaternion<float> q;
-//  q.SetRotation(r1[0], r1[1], r1[2], Dg::EulerOrder::XYZ);
-//  T01.Set(Dg::Vector4<float>(v1[0], v1[1], v1[2], 0.0f), q, s1);
-//
-//  q.SetRotation(float(m_camRotX)
-//    , 0.0f
-//    , float(m_camRotZ)
-//    , Dg::EulerOrder::XYZ);
-//  TW0.SetQ(q);
-//  TW0.SetV(Dg::Vector4<float>(0.0f, -camHeight, float(-m_camZoom), 0.0f));
-//  TW0.SetS(s0);
-//
-//  Dg::Matrix44<float> mats[ArmSkeleton::BONE_COUNT];
-//  TW0.GetMatrix(mats[0]);
-//  (T01 * TW0).GetMatrix(mats[1]);
-//  
-//  //Set up the viewport
-//  float ratio;
-//  int width, height;
-//
-//  glfwGetFramebufferSize(m_window, &width, &height);
-//  ratio = width / (float)height;
-//
-//  glViewport(0, 0, width, height);
-//
-//  //Set up the perspective matrix;
-//  Dg::Matrix44<float> proj;
-//  proj.Perspective(fov, ratio, nearClip, farClip);
-//
-//  m_renderer.Render(proj, mats, ArmSkeleton::BONE_COUNT);
-//}
 
 void Application::Render()
 {
   float camHeight = 0.0f;
   float fov = 1.5f;
   float nearClip = 0.5f;
-  float farClip = 10.0f;
+  float farClip = 100.0f;
 
   Dg::VQS<float> T;
   Dg::Quaternion<float> q;
@@ -408,13 +343,6 @@ void Application::UI_NewFrame()
     ImGui::Begin("Stats", nullptr);
     ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
     ImGui::End();
-  }
-
-  //TODO Get rid of all ImGui unwanted code, demos, etc...
-  if (UI::showExampleWindow)
-  {
-	  ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-	  ImGui::ShowTestWindow(&UI::showExampleWindow);
   }
 }
 

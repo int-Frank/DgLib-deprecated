@@ -29,10 +29,10 @@ ArmSkeleton::ArmSkeleton()
   InitBoneTransforms();
 
   std::ifstream fs;
-  fs.open("poses.dgd");
+  fs.open("./resources/poses.dgd");
   if (!fs.good())
   {
-    printf("Failed to open file 'poses.dgd'!\n");
+    printf("Failed to open file './resources/poses.dgd'!\n");
     return;
   }
   fs >> m_jsRoot;
@@ -190,7 +190,7 @@ void ArmSkeleton::Update(float a_dt)
   }
 }
 
-void ArmSkeleton::SetTransform(VQS const & a_T)
+void ArmSkeleton::ShowEditor()
 {
   static BoneID activeBone = H;
   char const * boneName[BONE_COUNT] =
@@ -204,6 +204,7 @@ void ArmSkeleton::SetTransform(VQS const & a_T)
   };
   static char nameBuf[64] = {};
   static float rotations[BONE_COUNT][3] = {};
+  static bool isFirst = true;
 
   ImGui::Begin("Editor");
 
@@ -211,8 +212,9 @@ void ArmSkeleton::SetTransform(VQS const & a_T)
   std::vector<std::string> poses = m_jsRoot.getMemberNames();
   for (auto it = poses.begin(); it != poses.end(); it++)
   {
-    if (ImGui::Button(it->c_str()))
+    if (ImGui::Button(it->c_str()) || isFirst)
     {
+      isFirst = false;
       strcpy(nameBuf, it->c_str());
       std::vector<float> values;
       Dg::StringToNumberList(m_jsRoot[*it].asString(), ',', std::dec, values);
@@ -223,9 +225,9 @@ void ArmSkeleton::SetTransform(VQS const & a_T)
         Dg::Slerp(q, m_tBone[i].qBegin, m_tBone[i].qEnd, GetRunTime());
         m_tBone[i].qBegin = q;
         m_tBone[i].qEnd.SetRotation(rotations[i][0]
-        , rotations[i][1]
-        , rotations[i][2]
-        , Dg::EulerOrder::XYZ);
+          , rotations[i][1]
+          , rotations[i][2]
+          , Dg::EulerOrder::XYZ);
       }
       m_time = 0.0f;
     }
@@ -283,19 +285,22 @@ void ArmSkeleton::SetTransform(VQS const & a_T)
     {
       m_jsRoot[nameBuf] = ToString((float*)rotations, BONE_COUNT * 3);
       std::ofstream fs;
-      fs.open("poses.dgd");
+      fs.open("./resources/poses.dgd");
       if (fs.good())
       {
         fs << m_jsRoot;
       }
       else
       {
-        printf("Failed to open file 'poses.dgd'!\n");
+        printf("Failed to open file './resources/poses.dgd'!\n");
       }
     }
   }
-  
-  ImGui::End();
 
+  ImGui::End();
+}
+
+void ArmSkeleton::SetTransform(VQS const & a_T)
+{
   m_pRoot->Update(a_T);
 }

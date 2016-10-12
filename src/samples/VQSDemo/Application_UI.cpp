@@ -44,7 +44,7 @@ void Application::ShowMainGUIWindow()
   }
   if (ImGui::BeginPopupModal("About", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
-    ImGui::Text("About window");
+    ImGui::Text("This app demonstrates the VQS structure.");
     if (ImGui::Button("OK", ImVec2(130, 0)))
     {
       UI::showAbout = false;
@@ -54,7 +54,7 @@ void Application::ShowMainGUIWindow()
     ImGui::EndPopup();
   }
 
-  //ImGui::Checkbox("Example Gui", &UI::showExampleWindow);
-
   ImGui::End();
+
+  m_model.ShowEditor();
 }

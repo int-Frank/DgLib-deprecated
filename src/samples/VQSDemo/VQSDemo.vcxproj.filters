@@ -63,6 +63,9 @@
     <ClCompile Include="jsoncpp.cpp">
       <Filter>Json</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -126,9 +129,6 @@
     </None>
     <None Include="poses.dgd">
       <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Segment.inl">
-      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -157,6 +157,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Renderer_data.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -180,7 +181,6 @@
   <ItemGroup>
     <None Include="fs.glsl" />
     <None Include="poses.dgd" />
-    <None Include="Segment.inl" />
     <None Include="vs.glsl" />
     <None Include="config.ini" />
   </ItemGroup>

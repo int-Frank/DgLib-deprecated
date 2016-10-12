@@ -107,6 +107,7 @@ public:
   void Update(float a_dt);
   void SetTransform(VQS const &);
   void SetMatrices(Mat44[BONE_COUNT]);
+  void ShowEditor();
 
 private:
 
@@ -118,7 +119,7 @@ private:
 
   float const m_changeTime = 1.5f;
 
-public:
+private:
 
   Json::Value               m_jsRoot;
 

@@ -73,8 +73,6 @@ private:
   void ResetCamera();
   void GetConfiguration();
   bool InitGL();
-  void GetRenderTransforms(Dg::Matrix44<float> & a_mv
-                         , Dg::Matrix44<float> & a_proj);
 
   void UI_NewFrame();
   void HandleEvents();

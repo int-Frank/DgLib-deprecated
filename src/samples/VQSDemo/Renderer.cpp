@@ -5,11 +5,19 @@
 #include "Types.h"
 #include "UI.h"
 
-#include "Segment.inl"
+//#include "Segment.inl"
 
 bool Renderer::Init()
 {
   glGenBuffers(3, m_buffer);
+
+  std::vector<float> v, vn;
+  std::vector<GLushort> fv;
+  if (!LoadData(v, vn, fv))
+  {
+    return false;
+  }
+  m_nFvs = fv.size();
 
   //Verts
   glGenVertexArrays(1, &m_vao);
@@ -19,18 +27,18 @@ bool Renderer::Init()
 
   //Vertices
   glBindBuffer(GL_ARRAY_BUFFER, m_buffer[0]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(seg_v), seg_v, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(float), v.data(), GL_STATIC_DRAW);
 
   GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
   glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(vPosition);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer[1]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(seg_fv), seg_fv, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, fv.size() * sizeof(GLushort), fv.data(), GL_STATIC_DRAW);
 
   //Normals
   glBindBuffer(GL_ARRAY_BUFFER, m_buffer[2]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(seg_vn), seg_vn, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vn.size() * sizeof(float), vn.data(), GL_STATIC_DRAW);
 
   GLuint vNormal = glGetAttribLocation(m_shaderProgram, "normal");
   glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -69,7 +77,7 @@ void Renderer::Render(Dg::Matrix44<float> const & a_proj
   for (int i = 0; i < a_nObjects; ++i)
   {
     glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_pMV[i].GetData());
-	  glDrawElements(GL_TRIANGLES, sizeof(seg_fv) / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+	  glDrawElements(GL_TRIANGLES, m_nFvs, GL_UNSIGNED_SHORT, 0);
   }
 
   glBindVertexArray(0);
