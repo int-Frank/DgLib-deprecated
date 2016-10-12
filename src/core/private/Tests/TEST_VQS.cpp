@@ -50,7 +50,7 @@ TEST(Stack_VQS_Construction, creation_VQS_Construction)
   vqs0.SetV(v);
   vqs2.SetQ(q);
   vqs3.SetS(s);
-  CHECK((vqs0 * vqs2 * vqs3) == vqs1);
+  CHECK((vqs3 * vqs2 * vqs0) == vqs1);
 
   vqs0.Identity();
   vqs2.Identity();
@@ -59,9 +59,9 @@ TEST(Stack_VQS_Construction, creation_VQS_Construction)
   vqs0.SetV(v);
   vqs2.SetQ(q);
   vqs3.SetS(s);
-  vqs0 *= vqs2;
-  vqs0 *= vqs3;
-  CHECK(vqs0 == vqs1);
+  vqs3 *= vqs2;
+  vqs3 *= vqs0;
+  CHECK(vqs3 == vqs1);
 
 }
 
