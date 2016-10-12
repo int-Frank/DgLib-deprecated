@@ -118,7 +118,7 @@ private:
 
   float const m_changeTime = 1.5f;
 
-private:
+public:
 
   Json::Value               m_jsRoot;
 

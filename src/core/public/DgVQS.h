@@ -540,20 +540,19 @@ namespace Dg
   void VQS<Real>::GetMatrix(Matrix44<Real> & a_out) const
   {
     a_out.Rotation(m_q);
-
-    a_out.m_V[0] *= m_s;
-    a_out.m_V[1] *= m_s;
-    a_out.m_V[2] *= m_s;
-    a_out.m_V[4] *= m_s;
-    a_out.m_V[5] *= m_s;
-    a_out.m_V[6] *= m_s;
-    a_out.m_V[8] *= m_s;
-    a_out.m_V[9] *= m_s;
+    a_out.m_V[0]  *= m_s;
+    a_out.m_V[1]  *= m_s;
+    a_out.m_V[2]  *= m_s;
+    a_out.m_V[4]  *= m_s;
+    a_out.m_V[5]  *= m_s;
+    a_out.m_V[6]  *= m_s;
+    a_out.m_V[8]  *= m_s;
+    a_out.m_V[9]  *= m_s;
     a_out.m_V[10] *= m_s;
 
-    a_out.m_V[12] = m_v.x() * m_s;
-    a_out.m_V[13] = m_v.y() * m_s;
-    a_out.m_V[14] = m_v.z() * m_s;
+    a_out.m_V[12] = m_v.x();
+    a_out.m_V[13] = m_v.y();
+    a_out.m_V[14] = m_v.z();
 
   }	//End: VQS<Real>::Get()
 

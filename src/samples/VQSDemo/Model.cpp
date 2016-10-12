@@ -152,9 +152,9 @@ void ArmSkeleton::InitBoneTransforms()
   m_pRoot->Update(VQS());
 }
 
-void Bone::Update(VQS const & a_T_PW)
+void Bone::Update(VQS const & a_T_PV)
 {
-  m_pTBone->T_MV = m_pTBone->T_MP * a_T_PW;
+  m_pTBone->T_MV = m_pTBone->T_MP * a_T_PV;
   for (size_t i = 0; i < m_children.size(); ++i)
   {
     m_children[i].Update(m_pTBone->T_MV);

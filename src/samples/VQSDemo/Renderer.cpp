@@ -15,11 +15,6 @@ bool Renderer::Init()
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
 
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LESS);
-
   m_shaderProgram = CompileShaders("vs.glsl", "fs.glsl");
 
   //Vertices
@@ -34,10 +29,20 @@ bool Renderer::Init()
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(seg_fv), seg_fv, GL_STATIC_DRAW);
 
   //Normals
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffer[2]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(seg_vn), seg_vn, GL_STATIC_DRAW);
+
+  GLuint vNormal = glGetAttribLocation(m_shaderProgram, "normal");
+  glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(vNormal);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
   return true;
 }
 
@@ -64,7 +69,7 @@ void Renderer::Render(Dg::Matrix44<float> const & a_proj
   for (int i = 0; i < a_nObjects; ++i)
   {
     glUniformMatrix4fv(mv_loc, 1, GL_FALSE, a_pMV[i].GetData());
-	glDrawElements(GL_TRIANGLES, sizeof(seg_fv) / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+	  glDrawElements(GL_TRIANGLES, sizeof(seg_fv) / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
   }
 
   glBindVertexArray(0);

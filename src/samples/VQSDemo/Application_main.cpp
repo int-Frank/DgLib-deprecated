@@ -276,8 +276,8 @@ void Application::Render()
 {
   float camHeight = 0.0f;
   float fov = 1.5f;
-  float nearClip = 0.1f;
-  float farClip = 1000.0f;
+  float nearClip = 0.5f;
+  float farClip = 10.0f;
 
   Dg::VQS<float> T;
   Dg::Quaternion<float> q;
