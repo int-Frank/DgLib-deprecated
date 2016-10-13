@@ -5,6 +5,5 @@ namespace UI
 {
   bool showMetrics = false;
   bool showAbout = false;
-  bool showHelp = false;
   bool showEditor = false;
 }
