@@ -16,7 +16,7 @@ void Application::ShowMainGUIWindow()
   ImVec4  const   headingClr(1.0f, 0.0f, 1.0f, 1.0f);
   int     const   nSpacing        = 3;
 
-  ImGui::Begin("Editor");
+  ImGui::Begin("Main");
 
   //----------------------------------------------------------------------------------
   //  Menu Bar
@@ -28,6 +28,14 @@ void Application::ShowMainGUIWindow()
       if (ImGui::MenuItem("About", NULL, &UI::showAbout))
       {
         m_windowStack.push(Modal::ViewAbout);
+      }
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Options"))
+    {
+      if (ImGui::MenuItem("Show editor", NULL, &UI::showEditor))
+      {
+        UI::showEditor = true;
       }
       ImGui::EndMenu();
     }

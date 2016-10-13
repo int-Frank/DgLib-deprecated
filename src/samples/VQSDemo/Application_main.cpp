@@ -333,7 +333,7 @@ void Application::UI_NewFrame()
 
   //Editor
   {
-    ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_MenuBar);
+    ImGui::Begin("Main", nullptr, ImGuiWindowFlags_MenuBar);
     ImGui::End();
   }
 

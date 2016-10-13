@@ -3,7 +3,7 @@
 #include "DgStringFunctions.h"
 #include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
-
+#include "UI.h"
 #include "Model.h"
 
 
@@ -206,13 +206,13 @@ void ArmSkeleton::ShowEditor()
   static float rotations[BONE_COUNT][3] = {};
   static bool isFirst = true;
 
-  ImGui::Begin("Editor");
+  ImGui::Begin("Main");
 
   static std::string curentPose;
   std::vector<std::string> poses = m_jsRoot.getMemberNames();
   for (auto it = poses.begin(); it != poses.end(); it++)
   {
-    if (ImGui::Button(it->c_str()) || isFirst)
+    if (ImGui::Button(it->c_str(), ImVec2(100, 20)) || isFirst)
     {
       isFirst = false;
       strcpy(nameBuf, it->c_str());
@@ -232,12 +232,11 @@ void ArmSkeleton::ShowEditor()
       m_time = 0.0f;
     }
   }
-
-  ImGui::Separator();
-  static bool edit = false;
-  ImGui::Checkbox("Edit", &edit);
-  if (edit)
+  ImGui::End();
+  if (UI::showEditor)
   {
+    ImGui::Begin("Editor", &UI::showEditor);
+    
     if (ImGui::Button(boneName[H])) activeBone = H; ImGui::SameLine();
     if (ImGui::Button(boneName[F])) activeBone = F;
 
@@ -295,9 +294,11 @@ void ArmSkeleton::ShowEditor()
         printf("Failed to open file './resources/poses.dgd'!\n");
       }
     }
+    ImGui::End();
+    
   }
+  
 
-  ImGui::End();
 }
 
 void ArmSkeleton::SetTransform(VQS const & a_T)

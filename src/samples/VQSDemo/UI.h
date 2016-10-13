@@ -6,6 +6,7 @@ namespace UI
   extern bool showMetrics;
   extern bool showAbout;
   extern bool showHelp;
+  extern bool showEditor;
 }
 
 #endif
