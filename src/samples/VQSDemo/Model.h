@@ -107,7 +107,7 @@ public:
   void Update(float a_dt);
   void SetTransform(VQS const &);
   void SetMatrices(Mat44[BONE_COUNT]);
-  void ShowEditor();
+  void ShowUI();
 
 private:
 

@@ -64,5 +64,5 @@ void Application::ShowMainGUIWindow()
 
   ImGui::End();
 
-  m_model.ShowEditor();
+  m_model.ShowUI();
 }

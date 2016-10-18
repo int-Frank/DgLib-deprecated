@@ -60,11 +60,11 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="jsoncpp.cpp">
-      <Filter>Json</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer_data.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jsoncpp.cpp">
+      <Filter>Json</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

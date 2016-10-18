@@ -190,7 +190,7 @@ void ArmSkeleton::Update(float a_dt)
   }
 }
 
-void ArmSkeleton::ShowEditor()
+void ArmSkeleton::ShowUI()
 {
   static BoneID activeBone = H;
   char const * boneName[BONE_COUNT] =
