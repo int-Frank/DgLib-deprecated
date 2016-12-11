@@ -107,7 +107,7 @@ void Application::ResetCamera()
 {
 	m_mouseSpeed = 0.01;
 	m_camRotZ = 0.0;
-  m_camRotX = Dg::PI * 0.5;
+  m_camRotX = Dg::Constants<double>::PI * 0.5;
 	m_camZoom = 7.0;
 	m_camZoomTarget = 7.0;
 	glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentX);
@@ -190,7 +190,7 @@ void Application::HandleEvents()
 	  m_camRotZ += (m_mouseCurrentX - m_mousePrevX) * m_mouseSpeed;
 	  Dg::WrapAngle(m_camRotZ);
 	  m_camRotX += (m_mouseCurrentY - m_mousePrevY) * m_mouseSpeed;
-	  Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
+	  Dg::ClampNumber(0.001, Dg::Constants<double>::PI - 0.001, m_camRotX);
   }
 }
 

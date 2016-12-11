@@ -28,7 +28,7 @@ Dg::Attractor<float> * AttractorFactory::operator()(AttractorData const & a_data
     vec4 v;
     v.Set(a_data.transform[0], a_data.transform[1], a_data.transform[2], 0.0f);
     qz.SetRotationZ(a_data.transform[3]);
-    qy.SetRotationY(a_data.transform[4] - Dg::PI_f / 2.0f);
+    qy.SetRotationY(a_data.transform[4] - Dg::Constants<float>::PI / 2.0f);
     vqs.SetQ(qy * qz);
     vqs.SetV(v);
     vqs.SetS(a_data.transform[5]);

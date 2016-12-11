@@ -719,7 +719,7 @@ namespace Dg
     //                cos(theta/2)
 
     // before we normalize, check if vectors are opposing
-    if (m_w <= static_cast<Real>(EPSILON_d))
+    if (m_w <= Dg::Constants<Real>::EPSILON)
     {
       // rotate pi radians around orthogonal vector
       // take cross product with x axis
@@ -1139,7 +1139,7 @@ namespace Dg
     a_result = a_t * a_end;
 
     // if "angle" between quaternions is less than 90 degrees
-    if (cosTheta >= static_cast<Real>(EPSILON_d))
+    if (cosTheta >= Dg::Constants<Real>::EPSILON)
     {
       // use standard interpolation
       a_result += (static_cast<Real>(1.0) - a_t) * a_start;
@@ -1164,10 +1164,10 @@ namespace Dg
     Real startInterp, endInterp;
 
     // if "angle" between quaternions is less than 90 degrees
-    if (cosTheta >= static_cast<Real>(EPSILON))
+    if (cosTheta >= Dg::Constants<Real>::EPSILON)
     {
       // if angle is greater than zero
-      if ((static_cast<Real>(1.0) - cosTheta) > static_cast<Real>(EPSILON_d))
+      if ((static_cast<Real>(1.0) - cosTheta) > Dg::Constants<Real>::EPSILON)
       {
         // use standard slerp
         Real theta = Real(acos(cosTheta));
@@ -1188,7 +1188,7 @@ namespace Dg
     else
     {
       // if angle is less than 180 degrees
-      if ((static_cast<Real>(1.0) + cosTheta) > static_cast<Real>(EPSILON_d))
+      if ((static_cast<Real>(1.0) + cosTheta) > Dg::Constants<Real>::EPSILON)
       {
         // use slerp w/negation of a_start quaternion
         Real theta = Real(acos(-cosTheta));
@@ -1235,7 +1235,7 @@ namespace Dg
     a_result = a_t * a_end;
 
     // if "angle" between quaternions is less than 90 degrees
-    if (cosTheta >= static_cast<Real>(EPSILON_d))
+    if (cosTheta >= Dg::Constants<Real>::EPSILON)
     {
       // use standard interpolation
       a_result += (static_cast<Real>(1.0) - a_t) * a_start;

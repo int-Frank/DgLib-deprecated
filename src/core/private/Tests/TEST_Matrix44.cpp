@@ -209,9 +209,9 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
 {
   mat44 m0, m1, mx, my, mz, ms, mt;
   quat q0, q1;
-  mx.RotationX(Dg::PI_f * 0.5f);
-  my.RotationY(Dg::PI_f * 0.5f);
-  mz.RotationZ(Dg::PI_f * 0.5f);
+  mx.RotationX(Dg::Constants<float>::PI * 0.5f);
+  my.RotationY(Dg::Constants<float>::PI * 0.5f);
+  mz.RotationZ(Dg::Constants<float>::PI * 0.5f);
   ms.Scaling(2.0f);
   mt.Translation(vec4( -10.0f, 0.0f, 0.0f, 0.0f ));
   vec4 v({ 1.0f, 0.0f, 0.0f, 0.0f }), vr;

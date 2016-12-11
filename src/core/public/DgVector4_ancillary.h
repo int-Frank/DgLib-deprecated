@@ -21,7 +21,7 @@ namespace Dg
   {
     RNG generator;
 
-    Real theta = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(2.0) * static_cast<Real>(Dg::PI_d));
+    Real theta = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(2.0) * Dg::Constants<Real>::PI);
     Real rho = generator.GetUniform<Real>(static_cast<Real>(-1.0), static_cast<Real>(1.0));
 
     Real val = sqrt(static_cast<Real>(1.0) - rho * rho);
@@ -44,7 +44,7 @@ namespace Dg
     Vector4<Real> perp = Perpendicular(a_axis);
     Vector4<Real> crs = Cross(a_axis, perp);
     Real phi = gen.GetUniform(static_cast<Real>(0.0)
-                            , static_cast<Real>(Dg::PI_d * 2.0));
+                            , Dg::Constants<Real>::PI * static_cast<Real>(2.0));
 
     return (cos(phi) * perp + sin(phi) * crs);
   }	//End: GetRandomOrthonormalVector()
@@ -59,12 +59,12 @@ namespace Dg
     RNG generator;
 
     Dg::WrapNumber(static_cast<Real>(0.0)
-                 , static_cast<Real>(Dg::PI_d)
+                 , Dg::Constants<Real>::PI
                  , theta);
 
-    Real bound = cos(static_cast<Real>(Dg::PI_d) - theta);
+    Real bound = cos(Dg::Constants<Real>::PI - theta);
     Real x = generator.GetUniform(static_cast<Real>(-1.0), bound);
-    Real phi = static_cast<Real>(Dg::PI_d) - acos(x);
+    Real phi = Dg::Constants<Real>::PI - acos(x);
     return (cos(phi) * a_axis + sin(phi) * GetRandomOrthonormalVector(a_axis));
   }	//End: GetRandomVector()
 }

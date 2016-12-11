@@ -154,8 +154,8 @@ namespace Dg
       return ErrorCode::OutOfBounds;
     }
 
-    Real zLower = 0.5 * (1.0 + std::erf((a_lower - a_mean) / (a_sd * Dg::SQRT2)));
-    Real zUpper = 0.5 * (1.0 + std::erf((a_upper - a_mean) / (a_sd * Dg::SQRT2)));
+    Real zLower = 0.5 * (1.0 + std::erf((a_lower - a_mean) / (a_sd * Dg::Constants<Real>::SQRT2)));
+    Real zUpper = 0.5 * (1.0 + std::erf((a_upper - a_mean) / (a_sd * Dg::Constants<Real>::SQRT2)));
 
     m_nValues = a_nValues;
     m_values = new Real[m_nValues];
@@ -165,7 +165,7 @@ namespace Dg
       double c = static_cast<double>(zLower + (zUpper - zLower) * static_cast<double>(i) / static_cast<double>(m_nValues - 1));
       c = 2.0 * c - 1.0;
       Real inverfResult = static_cast<Real>(inverf<double, N_C_INVERF>(c));
-      m_values[i] = a_sd * static_cast<Real>(SQRT2_d) * inverfResult + a_mean;
+      m_values[i] = a_sd * Dg::Constants<Real>::SQRT2 * inverfResult + a_mean;
     }
 
     return ErrorCode::None;

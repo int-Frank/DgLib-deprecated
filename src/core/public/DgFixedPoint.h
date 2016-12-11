@@ -441,12 +441,12 @@ namespace Dg
     {
       if (F2 > F)
       {
-        int diff = F2 - F;
+        int const diff = F2 - F;
         return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) << impl::Shifts[diff], true);
       }
       else
       {
-        int diff = F - F2;
+        int const diff = F - F2;
         return FixedPoint<I2, F2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : static_cast<I2>(m_val) >> impl::Shifts[diff], true);
       }
     }
@@ -454,12 +454,12 @@ namespace Dg
     {
       if (F2 > F)
       {
-        int diff = F2 - F;
+        int const diff = F2 - F;
         return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val << impl::Shifts[diff]), true);
       }
       else
       {
-        int diff = F - F2;
+        int const diff = F - F2;
         return FixedPoint<I2, F2>(static_cast<I2>((diff >= sizeof(I2) * CHAR_BIT) ? 0 : m_val >> impl::Shifts[diff]), true);
       }
     }

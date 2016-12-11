@@ -238,7 +238,7 @@ void Application::UpdateParSysAttr()
         quat qz, qy;
         Vqs vqs;
         qz.SetRotationZ(data.velCone[0]);
-        qy.SetRotationY(-Dg::PI_f / 2.0f + data.velCone[1]);
+        qy.SetRotationY(-Dg::Constants<float>::PI / 2.0f + data.velCone[1]);
         vqs.SetQ(qy * qz);
         pVelGen->SetTransformation(vqs);
       }
@@ -400,7 +400,7 @@ void Application::UpdateParSysAttr()
       Vqs vqs;
       quat qh, qp;
       qh.SetRotationZ(data.transform[3]);
-      qp.SetRotationY(-Dg::PI_f / 2.0f + data.transform[4]);
+      qp.SetRotationY(-Dg::Constants<float>::PI / 2.0f + data.transform[4]);
       vqs.SetQ(qp * qh);
       vqs.SetV(vec4(data.transform[0], data.transform[1], data.transform[2], 0.0f));
       vqs.SetS(data.transform[5]);

@@ -119,7 +119,7 @@ public:
     , transform{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
     , relativeForce(1.0f)
     , boxDim{ 0.5f, 0.5f, 0.5f }
-    , velCone{ 0.0f, 0.0f, Dg::PI_f / 8.0f }
+    , velCone{ 0.0f, 0.0f, Dg::Constants<float>::PI / 8.0f }
     , velocity(1.0f)
     , colors{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f }
     , rate(10.0f)

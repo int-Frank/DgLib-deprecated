@@ -110,9 +110,9 @@ TEST(Stack_DgLineTransform, DgLineTransform)
 
   Real scale = 2.0;
   vec trans(1.0, 2.0, 3.0, 0.0);
-  Real rx = Dg::PI / 2.0;
+  Real rx = Dg::Constants<Real>::PI / 2.0;
   Real ry = 0.0;
-  Real rz = Dg::PI / 2.0;
+  Real rz = Dg::Constants<Real>::PI / 2.0;
   Dg::EulerOrder eo = Dg::EulerOrder::ZXY;
 
   mat44 m, m_rot, m_scl, m_trans;

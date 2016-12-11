@@ -55,7 +55,7 @@ void GenVelCone<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
 template<typename Real>
 void GenVelCone<Real>::SetAngle(Real a_ang)
 {
-  m_angle = (a_ang > static_cast<Real>(Dg::PI)) ? static_cast<Real>(Dg::PI) : a_ang;
+  m_angle = (a_ang > Dg::Constants<Real>::PI) ? Dg::Constants<Real>::PI : a_ang;
 }
 
 template<typename Real>

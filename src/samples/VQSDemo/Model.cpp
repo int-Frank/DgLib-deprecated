@@ -137,16 +137,16 @@ void ArmSkeleton::InitBoneTransforms()
   //Set Rotations
   Quat q;
 
-  q.SetRotationY(Dg::PI_f / 4.0f);
+  q.SetRotationY(Dg::Constants<float>::PI / 4.0f);
   m_tBone[T0].T_MP.SetQ(q);
 
-  q.SetRotationY(Dg::PI_f / 18.0f);
+  q.SetRotationY(Dg::Constants<float>::PI / 18.0f);
   m_tBone[I0].T_MP.SetQ(q);
 
-  q.SetRotationY(-Dg::PI_f / 18.0f);
+  q.SetRotationY(-Dg::Constants<float>::PI / 18.0f);
   m_tBone[R0].T_MP.SetQ(q);
 
-  q.SetRotationY(-Dg::PI_f / 9.0f);
+  q.SetRotationY(-Dg::Constants<float>::PI / 9.0f);
   m_tBone[L0].T_MP.SetQ(q);
 
   m_pRoot->Update(VQS());
@@ -176,7 +176,7 @@ float ArmSkeleton::GetRunTime() const
   {
     return 1.0f;
   }
-  return (sin(m_time / m_changeTime * Dg::PI_f - Dg::PI_f / 2.0f) + 1.0f) / 2.0f;
+  return (sin(m_time / m_changeTime * Dg::Constants<float>::PI - Dg::Constants<float>::PI / 2.0f) + 1.0f) / 2.0f;
 }
 
 void ArmSkeleton::Update(float a_dt)

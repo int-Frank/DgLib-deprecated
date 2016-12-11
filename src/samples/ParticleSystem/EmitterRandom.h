@@ -52,7 +52,7 @@ private:
 template<typename Real>
 void EmitterRandom<Real>::SetRate(Real a_val)
 {
-  Real maxMean = static_cast<Real>(1.0) / Dg::EPSILON;
+  Real maxMean = static_cast<Real>(1.0) / Dg::Constants<Real>::EPSILON;
   m_mean = (Dg::IsZero(a_val)) ? maxMean : static_cast<Real>(1.0) / a_val;
   m_nextEmitTime = static_cast<Real>(0.0);
 }
@@ -84,7 +84,7 @@ int EmitterRandom<Real>::EmitParticles(Dg::ParticleData<Real> & a_data, Real a_d
     
     //This function gives us a Gaussian-like distribution of samples, ranging from
     //0 to 2*m_mean.
-    Real timeToNext = m_mean * acos(rnd - static_cast<Real>(1.0)) / static_cast<Real>(Dg::PI_d * 0.5);
+    Real timeToNext = m_mean * acos(rnd - static_cast<Real>(1.0)) / static_cast<Real>(Dg::Constants<double>::PI * 0.5);
     m_nextEmitTime += timeToNext;
   }
   m_nextEmitTime -= a_dt;

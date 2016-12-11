@@ -40,33 +40,31 @@ namespace Dg
     ZXZ
   };
 
-  float const PI_f            = 3.141592653589793238462643383279f;
-  float const INVPI_f         = 0.31830988618379067153776752674503f;
-  float const EPSILON_f       = 1.0e-4f;
-  float const SQRT2_f         = 1.4142135623730950488016887242097f;
-  float const INVSQRT2_f      = 0.70710678118654752440084436210485f;
+  template<typename Real>
+  struct Constants
+  {};
 
-  double const PI_d           = 3.141592653589793238462643383279;
-  double const INVPI_d        = 0.31830988618379067153776752674503;
-  double const EPSILON_d      = 1.0e-8;
-  double const SQRT2_d        = 1.4142135623730950488016887242097;
-  double const INVSQRT2_d     = 0.70710678118654752440084436210485;
+  template<>
+  struct Constants<float>
+  {
+    static float const PI;
+    static float const INVPI;
+    static float const EPSILON;
+    static float const SQRT2;
+    static float const INVSQRT2;
+  };
+
+  template<>
+  struct Constants<double>
+  {
+    static double const PI;
+    static double const INVPI;
+    static double const EPSILON;
+    static double const SQRT2;
+    static double const INVSQRT2;
+  };
 
   unsigned const N_C_INVERF   = 512;
-
-#ifdef USE_PRECISION_32
-  float const PI              = PI_f;
-  float const INVPI           = INVPI_f;
-  float const EPSILON         = EPSILON_f;
-  float const SQRT2           = SQRT2_f;
-  float const INVSQRT2        = INVSQRT2_f;
-#else
-  double const PI             = PI_d;
-  double const INVPI          = INVPI_d;
-  double const EPSILON        = EPSILON_d;
-  double const SQRT2          = SQRT2_d;
-  double const INVSQRT2       = INVSQRT2_d;
-#endif
 
   //! @}
   
@@ -95,7 +93,7 @@ namespace Dg
     if (a_val % 2 == 0 || a_val % 3 == 0) return false;
 
     T maxi = (T(1) << ((CHAR_BIT * sizeof(T)) / 2)) - 1; //Root of the highest square T can hold before overflow.
-    for (T i = 5; i <= maxi && i*i <= a_val; i += 6)
+    for (T i = 5; i*i <= a_val && i <= maxi; i += 6)
     {
       if (a_val % i == 0 || a_val % (i + 2) == 0)
       {
@@ -174,7 +172,7 @@ namespace Dg
   template<typename Real>
   void WrapAngle(Real& val)
   {
-    val = val - static_cast<Real>(PI_d * 2.0)*floor((val + PI) / static_cast<Real>(PI_d * 2.0));
+    val = val - static_cast<Real>(Constants<Real>::PI * 2.0)*floor((val + Constants<Real>::PI) / (Constants<Real>::PI * 2.0));
   }	//End: WrapAngle()
 
 
@@ -194,7 +192,7 @@ namespace Dg
   template<typename Real>
   bool IsZero(Real a)
   {
-    return (abs(a) < static_cast<Real>(EPSILON));
+    return (abs(a) < Dg::Constants<Real>::EPSILON);
 
   }	//End: IsZero()
 

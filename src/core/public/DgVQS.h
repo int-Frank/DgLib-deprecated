@@ -304,7 +304,7 @@ namespace Dg
     m_q.MakeValid();
 
     //Clean scale;
-    if (m_s < Dg::EPSILON)
+    if (m_s < Dg::Constants<Real>::EPSILON)
       m_s = static_cast<Real>(0.0);
 
   }	//End: VQS<Real>::MakeValid()

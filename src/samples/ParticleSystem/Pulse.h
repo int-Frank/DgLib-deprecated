@@ -78,6 +78,6 @@ void Pulse<Real>::Update(Real a_dt)
 template<typename Real>
 Real Pulse<Real>::GetCurrentValue() const
 {
-  return m_amplitude * sin(mm_time * static_cast<Real>(2.0 * Dg::PI_d) * m_freq);
+  return m_amplitude * sin(mm_time * static_cast<Real>(2.0 * Dg::Constants<double>::PI) * m_freq);
 }
 #endif

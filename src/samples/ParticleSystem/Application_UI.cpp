@@ -78,7 +78,7 @@ void Application::ShowMainGUIWindow()
   int     const   nSpacing        = 3;
   float   const   sliderOffset    = -90.0f;
   float   const   vRotMins[2]     = { 0.0f, 0.0f };
-  float   const   vRotMaxs[2]     = { Dg::PI_f * 2.0f, Dg::PI_f };
+  float   const   vRotMaxs[2]     = { Dg::Constants<float>::PI * 2.0f, Dg::Constants<float>::PI };
   char    const * vRotformats[2]  = { "yaw = %.2f", "pitch = %.2f" };
   float   const   powers2[2]      = { 1.0f, 1.0f };
   float   const   posMins[3]      = { -10.0f, -10.0f, -10.0f };
@@ -517,7 +517,7 @@ void Application::ShowMainGUIWindow()
       if (curEmData.posGenMethod == E_GenPosBox)
       {
         float mins[3] = { 0.0f, 0.0f, 0.0f };
-        float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f * 2.0f, Dg::PI_f * 2.0f };
+        float maxs[3] = { Dg::Constants<float>::PI * 2.0f, Dg::Constants<float>::PI * 2.0f, Dg::Constants<float>::PI * 2.0f };
         char const * formats[3] = { "rz = %.2f", "ry = %.2f", "rx = %.2f" };
         float powers[3] = { 1.0f, 1.0f, 1.0f };
         ImGui::PushItemWidth(sliderOffset);
@@ -533,7 +533,7 @@ void Application::ShowMainGUIWindow()
       if (curEmData.velGenMethod == E_GenVelCone)
       {
         float mins[3] = { 0.0f, 0.0f, 0.0f };
-        float maxs[3] = { Dg::PI_f * 2.0f, Dg::PI_f, Dg::PI_f };
+        float maxs[3] = { Dg::Constants<float>::PI * 2.0f, Dg::Constants<float>::PI, Dg::Constants<float>::PI };
         char const * formats[3] = { "yaw = %.2f", "pitch = %.2f", "spread = %.2f" };
         float powers[3] = { 1.0f, 1.0f, 1.0f };
         ImGui::PushItemWidth(sliderOffset);

@@ -138,7 +138,7 @@ Dg::ParticleGenerator<float> * EmitterFactory::CreateGenVelCone(EmitterData cons
   Vqs vqs;
   quat qy, qz;
   qz.SetRotationZ(a_data.velCone[0]);
-  qy.SetRotationY(a_data.velCone[1] - Dg::PI_f / 2.0f);
+  qy.SetRotationY(a_data.velCone[1] - Dg::Constants<float>::PI / 2.0f);
   vqs.SetQ(qy * qz);
   pGen->SetTransformation(vqs);
   pGen->SetAngle(a_data.velCone[2]);

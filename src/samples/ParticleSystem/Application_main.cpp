@@ -151,7 +151,7 @@ void Application::ResetCamera()
 {
   m_mouseSpeed = 0.01;
   m_camRotZ = 0.0;
-  m_camRotX = Dg::PI * 0.5;
+  m_camRotX = Dg::Constants<double>::PI * 0.5;
   m_camZoom = 5.0;
   m_camZoomTarget = 5.0;
   glfwGetCursorPos(m_window, &m_mouseCurrentX, &m_mouseCurrentX);
@@ -200,7 +200,7 @@ void Application::HandleEvents()
     m_camRotZ += (m_mouseCurrentX - m_mousePrevX) * m_mouseSpeed;
     Dg::WrapAngle(m_camRotZ);
     m_camRotX += (m_mouseCurrentY - m_mousePrevY) * m_mouseSpeed;
-    Dg::ClampNumber(0.001, Dg::PI_d - 0.001, m_camRotX);
+    Dg::ClampNumber(0.001, Dg::Constants<double>::PI - 0.001, m_camRotX);
   }
 }
 
@@ -278,7 +278,7 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
       case E_AttGlobal:
       {
         lineRenderData.mat.Rotation(0.0f
-          , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+          , m_projData.aData[i].first.transform[4] - Dg::Constants<float>::PI / 2.0f
           , m_projData.aData[i].first.transform[3]
           , Dg::EulerOrder::XYZ);
         break;
@@ -306,7 +306,7 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
         );
 
         rot.Rotation(0.0f
-          , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+          , m_projData.aData[i].first.transform[4] - Dg::Constants<float>::PI / 2.0f
           , m_projData.aData[i].first.transform[3]
           , Dg::EulerOrder::XYZ);
         lineRenderData.mat = rot * trans;
@@ -324,7 +324,7 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
         );
 
         rot.Rotation(0.0f
-          , m_projData.aData[i].first.transform[4] - Dg::PI_f / 2.0f
+          , m_projData.aData[i].first.transform[4] - Dg::Constants<float>::PI / 2.0f
           , m_projData.aData[i].first.transform[3]
           , Dg::EulerOrder::XYZ);
         lineRenderData.mat = rot * trans;
@@ -348,7 +348,7 @@ void Application::GetRenderTransforms(Dg::Matrix44<float> & a_mv
 
   mat44 translate, rotate;
   translate.Translation(vec4(0.0f, -camHeight, float(-m_camZoom), 0.0f));
-  rotate.Rotation(float(Dg::PI_d + m_camRotX)
+  rotate.Rotation(float(Dg::Constants<double>::PI + m_camRotX)
                 , 0.0f
                 , float(m_camRotZ)
                 , Dg::EulerOrder::ZYX);
