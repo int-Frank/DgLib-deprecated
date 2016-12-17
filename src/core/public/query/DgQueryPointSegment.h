@@ -1,20 +1,20 @@
-//! @file DgQueryPointLineSegment.h
+//! @file DgQueryPointSegment.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 
-#ifndef DGQUERYPOINTLINESEGMENT_H
-#define DGQUERYPOINTLINESEGMENT_H
+#ifndef DGQUERYPOINTSEGMENT_H
+#define DGQUERYPOINTSEGMENT_H
 
 #include "DgCPQuery.h"
-#include "..\DgLineSegment.h"
+#include "..\DgSegment.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Point, LineSegment.
+  //! Distance and closest-point query: Point, Segment.
   template <typename Real>
-  class CPQuery<Real, Vector4<Real>, LineSegment<Real>>
+  class CPQuery<Real, Vector4<Real>, Segment<Real>>
   {
   public:
 
@@ -29,26 +29,26 @@ namespace Dg
     };
 
     //! Perform query
-    Result operator()(Vector4<Real> const &, LineSegment<Real> const &);
+    Result operator()(Vector4<Real> const &, Segment<Real> const &);
   };
 
   //! Template alias for convenience
   template<typename Real>
-  using CPPointLineSegment = CPQuery<Real, Vector4<Real>, LineSegment<Real>>;
+  using CPPointSegment = CPQuery<Real, Vector4<Real>, Segment<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename CPQuery<Real, Vector4<Real>, LineSegment<Real>>::Result
-    CPQuery<Real, Vector4<Real>, LineSegment<Real>>::operator()
-    (Vector4<Real> const & a_point, LineSegment<Real> const & a_line)
+  typename CPQuery<Real, Vector4<Real>, Segment<Real>>::Result
+    CPQuery<Real, Vector4<Real>, Segment<Real>>::operator()
+    (Vector4<Real> const & a_point, Segment<Real> const & a_seg)
   {
     Result result;
-    Vector4<Real> w = a_point - a_line.Origin();
+    Vector4<Real> w = a_point - a_seg.Origin();
 
-    Real proj = w.Dot(a_line.Direction());
+    Real proj = w.Dot(a_seg.Direction());
 
     if (proj <= static_cast<Real>(0.0))
     {
@@ -56,7 +56,7 @@ namespace Dg
     }
     else
     {
-      Real vsq = a_line.LengthSquared();
+      Real vsq = a_seg.LengthSquared();
 
       if (proj >= vsq)
       {
@@ -68,7 +68,7 @@ namespace Dg
       }
     }
 
-    result.cp = a_line.Origin() + result.u * a_line.Direction();
+    result.cp = a_seg.Origin() + result.u * a_seg.Direction();
     return result;
   }
 } //End: CPQuery::operator()

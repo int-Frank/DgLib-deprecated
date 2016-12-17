@@ -1,20 +1,20 @@
-//! @file DgQueryLineSegmentLineSegment.h
+//! @file DgQuerySegmentSegment.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 
-#ifndef DGQUERYLINESEGMENTLINESEGMENT_H
-#define DGQUERYLINESEGMENTLINESEGMENT_H
+#ifndef DGQUERYSEGMENTSEGMENT_H
+#define DGQUERYSEGMENTSEGMENT_H
 
 #include "DgCPQuery.h"
-#include "..\DgLineSegment.h"
+#include "..\DgSegment.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
   //! Distance and closest-point query: Line Segment, Line Segment
   template <typename Real>
-  class CPQuery<Real, LineSegment<Real>, LineSegment<Real>>
+  class CPQuery<Real, Segment<Real>, Segment<Real>>
   {
   public:
 
@@ -40,29 +40,29 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(LineSegment<Real> const &, LineSegment<Real> const &);
+    Result operator()(Segment<Real> const &, Segment<Real> const &);
   };
 
   //! Template alias for convenience.
   template<typename Real>
-  using CPLineSegmentLineSegment = CPQuery<Real, LineSegment<Real>, LineSegment<Real>>;
+  using CPSegmentSegment = CPQuery<Real, Segment<Real>, Segment<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename CPQuery<Real, LineSegment<Real>, LineSegment<Real>>::Result
-    CPQuery<Real, LineSegment<Real>, LineSegment<Real>>::operator()
-    (LineSegment<Real> const & a_ls0, LineSegment<Real> const & a_ls1)
+  typename CPQuery<Real, Segment<Real>, Segment<Real>>::Result
+    CPQuery<Real, Segment<Real>, Segment<Real>>::operator()
+    (Segment<Real> const & a_seg0, Segment<Real> const & a_seg1)
   {
     Result result;
     result.code = 0;
 
-    Vector4<Real> o0(a_ls0.Origin());
-    Vector4<Real> o1(a_ls1.Origin());
-    Vector4<Real> d0(a_ls0.Direction());
-    Vector4<Real> d1(a_ls1.Direction());
+    Vector4<Real> o0(a_seg0.Origin());
+    Vector4<Real> o1(a_seg1.Origin());
+    Vector4<Real> d0(a_seg0.Direction());
+    Vector4<Real> d1(a_seg1.Direction());
 
     //compute intermediate parameters
     Vector4<Real> w0(o0 - o1);

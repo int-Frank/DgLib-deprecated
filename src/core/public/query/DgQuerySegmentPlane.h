@@ -1,14 +1,14 @@
-//! @file DgQueryLineSegmentPlane.h
+//! @file DgQuerySegmentPlane.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 
-#ifndef DGQUERYLINESEGMENTPLANE_H
-#define DGQUERYLINESEGMENTPLANE_H
+#ifndef DGQUERYSEGMENTPLANE_H
+#define DGQUERYSEGMENTPLANE_H
 
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
-#include "..\DgLineSegment.h"
+#include "..\DgSegment.h"
 #include "..\DgPlane.h"
 
 namespace Dg
@@ -16,7 +16,7 @@ namespace Dg
   //! @ingroup DgMath_geoQueries
   //! Test for intersection between a line segment and a plane.
   template <typename Real>
-  class TIQuery<Real, LineSegment<Real>, Plane<Real>>
+  class TIQuery<Real, Segment<Real>, Plane<Real>>
   {
   public:
 
@@ -28,14 +28,14 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(LineSegment<Real> const &, Plane<Real> const &);
+    Result operator()(Segment<Real> const &, Plane<Real> const &);
   };
 
 
   //! @ingroup DgMath_geoQueries
   //! Find the intersection point between a line segment and a plane.
   template <typename Real>
-  class FIQuery<Real, LineSegment<Real>, Plane<Real>>
+  class FIQuery<Real, Segment<Real>, Plane<Real>>
   {
   public:
 
@@ -56,41 +56,41 @@ namespace Dg
     };
 
     //! Perform query
-    Result operator()(LineSegment<Real> const &, Plane<Real> const &);
+    Result operator()(Segment<Real> const &, Plane<Real> const &);
   };
 
 
   //! Template alias for convenience
   template<typename Real>
-  using TILineSegmentPlane = TIQuery<Real, LineSegment<Real>, Plane<Real>>;
+  using TISegmentPlane = TIQuery<Real, Segment<Real>, Plane<Real>>;
 
   //! Template alias for convenience
   template<typename Real>
-  using FILineSegmentPlane = FIQuery<Real, LineSegment<Real>, Plane<Real>>;
+  using FISegmentPlane = FIQuery<Real, Segment<Real>, Plane<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	TIQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename TIQuery<Real, LineSegment<Real>, Plane<Real>>::Result
-    TIQuery<Real, LineSegment<Real>, Plane<Real>>::operator()
-    (LineSegment<Real> const & a_ls, Plane<Real> const & a_plane)
+  typename TIQuery<Real, Segment<Real>, Plane<Real>>::Result
+    TIQuery<Real, Segment<Real>, Plane<Real>>::operator()
+    (Segment<Real> const & a_seg, Plane<Real> const & a_plane)
   {
     Result result;
 
     Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
-    Vector4<Real> lso(a_ls.Origin());
-    Vector4<Real> lsd(a_ls.Direction());
+    Vector4<Real> so(a_seg.Origin());
+    Vector4<Real> sd(a_seg.Direction());
 
-    Real denom = pn.Dot(lsd);
+    Real denom = pn.Dot(sd);
 
     //check if ray is parallel to plane
     if (Dg::IsZero(denom))
     {
       //check if ray is on the plane
-      if (Dg::IsZero(a_plane.SignedDistance(lso)))
+      if (Dg::IsZero(a_plane.SignedDistance(so)))
       {
         result.isIntersecting = true;
       }
@@ -101,7 +101,7 @@ namespace Dg
     }
     else
     {
-      Real u = (-(lso.Dot(pn) + po) / denom);
+      Real u = (-(so.Dot(pn) + po) / denom);
 
       if (u < static_cast<Real>(0.0) ||
           u > static_cast<Real>(1.0))
@@ -122,18 +122,18 @@ namespace Dg
   //	@	FIQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename FIQuery<Real, LineSegment<Real>, Plane<Real>>::Result
-    FIQuery<Real, LineSegment<Real>, Plane<Real>>::operator()
-    (LineSegment<Real> const & a_ls, Plane<Real> const & a_plane)
+  typename FIQuery<Real, Segment<Real>, Plane<Real>>::Result
+    FIQuery<Real, Segment<Real>, Plane<Real>>::operator()
+    (Segment<Real> const & a_seg, Plane<Real> const & a_plane)
   {
     Result result;
 
     Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
-    Vector4<Real> lso(a_ls.Origin());
-    Vector4<Real> lsd(a_ls.Direction());
+    Vector4<Real> so(a_seg.Origin());
+    Vector4<Real> sd(a_seg.Direction());
 
-    Real denom = pn.Dot(lsd);
+    Real denom = pn.Dot(sd);
 
     //check if line is parallel to plane
     if (Dg::IsZero(denom))
@@ -141,7 +141,7 @@ namespace Dg
       result.u = static_cast<Real>(0.0);
 
       //check if line is on the plane
-      if (Dg::IsZero(a_plane.Distance(lso)))
+      if (Dg::IsZero(a_plane.Distance(so)))
       {
         result.code = 1;
       }
@@ -152,7 +152,7 @@ namespace Dg
     }
     else
     {
-      result.u = (-(lso.Dot(pn) + po) / denom);
+      result.u = (-(so.Dot(pn) + po) / denom);
       if (result.u < static_cast<Real>(0.0))
       {
         result.u = static_cast<Real>(0.0);
@@ -169,7 +169,7 @@ namespace Dg
       }
     }
 
-    result.point = lso + result.u * lsd;
+    result.point = so + result.u * sd;
     return result;
   } //End: FIQuery::operator()
 }

@@ -1,17 +1,14 @@
-//! @file DgLineSegment.h
+//! @file DgSegment.h
 //!
 //! @author: Frank B. Hart
 //! @date 29/05/2016
 //!
-//! Class declaration: LineSegment
+//! Class declaration: Segment
 
-#ifndef DGLINESEGMENT_H
-#define DGLINESEGMENT_H
+#ifndef DGSEGMENT_H
+#define DGSEGMENT_H
 
 #include "DgVector4.h"
-#include "DgPlane.h"
-#include "DgLine.h"
-#include "DgRay.h"
 #include "DgMatrix44.h"
 #include "DgVQS.h"
 #include "dgmath.h"
@@ -20,7 +17,7 @@ namespace Dg
 {
   //! @ingroup DgMath_types
   //!
-  //! @class LineSegment
+  //! @class Segment
   //!
   //! A Linesgment is a line that connects two points. It is represented by a Point4 
   //! and a Vector4, the length of the vector being the distance between the points.
@@ -32,21 +29,21 @@ namespace Dg
   //! @author: James M. Van Verth, Lars M. Bishop, Frank Hart
   //! @date 29/05/2016
   template<typename Real>
-  class LineSegment
+  class Segment
   {
   public:
     //! Default constructor
-    LineSegment();
+    Segment();
 
     //! Construct from an origin and direction
-    LineSegment(Vector4<Real> const & p0, Vector4<Real> const & p1);
-    ~LineSegment() {}
+    Segment(Vector4<Real> const & p0, Vector4<Real> const & p1);
+    ~Segment() {}
 
     //! Copy constructor
-    LineSegment(LineSegment const &);
+    Segment(Segment const &);
 
     //! Assignment
-    LineSegment& operator=(LineSegment const &);
+    Segment& operator=(Segment const &);
 
     //! Get the origin of the line
     Vector4<Real> const & Origin() const { return m_origin; }
@@ -67,10 +64,10 @@ namespace Dg
     void Get(Vector4<Real>& a_p0, Vector4<Real>& a_p1) const;
 
     //! Comparison
-    bool operator== (LineSegment const &) const;
+    bool operator== (Segment const &) const;
 
     //! Comparison
-    bool operator!= (LineSegment const &) const;
+    bool operator!= (Segment const &) const;
 
     //! Set line segment from endpoints
     void Set(Vector4<Real> const & p0, Vector4<Real> const & p1);
@@ -82,16 +79,16 @@ namespace Dg
     Real LengthSquared() const;
 
     //! Transform the line segment
-    LineSegment GetTransformed(Matrix44<Real> const &) const;
+    Segment GetTransformed(Matrix44<Real> const &) const;
 
     //! Transform the line segment, assign to self
-    LineSegment & TransformSelf(Matrix44<Real> const &);
+    Segment & TransformSelf(Matrix44<Real> const &);
 
     //! Transform the line segment
-    LineSegment GetTransformed(VQS<Real> const &) const;
+    Segment GetTransformed(VQS<Real> const &) const;
 
     //! Transform the line segment, assign to self
-    LineSegment & TransformSelf(VQS<Real> const &);
+    Segment & TransformSelf(VQS<Real> const &);
   private:
 
     //Data members
@@ -101,84 +98,84 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::LineSegment()
+  //	@	Segment::Segment()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real>::LineSegment() : m_origin(Vector4<Real>::Origin())
+  Segment<Real>::Segment() : m_origin(Vector4<Real>::Origin())
     , m_direction(Vector4<Real>::xAxis())
   {
-  }	//End: LineSegment::LineSegment()
+  }	//End: Segment::Segment()
 
 
   //--------------------------------------------------------------------------------
-  //  @ LineSegment::LineSegment()
+  //  @ Segment::Segment()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real>::LineSegment(Vector4<Real> const & p0, Vector4<Real> const & p1)
+  Segment<Real>::Segment(Vector4<Real> const & p0, Vector4<Real> const & p1)
   {
     Set(p0, p1);
-  }	//End: LineSegment::LineSegment()
+  }	//End: Segment::Segment()
 
 
   //--------------------------------------------------------------------------------
-  //  @ LineSegment::LineSegment()
+  //  @ Segment::Segment()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real>::LineSegment(LineSegment<Real> const & a_other) :
+  Segment<Real>::Segment(Segment<Real> const & a_other) :
     m_origin(a_other.m_origin), m_direction(a_other.m_direction)
   {
-  }	//End: LineSegment::LineSegment()
+  }	//End: Segment::Segment()
 
 
   //--------------------------------------------------------------------------------
-  //  @ LineSegment::operator=()
+  //  @ Segment::operator=()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real> & LineSegment<Real>::operator=(LineSegment<Real> const & a_other)
+  Segment<Real> & Segment<Real>::operator=(Segment<Real> const & a_other)
   {
     m_origin = a_other.m_origin;
     m_direction = a_other.m_direction;
 
     return *this;
-  }	//End: LineSegment::operator=()
+  }	//End: Segment::operator=()
 
 
   //--------------------------------------------------------------------------------
-  //  @ LineSegment::Get()
+  //  @ Segment::Get()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void LineSegment<Real>::Get(Vector4<Real> & a_p0, Vector4<Real> & a_p1) const
+  void Segment<Real>::Get(Vector4<Real> & a_p0, Vector4<Real> & a_p1) const
   {
     a_p0 = m_origin;
     a_p1 = m_origin + m_direction;
-  }	//End: LineSegment::Get()
+  }	//End: Segment::Get()
 
 
   //--------------------------------------------------------------------------------
-  //  @ LineSegment::operator==()
+  //  @ Segment::operator==()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  bool LineSegment<Real>::operator==(LineSegment<Real> const & a_other) const
+  bool Segment<Real>::operator==(Segment<Real> const & a_other) const
   {
     return m_origin == a_other.m_origin && m_direction == a_other.m_direction;
-  }	//End: LineSegment::operator==()
+  }	//End: Segment::operator==()
 
 
   //--------------------------------------------------------------------------------
-  //  @ LineSegment::operator!=()
+  //  @ Segment::operator!=()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  bool LineSegment<Real>::operator!=(LineSegment<Real> const & a_other) const
+  bool Segment<Real>::operator!=(Segment<Real> const & a_other) const
   {
     return m_origin != a_other.m_origin || m_direction != a_other.m_direction;
-  }	//End: LineSegment::operator!=()
+  }	//End: Segment::operator!=()
 
 
   //--------------------------------------------------------------------------------
-  //  @ LineSegment::Set()
+  //  @ Segment::Set()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void LineSegment<Real>::Set(Vector4<Real> const & a_p0, Vector4<Real> const & a_p1)
+  void Segment<Real>::Set(Vector4<Real> const & a_p0, Vector4<Real> const & a_p1)
   {
     //Assign
     m_origin = a_p0;
@@ -187,78 +184,78 @@ namespace Dg
     m_direction = a_p1 - a_p0;
     m_direction.w() = static_cast<Real>(0.0);
 
-  }	//End: LineSegment::Set()
+  }	//End: Segment::Set()
 
 
     //--------------------------------------------------------------------------------
-    //  @ LineSegment::Length()
+    //  @ Segment::Length()
     //--------------------------------------------------------------------------------
   template<typename Real>
-  Real LineSegment<Real>::Length() const
+  Real Segment<Real>::Length() const
   {
     return m_direction.Length();
 
-  }	//End: LineSegment::Length()
+  }	//End: Segment::Length()
 
 
   //--------------------------------------------------------------------------------
-  //  @ LineSegment::LengthSquared()
+  //  @ Segment::LengthSquared()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Real LineSegment<Real>::LengthSquared() const
+  Real Segment<Real>::LengthSquared() const
   {
     return m_direction.LengthSquared();
 
-  }	//End: LineSegment::LengthSquared()
+  }	//End: Segment::LengthSquared()
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::GetTransformed()
+  //	@	Segment::GetTransformed()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real> LineSegment<Real>::GetTransformed(Matrix44<Real> const & a_mat) const
+  Segment<Real> Segment<Real>::GetTransformed(Matrix44<Real> const & a_mat) const
   {
     Vector4<Real> p0(m_origin * a_mat);
     Vector4<Real> p1(p0 + m_direction * a_mat);
-    return LineSegment<Real>(p0, p1);
-  }	//End: LineSegment::GetTransformed()
+    return Segment<Real>(p0, p1);
+  }	//End: Segment::GetTransformed()
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::TransformSelf()
+  //	@	Segment::TransformSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real>& LineSegment<Real>::TransformSelf(Matrix44<Real> const & a_mat)
+  Segment<Real>& Segment<Real>::TransformSelf(Matrix44<Real> const & a_mat)
   {
     Vector4<Real> p0(m_origin * a_mat);
     Vector4<Real> p1(p0 + m_direction * a_mat);
     Set(p0, p1);
     return *this;
-  }	//End: LineSegment::TransformSelf()
+  }	//End: Segment::TransformSelf()
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::GetTransformed()
+  //	@	Segment::GetTransformed()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real> LineSegment<Real>::GetTransformed(VQS<Real> const & a_vqs) const
+  Segment<Real> Segment<Real>::GetTransformed(VQS<Real> const & a_vqs) const
   {
     Vector4<Real> p0(a_vqs.TransformPoint(m_origin));
     Vector4<Real> p1(p0 + a_vqs.TransformVector(m_direction));
-    return LineSegment<Real>(p0, p1);
-  }	//End: LineSegment::GetTransformed()
+    return Segment<Real>(p0, p1);
+  }	//End: Segment::GetTransformed()
 
 
   //--------------------------------------------------------------------------------
-  //	@	LineSegment::TransformSelf()
+  //	@	Segment::TransformSelf()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  LineSegment<Real>& LineSegment<Real>::TransformSelf(VQS<Real> const & a_vqs)
+  Segment<Real>& Segment<Real>::TransformSelf(VQS<Real> const & a_vqs)
   {
     Vector4<Real> p0(a_vqs.TransformPoint(m_origin));
     Vector4<Real> p1(p0 + a_vqs.TransformVector(m_direction));
     Set(p0, p1);
     return *this;
-  }	//End: LineSegment::TransformSelf()
+  }	//End: Segment::TransformSelf()
 }
 #endif

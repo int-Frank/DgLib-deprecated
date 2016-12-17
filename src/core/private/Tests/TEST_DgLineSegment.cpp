@@ -1,12 +1,12 @@
 #include "TestHarness.h"
-#include "DgLineSegment.h"
+#include "DgSegment.h"
 #include "DgMatrix44.h"
 #include "DgVQS.h"
-#include "query/DgQueryPointLineSegment.h"
-#include "query/DgQueryLineSegmentLine.h"
-#include "query/DgQueryLineSegmentRay.h"
-#include "query/DgQueryLineSegmentLineSegment.h"
-#include "query/DgQueryLineSegmentPlane.h"
+#include "query/DgQueryPointSegment.h"
+#include "query/DgQuerySegmentLine.h"
+#include "query/DgQuerySegmentRay.h"
+#include "query/DgQuerySegmentSegment.h"
+#include "query/DgQuerySegmentPlane.h"
 
 typedef double Real;
 typedef Dg::Vector4<Real>               vec;
@@ -16,7 +16,7 @@ typedef Dg::Matrix44<Real>              mat44;
 typedef Dg::VQS<Real>                   vqs;
 typedef Dg::Quaternion<Real>            quat;
 typedef Dg::Ray<Real>                   ray;
-typedef Dg::LineSegment<Real>           lineSeg;
+typedef Dg::Segment<Real>           lineSeg;
 
 TEST(Stack_DgLineSegment, DgLineSegment)
 {
@@ -43,8 +43,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //Geometric tests
 
   //lineSeg-point
-  Dg::CPPointLineSegment<Real>           dcpPointLS;
-  Dg::CPPointLineSegment<Real>::Result   dcpPointLS_res;
+  Dg::CPPointSegment<Real>           dcpPointLS;
+  Dg::CPPointSegment<Real>::Result   dcpPointLS_res;
   ls0.Set(vec(2.0, 0.0, 0.0, 1.0), vec(6.0, 0.0, 0.0, 1.0));
   vec pIn;
 
@@ -73,8 +73,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //CHECK(dcpPointLS_res.sqDistance == 25.0);
 
   //lineSeg-Line
-  Dg::CPLineSegmentLine<Real>           dcpLSLine;
-  Dg::CPLineSegmentLine<Real>::Result   dcpLSLine_res;
+  Dg::CPSegmentLine<Real>           dcpLSLine;
+  Dg::CPSegmentLine<Real>::Result   dcpLSLine_res;
   line l;
 
   //LineSeg parallel to line
@@ -82,8 +82,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSLine_res = dcpLSLine(ls0, l);
   CHECK(dcpLSLine_res.code == 1);
   CHECK(dcpLSLine_res.ul == -1.0);
-  CHECK(dcpLSLine_res.uls == 0.0);
-  CHECK(dcpLSLine_res.cpls == ls0.GetP0());
+  CHECK(dcpLSLine_res.us == 0.0);
+  CHECK(dcpLSLine_res.cps == ls0.GetP0());
   CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 4.0, 1.0));
   //CHECK(dcpLSLine_res.distance == 5.0);
   //CHECK(dcpLSLine_res.sqDistance == 25.0);
@@ -93,8 +93,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSLine_res = dcpLSLine(ls0, l);
   CHECK(dcpLSLine_res.code == 1);
   CHECK(dcpLSLine_res.ul == 1.0);
-  CHECK(dcpLSLine_res.uls == 0.0);
-  CHECK(dcpLSLine_res.cpls == ls0.GetP0());
+  CHECK(dcpLSLine_res.us == 0.0);
+  CHECK(dcpLSLine_res.cps == ls0.GetP0());
   CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 4.0, 1.0));
   //CHECK(dcpLSLine_res.distance == 5.0);
   //CHECK(dcpLSLine_res.sqDistance == 25.0);
@@ -104,8 +104,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSLine_res = dcpLSLine(ls0, l);
   CHECK(dcpLSLine_res.code == 0);
   CHECK(dcpLSLine_res.ul == 3.0);
-  CHECK(dcpLSLine_res.uls == 0.0);
-  CHECK(dcpLSLine_res.cpls == ls0.GetP0());
+  CHECK(dcpLSLine_res.us == 0.0);
+  CHECK(dcpLSLine_res.cps == ls0.GetP0());
   CHECK(dcpLSLine_res.cpl == vec(-1.0, 4.0, 0.0, 1.0));
   //CHECK(dcpLSLine_res.distance == 5.0);
   //CHECK(dcpLSLine_res.sqDistance == 25.0);
@@ -115,8 +115,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSLine_res = dcpLSLine(ls0, l);
   CHECK(dcpLSLine_res.code == 0);
   CHECK(dcpLSLine_res.ul == 3.0);
-  CHECK(dcpLSLine_res.uls == 1.0);
-  CHECK(dcpLSLine_res.cpls == ls0.GetP1());
+  CHECK(dcpLSLine_res.us == 1.0);
+  CHECK(dcpLSLine_res.cps == ls0.GetP1());
   CHECK(dcpLSLine_res.cpl == vec(9.0, 4.0, 0.0, 1.0));
   //CHECK(dcpLSLine_res.distance == 5.0);
   //CHECK(dcpLSLine_res.sqDistance == 25.0);
@@ -126,24 +126,24 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSLine_res = dcpLSLine(ls0, l);
   CHECK(dcpLSLine_res.code == 0);
   CHECK(dcpLSLine_res.ul == -3.0);
-  CHECK(dcpLSLine_res.uls == 0.25);
-  CHECK(dcpLSLine_res.cpls == vec(3.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSLine_res.us == 0.25);
+  CHECK(dcpLSLine_res.cps == vec(3.0, 0.0, 0.0, 1.0));
   CHECK(dcpLSLine_res.cpl == vec(3.0, 4.0, 0.0, 1.0));
   //CHECK(dcpLSLine_res.distance == 4.0);
   //CHECK(dcpLSLine_res.sqDistance == 16.0);
 
   //lineSeg-Ray
   ray r;
-  Dg::CPLineSegmentRay<Real>           dcpLSRay;
-  Dg::CPLineSegmentRay<Real>::Result   dcpLSRay_res;
+  Dg::CPSegmentRay<Real>           dcpLSRay;
+  Dg::CPSegmentRay<Real>::Result   dcpLSRay_res;
 
   //LineSeg parallel to ray, but behind ray origin
   r.Set(vec(-1.0, 4.0, 12.0, 1.0), -vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 0.0);
-  CHECK(dcpLSRay_res.uls == 0.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.us == 0.0);
+  CHECK(dcpLSRay_res.cps == ls0.GetP0());
   CHECK(dcpLSRay_res.cpr == r.Origin());
   //CHECK(dcpLSRay_res.distance == 13.0);
   //CHECK(dcpLSRay_res.sqDistance == 13.0 * 13.0);
@@ -153,8 +153,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 0.0);
-  CHECK(dcpLSRay_res.uls == 1.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP1());
+  CHECK(dcpLSRay_res.us == 1.0);
+  CHECK(dcpLSRay_res.cps == ls0.GetP1());
   CHECK(dcpLSRay_res.cpr == r.Origin());
   //CHECK(dcpLSRay_res.distance == 13.0);
   //CHECK(dcpLSRay_res.sqDistance == 13.0 * 13.0);
@@ -164,8 +164,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 1);
   CHECK(dcpLSRay_res.ur == 0.0);
-  CHECK(dcpLSRay_res.uls == 0.5);
-  CHECK(dcpLSRay_res.cpls == vec(4.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSRay_res.us == 0.5);
+  CHECK(dcpLSRay_res.cps == vec(4.0, 0.0, 0.0, 1.0));
   CHECK(dcpLSRay_res.cpr == r.Origin());
   //CHECK(dcpLSRay_res.distance == 5.0);
   //CHECK(dcpLSRay_res.sqDistance == 25.0);
@@ -175,8 +175,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 1);
   CHECK(dcpLSRay_res.ur == 2.0);
-  CHECK(dcpLSRay_res.uls == 0.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.us == 0.0);
+  CHECK(dcpLSRay_res.cps == ls0.GetP0());
   CHECK(dcpLSRay_res.cpr == vec(2.0, 3.0, 4.0, 1.0));
   //CHECK(dcpLSRay_res.distance == 5.0);
   //CHECK(dcpLSRay_res.sqDistance == 25.0);
@@ -186,8 +186,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 1);
   CHECK(dcpLSRay_res.ur == 4.0);
-  CHECK(dcpLSRay_res.uls == 0.0);
-  CHECK(dcpLSRay_res.cpls == ls0.Origin());
+  CHECK(dcpLSRay_res.us == 0.0);
+  CHECK(dcpLSRay_res.cps == ls0.Origin());
   CHECK(dcpLSRay_res.cpr == vec(2.0, 3.0, 4.0, 1.0));
   //CHECK(dcpLSRay_res.distance == 5.0);
   //CHECK(dcpLSRay_res.sqDistance == 25.0);
@@ -197,8 +197,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 1);
   CHECK(dcpLSRay_res.ur == 8.0);
-  CHECK(dcpLSRay_res.uls == 0.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.us == 0.0);
+  CHECK(dcpLSRay_res.cps == ls0.GetP0());
   CHECK(dcpLSRay_res.cpr == vec(2.0, 3.0, 4.0, 1.0));
   //CHECK(dcpLSRay_res.distance == 5.0);
   //CHECK(dcpLSRay_res.sqDistance == 25.0);
@@ -208,8 +208,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 0.0);
-  CHECK(dcpLSRay_res.uls == 0.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.us == 0.0);
+  CHECK(dcpLSRay_res.cps == ls0.GetP0());
   CHECK(dcpLSRay_res.cpr == r.Origin());
   //CHECK(dcpLSRay_res.distance == 19.0);
   //CHECK(dcpLSRay_res.sqDistance == 19.0 * 19.0);
@@ -219,8 +219,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 0.0);
-  CHECK(dcpLSRay_res.uls == 1.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP1());
+  CHECK(dcpLSRay_res.us == 1.0);
+  CHECK(dcpLSRay_res.cps == ls0.GetP1());
   CHECK(dcpLSRay_res.cpr == r.Origin());
   //CHECK(dcpLSRay_res.distance == 19.0);
   //CHECK(dcpLSRay_res.sqDistance == 19.0 * 19.0);
@@ -230,8 +230,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 0.0);
-  CHECK(dcpLSRay_res.uls == 0.75);
-  CHECK(dcpLSRay_res.cpls == vec(5.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSRay_res.us == 0.75);
+  CHECK(dcpLSRay_res.cps == vec(5.0, 0.0, 0.0, 1.0));
   CHECK(dcpLSRay_res.cpr == r.Origin());
   //CHECK(dcpLSRay_res.distance == 5.0);
   //CHECK(dcpLSRay_res.sqDistance == 25.0);
@@ -241,8 +241,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 3.0);
-  CHECK(dcpLSRay_res.uls == 0.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP0());
+  CHECK(dcpLSRay_res.us == 0.0);
+  CHECK(dcpLSRay_res.cps == ls0.GetP0());
   CHECK(dcpLSRay_res.cpr == vec(-1.0, -4.0, 0.0, 1.0));
   //CHECK(dcpLSRay_res.distance == 5.0);
   //CHECK(dcpLSRay_res.sqDistance == 25.0);
@@ -252,8 +252,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 3.0);
-  CHECK(dcpLSRay_res.uls == 1.0);
-  CHECK(dcpLSRay_res.cpls == ls0.GetP1());
+  CHECK(dcpLSRay_res.us == 1.0);
+  CHECK(dcpLSRay_res.cps == ls0.GetP1());
   CHECK(dcpLSRay_res.cpr == vec(9.0, -4.0, 0.0, 1.0));
   //CHECK(dcpLSRay_res.distance == 5.0);
   //CHECK(dcpLSRay_res.sqDistance == 25.0);
@@ -263,15 +263,15 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   dcpLSRay_res = dcpLSRay(ls0, r);
   CHECK(dcpLSRay_res.code == 0);
   CHECK(dcpLSRay_res.ur == 3.0);
-  CHECK(dcpLSRay_res.uls == 0.75);
-  CHECK(dcpLSRay_res.cpls == vec(5.0, 0.0, 0.0, 1.0));
+  CHECK(dcpLSRay_res.us == 0.75);
+  CHECK(dcpLSRay_res.cps == vec(5.0, 0.0, 0.0, 1.0));
   CHECK(dcpLSRay_res.cpr == vec(5.0, -4.0, 0.0, 1.0));
   //CHECK(dcpLSRay_res.distance == 4.0);
   //CHECK(dcpLSRay_res.sqDistance == 16.0);
 
   //lineSeg-LineSeg
-  Dg::CPLineSegmentLineSegment<Real>           dcpLSLS;
-  Dg::CPLineSegmentLineSegment<Real>::Result   dcpLSLS_res;
+  Dg::CPSegmentSegment<Real>           dcpLSLS;
+  Dg::CPSegmentSegment<Real>::Result   dcpLSLS_res;
 
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p0
   ls1.Set(vec(-1.0, -4.0, 12.0, 1.0), vec(-5.0, -4.0, 12.0, 1.0));
@@ -439,10 +439,10 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //CHECK(dcpLSLS_res.sqDistance == 9.0);
 
   //LineSeg-plane
-  Dg::TILineSegmentPlane<Real>          tiLSPlane;
-  Dg::FILineSegmentPlane<Real>          fiLSPlane;
-  Dg::TILineSegmentPlane<Real>::Result  tiLSPlane_res;
-  Dg::FILineSegmentPlane<Real>::Result  fiLSPlane_res;
+  Dg::TISegmentPlane<Real>          tiLSPlane;
+  Dg::FISegmentPlane<Real>          fiLSPlane;
+  Dg::TISegmentPlane<Real>::Result  tiLSPlane_res;
+  Dg::FISegmentPlane<Real>::Result  fiLSPlane_res;
   plane pl;
   
   //LineSeg parallel to plane

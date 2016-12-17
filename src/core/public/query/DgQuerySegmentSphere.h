@@ -1,14 +1,14 @@
-//! @file DgQueryLineSegmentSphere.h
+//! @file DgQuerySegmentSphere.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 
-#ifndef DGQUERYLINESEGMENTSPHERE_H
-#define DGQUERYLINESEGMENTSPHERE_H
+#ifndef DGQUERYSEGMENTSPHERE_H
+#define DGQUERYSEGMENTSPHERE_H
 
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
-#include "..\DgLineSegment.h"
+#include "..\DgSegment.h"
 #include "..\DgSphere.h"
 
 namespace Dg
@@ -16,7 +16,7 @@ namespace Dg
   //! @ingroup DgMath_geoQueries
   //! Test for intersection between a line and a sphere.
   template <typename Real>
-  class TIQuery<Real, LineSegment<Real>, Sphere<Real>>
+  class TIQuery<Real, Segment<Real>, Sphere<Real>>
   {
   public:
 
@@ -28,27 +28,27 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(LineSegment<Real> const &, Sphere<Real> const &);
+    Result operator()(Segment<Real> const &, Sphere<Real> const &);
   };
 
 
   //! Template alias for convenience
   template<typename Real>
-  using TILineSegmentSphere = TIQuery<Real, LineSegment<Real>, Sphere<Real>>;
+  using TISegmentSphere = TIQuery<Real, Segment<Real>, Sphere<Real>>;
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename TIQuery<Real, LineSegment<Real>, Sphere<Real>>::Result
-    TIQuery<Real, LineSegment<Real>, Sphere<Real>>::operator()
-    (LineSegment<Real> const & a_ls, Sphere<Real> const & a_sphere)
+  typename TIQuery<Real, Segment<Real>, Sphere<Real>>::Result
+    TIQuery<Real, Segment<Real>, Sphere<Real>>::operator()
+    (Segment<Real> const & a_seg, Sphere<Real> const & a_sphere)
   {
     Result result;
-    Vector4<Real> w0(a_ls.Origin() - a_sphere.Center());
-    Real a = a_ls.Direction().LengthSquared();
+    Vector4<Real> w0(a_seg.Origin() - a_sphere.Center());
+    Real a = a_seg.Direction().LengthSquared();
     Real inv_a = static_cast<Real>(1.0) / a;
-    Real b = inv_a * w0.Dot(a_ls.Direction());
+    Real b = inv_a * w0.Dot(a_seg.Direction());
     Real c = inv_a * (w0.LengthSquared() - a_sphere.Radius() *a_sphere.Radius());
     Real discriminant = b * b + c;
 
