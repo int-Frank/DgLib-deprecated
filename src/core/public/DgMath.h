@@ -14,10 +14,6 @@
 #include "DgTypes.h"
 #include "impl/DgMath_impl.h"
 
-//! @ingroup DgMath_constants
-#define USE_PRECISION_32
-//#define USE_PRECISION_64
-
 namespace Dg
 {
 	
