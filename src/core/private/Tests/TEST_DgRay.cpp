@@ -62,7 +62,7 @@ TEST(Stack_DgRay, DgRay)
   //Rays parallel, no overlap, facing opposite directions
   r1.Set(vec(-3.0, 8.0, 36.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
   dcpRayRay_res = dcpRayRay(r0, r1);
-  CHECK(dcpRayRay_res.code == 0);
+  CHECK(dcpRayRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpRayRay_res.u0 == 0.0);
   CHECK(dcpRayRay_res.u1 == 0.0);
   CHECK(dcpRayRay_res.cp0 == r0.Origin());
@@ -73,7 +73,7 @@ TEST(Stack_DgRay, DgRay)
   //Rays parallel, overlap, facing opposite directions
   r1.Set(vec(4.0, 13.0, 84.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
   dcpRayRay_res = dcpRayRay(r0, r1);
-  CHECK(dcpRayRay_res.code == 1);
+  CHECK(dcpRayRay_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpRayRay_res.u0 == 0.0);
   CHECK(dcpRayRay_res.u1 == 4.0);
   CHECK(dcpRayRay_res.cp0 == r0.Origin());
@@ -84,7 +84,7 @@ TEST(Stack_DgRay, DgRay)
   //Rays parallel, overlap, facing same direction
   r1.Set(vec(4.0, 3.0, 4.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
   dcpRayRay_res = dcpRayRay(r0, r1);
-  CHECK(dcpRayRay_res.code == 1);
+  CHECK(dcpRayRay_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpRayRay_res.u0 == 4.0);
   CHECK(dcpRayRay_res.u1 == 0.0);
   CHECK(dcpRayRay_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
@@ -95,7 +95,7 @@ TEST(Stack_DgRay, DgRay)
   //Rays parallel, overlap, facing same direction, switch rays
   r1.Set(vec(4.0, 3.0, 4.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
   dcpRayRay_res = dcpRayRay(r1, r0);
-  CHECK(dcpRayRay_res.code == 1);
+  CHECK(dcpRayRay_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpRayRay_res.u1 == 4.0);
   CHECK(dcpRayRay_res.u0 == 0.0);
   CHECK(dcpRayRay_res.cp1 == vec(4.0, 0.0, 0.0, 1.0));
@@ -106,7 +106,7 @@ TEST(Stack_DgRay, DgRay)
   //Rays not parallel, cp are along r0, r1.Origin.
   r1.Set(vec(3.0, 4.0, 3.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
   dcpRayRay_res = dcpRayRay(r0, r1);
-  CHECK(dcpRayRay_res.code == 0);
+  CHECK(dcpRayRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpRayRay_res.u0 == 3.0);
   CHECK(dcpRayRay_res.u1 == 0.0);
   CHECK(dcpRayRay_res.cp0 == vec(3.0, 0.0, 0.0, 1.0));
@@ -117,7 +117,7 @@ TEST(Stack_DgRay, DgRay)
   //Rays not parallel, cp are along both rays
   r1.Set(vec(3.0, 4.0, 3.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
   dcpRayRay_res = dcpRayRay(r0, r1);
-  CHECK(dcpRayRay_res.code == 0);
+  CHECK(dcpRayRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpRayRay_res.u0 == 3.0);
   CHECK(dcpRayRay_res.u1 == 3.0);
   CHECK(dcpRayRay_res.cp0 == vec(3.0, 0.0, 0.0, 1.0));
@@ -133,7 +133,7 @@ TEST(Stack_DgRay, DgRay)
   //Line-Ray Parallel, same direction
   ln.Set(vec(5.0, 11.0, 60.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
   dcpRayLine_res = dcpRayLine(r0, ln);
-  CHECK(dcpRayLine_res.code == 1);
+  CHECK(dcpRayLine_res.code == Dg::QueryCode::Parallel);
   CHECK(dcpRayLine_res.ur == 0.0);
   CHECK(dcpRayLine_res.ul == -5.0);
   CHECK(dcpRayLine_res.cpr == r0.Origin());
@@ -144,7 +144,7 @@ TEST(Stack_DgRay, DgRay)
   //Line-Ray Parallel, opposite directions
   ln.Set(vec(5.0, 11.0, 60.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
   dcpRayLine_res = dcpRayLine(r0, ln);
-  CHECK(dcpRayLine_res.code == 1);
+  CHECK(dcpRayLine_res.code == Dg::QueryCode::Parallel);
   CHECK(dcpRayLine_res.ur == 0.0);
   CHECK(dcpRayLine_res.ul == 5.0);
   CHECK(dcpRayLine_res.cpr == r0.Origin());
@@ -155,7 +155,7 @@ TEST(Stack_DgRay, DgRay)
   //Line-Ray not parallel, closest point is ray origin
   ln.Set(vec(-9.0, 40.0, 61.0, 1.0), vec(0.0, 0.0, -1.0, 0.0));
   dcpRayLine_res = dcpRayLine(r0, ln);
-  CHECK(dcpRayLine_res.code == 0);
+  CHECK(dcpRayLine_res.code == Dg::QueryCode::Success);
   CHECK(dcpRayLine_res.ur == 0.0);
   CHECK(dcpRayLine_res.ul == 61.0);
   CHECK(dcpRayLine_res.cpr == r0.Origin());
@@ -166,7 +166,7 @@ TEST(Stack_DgRay, DgRay)
   //Line-Ray not parallel, closest point is along the ray
   ln.Set(vec(9.0, 40.0, -61.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
   dcpRayLine_res = dcpRayLine(r0, ln);
-  CHECK(dcpRayLine_res.code == 0);
+  CHECK(dcpRayLine_res.code == Dg::QueryCode::Success);
   CHECK(dcpRayLine_res.ur == 9.0);
   CHECK(dcpRayLine_res.ul == 61.0);
   CHECK(dcpRayLine_res.cpr == vec(9.0, 0.0, 0.0, 1.0));
@@ -187,7 +187,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(tiRayPlane_res.isIntersecting == false);
 
   fiRayPlane_res = fiRayPlane(r0, pl);
-  CHECK(fiRayPlane_res.code == 2);
+  CHECK(fiRayPlane_res.code == Dg::QueryCode::NotIntersecting);
   CHECK(fiRayPlane_res.point == r0.Origin());
   CHECK(fiRayPlane_res.u == 0.0);
 
@@ -197,7 +197,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(tiRayPlane_res.isIntersecting == false);
 
   fiRayPlane_res = fiRayPlane(r0, pl);
-  CHECK(fiRayPlane_res.code == 2);
+  CHECK(fiRayPlane_res.code == Dg::QueryCode::NotIntersecting);
   CHECK(fiRayPlane_res.point == r0.Origin());
   CHECK(fiRayPlane_res.u == 0.0);
 
@@ -207,7 +207,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(tiRayPlane_res.isIntersecting == true);
 
   fiRayPlane_res = fiRayPlane(r0, pl);
-  CHECK(fiRayPlane_res.code == 1);
+  CHECK(fiRayPlane_res.code == Dg::QueryCode::Overlapping);
   CHECK(fiRayPlane_res.point == r0.Origin());
   CHECK(fiRayPlane_res.u == 0.0);
 
@@ -217,7 +217,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(tiRayPlane_res.isIntersecting == true);
 
   fiRayPlane_res = fiRayPlane(r0, pl);
-  CHECK(fiRayPlane_res.code == 0);
+  CHECK(fiRayPlane_res.code == Dg::QueryCode::Intersecting);
   CHECK(fiRayPlane_res.point == vec(3.0, 0.0, 0.0, 1.0));
   CHECK(fiRayPlane_res.u == 3.0);
 
@@ -228,7 +228,7 @@ TEST(Stack_DgRay, DgRay)
   CHECK(tiRayPlane_res.isIntersecting == true);
 
   fiRayPlane_res = fiRayPlane(r0, pl);
-  CHECK(fiRayPlane_res.code == 0);
+  CHECK(fiRayPlane_res.code == Dg::QueryCode::Intersecting);
   CHECK(fiRayPlane_res.point == vec(10.0, 2.3, -5.6, 1.0));
   CHECK(fiRayPlane_res.u == 4.0);
 

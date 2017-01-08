@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYLINEPLANE_H
 #define DGR3QUERYLINEPLANE_H
 
+#include "DgQueryCommon.h"
 #include "DgR3TIQuery.h"
 #include "DgR3FIQuery.h"
 #include "..\DgR3Line.h"
@@ -51,10 +52,8 @@ namespace Dg
         Real u;
 
         //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Line intersects plane
-        //!   - <code><b>1</b></code>: Line lies on the plane. Output set to line origin.
-        //!   - <code><b>2</b></code>: No Intersection. Line is parllel to the plane. Output point not set.
-        int code;
+        //! Intersecting, Overlapping, NoIntersecting
+        QueryCode code;
       };
 
       //! Perform query
@@ -109,13 +108,13 @@ namespace Dg
         result.point = lo;
 
         //check if line is on the plane
-        result.code = Dg::IsZero(a_plane.SignedDistance(lo)) ? 1 : 2;
+        result.code = Dg::IsZero(a_plane.SignedDistance(lo)) ? QueryCode::Overlapping : QueryCode::NotIntersecting;
       }
       else
       {
         result.u = -(lo.Dot(pn) + po) / denom;
         result.point = lo + result.u * ld;
-        result.code = 0;
+        result.code = QueryCode::Intersecting;
       }
 
       return result;

@@ -47,7 +47,7 @@ TEST(Stack_DgLine, DgLine)
   //Lines parallel
   l1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
   dcpLineLine_res = dcpLineLine(l0, l1);
-  CHECK(dcpLineLine_res.code == 1);
+  CHECK(dcpLineLine_res.code == Dg::QueryCode::Parallel);
   CHECK(dcpLineLine_res.cp0 == l0.Origin());
   CHECK(dcpLineLine_res.cp1 == vec(0.0, 1.0, 0.0, 1.0));
   //CHECK(dcpLineLine_res.sqDistance == 1.0);
@@ -56,7 +56,7 @@ TEST(Stack_DgLine, DgLine)
   //Lines not parallel
   l1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(0.0, 0.0, 1.0, 0.0));
   dcpLineLine_res = dcpLineLine(l0, l1);
-  CHECK(dcpLineLine_res.code == 0);
+  CHECK(dcpLineLine_res.code == Dg::QueryCode::Success);
   CHECK(dcpLineLine_res.cp0 == vec(1.0, 0.0, 0.0, 1.0));
   CHECK(dcpLineLine_res.cp1 == vec(1.0, 1.0, 0.0, 1.0));
   //CHECK(dcpLineLine_res.sqDistance == 1.0);
@@ -75,7 +75,7 @@ TEST(Stack_DgLine, DgLine)
   CHECK(tiLinePlane_res.isIntersecting == false);
 
   fiLinePlane_res = fiLinePlane(l0, pl);
-  CHECK(fiLinePlane_res.code == 2);
+  CHECK(fiLinePlane_res.code == Dg::QueryCode::NotIntersecting);
   CHECK(fiLinePlane_res.point == l0.Origin());
   CHECK(fiLinePlane_res.u == 0.0);
 
@@ -85,7 +85,7 @@ TEST(Stack_DgLine, DgLine)
   CHECK(tiLinePlane_res.isIntersecting == true);
 
   fiLinePlane_res = fiLinePlane(l0, pl);
-  CHECK(fiLinePlane_res.code == 1);
+  CHECK(fiLinePlane_res.code == Dg::QueryCode::Overlapping);
   CHECK(fiLinePlane_res.point == l0.Origin());
   CHECK(fiLinePlane_res.u == 0.0);
 
@@ -95,7 +95,7 @@ TEST(Stack_DgLine, DgLine)
   CHECK(tiLinePlane_res.isIntersecting == true);
 
   fiLinePlane_res = fiLinePlane(l0, pl);
-  CHECK(fiLinePlane_res.code == 0);
+  CHECK(fiLinePlane_res.code == Dg::QueryCode::Intersecting);
   CHECK(fiLinePlane_res.point == vec(3.0, 0.0, 0.0, 1.0));
   CHECK(fiLinePlane_res.u == 3.0);
 }

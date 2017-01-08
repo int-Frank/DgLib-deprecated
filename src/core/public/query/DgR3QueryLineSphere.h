@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYLINESPHERE_H
 #define DGR3QUERYLINESPHERE_H
 
+#include "DgQueryCommon.h"
 #include "DgR3TIQuery.h"
 #include "DgR3FIQuery.h"
 #include "..\DgR3Line.h"
@@ -57,9 +58,8 @@ namespace Dg
         Real u1;
 
         //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Line intersects Sphere
-        //!   - <code><b>1</b></code>: Line does not intersect sphere.
-        int code;
+        //! Intersecting, NotIntersecting
+        QueryCode code;
       };
 
       //! Perform query
@@ -111,7 +111,7 @@ namespace Dg
       Real discr = b*b - static_cast<Real>(4.0)*a*c;
       if (discr < static_cast<Real>(0.0))
       {
-        result.code = 1;
+        result.code = QueryCode::NotIntersecting;
       }
       else
       {
@@ -121,7 +121,7 @@ namespace Dg
         result.u1 = (-b + d) * e;
         result.p0 = a_line.Origin() + result.u0 * a_line.Direction();
         result.p1 = a_line.Origin() + result.u1 * a_line.Direction();
-        result.code = 0;
+        result.code = QueryCode::Intersecting;
       }
 
       return result;

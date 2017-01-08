@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYRAYRAY_H
 #define DGR3QUERYRAYRAY_H
 
+#include "DgQueryCommon.h"
 #include "DgR3CPQuery.h"
 #include "..\DgR3Ray.h"
 
@@ -36,9 +37,8 @@ namespace Dg
         Vector4<Real> cp1;
 
         //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Success
-        //!   - <code><b>1</b></code>: Rays are parallel and overlapping - have an infinite set of closest points
-        int code;
+        //! Success, Overlapping
+        QueryCode code;
       };
 
       //! Perform query.
@@ -59,7 +59,7 @@ namespace Dg
       (Ray<Real> const & a_ray0, Ray<Real> const & a_ray1)
     {
       Result result;
-      result.code = 0;
+      result.code = QueryCode::Success;
 
       Vector4<Real> o0(a_ray0.Origin());
       Vector4<Real> o1(a_ray1.Origin());
@@ -88,7 +88,7 @@ namespace Dg
         if (!(c < static_cast<Real>(0.0) &&
           b > static_cast<Real>(0.0)))
         {
-          result.code = 1;
+          result.code = QueryCode::Overlapping;
         }
       }
       else

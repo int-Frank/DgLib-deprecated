@@ -155,5 +155,14 @@
     <ClInclude Include="..\..\public\query\DgR3TIQuery.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2CPQuery.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QuerySegmentSegment.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgQueryCommon.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

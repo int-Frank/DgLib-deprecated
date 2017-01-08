@@ -166,6 +166,9 @@
     <ClInclude Include="..\..\public\DgR3VQS.h" />
     <ClInclude Include="..\..\public\DgR3Segment.h" />
     <ClInclude Include="..\..\public\impl\DgMath_impl.h" />
+    <ClInclude Include="..\..\public\query\DgQueryCommon.h" />
+    <ClInclude Include="..\..\public\query\DgR2CPQuery.h" />
+    <ClInclude Include="..\..\public\query\DgR2QuerySegmentSegment.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentLine.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSegment.h" />

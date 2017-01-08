@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYSEGMENTPLANE_H
 #define DGR3QUERYSEGMENTPLANE_H
 
+#include "DgQueryCommon.h"
 #include "DgR3TIQuery.h"
 #include "DgR3FIQuery.h"
 #include "..\DgR3Segment.h"
@@ -51,10 +52,8 @@ namespace Dg
         Real u;
 
         //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Line segment intersects plane
-        //!   - <code><b>1</b></code>: Line segment lies on the plane. Output set to line origin.
-        //!   - <code><b>2</b></code>: No Intersection. 
-        int code;
+        //! Intersecting, Overlapping, NotIntersecting
+        QueryCode code;
       };
 
       //! Perform query
@@ -145,11 +144,11 @@ namespace Dg
         //check if line is on the plane
         if (Dg::IsZero(a_plane.Distance(so)))
         {
-          result.code = 1;
+          result.code = QueryCode::Overlapping;
         }
         else
         {
-          result.code = 2;
+          result.code = QueryCode::NotIntersecting;
         }
       }
       else
@@ -158,16 +157,16 @@ namespace Dg
         if (result.u < static_cast<Real>(0.0))
         {
           result.u = static_cast<Real>(0.0);
-          result.code = 2;
+          result.code = QueryCode::NotIntersecting;
         }
         else if (result.u > static_cast<Real>(1.0))
         {
           result.u = static_cast<Real>(1.0);
-          result.code = 2;
+          result.code = QueryCode::NotIntersecting;
         }
         else
         {
-          result.code = 0;
+          result.code = QueryCode::Intersecting;
         }
       }
 

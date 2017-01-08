@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYLINELINE_H
 #define DGR3QUERYLINELINE_H
 
+#include "DgQueryCommon.h"
 #include "DgR3CPQuery.h"
 #include "../DgR3Line.h"
 
@@ -35,10 +36,9 @@ namespace Dg
         //! Closest point on line 1 to line 0
         Vector4<Real> cp1;
 
-        //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Success
-        //!   - <code><b>1</b></code>: Lines are parallel. Closest points are based off line 0 origin.
-        int code;
+        //! Return codes include:
+        //! Success, Parallel
+        QueryCode code;
       };
 
       //! Perform query.
@@ -76,13 +76,13 @@ namespace Dg
       {
         result.u0 = static_cast<Real>(0.0);
         result.u1 = c;
-        result.code = 1;
+        result.code = QueryCode::Parallel;
       }
       else
       {
         result.u0 = ((a*c - b) / d);
         result.u1 = ((c - a*b) / d);
-        result.code = 0;
+        result.code = QueryCode::Success;
       }
 
       result.cp0 = o0 + result.u0 * d0;

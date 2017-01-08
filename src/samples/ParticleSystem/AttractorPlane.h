@@ -4,7 +4,7 @@
 #include "particle_system/DgAttractor.h"
 #include "particle_system/DgParticleData.h"
 #include "DgR3Plane.h"
-#include "./query/DgQueryPointPlane.h"
+#include "./query/DgR3QueryPointPlane.h"
 #include "DgR3VQS.h"
 
 template<typename Real>
@@ -68,8 +68,8 @@ void AttractorPlane<Real>::Update(Dg::ParticleData<Real> & a_data
   Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
   Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
 
-  Dg::CPPointPlane<Real> query;
-  Dg::CPPointPlane<Real>::Result result;
+  Dg::R3::CPPointPlane<Real> query;
+  Dg::R3::CPPointPlane<Real>::Result result;
 
   if (pPos && pAccels)
   {

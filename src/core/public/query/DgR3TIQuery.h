@@ -12,16 +12,6 @@ namespace Dg
 {
   namespace R3
   {
-    struct IntersectType
-    {
-      enum
-      {
-        CompletelyInside,
-        CompletelyOutside,
-        Intersecting
-      };
-    };
-
     //! @ingroup DgMath_geoQueries
     //!
     //! Test for intersection queries.

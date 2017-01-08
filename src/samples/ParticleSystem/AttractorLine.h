@@ -4,7 +4,7 @@
 #include "particle_system/DgAttractor.h"
 #include "particle_system/DgParticleData.h"
 #include "DgR3Line.h"
-#include "./query/DgQueryPointLine.h"
+#include "./query/DgR3QueryPointLine.h"
 #include "DgR3VQS.h"
 
 template<typename Real>
@@ -70,8 +70,8 @@ void AttractorLine<Real>::Update(Dg::ParticleData<Real> & a_data
 
   if (pPos && pAccels)
   {
-    Dg::CPPointLine<Real> query;
-    Dg::CPPointLine<Real>::Result result;
+    Dg::R3::CPPointLine<Real> query;
+    Dg::R3::CPPointLine<Real>::Result result;
 
     switch (GetAttenuationMethod())
     {

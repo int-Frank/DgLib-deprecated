@@ -8,6 +8,7 @@
 #ifndef DGR3QUERYFRUSTUMSPHERE_H
 #define DGR3QUERYFRUSTUMSPHERE_H
 
+#include "DgQueryCommon.h"
 #include "DgR3TIQuery.h"
 #include "DgR3QueryLineSphere.h"
 #include "../DgR3Frustum.h"
@@ -28,7 +29,9 @@ namespace Dg
       //! Query return data
       struct Result
       {
-        int value;
+        //! Return codes include:
+        //! CompletelyInside, CompletelyOutside, Intersecting
+        QueryCode code;
       };
 
       //! Perform the query
@@ -48,19 +51,19 @@ namespace Dg
       (FrustumData<Real> const & a_fdata, Sphere<Real> const & a_sphere)
     {
       Result result;
-      result.value = IntersectType::CompletelyInside;
+      result.code = QueryCode::CompletelyInside;
       for (int i = 0; i < 6; ++i)
       {
         Real dist = a_fdata.planes[i].SignedDistance(a_sphere.Center());
         if (dist <= -a_sphere.Radius())
         {
-          result.value = IntersectType::CompletelyOutside;
+          result.code = QueryCode::CompletelyOutside;
           return result;
         }
 
         if (abs(dist) < a_sphere.Radius())
         {
-          result.value = IntersectType::Intersecting;
+          result.code = QueryCode::Intersecting;
         }
       }
       return result;

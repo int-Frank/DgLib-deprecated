@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYSEGMENTLINE_H
 #define DGR3QUERYSEGMENTLINE_H
 
+#include "DgQueryCommon.h"
 #include "DgR3CPQuery.h"
 #include "..\DgR3Line.h"
 #include "..\DgR3Segment.h"
@@ -37,9 +38,8 @@ namespace Dg
         Vector4<Real> cps;
 
         //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Success
-        //!   - <code><b>1</b></code>: Line segment and line are parallel.
-        int code;
+        //! Success, Parallel.
+        QueryCode code;
       };
 
       //! Perform query.
@@ -79,11 +79,11 @@ namespace Dg
       {
         result.us = static_cast<Real>(0.0);
         result.ul = d;
-        result.code = 1;
+        result.code = QueryCode::Parallel;
       }
       else
       {
-        result.code = 0;
+        result.code = QueryCode::Success;
 
         // clamp result.uls within [0,1]
         Real sn = b*d - c;

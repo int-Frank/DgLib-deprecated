@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYSEGMENTSEGMENT_H
 #define DGR3QUERYSEGMENTSEGMENT_H
 
+#include "DgQueryCommon.h"
 #include "DgR3CPQuery.h"
 #include "..\DgR3Segment.h"
 
@@ -36,9 +37,8 @@ namespace Dg
         Vector4<Real> cp1;
 
         //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Success
-        //!   - <code><b>1</b></code>: Line segments are parallel and overlap - infinite closest points.
-        int code;
+        //! Success, Overlapping
+        QueryCode code;
       };
 
       //! Perform query.
@@ -59,7 +59,7 @@ namespace Dg
       (Segment<Real> const & a_seg0, Segment<Real> const & a_seg1)
     {
       Result result;
-      result.code = 0;
+      result.code = QueryCode::Success;
 
       Vector4<Real> o0(a_seg0.Origin());
       Vector4<Real> o1(a_seg1.Origin());
@@ -96,7 +96,7 @@ namespace Dg
           bse == (w3.Dot(d1) < static_cast<Real>(0.0))
           ))
         {
-          result.code = 1;
+          result.code = QueryCode::Overlapping;
         }
       }
       else

@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYRAYPLANE_H
 #define DGR3QUERYRAYPLANE_H
 
+#include "DgQueryCommon.h"
 #include "DgR3TIQuery.h"
 #include "DgR3FIQuery.h"
 #include "..\DgR3Ray.h"
@@ -51,10 +52,8 @@ namespace Dg
         Real u;
 
         //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Ray intersects plane
-        //!   - <code><b>1</b></code>: Ray lies on the plane. Output set to ray origin.
-        //!   - <code><b>2</b></code>: No Intersection. 
-        int code;
+        //! Intersecting, Overlapping, NotIntersecting
+        QueryCode code;
       };
 
       //! Perform query
@@ -146,11 +145,11 @@ namespace Dg
         //check if ray is on the plane
         if (Dg::IsZero(a_plane.Distance(ro)))
         {
-          result.code = 1;
+          result.code = QueryCode::Overlapping;
         }
         else
         {
-          result.code = 2;
+          result.code = QueryCode::NotIntersecting;
         }
       }
       else
@@ -162,12 +161,12 @@ namespace Dg
         {
           result.u = static_cast<Real>(0.0);
           result.point = ro;
-          result.code = 2;
+          result.code = QueryCode::NotIntersecting;
         }
         else
         {
           result.point = ro + result.u * rd;
-          result.code = 0;
+          result.code = QueryCode::Intersecting;
         }
       }
 

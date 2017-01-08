@@ -80,7 +80,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg parallel to line
   l.Set(vec(3.0, 3.0, 4.0, 1.0), vec::xAxis());
   dcpLSLine_res = dcpLSLine(ls0, l);
-  CHECK(dcpLSLine_res.code == 1);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Parallel);
   CHECK(dcpLSLine_res.ul == -1.0);
   CHECK(dcpLSLine_res.us == 0.0);
   CHECK(dcpLSLine_res.cps == ls0.GetP0());
@@ -91,7 +91,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg parallel to line, opposite direction
   l.Set(vec(3.0, 3.0, 4.0, 1.0), -vec::xAxis());
   dcpLSLine_res = dcpLSLine(ls0, l);
-  CHECK(dcpLSLine_res.code == 1);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Parallel);
   CHECK(dcpLSLine_res.ul == 1.0);
   CHECK(dcpLSLine_res.us == 0.0);
   CHECK(dcpLSLine_res.cps == ls0.GetP0());
@@ -102,7 +102,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //lineSeg-p0 closest point
   l.Set(vec(-1.0, 4.0, 3.0, 1.0), -vec::zAxis());
   dcpLSLine_res = dcpLSLine(ls0, l);
-  CHECK(dcpLSLine_res.code == 0);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLine_res.ul == 3.0);
   CHECK(dcpLSLine_res.us == 0.0);
   CHECK(dcpLSLine_res.cps == ls0.GetP0());
@@ -113,7 +113,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //lineSeg-p1 closest point
   l.Set(vec(9.0, 4.0, 3.0, 1.0), -vec::zAxis());
   dcpLSLine_res = dcpLSLine(ls0, l);
-  CHECK(dcpLSLine_res.code == 0);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLine_res.ul == 3.0);
   CHECK(dcpLSLine_res.us == 1.0);
   CHECK(dcpLSLine_res.cps == ls0.GetP1());
@@ -124,7 +124,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //Closest point along lineSeg
   l.Set(vec(3.0, 4.0, 3.0, 1.0), vec::zAxis());
   dcpLSLine_res = dcpLSLine(ls0, l);
-  CHECK(dcpLSLine_res.code == 0);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLine_res.ul == -3.0);
   CHECK(dcpLSLine_res.us == 0.25);
   CHECK(dcpLSLine_res.cps == vec(3.0, 0.0, 0.0, 1.0));
@@ -140,7 +140,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg parallel to ray, but behind ray origin
   r.Set(vec(-1.0, 4.0, 12.0, 1.0), -vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSRay_res.ur == 0.0);
   CHECK(dcpLSRay_res.us == 0.0);
   CHECK(dcpLSRay_res.cps == ls0.GetP0());
@@ -151,7 +151,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg parallel to ray, but behind ray origin, switch LineSeg direction
   r.Set(vec(9.0, 4.0, -12.0, 1.0), vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSRay_res.ur == 0.0);
   CHECK(dcpLSRay_res.us == 1.0);
   CHECK(dcpLSRay_res.cps == ls0.GetP1());
@@ -162,7 +162,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg parallel to ray, p0 behind ray origin, p1 along ray
   r.Set(vec(4.0, 3.0, 4.0, 1.0), vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 1);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpLSRay_res.ur == 0.0);
   CHECK(dcpLSRay_res.us == 0.5);
   CHECK(dcpLSRay_res.cps == vec(4.0, 0.0, 0.0, 1.0));
@@ -173,7 +173,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg parallel to ray, p1 behind ray origin, p0 along ray
   r.Set(vec(4.0, 3.0, 4.0, 1.0), -vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 1);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpLSRay_res.ur == 2.0);
   CHECK(dcpLSRay_res.us == 0.0);
   CHECK(dcpLSRay_res.cps == ls0.GetP0());
@@ -184,7 +184,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg parallel to ray, completely in front of ray, p0 closer to ray origin
   r.Set(vec(-2.0, 3.0, 4.0, 1.0), vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 1);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpLSRay_res.ur == 4.0);
   CHECK(dcpLSRay_res.us == 0.0);
   CHECK(dcpLSRay_res.cps == ls0.Origin());
@@ -195,7 +195,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg parallel to ray, completely in front of ray, p1 closer to ray origin
   r.Set(vec(10.0, 3.0, 4.0, 1.0), -vec::xAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 1);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpLSRay_res.ur == 8.0);
   CHECK(dcpLSRay_res.us == 0.0);
   CHECK(dcpLSRay_res.cps == ls0.GetP0());
@@ -206,7 +206,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg not parallel, behind ray, Closest points are ls-p0, ray-origin
   r.Set(vec(1.0, 6.0, -18.0, 1.0), -vec::zAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSRay_res.ur == 0.0);
   CHECK(dcpLSRay_res.us == 0.0);
   CHECK(dcpLSRay_res.cps == ls0.GetP0());
@@ -217,7 +217,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg not parallel, behind ray, Closest points are ls-p1, ray-origin
   r.Set(vec(7.0, -6.0, 18.0, 1.0), -vec::yAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSRay_res.ur == 0.0);
   CHECK(dcpLSRay_res.us == 1.0);
   CHECK(dcpLSRay_res.cps == ls0.GetP1());
@@ -228,7 +228,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg not parallel, behind ray, Closest points are along the ls, ray-origin
   r.Set(vec(5.0, -3.0, 4.0, 1.0), -vec::yAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSRay_res.ur == 0.0);
   CHECK(dcpLSRay_res.us == 0.75);
   CHECK(dcpLSRay_res.cps == vec(5.0, 0.0, 0.0, 1.0));
@@ -239,7 +239,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg in front of ray, closest point p0
   r.Set(vec(-1.0, -4.0, -3.0, 1.0), vec::zAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSRay_res.ur == 3.0);
   CHECK(dcpLSRay_res.us == 0.0);
   CHECK(dcpLSRay_res.cps == ls0.GetP0());
@@ -250,7 +250,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg in front of ray, closest point p1
   r.Set(vec(9.0, -4.0, -3.0, 1.0), vec::zAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSRay_res.ur == 3.0);
   CHECK(dcpLSRay_res.us == 1.0);
   CHECK(dcpLSRay_res.cps == ls0.GetP1());
@@ -261,7 +261,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSeg in front of ray, closest point along ls
   r.Set(vec(5.0, -4.0, -3.0, 1.0), vec::zAxis());
   dcpLSRay_res = dcpLSRay(ls0, r);
-  CHECK(dcpLSRay_res.code == 0);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSRay_res.ur == 3.0);
   CHECK(dcpLSRay_res.us == 0.75);
   CHECK(dcpLSRay_res.cps == vec(5.0, 0.0, 0.0, 1.0));
@@ -276,7 +276,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p0
   ls1.Set(vec(-1.0, -4.0, 12.0, 1.0), vec(-5.0, -4.0, 12.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 0.0);
   CHECK(dcpLSLS_res.u1 == 0.0);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
@@ -287,7 +287,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p1
   ls1.Set(vec(-5.0, -4.0, 12.0, 1.0), vec(-1.0, -4.0, 12.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 0.0);
   CHECK(dcpLSLS_res.u1 == 1.0);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
@@ -298,7 +298,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs parallel, no overlap, closest points ls0-p1, ls1-p0
   ls1.Set(vec(9.0, -4.0, 12.0, 1.0), vec(18.0, -4.0, 12.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 1.0);
   CHECK(dcpLSLS_res.u1 == 0.0);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
@@ -309,7 +309,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs parallel, no overlap, closest points ls0-p1, ls1-p1
   ls1.Set(vec(10.0, -4.0, 12.0, 1.0), vec(9.0, -4.0, 12.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 1.0);
   CHECK(dcpLSLS_res.u1 == 1.0);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
@@ -320,7 +320,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs parallel, overlap, ls0p0---ls1p0---ls0p1---ls1p1
   ls1.Set(vec(4.0, -3.0, 4.0, 1.0), vec(10.0, -3.0, 4.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 1);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpLSLS_res.u0 == 0.5);
   CHECK(dcpLSLS_res.u1 == 0.0);
   CHECK(dcpLSLS_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
@@ -331,7 +331,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs parallel, overlap, ls0p1---ls1p0---ls0p0---ls1p1
   ls1.Set(vec(4.0, -3.0, 4.0, 1.0), vec(0.0, -3.0, 4.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 1);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpLSLS_res.u0 == 0.0);
   CHECK(dcpLSLS_res.u1 == 0.5);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
@@ -342,7 +342,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs parallel, overlap, ls0p0---ls1p0---ls1p1---ls0p1
   ls1.Set(vec(4.0, -3.0, 4.0, 1.0), vec(5.0, -3.0, 4.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 1);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpLSLS_res.u0 == 0.5);
   CHECK(dcpLSLS_res.u1 == 0.0);
   CHECK(dcpLSLS_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
@@ -353,7 +353,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs parallel, overlap, ls0p1---ls1p0---ls1p1---ls0p0
   ls1.Set(vec(4.0, -3.0, 4.0, 1.0), vec(8.0, -3.0, 4.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 1);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Overlapping);
   CHECK(dcpLSLS_res.u0 == 0.5);
   CHECK(dcpLSLS_res.u1 == 0.0);
   CHECK(dcpLSLS_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
@@ -364,7 +364,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs not parallel, closest points: ls0p0, ls1p0
   ls1.Set(vec(-2.0, -5.0, 20.0, 1.0), vec(-2.0, -5.0, 23.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 0.0);
   CHECK(dcpLSLS_res.u1 == 0.0);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
@@ -375,7 +375,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs not parallel, closest points: ls0p0, ls1p1
   ls1.Set(vec(-2.0, -5.0, 23.0, 1.0), vec(-2.0, -5.0, 20.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 0.0);
   CHECK(dcpLSLS_res.u1 == 1.0);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
@@ -386,7 +386,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs not parallel, closest points: ls0p1, ls1p0
   ls1.Set(vec(10.0, -5.0, 20.0, 1.0), vec(10.0, -5.0, 23.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 1.0);
   CHECK(dcpLSLS_res.u1 == 0.0);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
@@ -397,7 +397,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs not parallel, closest points: ls0p1, ls1p1
   ls1.Set(vec(10.0, -5.0, 23.0, 1.0), vec(10.0, -5.0, 20.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 1.0);
   CHECK(dcpLSLS_res.u1 == 1.0);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
@@ -408,7 +408,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs not parallel, closest points: ls0p0, ls1-along ls
   ls1.Set(vec(-1.0, 4.0, -3.0, 1.0), vec(-1.0, 4.0, 3.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 0.0);
   CHECK(dcpLSLS_res.u1 == 0.5);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
@@ -419,7 +419,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs not parallel, closest points: ls0p1, ls1-along ls
   ls1.Set(vec(9.0, 4.0, -3.0, 1.0), vec(9.0, 4.0, 3.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 1.0);
   CHECK(dcpLSLS_res.u1 == 0.5);
   CHECK(dcpLSLS_res.cp0 == ls0.GetP1());
@@ -430,7 +430,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //LineSegs not parallel, closest points: ls0-along ls, ls1-along ls
   ls1.Set(vec(4.0, 4.0, -3.0, 1.0), vec(4.0, -4.0, -3.0, 1.0));
   dcpLSLS_res = dcpLSLS(ls0, ls1);
-  CHECK(dcpLSLS_res.code == 0);
+  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
   CHECK(dcpLSLS_res.u0 == 0.5);
   CHECK(dcpLSLS_res.u1 == 0.5);
   CHECK(dcpLSLS_res.cp0 == vec(4.0, 0.0, 0.0, 1.0));
@@ -451,7 +451,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(tiLSPlane_res.isIntersecting == false);
 
   fiLSPlane_res = fiLSPlane(ls0, pl);
-  CHECK(fiLSPlane_res.code == 2);
+  CHECK(fiLSPlane_res.code == Dg::QueryCode::NotIntersecting);
   CHECK(fiLSPlane_res.point == ls0.Origin());
   CHECK(fiLSPlane_res.u == 0.0);
 
@@ -461,7 +461,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(tiLSPlane_res.isIntersecting == true);
 
   fiLSPlane_res = fiLSPlane(ls0, pl);
-  CHECK(fiLSPlane_res.code == 1);
+  CHECK(fiLSPlane_res.code == Dg::QueryCode::Overlapping);
   CHECK(fiLSPlane_res.point == ls0.Origin());
   CHECK(fiLSPlane_res.u == 0.0);
 
@@ -471,7 +471,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(tiLSPlane_res.isIntersecting == false);
 
   fiLSPlane_res = fiLSPlane(ls0, pl);
-  CHECK(fiLSPlane_res.code == 2);
+  CHECK(fiLSPlane_res.code == Dg::QueryCode::NotIntersecting);
   CHECK(fiLSPlane_res.point == ls0.Origin());
   CHECK(fiLSPlane_res.u == 0.0);
 
@@ -481,7 +481,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(tiLSPlane_res.isIntersecting == false);
 
   fiLSPlane_res = fiLSPlane(ls0, pl);
-  CHECK(fiLSPlane_res.code == 2);
+  CHECK(fiLSPlane_res.code == Dg::QueryCode::NotIntersecting);
   CHECK(fiLSPlane_res.point == ls0.GetP1());
   CHECK(fiLSPlane_res.u == 1.0);
 
@@ -491,7 +491,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(tiLSPlane_res.isIntersecting == true);
 
   fiLSPlane_res = fiLSPlane(ls0, pl);
-  CHECK(fiLSPlane_res.code == 0);
+  CHECK(fiLSPlane_res.code == Dg::QueryCode::Intersecting);
   CHECK(fiLSPlane_res.point == vec(4.0, 0.0, 0.0, 1.0));
   CHECK(fiLSPlane_res.u == 0.5);
 
@@ -501,7 +501,7 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(tiLSPlane_res.isIntersecting == true);
 
   fiLSPlane_res = fiLSPlane(ls0, pl);
-  CHECK(fiLSPlane_res.code == 0);
+  CHECK(fiLSPlane_res.code == Dg::QueryCode::Intersecting);
   CHECK(fiLSPlane_res.point == vec(4.0, 0.0, 0.0, 1.0));
   CHECK(fiLSPlane_res.u == 0.5);
 }

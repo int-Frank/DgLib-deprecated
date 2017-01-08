@@ -6,6 +6,7 @@
 #ifndef DGR3QUERYRAYLINE_H
 #define DGR3QUERYRAYLINE_H
 
+#include "DgQueryCommon.h"
 #include "DgR3CPQuery.h"
 #include "..\DgR3Line.h"
 #include "..\DgR3Ray.h"
@@ -37,9 +38,8 @@ namespace Dg
         Vector4<Real> cpr;
 
         //! Return code. Codes include:
-        //!   - <code><b>0</b></code>: Success
-        //!   - <code><b>1</b></code>: Ray and line are parallel. Closest points are based off the ray origin.
-        int code;
+        //! Success, Parallel
+        QueryCode code;
       };
 
       //! Perform query.
@@ -71,7 +71,6 @@ namespace Dg
       Real c = static_cast<Real>(1.0) - a * a;
 
       Result result;
-      result.code = 0;
 
       //if c is zero, try finding closest point on the ray to the line origin
       if (Dg::IsZero(c))
@@ -79,7 +78,7 @@ namespace Dg
         //compute closest points
         result.ur = static_cast<Real>(0.0);
         result.ul = b;
-        result.code = 1;
+        result.code = QueryCode::Parallel;
       }
       else
       {
@@ -100,7 +99,7 @@ namespace Dg
           result.ul = (b - a*d) * denom;
         }
 
-        result.code = 0;
+        result.code = Success;
       }
 
       result.cpr = or +result.ur*dr;
