@@ -2,11 +2,11 @@
 #include "DgR3Segment.h"
 #include "DgR3Matrix44.h"
 #include "DgR3VQS.h"
-#include "query/DgQueryPointSegment.h"
-#include "query/DgQuerySegmentLine.h"
-#include "query/DgQuerySegmentRay.h"
-#include "query/DgQuerySegmentSegment.h"
-#include "query/DgQuerySegmentPlane.h"
+#include "query/DgR3QueryPointSegment.h"
+#include "query/DgR3QuerySegmentLine.h"
+#include "query/DgR3QuerySegmentRay.h"
+#include "query/DgR3QuerySegmentSegment.h"
+#include "query/DgR3QuerySegmentPlane.h"
 
 typedef double Real;
 typedef Dg::R3::Vector4<Real>               vec;
@@ -43,8 +43,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //Geometric tests
 
   //lineSeg-point
-  Dg::CPPointSegment<Real>           dcpPointLS;
-  Dg::CPPointSegment<Real>::Result   dcpPointLS_res;
+  Dg::R3::CPPointSegment<Real>           dcpPointLS;
+  Dg::R3::CPPointSegment<Real>::Result   dcpPointLS_res;
   ls0.Set(vec(2.0, 0.0, 0.0, 1.0), vec(6.0, 0.0, 0.0, 1.0));
   vec pIn;
 
@@ -73,8 +73,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //CHECK(dcpPointLS_res.sqDistance == 25.0);
 
   //lineSeg-Line
-  Dg::CPSegmentLine<Real>           dcpLSLine;
-  Dg::CPSegmentLine<Real>::Result   dcpLSLine_res;
+  Dg::R3::CPSegmentLine<Real>           dcpLSLine;
+  Dg::R3::CPSegmentLine<Real>::Result   dcpLSLine_res;
   line l;
 
   //LineSeg parallel to line
@@ -134,8 +134,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
 
   //lineSeg-Ray
   ray r;
-  Dg::CPSegmentRay<Real>           dcpLSRay;
-  Dg::CPSegmentRay<Real>::Result   dcpLSRay_res;
+  Dg::R3::CPSegmentRay<Real>           dcpLSRay;
+  Dg::R3::CPSegmentRay<Real>::Result   dcpLSRay_res;
 
   //LineSeg parallel to ray, but behind ray origin
   r.Set(vec(-1.0, 4.0, 12.0, 1.0), -vec::xAxis());
@@ -270,8 +270,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //CHECK(dcpLSRay_res.sqDistance == 16.0);
 
   //lineSeg-LineSeg
-  Dg::CPSegmentSegment<Real>           dcpLSLS;
-  Dg::CPSegmentSegment<Real>::Result   dcpLSLS_res;
+  Dg::R3::CPSegmentSegment<Real>           dcpLSLS;
+  Dg::R3::CPSegmentSegment<Real>::Result   dcpLSLS_res;
 
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p0
   ls1.Set(vec(-1.0, -4.0, 12.0, 1.0), vec(-5.0, -4.0, 12.0, 1.0));
@@ -439,10 +439,10 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //CHECK(dcpLSLS_res.sqDistance == 9.0);
 
   //LineSeg-plane
-  Dg::TISegmentPlane<Real>          tiLSPlane;
-  Dg::FISegmentPlane<Real>          fiLSPlane;
-  Dg::TISegmentPlane<Real>::Result  tiLSPlane_res;
-  Dg::FISegmentPlane<Real>::Result  fiLSPlane_res;
+  Dg::R3::TISegmentPlane<Real>          tiLSPlane;
+  Dg::R3::FISegmentPlane<Real>          fiLSPlane;
+  Dg::R3::TISegmentPlane<Real>::Result  tiLSPlane_res;
+  Dg::R3::FISegmentPlane<Real>::Result  fiLSPlane_res;
   plane pl;
   
   //LineSeg parallel to plane

@@ -5,8 +5,8 @@
 //!
 //! Class declaration: Line
 
-#ifndef DGLINE_H
-#define DGLINE_H
+#ifndef DGR3LINE_H
+#define DGR3LINE_H
 
 #include "DgR3Vector4.h"
 #include "DgR3Matrix44.h"

@@ -5,8 +5,8 @@
 //!
 //! Class declaration: Vector4
 
-#ifndef DGVECTOR4_ANCILLARY_H
-#define DGVECTOR4_ANCILLARY_H
+#ifndef DGR3VECTOR4_ANCILLARY_H
+#define DGR3VECTOR4_ANCILLARY_H
 
 #include "DgR3Vector4.h"
 #include "DgRNG.h"

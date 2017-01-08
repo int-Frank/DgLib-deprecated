@@ -1,6 +1,6 @@
 #include "TestHarness.h"
 #include "DgR3Sphere.h"
-#include "query/DgQueryLineSphere.h"
+#include "query/DgR3QueryLineSphere.h"
 
 typedef double                  Real;
 typedef Dg::R3::Vector4<Real>       vec;

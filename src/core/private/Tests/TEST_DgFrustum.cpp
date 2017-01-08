@@ -1,7 +1,7 @@
 #include "TestHarness.h"
 #include "DgR3Frustum.h"
 #include "DgR3Sphere.h"
-#include "query/DgQueryFrustumSphere.h"
+#include "query/DgR3QueryFrustumSphere.h"
 
 typedef double Real;
 typedef Dg::R3::Vector4<Real>      vec;
@@ -17,7 +17,7 @@ TEST(Stack_DgFrustum, DgFrustum)
 
   sphere s;
 
-  Dg::TIFrustumSphere<Real> tiFS;
-  Dg::TIFrustumSphere<Real>::Result tiFS_res = tiFS(fData, s);
+  Dg::R3::TIFrustumSphere<Real> tiFS;
+  Dg::R3::TIFrustumSphere<Real>::Result tiFS_res = tiFS(fData, s);
 
 }

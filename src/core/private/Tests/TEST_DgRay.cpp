@@ -2,10 +2,10 @@
 #include "DgR3Ray.h"
 #include "DgR3Matrix44.h"
 #include "DgR3VQS.h"
-#include "query/DgQueryPointRay.h"
-#include "query/DgQueryRayLine.h"
-#include "query/DgQueryRayRay.h"
-#include "query/DgQueryRayPlane.h"
+#include "query/DgR3QueryPointRay.h"
+#include "query/DgR3QueryRayLine.h"
+#include "query/DgR3QueryRayRay.h"
+#include "query/DgR3QueryRayPlane.h"
 
 typedef double Real;
 typedef Dg::R3::Vector4<Real>               vec;
@@ -35,8 +35,8 @@ TEST(Stack_DgRay, DgRay)
   //Geometric tests
 
   //Ray-Point
-  Dg::CPPointRay<Real> dcpPointRay;
-  Dg::CPPointRay<Real>::Result dcpPointRay_res;
+  Dg::R3::CPPointRay<Real> dcpPointRay;
+  Dg::R3::CPPointRay<Real>::Result dcpPointRay_res;
   vec pIn;
 
   //Point in front of ray
@@ -56,8 +56,8 @@ TEST(Stack_DgRay, DgRay)
   CHECK(dcpPointRay_res.cp == r0.Origin());
 
   //Ray - Ray
-  Dg::CPRayRay<Real> dcpRayRay;
-  Dg::CPRayRay<Real>::Result dcpRayRay_res;
+  Dg::R3::CPRayRay<Real> dcpRayRay;
+  Dg::R3::CPRayRay<Real>::Result dcpRayRay_res;
 
   //Rays parallel, no overlap, facing opposite directions
   r1.Set(vec(-3.0, 8.0, 36.0, 1.0), vec(-1.0, 0.0, 0.0, 0.0));
@@ -127,8 +127,8 @@ TEST(Stack_DgRay, DgRay)
 
   //Line - Ray
   line ln;
-  Dg::CPRayLine<Real> dcpRayLine;
-  Dg::CPRayLine<Real>::Result dcpRayLine_res;
+  Dg::R3::CPRayLine<Real> dcpRayLine;
+  Dg::R3::CPRayLine<Real>::Result dcpRayLine_res;
 
   //Line-Ray Parallel, same direction
   ln.Set(vec(5.0, 11.0, 60.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
@@ -175,10 +175,10 @@ TEST(Stack_DgRay, DgRay)
   //CHECK(dcpRayLine_res.sqDistance == 1600.0);
 
   //Ray-Plane
-  Dg::TIRayPlane<Real>          tiRayPlane;
-  Dg::FIRayPlane<Real>          fiRayPlane;
-  Dg::TIRayPlane<Real>::Result  tiRayPlane_res;
-  Dg::FIRayPlane<Real>::Result  fiRayPlane_res;
+  Dg::R3::TIRayPlane<Real>          tiRayPlane;
+  Dg::R3::FIRayPlane<Real>          fiRayPlane;
+  Dg::R3::TIRayPlane<Real>::Result  tiRayPlane_res;
+  Dg::R3::FIRayPlane<Real>::Result  fiRayPlane_res;
   plane pl;
 
   //Ray not intersecting plane, pointing away from plane

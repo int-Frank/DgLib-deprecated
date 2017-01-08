@@ -5,8 +5,8 @@
 //!
 //! Class declaration: OBB
 
-#ifndef DGOBB_H
-#define DGOBB_H
+#ifndef DGR3OBB_H
+#define DGR3OBB_H
 
 #include "DgR3Vector4.h"
 #include "DgR3VQS.h"

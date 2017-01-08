@@ -5,8 +5,8 @@
 //!
 //! Class declaration: Segment
 
-#ifndef DGSEGMENT_H
-#define DGSEGMENT_H
+#ifndef DGR3SEGMENT_H
+#define DGR3SEGMENT_H
 
 #include "DgR3Vector4.h"
 #include "DgR3Matrix44.h"

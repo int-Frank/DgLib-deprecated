@@ -1,8 +1,8 @@
 #include "TestHarness.h"
 #include "DgR3Line.h"
-#include "query/DgQueryLineLine.h"
-#include "query/DgQueryPointLine.h"
-#include "query/DgQueryLinePlane.h"
+#include "query/DgR3QueryLineLine.h"
+#include "query/DgR3QueryPointLine.h"
+#include "query/DgR3QueryLinePlane.h"
 
 typedef double                          Real;
 typedef Dg::R3::Vector4<Real>               vec;
@@ -31,8 +31,8 @@ TEST(Stack_DgLine, DgLine)
   //Geometric tests
 
   //Line-Point
-  Dg::CPPointLine<Real>          dcpPointLine;
-  Dg::CPPointLine<Real>::Result  dcpPointLine_res;
+  Dg::R3::CPPointLine<Real>          dcpPointLine;
+  Dg::R3::CPPointLine<Real>::Result  dcpPointLine_res;
 
   dcpPointLine_res = dcpPointLine(vec(7.0, -3.0, 4.0, 1.0), l0);
   CHECK(dcpPointLine_res.u == 7.0);
@@ -41,8 +41,8 @@ TEST(Stack_DgLine, DgLine)
   //CHECK(dcpPointLine_res.sqDistance == 25);
 
   //Line-Line
-  Dg::CPLineLine<Real>             dcpLineLine;
-  Dg::CPLineLine<Real>::Result     dcpLineLine_res;
+  Dg::R3::CPLineLine<Real>             dcpLineLine;
+  Dg::R3::CPLineLine<Real>::Result     dcpLineLine_res;
 
   //Lines parallel
   l1.Set(vec(1.0, 1.0, 0.0, 1.0), vec(1.0, 0.0, 0.0, 0.0));
@@ -63,10 +63,10 @@ TEST(Stack_DgLine, DgLine)
   //CHECK(dcpLineLine_res.distance == 1.0);
 
   //Line-Plane
-  Dg::TILinePlane<Real>          tiLinePlane;
-  Dg::FILinePlane<Real>          fiLinePlane;
-  Dg::TILinePlane<Real>::Result  tiLinePlane_res;
-  Dg::FILinePlane<Real>::Result  fiLinePlane_res;
+  Dg::R3::TILinePlane<Real>          tiLinePlane;
+  Dg::R3::FILinePlane<Real>          fiLinePlane;
+  Dg::R3::TILinePlane<Real>::Result  tiLinePlane_res;
+  Dg::R3::FILinePlane<Real>::Result  fiLinePlane_res;
   plane pl;
 
   //Line parallel to plane

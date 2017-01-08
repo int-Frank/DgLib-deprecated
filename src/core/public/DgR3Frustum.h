@@ -5,8 +5,8 @@
 //!
 //! Class declaration: Frustum
 
-#ifndef DGOBB_H
-#define DGOBB_H
+#ifndef DGR3FRUSTUM_H
+#define DGR3FRUSTUM_H
 
 #include "DgR3Vector4.h"
 #include "DgR3Plane.h"

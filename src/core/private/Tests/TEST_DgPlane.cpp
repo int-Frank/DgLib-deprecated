@@ -1,6 +1,6 @@
 #include "TestHarness.h"
 #include "DgR3Plane.h"
-#include "query/DgQueryPointPlane.h"
+#include "query/DgR3QueryPointPlane.h"
 
 typedef double Real;
 typedef Dg::R3::Vector4<Real> vec;
@@ -49,8 +49,8 @@ TEST(Stack_DgPlane, DgPlane)
   CHECK(Dg::IsZero(pl1.NormalDot(vec(0.0, 12.4, -5.3, 0.0))));
 
   //Point-Plane query
-  Dg::CPPointPlane<Real>           dcpPointPlane;
-  Dg::CPPointPlane<Real>::Result   dcpPointPlane_res;
+  Dg::R3::CPPointPlane<Real>           dcpPointPlane;
+  Dg::R3::CPPointPlane<Real>::Result   dcpPointPlane_res;
 
   dcpPointPlane_res = dcpPointPlane(p3, pl0);
   CHECK(dcpPointPlane_res.cp == vec(1.0, 23.5, -90.4, 1.0));
