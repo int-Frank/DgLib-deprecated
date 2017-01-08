@@ -26,7 +26,7 @@ public:
     return *this;
   }
 
-  void SetTransformation(Dg::VQS<Real> const &);
+  void SetTransformation(Dg::R3::VQS<Real> const &);
 
   //! Must be >= 0
   void SetValue(Real);
@@ -40,7 +40,7 @@ private:
 };
 
 template<typename Real>
-void GenRelativeForce<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
+void GenRelativeForce<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
 }
 

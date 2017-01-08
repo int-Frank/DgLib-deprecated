@@ -8,7 +8,7 @@
 #ifndef DGSEGMENT2D_H
 #define DGSEGMENT2D_H
 
-#include "DgVector2D.h"
+#include "DgVector3.h"
 #include "dgmath.h"
 
 namespace Dg
@@ -18,7 +18,7 @@ namespace Dg
   //! @class Segment2D
   //!
   //! A Linesgment is a line that connects two points. It is represented by a Point4 
-  //! and a Vector2D, the length of the vector being the distance between the points.
+  //! and a Vector3, the length of the vector being the distance between the points.
   //! This file also declares methods to test LineSegments against other 
   //! geometric entities.
   //!
@@ -34,7 +34,7 @@ namespace Dg
     Segment2D();
 
     //! Construct from an origin and direction
-    Segment2D(Vector2D<Real> const & p0, Vector2D<Real> const & p1);
+    Segment2D(Vector3<Real> const & p0, Vector3<Real> const & p1);
     ~Segment2D() {}
 
     //! Copy constructor
@@ -44,22 +44,22 @@ namespace Dg
     Segment2D& operator=(Segment2D const &);
 
     //! Get the origin of the line
-    Vector2D<Real> const & Origin() const { return m_origin; }
+    Vector3<Real> const & Origin() const { return m_origin; }
 
     //! Get the direction of the line
-    Vector2D<Real> const & Direction() const { return m_direction; }
+    Vector3<Real> const & Direction() const { return m_direction; }
 
     //! Get endpoint 0
-    Vector2D<Real> GetP0() const { return m_origin; }
+    Vector3<Real> GetP0() const { return m_origin; }
 
     //! Get endpoint 1
-    Vector2D<Real> GetP1() const { return m_origin + m_direction; }
+    Vector3<Real> GetP1() const { return m_origin + m_direction; }
 
     //! Get the center of the line segment
-    Vector2D<Real> GetCenter() const { return m_origin + static_cast<Real>(0.5) * m_direction; }
+    Vector3<Real> GetCenter() const { return m_origin + static_cast<Real>(0.5) * m_direction; }
 
     //! Get the endpoints of the line segment
-    void Get(Vector2D<Real>& a_p0, Vector2D<Real>& a_p1) const;
+    void Get(Vector3<Real>& a_p0, Vector3<Real>& a_p1) const;
 
     //! Comparison
     bool operator== (Segment2D const &) const;
@@ -68,7 +68,7 @@ namespace Dg
     bool operator!= (Segment2D const &) const;
 
     //! Set line segment from endpoints
-    void Set(Vector2D<Real> const & p0, Vector2D<Real> const & p1);
+    void Set(Vector3<Real> const & p0, Vector3<Real> const & p1);
 
     //! Get the length of the line segment
     Real Length() const;
@@ -79,8 +79,8 @@ namespace Dg
   private:
 
     //Data members
-    Vector2D<Real> m_origin;
-    Vector2D<Real> m_direction;
+    Vector3<Real> m_origin;
+    Vector3<Real> m_direction;
   };
 
 
@@ -88,8 +88,8 @@ namespace Dg
   //	@	Segment2D::Segment2D()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Segment2D<Real>::Segment2D() : m_origin(Vector2D<Real>::Origin())
-    , m_direction(Vector2D<Real>::xAxis())
+  Segment2D<Real>::Segment2D() : m_origin(Vector3<Real>::Origin())
+    , m_direction(Vector3<Real>::xAxis())
   {
   }	//End: Segment2D::Segment2D()
 
@@ -98,7 +98,7 @@ namespace Dg
     //  @ Segment2D::Segment2D()
     //--------------------------------------------------------------------------------
   template<typename Real>
-  Segment2D<Real>::Segment2D(Vector2D<Real> const & p0, Vector2D<Real> const & p1)
+  Segment2D<Real>::Segment2D(Vector3<Real> const & p0, Vector3<Real> const & p1)
   {
     Set(p0, p1);
   }	//End: Segment2D::Segment2D()
@@ -131,7 +131,7 @@ namespace Dg
     //  @ Segment2D::Get()
     //--------------------------------------------------------------------------------
   template<typename Real>
-  void Segment2D<Real>::Get(Vector2D<Real> & a_p0, Vector2D<Real> & a_p1) const
+  void Segment2D<Real>::Get(Vector3<Real> & a_p0, Vector3<Real> & a_p1) const
   {
     a_p0 = m_origin;
     a_p1 = m_origin + m_direction;
@@ -162,7 +162,7 @@ namespace Dg
     //  @ Segment2D::Set()
     //--------------------------------------------------------------------------------
   template<typename Real>
-  void Segment2D<Real>::Set(Vector2D<Real> const & a_p0, Vector2D<Real> const & a_p1)
+  void Segment2D<Real>::Set(Vector3<Real> const & a_p0, Vector3<Real> const & a_p1)
   {
     //Assign
     m_origin = a_p0;

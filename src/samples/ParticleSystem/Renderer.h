@@ -26,8 +26,8 @@ public:
 
   void Update(Dg::ParticleData<float> *);
 
-  void Render(Dg::Matrix44<float> const & modelView
-            , Dg::Matrix44<float> const & proj
+  void Render(Dg::R3::Matrix44<float> const & modelView
+            , Dg::R3::Matrix44<float> const & proj
             , float parScale
             , std::vector<LineRenderData> const & lineRenderData);
 

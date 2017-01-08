@@ -6,9 +6,9 @@
 #include "Types.h"
 
 
-typedef Dg::Vector4<float>      vec4;
-typedef Dg::Quaternion<float>   quat;
-typedef Dg::VQS<float>          Vqs;
+typedef Dg::R3::Vector4<float>      vec4;
+typedef Dg::R3::Quaternion<float>   quat;
+typedef Dg::R3::VQS<float>          Vqs;
 
 Dg::Attractor<float> * AttractorFactory::operator()(AttractorData const & a_data) const
 {

@@ -7,14 +7,14 @@
 #define DGQUERYPOINTSEGMENT_H
 
 #include "DgCPQuery.h"
-#include "..\DgSegment.h"
+#include "..\DgR3Segment.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Point, Segment.
+  //! Distance and closest-point query: Point, R3::Segment.
   template <typename Real>
-  class CPQuery<Real, Vector4<Real>, Segment<Real>>
+  class CPQuery<Real, R3::Vector4<Real>, R3::Segment<Real>>
   {
   public:
 
@@ -25,28 +25,28 @@ namespace Dg
       Real u;
 
       //! Closest point on the line segment to the point.
-      Vector4<Real> cp;
+      R3::Vector4<Real> cp;
     };
 
     //! Perform query
-    Result operator()(Vector4<Real> const &, Segment<Real> const &);
+    Result operator()(R3::Vector4<Real> const &, R3::Segment<Real> const &);
   };
 
   //! Template alias for convenience
   template<typename Real>
-  using CPPointSegment = CPQuery<Real, Vector4<Real>, Segment<Real>>;
+  using CPPointSegment = CPQuery<Real, R3::Vector4<Real>, R3::Segment<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename CPQuery<Real, Vector4<Real>, Segment<Real>>::Result
-    CPQuery<Real, Vector4<Real>, Segment<Real>>::operator()
-    (Vector4<Real> const & a_point, Segment<Real> const & a_seg)
+  typename CPQuery<Real, R3::Vector4<Real>, R3::Segment<Real>>::Result
+    CPQuery<Real, R3::Vector4<Real>, R3::Segment<Real>>::operator()
+    (R3::Vector4<Real> const & a_point, R3::Segment<Real> const & a_seg)
   {
     Result result;
-    Vector4<Real> w = a_point - a_seg.Origin();
+    R3::Vector4<Real> w = a_point - a_seg.Origin();
 
     Real proj = w.Dot(a_seg.Direction());
 

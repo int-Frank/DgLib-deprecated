@@ -1,15 +1,15 @@
 #pragma once
 
 #include "Dg_vector.h"
-#include "DgVQS.h"
-#include "DgMatrix44.h"
+#include "DgR3VQS.h"
+#include "DgR3Matrix44.h"
 #include "./json/json.h"
 
 typedef float Real;
-typedef Dg::Quaternion<Real>  Quat;
-typedef Dg::VQS<Real>         VQS;
-typedef Dg::Matrix44<Real>    Mat44;
-typedef Dg::Vector4<Real>     Vec4;
+typedef Dg::R3::Quaternion<Real>  Quat;
+typedef Dg::R3::VQS<Real>         VQS;
+typedef Dg::R3::Matrix44<Real>    Mat44;
+typedef Dg::R3::Vector4<Real>     Vec4;
 
 struct T_Bone
 {

@@ -8,6 +8,8 @@
 
 namespace Dg
 {
+#define IS_FLAGGED(x, y) static_cast<bool>(x & (1 << y))
+
   //! @ingroup DgUtility_constants
   //! Error codes
   enum class ErrorCode

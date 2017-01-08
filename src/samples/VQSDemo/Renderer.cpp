@@ -17,7 +17,7 @@ bool Renderer::Init()
   {
     return false;
   }
-  m_nFvs = fv.size();
+  m_nFvs = int(fv.size());
 
   //Verts
   glGenVertexArrays(1, &m_vao);
@@ -60,8 +60,8 @@ void Renderer::Update()
 }
 
 
-void Renderer::Render(Dg::Matrix44<float> const & a_proj
-                    , Dg::Matrix44<float> const * a_pMV
+void Renderer::Render(Dg::R3::Matrix44<float> const & a_proj
+                    , Dg::R3::Matrix44<float> const * a_pMV
                     , int a_nObjects)
 {
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

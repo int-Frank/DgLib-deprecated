@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Types.h"
-#include "DgMatrix44.h"
+#include "DgR3Matrix44.h"
 
 class Renderer
 {
@@ -16,8 +16,8 @@ public:
 
   bool Init();
   void Update();
-  void Render(Dg::Matrix44<float> const & a_proj
-            , Dg::Matrix44<float> const * a_pMV
+  void Render(Dg::R3::Matrix44<float> const & a_proj
+            , Dg::R3::Matrix44<float> const * a_pMV
             , int a_nObjects);
   void ShutDown();
 

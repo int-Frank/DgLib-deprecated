@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#include "../DgVector4.h"
+#include "../DgR3Vector4.h"
 #include "DgVariadicMacros.h"
 #include "../impl/DgParticleData_impl.inl"
 
@@ -21,9 +21,9 @@
 //!
 //! Be sure there are no spaces after the final '\' on each line.
 #define ATTRIBUTES ID,                  int,\
-                   Position,            Dg::Vector4<Real>,\
-                   Velocity,            Dg::Vector4<Real>,\
-                   Acceleration,        Dg::Vector4<Real>,\
+                   Position,            Dg::R3::Vector4<Real>,\
+                   Velocity,            Dg::R3::Vector4<Real>,\
+                   Acceleration,        Dg::R3::Vector4<Real>,\
                    Force,               Real,\
                    Size,                Real,\
                    StartSize,           Real,\
@@ -32,9 +32,9 @@
                    LifeMax,             Real,\
                    DLife,               Real,\
                    TimeSinceBirth,      Real,\
-                   Color,               Dg::Vector4<float>,\
-                   StartColor,          Dg::Vector4<float>,\
-                   DColor,              Dg::Vector4<float>
+                   Color,               Dg::R3::Vector4<float>,\
+                   StartColor,          Dg::R3::Vector4<float>,\
+                   DColor,              Dg::R3::Vector4<float>
 
 
 namespace Dg

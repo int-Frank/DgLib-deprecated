@@ -34,6 +34,12 @@
     <ClInclude Include="..\..\public\Dg_vector.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgSimplePage.h">
+      <Filter>Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\Dg_QuadTree.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgContainerBase.cpp">

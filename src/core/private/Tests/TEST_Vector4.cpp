@@ -1,8 +1,8 @@
 #include "TestHarness.h"
-#include "DgVector4.h"
-#include "DgVector4_ancillary.h"
+#include "DgR3Vector4.h"
+#include "DgR3Vector4_ancillary.h"
 
-typedef Dg::Vector4 < float > vec4;
+typedef Dg::R3::Vector4 < float > vec4;
 
 //--------------------------------------------------------------------------------
 //	Vector4 Construction
@@ -136,25 +136,25 @@ TEST(Stack_Vector4_Other, creation_Vector4_Other)
 
   // Random vectors ///////////////////////////////////
 
-  v = Dg::GetRandomVector<float>();
-  vec4 vs = Dg::GetRandomOrthonormalVector<float>(v);
+  v = Dg::R3::GetRandomVector<float>();
+  vec4 vs = Dg::R3::GetRandomOrthonormalVector<float>(v);
 
   CHECK(Dg::IsZero(v.Dot(vs)));
 
-  v = Dg::GetRandomVector<float>(v, 10.3f);
+  v = Dg::R3::GetRandomVector<float>(v, 10.3f);
 
   // Basis ///////////////////////////////////////////////
 
   vec4 v0, v1, v2;
 
-  Dg::GetBasis(vec4( 0.0f, 12.0f, 0.0f, 0.0f ),
+  Dg::R3::GetBasis(vec4( 0.0f, 12.0f, 0.0f, 0.0f ),
     vec4(0.0f, 0.0f, 12.3f, 0.0f),
     v0, v1, v2);
   CHECK(v0 == vec4( 0.0f, 1.0f, 0.0f, 0.0f ));
   CHECK(v1 == vec4( 0.0f, 0.0f, 1.0f, 0.0f ));
   CHECK(v2 == vec4( 1.0f, 0.0f, 0.0f, 0.0f ));
 
-  Dg::GetBasis(vec4(0.0f, 0.0f, 0.0f, 0.0f), 
+  Dg::R3::GetBasis(vec4(0.0f, 0.0f, 0.0f, 0.0f),
                vec4(0.0f, 0.0f, 0.0f, 0.0f),
                v0, v1, v2);
   CHECK(v0 == vec4(1.0f, 0.0f, 0.0f, 0.0f));

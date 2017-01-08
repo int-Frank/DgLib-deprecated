@@ -7,15 +7,15 @@
 #define DGQUERYSEGMENTRAY_H
 
 #include "DgCPQuery.h"
-#include "..\DgRay.h"
-#include "..\DgSegment.h"
+#include "..\DgR3Ray.h"
+#include "..\DgR3Segment.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Line Segment, Ray
+  //! Distance and closest-point query: Line R3::Segment, R3::Ray
   template <typename Real>
-  class CPQuery<Real, Segment<Real>, Ray<Real>>
+  class CPQuery<Real, R3::Segment<Real>, R3::Ray<Real>>
   {
   public:
 
@@ -29,10 +29,10 @@ namespace Dg
       Real us;
 
       //! Closest point on ray to the line segment
-      Vector4<Real> cpr;
+      R3::Vector4<Real> cpr;
 
       //! Closest point on line segment to the ray
-      Vector4<Real> cps;
+      R3::Vector4<Real> cps;
 
       //! Return code. Codes include:
       //!   - <code><b>0</b></code>: Success
@@ -41,32 +41,32 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(Segment<Real> const &, Ray<Real> const &);
+    Result operator()(R3::Segment<Real> const &, R3::Ray<Real> const &);
   };
 
   //! Template alias for convenience.
   template<typename Real>
-  using CPSegmentRay = CPQuery<Real, Segment<Real>, Ray<Real>>;
+  using CPSegmentRay = CPQuery<Real, R3::Segment<Real>, R3::Ray<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename CPQuery<Real, Segment<Real>, Ray<Real>>::Result
-    CPQuery<Real, Segment<Real>, Ray<Real>>::operator()
-    (Segment<Real> const & a_seg, Ray<Real> const & a_ray)
+  typename CPQuery<Real, R3::Segment<Real>, R3::Ray<Real>>::Result
+    CPQuery<Real, R3::Segment<Real>, R3::Ray<Real>>::operator()
+    (R3::Segment<Real> const & a_seg, R3::Ray<Real> const & a_ray)
   {
     Result result;
     result.code = 0;
 
-    Vector4<Real> os(a_seg.Origin());
-    Vector4<Real> or (a_ray.Origin());
-    Vector4<Real> ds(a_seg.Direction());
-    Vector4<Real> dr(a_ray.Direction());
+    R3::Vector4<Real> os(a_seg.Origin());
+    R3::Vector4<Real> or (a_ray.Origin());
+    R3::Vector4<Real> ds(a_seg.Direction());
+    R3::Vector4<Real> dr(a_ray.Direction());
 
     //compute intermediate parameters
-    Vector4<Real> w0(os - or );
+    R3::Vector4<Real> w0(os - or );
     Real a = ds.Dot(ds);
     Real b = ds.Dot(dr);
     Real c = ds.Dot(w0);
@@ -84,7 +84,7 @@ namespace Dg
       tn = d;
 
       //Does the live segment overlap the ray?
-      Vector4<Real> w1((os + ds) - or );
+      R3::Vector4<Real> w1((os + ds) - or );
       if (!(d < static_cast<Real>(0.0) &&
           w1.Dot(dr) < static_cast<Real>(0.0)))
       {

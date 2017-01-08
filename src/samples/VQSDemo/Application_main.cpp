@@ -7,7 +7,7 @@
 #include "UI.h"
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
-#include "dgvqs.h"
+#include "dgR3vqs.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
@@ -196,7 +196,7 @@ void Application::HandleEvents()
 
 void Application::DoLogic(double a_dt)
 {
-  m_model.Update(a_dt);
+  m_model.Update(float(a_dt));
 
   //Zoom the camera
   if (abs(m_camZoomTarget - m_camZoom) > 0.01)
@@ -214,18 +214,18 @@ void Application::Render()
   float nearClip = 0.5f;
   float farClip = 100.0f;
 
-  Dg::VQS<float> T;
-  Dg::Quaternion<float> q;
+  Dg::R3::VQS<float> T;
+  Dg::R3::Quaternion<float> q;
   q.SetRotation(float(m_camRotX + 3.14159f)
     , 0.0f
     , float(m_camRotZ)
     , Dg::EulerOrder::ZYX);
   T.SetQ(q);
-  T.SetV(Dg::Vector4<float>(0.0f, -camHeight, float(-m_camZoom), 0.0f));
+  T.SetV(Dg::R3::Vector4<float>(0.0f, -camHeight, float(-m_camZoom), 0.0f));
   T.SetS(2.0f);
 
   m_model.SetTransform(T);
-  Dg::Matrix44<float> mats[ArmSkeleton::BONE_COUNT];
+  Dg::R3::Matrix44<float> mats[ArmSkeleton::BONE_COUNT];
   m_model.SetMatrices(mats);
   
   //Set up the viewport
@@ -238,7 +238,7 @@ void Application::Render()
   glViewport(0, 0, width, height);
 
   //Set up the perspective matrix;
-  Dg::Matrix44<float> proj;
+  Dg::R3::Matrix44<float> proj;
   proj.Perspective(fov, ratio, nearClip, farClip);
 
   m_renderer.Render(proj, mats, ArmSkeleton::BONE_COUNT);

@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "./particle_system/DgAttractor.h"
-#include "DgMatrix44.h"
+#include "DgR3Matrix44.h"
 
 class EmitterData;
 class AttractorData;
@@ -150,8 +150,8 @@ public:
 struct LineRenderData
 {
   int                   model;
-  Dg::Matrix44<float>   mat;
-  Dg::Vector4<float>    col;
+  Dg::R3::Matrix44<float>   mat;
+  Dg::R3::Vector4<float>    col;
 };
 
 class ParSysOpts

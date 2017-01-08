@@ -1,10 +1,10 @@
 #include "TestHarness.h"
-#include "DgPlane.h"
+#include "DgR3Plane.h"
 #include "query/DgQueryPointPlane.h"
 
 typedef double Real;
-typedef Dg::Vector4<Real> vec;
-typedef Dg::Plane<Real>   plane;
+typedef Dg::R3::Vector4<Real> vec;
+typedef Dg::R3::Plane<Real>   plane;
 
 TEST(Stack_DgPlane, DgPlane)
 {

@@ -1,20 +1,20 @@
 #include "TestHarness.h"
-#include "DgRay.h"
-#include "DgMatrix44.h"
-#include "DgVQS.h"
+#include "DgR3Ray.h"
+#include "DgR3Matrix44.h"
+#include "DgR3VQS.h"
 #include "query/DgQueryPointRay.h"
 #include "query/DgQueryRayLine.h"
 #include "query/DgQueryRayRay.h"
 #include "query/DgQueryRayPlane.h"
 
 typedef double Real;
-typedef Dg::Vector4<Real>               vec;
-typedef Dg::Plane<Real>                 plane;
-typedef Dg::Line<Real>                  line;
-typedef Dg::Matrix44<Real>              mat44;
-typedef Dg::VQS<Real>                   vqs;
-typedef Dg::Quaternion<Real>            quat;
-typedef Dg::Ray<Real>                   ray;
+typedef Dg::R3::Vector4<Real>               vec;
+typedef Dg::R3::Plane<Real>                 plane;
+typedef Dg::R3::Line<Real>                  line;
+typedef Dg::R3::Matrix44<Real>              mat44;
+typedef Dg::R3::VQS<Real>                   vqs;
+typedef Dg::R3::Quaternion<Real>            quat;
+typedef Dg::R3::Ray<Real>                   ray;
 
 TEST(Stack_DgRay, DgRay)
 {

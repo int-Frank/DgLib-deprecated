@@ -3,9 +3,9 @@
 
 #include "particle_system/DgAttractor.h"
 #include "particle_system/DgParticleData.h"
-#include "DgLine.h"
+#include "DgR3Line.h"
 #include "./query/DgQueryPointLine.h"
-#include "DgVQS.h"
+#include "DgR3VQS.h"
 
 template<typename Real>
 class AttractorLine : public Dg::Attractor<Real>
@@ -30,12 +30,12 @@ public:
   virtual void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
   virtual void Update(Dg::ParticleData<Real> &, int, Real);
 
-  virtual void SetTransformation(Dg::VQS<Real> const &);
+  virtual void SetTransformation(Dg::R3::VQS<Real> const &);
 
   virtual AttractorLine<Real> * Clone() const { return new AttractorLine<Real>(*this); }
 
 protected:
-  Dg::Line<Real> m_line;
+  Dg::R3::Line<Real> m_line;
 };
 
 template<typename Real>
@@ -54,9 +54,9 @@ AttractorLine<Real> & AttractorLine<Real>::operator=(AttractorLine<Real> const &
 }
 
 template<typename Real>
-void AttractorLine<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
+void AttractorLine<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_line.Set(Dg::Vector4<Real>::Origin(), Dg::Vector4<Real>::xAxis());
+  m_line.Set(Dg::R3::Vector4<Real>::Origin(), Dg::R3::Vector4<Real>::xAxis());
   m_line.TransformSelf(a_vqs);
 }
 
@@ -65,8 +65,8 @@ void AttractorLine<Real>::Update(Dg::ParticleData<Real> & a_data
   , int a_start
   , Real a_dt)
 {
-  Dg::Vector4<Real> * pPos = a_data.GetPosition();
-  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
 
   if (pPos && pAccels)
   {

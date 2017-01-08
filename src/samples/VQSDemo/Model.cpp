@@ -185,7 +185,7 @@ void ArmSkeleton::Update(float a_dt)
   for (int i = 0; i < BONE_COUNT; i++)
   {
     Quat q;
-    Dg::Slerp(q, m_tBone[i].qBegin, m_tBone[i].qEnd, GetRunTime());
+    Dg::R3::Slerp(q, m_tBone[i].qBegin, m_tBone[i].qEnd, GetRunTime());
     m_tBone[i].T_MP.SetQ(q);
   }
 }
@@ -222,7 +222,7 @@ void ArmSkeleton::ShowUI()
       for (int i = 0; i < BONE_COUNT; i++)
       {
         Quat q;
-        Dg::Slerp(q, m_tBone[i].qBegin, m_tBone[i].qEnd, GetRunTime());
+        Dg::R3::Slerp(q, m_tBone[i].qBegin, m_tBone[i].qEnd, GetRunTime());
         m_tBone[i].qBegin = q;
         m_tBone[i].qEnd.SetRotation(rotations[i][0]
           , rotations[i][1]

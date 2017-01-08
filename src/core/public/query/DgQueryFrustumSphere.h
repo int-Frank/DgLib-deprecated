@@ -10,8 +10,8 @@
 
 #include "DgTIQuery.h"
 #include "DgQueryLineSphere.h"
-#include "../DgFrustum.h"
-#include "../DgSphere.h"
+#include "../DgR3Frustum.h"
+#include "../DgR3Sphere.h"
 
 namespace Dg
 {
@@ -19,7 +19,7 @@ namespace Dg
   //!
   //! Test for intersection between a frustum and a sphere
   template <typename Real>
-  class TIQuery<Real, FrustumData<Real>, Sphere<Real>>
+  class TIQuery<Real, R3::FrustumData<Real>, R3::Sphere<Real>>
   {
   public:
 
@@ -30,20 +30,20 @@ namespace Dg
     };
 
     //! Perform the query
-    Result operator()(FrustumData<Real> const &, Sphere<Real> const &);
+    Result operator()(R3::FrustumData<Real> const &, R3::Sphere<Real> const &);
   };
 
   //! Template alias for convenience.
   template<typename Real>
-  using TIFrustumSphere = TIQuery<Real, FrustumData<Real>, Sphere<Real>>;
+  using TIFrustumSphere = TIQuery<Real, R3::FrustumData<Real>, R3::Sphere<Real>>;
 
   //--------------------------------------------------------------------------------
   //	@	TIQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename TIQuery<Real, FrustumData<Real>, Sphere<Real>>::Result
-    TIQuery<Real, FrustumData<Real>, Sphere<Real>>::operator()
-    (FrustumData<Real> const & a_fdata, Sphere<Real> const & a_sphere)
+  typename TIQuery<Real, R3::FrustumData<Real>, R3::Sphere<Real>>::Result
+    TIQuery<Real, R3::FrustumData<Real>, R3::Sphere<Real>>::operator()
+    (R3::FrustumData<Real> const & a_fdata, R3::Sphere<Real> const & a_sphere)
   {
     Result result;
     result.value = IntersectType::CompletelyInside;

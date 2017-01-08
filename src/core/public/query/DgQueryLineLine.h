@@ -7,14 +7,14 @@
 #define DGQUERYLINELINE_H
 
 #include "DgCPQuery.h"
-#include "../DgLine.h"
+#include "../DgR3Line.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Line, Line
+  //! Distance and closest-point query: R3::Line, R3::Line
   template <typename Real>
-  class CPQuery<Real, Line<Real>, Line<Real>>
+  class CPQuery<Real, R3::Line<Real>, R3::Line<Real>>
   {
   public:
 
@@ -28,10 +28,10 @@ namespace Dg
       Real u1;
 
       //! Closest point on line 0 to line 1
-      Vector4<Real> cp0;
+      R3::Vector4<Real> cp0;
       
       //! Closest point on line 1 to line 0
-      Vector4<Real> cp1;
+      R3::Vector4<Real> cp1;
 
       //! Return code. Codes include:
       //!   - <code><b>0</b></code>: Success
@@ -40,31 +40,31 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(Line<Real> const &, Line<Real> const &);
+    Result operator()(R3::Line<Real> const &, R3::Line<Real> const &);
   };
   
   //! Template alias for convenience.
   template<typename Real>
-  using CPLineLine = CPQuery<Real, Line<Real>, Line<Real>>;
+  using CPLineLine = CPQuery<Real, R3::Line<Real>, R3::Line<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename CPQuery<Real, Line<Real>, Line<Real>>::Result
-    CPQuery<Real, Line<Real>, Line<Real>>::operator()
-    (Line<Real> const & a_line0, Line<Real> const & a_line1)
+  typename CPQuery<Real, R3::Line<Real>, R3::Line<Real>>::Result
+    CPQuery<Real, R3::Line<Real>, R3::Line<Real>>::operator()
+    (R3::Line<Real> const & a_line0, R3::Line<Real> const & a_line1)
   {
     Result result;
 
-    Vector4<Real> o0(a_line0.Origin());
-    Vector4<Real> o1(a_line1.Origin());
-    Vector4<Real> d0(a_line0.Direction());
-    Vector4<Real> d1(a_line1.Direction());
+    R3::Vector4<Real> o0(a_line0.Origin());
+    R3::Vector4<Real> o1(a_line1.Origin());
+    R3::Vector4<Real> d0(a_line0.Direction());
+    R3::Vector4<Real> d1(a_line1.Direction());
 
     //compute intermediate parameters
-    Vector4<Real> w0(o0 - o1);
+    R3::Vector4<Real> w0(o0 - o1);
     Real a = d0.Dot(d1);
     Real b = d0.Dot(w0);
     Real c = d1.Dot(w0);

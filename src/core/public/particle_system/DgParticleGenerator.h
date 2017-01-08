@@ -9,7 +9,7 @@
 #define DGPARTICLEGENERATOR_H
 
 #include "DgObject.h"
-#include "DgVQS.h"
+#include "DgR3VQS.h"
 
 
 namespace Dg
@@ -37,7 +37,7 @@ namespace Dg
     ParticleGenerator<Real> & operator=(ParticleGenerator<Real> const & a_other) { return *this; }
 
     //! Set any transformation if needed
-    virtual void SetTransformation(VQS<Real> const &) {}
+    virtual void SetTransformation(R3::VQS<Real> const &) {}
 
     //! Iterate over a set of particles in the particle data and
     //! initialize attributes

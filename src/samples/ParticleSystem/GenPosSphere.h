@@ -3,7 +3,7 @@
 
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleGenerator.h"
-#include "DgSphere.h"
+#include "DgR3Sphere.h"
 
 //! Updates particle color
 template<typename Real>
@@ -28,8 +28,8 @@ public:
     return *this;
   }
 
-  void SetTransformation(Dg::VQS<Real> const &);
-  void SetOrigin(Dg::Vector4<Real> const &);
+  void SetTransformation(Dg::R3::VQS<Real> const &);
+  void SetOrigin(Dg::R3::Vector4<Real> const &);
   void SetRadius(Real);
 
   void Generate(Dg::ParticleData<Real> &, int, int);
@@ -37,18 +37,18 @@ public:
   GenPosSphere<Real> * Clone() const { return new GenPosSphere<Real>(*this); }
 
 private:
-  Dg::Sphere<Real>    m_sphere;
+  Dg::R3::Sphere<Real>    m_sphere;
 };
 
 template<typename Real>
-void GenPosSphere<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
+void GenPosSphere<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_sphere.Set(Dg::Vector4<Real>::Origin(), static_cast<Real>(1.0));
+  m_sphere.Set(Dg::R3::Vector4<Real>::Origin(), static_cast<Real>(1.0));
   m_sphere.TransformSelf(a_vqs);
 }
 
 template<typename Real>
-void GenPosSphere<Real>::SetOrigin(Dg::Vector4<Real> const & a_origin)
+void GenPosSphere<Real>::SetOrigin(Dg::R3::Vector4<Real> const & a_origin)
 {
   m_sphere.SetCenter(a_origin);
 }
@@ -62,7 +62,7 @@ void GenPosSphere<Real>::SetRadius(Real a_radius)
 template<typename Real>
 void GenPosSphere<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
-  Dg::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
 
   if (pPos)
   {

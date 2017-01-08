@@ -1,11 +1,11 @@
 #include "TestHarness.h"
-#include "DgQuaternion.h"
-#include "DgMatrix44.h"
-#include "DgVector4.h"
+#include "DgR3Quaternion.h"
+#include "DgR3Matrix44.h"
+#include "DgR3Vector4.h"
 
-typedef Dg::Matrix44< float >     mat44;
-typedef Dg::Quaternion < float >  quat;
-typedef Dg::Vector4<float>        vec4;
+typedef Dg::R3::Matrix44< float >     mat44;
+typedef Dg::R3::Quaternion < float >  quat;
+typedef Dg::R3::Vector4<float>        vec4;
 
 //--------------------------------------------------------------------------------
 //	Matrix44 Construction

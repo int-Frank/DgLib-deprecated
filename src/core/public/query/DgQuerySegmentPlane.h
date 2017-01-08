@@ -8,15 +8,15 @@
 
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
-#include "..\DgSegment.h"
-#include "..\DgPlane.h"
+#include "..\DgR3Segment.h"
+#include "..\DgR3Plane.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
   //! Test for intersection between a line segment and a plane.
   template <typename Real>
-  class TIQuery<Real, Segment<Real>, Plane<Real>>
+  class TIQuery<Real, R3::Segment<Real>, R3::Plane<Real>>
   {
   public:
 
@@ -28,14 +28,14 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(Segment<Real> const &, Plane<Real> const &);
+    Result operator()(R3::Segment<Real> const &, R3::Plane<Real> const &);
   };
 
 
   //! @ingroup DgMath_geoQueries
   //! Find the intersection point between a line segment and a plane.
   template <typename Real>
-  class FIQuery<Real, Segment<Real>, Plane<Real>>
+  class FIQuery<Real, R3::Segment<Real>, R3::Plane<Real>>
   {
   public:
 
@@ -43,7 +43,7 @@ namespace Dg
     struct Result
     {
       //! Point of intersection. Set to origin if line segment is parallel to plane.
-      Vector4<Real> point;
+      R3::Vector4<Real> point;
 
       //! Distance from the line segment origin to the point of intersection. Set to 0 if line segment is parallel to the plane.
       Real u;
@@ -56,33 +56,33 @@ namespace Dg
     };
 
     //! Perform query
-    Result operator()(Segment<Real> const &, Plane<Real> const &);
+    Result operator()(R3::Segment<Real> const &, R3::Plane<Real> const &);
   };
 
 
   //! Template alias for convenience
   template<typename Real>
-  using TISegmentPlane = TIQuery<Real, Segment<Real>, Plane<Real>>;
+  using TISegmentPlane = TIQuery<Real, R3::Segment<Real>, R3::Plane<Real>>;
 
   //! Template alias for convenience
   template<typename Real>
-  using FISegmentPlane = FIQuery<Real, Segment<Real>, Plane<Real>>;
+  using FISegmentPlane = FIQuery<Real, R3::Segment<Real>, R3::Plane<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	TIQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename TIQuery<Real, Segment<Real>, Plane<Real>>::Result
-    TIQuery<Real, Segment<Real>, Plane<Real>>::operator()
-    (Segment<Real> const & a_seg, Plane<Real> const & a_plane)
+  typename TIQuery<Real, R3::Segment<Real>, R3::Plane<Real>>::Result
+    TIQuery<Real, R3::Segment<Real>, R3::Plane<Real>>::operator()
+    (R3::Segment<Real> const & a_seg, R3::Plane<Real> const & a_plane)
   {
     Result result;
 
-    Vector4<Real> pn(a_plane.Normal());
+    R3::Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
-    Vector4<Real> so(a_seg.Origin());
-    Vector4<Real> sd(a_seg.Direction());
+    R3::Vector4<Real> so(a_seg.Origin());
+    R3::Vector4<Real> sd(a_seg.Direction());
 
     Real denom = pn.Dot(sd);
 
@@ -122,16 +122,16 @@ namespace Dg
   //	@	FIQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename FIQuery<Real, Segment<Real>, Plane<Real>>::Result
-    FIQuery<Real, Segment<Real>, Plane<Real>>::operator()
-    (Segment<Real> const & a_seg, Plane<Real> const & a_plane)
+  typename FIQuery<Real, R3::Segment<Real>, R3::Plane<Real>>::Result
+    FIQuery<Real, R3::Segment<Real>, R3::Plane<Real>>::operator()
+    (R3::Segment<Real> const & a_seg, R3::Plane<Real> const & a_plane)
   {
     Result result;
 
-    Vector4<Real> pn(a_plane.Normal());
+    R3::Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
-    Vector4<Real> so(a_seg.Origin());
-    Vector4<Real> sd(a_seg.Direction());
+    R3::Vector4<Real> so(a_seg.Origin());
+    R3::Vector4<Real> sd(a_seg.Direction());
 
     Real denom = pn.Dot(sd);
 

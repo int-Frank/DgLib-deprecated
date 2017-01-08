@@ -1,16 +1,16 @@
 #include "TestHarness.h"
-#include "DgLine.h"
+#include "DgR3Line.h"
 #include "query/DgQueryLineLine.h"
 #include "query/DgQueryPointLine.h"
 #include "query/DgQueryLinePlane.h"
 
 typedef double                          Real;
-typedef Dg::Vector4<Real>               vec;
-typedef Dg::Plane<Real>                 plane;
-typedef Dg::Matrix44<Real>              mat44;
-typedef Dg::VQS<Real>                   vqs;
-typedef Dg::Quaternion<Real>            quat;
-typedef Dg::Line<Real>                  line;
+typedef Dg::R3::Vector4<Real>               vec;
+typedef Dg::R3::Plane<Real>                 plane;
+typedef Dg::R3::Matrix44<Real>              mat44;
+typedef Dg::R3::VQS<Real>                   vqs;
+typedef Dg::R3::Quaternion<Real>            quat;
+typedef Dg::R3::Line<Real>                  line;
 
 TEST(Stack_DgLine, DgLine)
 {

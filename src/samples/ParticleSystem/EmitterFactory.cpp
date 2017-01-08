@@ -11,9 +11,9 @@
 #include "GenSize.h"
 #include "Types.h"
 
-typedef Dg::Vector4<float>      vec4;
-typedef Dg::Quaternion<float>   quat;
-typedef Dg::VQS<float>          Vqs;
+typedef Dg::R3::Vector4<float>      vec4;
+typedef Dg::R3::Quaternion<float>   quat;
+typedef Dg::R3::VQS<float>          Vqs;
 
 Dg::ParticleEmitter<float> * EmitterFactory::operator()(EmitterData const & a_data) const
 {
@@ -154,7 +154,7 @@ Dg::ParticleGenerator<float> * EmitterFactory::CreateGenVelOutwards(EmitterData 
   case E_GenPosSphere:
   default:
   {
-    Dg::Vector4<float> origin(a_data.transform[0]
+    Dg::R3::Vector4<float> origin(a_data.transform[0]
                             , a_data.transform[1]
                             , a_data.transform[2]
                             , 1.0f);

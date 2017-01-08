@@ -8,15 +8,15 @@
 
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
-#include "..\DgLine.h"
-#include "..\DgPlane.h"
+#include "..\DgR3Line.h"
+#include "..\DgR3Plane.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
   //! Test for intersection between a line and a plane.
   template <typename Real>
-  class TIQuery<Real, Line<Real>, Plane<Real>>
+  class TIQuery<Real, R3::Line<Real>, R3::Plane<Real>>
   {
   public:
 
@@ -28,14 +28,14 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(Line<Real> const &, Plane<Real> const &);
+    Result operator()(R3::Line<Real> const &, R3::Plane<Real> const &);
   };
 
 
   //! @ingroup DgMath_geoQueries
   //! Find the intersection point between a line and a plane.
   template <typename Real>
-  class FIQuery<Real, Line<Real>, Plane<Real>>
+  class FIQuery<Real, R3::Line<Real>, R3::Plane<Real>>
   {
   public:
 
@@ -43,39 +43,39 @@ namespace Dg
     struct Result
     {
       //! Point of intersection. Set to origin if line is parallel to plane.
-      Vector4<Real> point;
+      R3::Vector4<Real> point;
 
       //! Distance from the line origin to the point of intersection. Set to 0 if line is parallel to the plane.
       Real u;
      
       //! Return code. Codes include:
-      //!   - <code><b>0</b></code>: Line intersects plane
-      //!   - <code><b>1</b></code>: Line lies on the plane. Output set to line origin.
-      //!   - <code><b>2</b></code>: No Intersection. Line is parllel to the plane. Output point not set.
+      //!   - <code><b>0</b></code>: R3::Line intersects plane
+      //!   - <code><b>1</b></code>: R3::Line lies on the plane. Output set to line origin.
+      //!   - <code><b>2</b></code>: No Intersection. R3::Line is parllel to the plane. Output point not set.
       int code;
     };
 
     //! Perform query
-    Result operator()(Line<Real> const &, Plane<Real> const &);
+    Result operator()(R3::Line<Real> const &, R3::Plane<Real> const &);
   };
 
 
   //! Template alias for convenience
   template<typename Real>
-  using TILinePlane = TIQuery<Real, Line<Real>, Plane<Real>>;
+  using TILinePlane = TIQuery<Real, R3::Line<Real>, R3::Plane<Real>>;
 
   //! Template alias for convenience
   template<typename Real>
-  using FILinePlane = FIQuery<Real, Line<Real>, Plane<Real>>;
+  using FILinePlane = FIQuery<Real, R3::Line<Real>, R3::Plane<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename TIQuery<Real, Line<Real>, Plane<Real>>::Result
-    TIQuery<Real, Line<Real>, Plane<Real>>::operator()
-    (Line<Real> const & a_line, Plane<Real> const & a_plane)
+  typename TIQuery<Real, R3::Line<Real>, R3::Plane<Real>>::Result
+    TIQuery<Real, R3::Line<Real>, R3::Plane<Real>>::operator()
+    (R3::Line<Real> const & a_line, R3::Plane<Real> const & a_plane)
   {
     Result result;
     result.isIntersecting = !Dg::IsZero(a_plane.NormalDot(a_line.Direction())) ||
@@ -88,14 +88,14 @@ namespace Dg
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename FIQuery<Real, Line<Real>, Plane<Real>>::Result
-    FIQuery<Real, Line<Real>, Plane<Real>>::operator()
-    (Line<Real> const & a_line, Plane<Real> const & a_plane)
+  typename FIQuery<Real, R3::Line<Real>, R3::Plane<Real>>::Result
+    FIQuery<Real, R3::Line<Real>, R3::Plane<Real>>::operator()
+    (R3::Line<Real> const & a_line, R3::Plane<Real> const & a_plane)
   {
-    Vector4<Real> pn(a_plane.Normal());
+    R3::Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
-    Vector4<Real> lo(a_line.Origin());
-    Vector4<Real> ld(a_line.Direction());
+    R3::Vector4<Real> lo(a_line.Origin());
+    R3::Vector4<Real> ld(a_line.Direction());
 
     Real denom = pn.Dot(ld);
     Result result;

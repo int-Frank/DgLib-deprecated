@@ -7,14 +7,14 @@
 #define DGQUERYPOINTRAY_H
 
 #include "DgCPQuery.h"
-#include "..\DgRay.h"
+#include "..\DgR3Ray.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Point, Ray.
+  //! Distance and closest-point query: Point, R3::Ray.
   template <typename Real>
-  class CPQuery<Real, Vector4<Real>, Ray<Real>>
+  class CPQuery<Real, R3::Vector4<Real>, R3::Ray<Real>>
   {
   public:
 
@@ -25,29 +25,29 @@ namespace Dg
       Real u;
 
       //! Closest point on the ray to the point.
-      Vector4<Real> cp;
+      R3::Vector4<Real> cp;
     };
 
     //! Perform query
-    Result operator()(Vector4<Real> const &, Ray<Real> const &);
+    Result operator()(R3::Vector4<Real> const &, R3::Ray<Real> const &);
   };
 
   //! Template alias for convenience
   template<typename Real>
-  using CPPointRay = CPQuery<Real, Vector4<Real>, Ray<Real>>;
+  using CPPointRay = CPQuery<Real, R3::Vector4<Real>, R3::Ray<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename CPQuery<Real, Vector4<Real>, Ray<Real>>::Result
-    CPQuery<Real, Vector4<Real>, Ray<Real>>::operator()
-    (Vector4<Real> const & a_point, Ray<Real> const & a_line)
+  typename CPQuery<Real, R3::Vector4<Real>, R3::Ray<Real>>::Result
+    CPQuery<Real, R3::Vector4<Real>, R3::Ray<Real>>::operator()
+    (R3::Vector4<Real> const & a_point, R3::Ray<Real> const & a_line)
   {
     Result result;
 
-    Vector4<Real> w = a_point - a_line.Origin();
+    R3::Vector4<Real> w = a_point - a_line.Origin();
     result.u = w.Dot(a_line.Direction());
 
     if (result.u < static_cast<Real>(0.0))

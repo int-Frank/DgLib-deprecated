@@ -8,11 +8,13 @@
 #ifndef DGATTRACTOR_H
 #define DGATTRACTOR_H
 
-#include "..\DgVector4.h"
-#include "..\DgVQS.h"
+#include <climits>
+
+#include "..\DgR3Vector4.h"
+#include "..\DgR3VQS.h"
 #include "DgParticleUpdater.h"
 #include "DgMath.h"
-#include "DgVector4_ancillary.h"
+#include "DgR3Vector4_ancillary.h"
 
 namespace Dg
 {
@@ -62,7 +64,7 @@ namespace Dg
                       , Real dt) {}
 
     //! Set the location and size (if applicable) of the attractor.
-    virtual void SetTransformation(VQS<Real> const &) {}
+    virtual void SetTransformation(R3::VQS<Real> const &) {}
 
     //! Set the strength of the Attractor
     virtual void SetStrength(Real a_str) { m_strength = a_str; }
@@ -84,14 +86,14 @@ namespace Dg
   
   protected:
 
-    Vector4<Real> GetAccel_Constant(Vector4<Real> const & p0
-                                  , Vector4<Real> const & p1) const;
+    R3::Vector4<Real> GetAccel_Constant(R3::Vector4<Real> const & p0
+                                  , R3::Vector4<Real> const & p1) const;
 
-    Vector4<Real> GetAccel_Inverse(Vector4<Real> const & p0
-                                 , Vector4<Real> const & p1) const;
+    R3::Vector4<Real> GetAccel_Inverse(R3::Vector4<Real> const & p0
+                                 , R3::Vector4<Real> const & p1) const;
 
-    Vector4<Real> GetAccel_InverseSquare(Vector4<Real> const & p0
-                                       , Vector4<Real> const & p1) const;
+    R3::Vector4<Real> GetAccel_InverseSquare(R3::Vector4<Real> const & p0
+                                       , R3::Vector4<Real> const & p1) const;
  
   protected:
     int   m_attenuation;
@@ -171,14 +173,14 @@ namespace Dg
   //	@	Attractor::GetAccel_Constant()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Attractor<Real>::GetAccel_Constant(Vector4<Real> const & a_p0
-                                                 , Vector4<Real> const & a_p1) const
+  R3::Vector4<Real> Attractor<Real>::GetAccel_Constant(R3::Vector4<Real> const & a_p0
+                                                 , R3::Vector4<Real> const & a_p1) const
   {
-    Vector4<Real> v(a_p1 - a_p0);
+    R3::Vector4<Real> v(a_p1 - a_p0);
     Real dist = v.Length();
     if (Dg::IsZero(dist))
     {
-      v = GetRandomVector<Real>();
+      v = R3::GetRandomVector<Real>();
       dist = static_cast<Real>(1.0);
     }
     Real str(m_strength);
@@ -191,16 +193,16 @@ namespace Dg
   //	@	Attractor::GetAccel_Inverse()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Attractor<Real>::GetAccel_Inverse(Vector4<Real> const & a_p0
-                                               , Vector4<Real> const & a_p1) const
+  R3::Vector4<Real> Attractor<Real>::GetAccel_Inverse(R3::Vector4<Real> const & a_p0
+                                               , R3::Vector4<Real> const & a_p1) const
   {
-    Vector4<Real> v(a_p1 - a_p0);
+    R3::Vector4<Real> v(a_p1 - a_p0);
 
     Real sqDist = v.LengthSquared();
     Real invSqDist;
     if (Dg::IsZero(sqDist))
     {
-      v = GetRandomVector<Real>();
+      v = R3::GetRandomVector<Real>();
       invSqDist = static_cast<Real>(999999999999999.0);
     }
     else
@@ -223,22 +225,22 @@ namespace Dg
   //	@	Attractor::GetAccel_InverseSquare()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector4<Real> Attractor<Real>::GetAccel_InverseSquare(Vector4<Real> const & a_p0
-                                              , Vector4<Real> const & a_p1) const
+  R3::Vector4<Real> Attractor<Real>::GetAccel_InverseSquare(R3::Vector4<Real> const & a_p0
+                                              , R3::Vector4<Real> const & a_p1) const
   {
-    Vector4<Real> v(a_p1 - a_p0);
+    R3::Vector4<Real> v(a_p1 - a_p0);
 
     Real dist = v.Length();
     if (Dg::IsZero(dist))
     {
-      v = GetRandomVector<Real>();
+      v = R3::GetRandomVector<Real>();
     }
 
     Real invDist;
     if (Dg::IsZero(dist))
     {
-      v = GetRandomVector<Real>();
-      invDist = static_cast<Real>(999999999999999.0);
+      v = R3::GetRandomVector<Real>();
+      invDist = std::numeric_limits<Real>::max();
     }
     else
     {

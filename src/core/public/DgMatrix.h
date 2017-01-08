@@ -12,6 +12,15 @@
 
 namespace Dg
 {
+  namespace R3
+  {
+    template<typename Real>
+    class Matrix44;
+
+    template<typename Real>
+    class Vector4;
+  }
+
   template<size_t M, size_t N, typename Real> class Matrix;
 
   //! Compute the transpose matrix.
@@ -58,8 +67,8 @@ namespace Dg
     static_assert(M > 0 && N > 0, "Matrix cannot have a zero dimension.");
 
     template<size_t _M, size_t _N, typename Real> friend class Matrix;
-    template<typename Real> friend class Matrix44;
-    template<typename Real> friend class Vector4;
+    template<typename Real> friend class R3::Matrix44;
+    template<typename Real> friend class R3::Vector4;
 
   public:
     //! Default constructor. Elements ore not initialised.

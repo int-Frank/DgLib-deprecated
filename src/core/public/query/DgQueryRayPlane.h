@@ -8,15 +8,15 @@
 
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
-#include "..\DgRay.h"
-#include "..\DgPlane.h"
+#include "..\DgR3Ray.h"
+#include "..\DgR3Plane.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
   //! Test for intersection between a ray and a plane.
   template <typename Real>
-  class TIQuery<Real, Ray<Real>, Plane<Real>>
+  class TIQuery<Real, R3::Ray<Real>, R3::Plane<Real>>
   {
   public:
 
@@ -28,14 +28,14 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(Ray<Real> const &, Plane<Real> const &);
+    Result operator()(R3::Ray<Real> const &, R3::Plane<Real> const &);
   };
 
 
   //! @ingroup DgMath_geoQueries
   //! Find the intersection point between a ray and a plane.
   template <typename Real>
-  class FIQuery<Real, Ray<Real>, Plane<Real>>
+  class FIQuery<Real, R3::Ray<Real>, R3::Plane<Real>>
   {
   public:
 
@@ -43,46 +43,46 @@ namespace Dg
     struct Result
     {
       //! Point of intersection. Set to origin if ray is parallel to plane.
-      Vector4<Real> point;
+      R3::Vector4<Real> point;
 
       //! Distance from the ray origin to the point of intersection. Set to 0 if ray is parallel to the plane.
       Real u;
 
       //! Return code. Codes include:
-      //!   - <code><b>0</b></code>: Ray intersects plane
-      //!   - <code><b>1</b></code>: Ray lies on the plane. Output set to ray origin.
+      //!   - <code><b>0</b></code>: R3::Ray intersects plane
+      //!   - <code><b>1</b></code>: R3::Ray lies on the plane. Output set to ray origin.
       //!   - <code><b>2</b></code>: No Intersection. 
       int code;
     };
 
     //! Perform query
-    Result operator()(Ray<Real> const &, Plane<Real> const &);
+    Result operator()(R3::Ray<Real> const &, R3::Plane<Real> const &);
   };
 
 
   //! Template alias for convenience
   template<typename Real>
-  using TIRayPlane = TIQuery<Real, Ray<Real>, Plane<Real>>;
+  using TIRayPlane = TIQuery<Real, R3::Ray<Real>, R3::Plane<Real>>;
 
   //! Template alias for convenience
   template<typename Real>
-  using FIRayPlane = FIQuery<Real, Ray<Real>, Plane<Real>>;
+  using FIRayPlane = FIQuery<Real, R3::Ray<Real>, R3::Plane<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	TIQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename TIQuery<Real, Ray<Real>, Plane<Real>>::Result
-    TIQuery<Real, Ray<Real>, Plane<Real>>::operator()
-    (Ray<Real> const & a_ray, Plane<Real> const & a_plane)
+  typename TIQuery<Real, R3::Ray<Real>, R3::Plane<Real>>::Result
+    TIQuery<Real, R3::Ray<Real>, R3::Plane<Real>>::operator()
+    (R3::Ray<Real> const & a_ray, R3::Plane<Real> const & a_plane)
   {
     Result result;
 
-    Vector4<Real> pn(a_plane.Normal());
+    R3::Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
-    Vector4<Real> ro(a_ray.Origin());
-    Vector4<Real> rd(a_ray.Direction());
+    R3::Vector4<Real> ro(a_ray.Origin());
+    R3::Vector4<Real> rd(a_ray.Direction());
 
     Real denom = pn.Dot(rd);
 
@@ -122,16 +122,16 @@ namespace Dg
     //	@	FIQuery::operator()
     //--------------------------------------------------------------------------------
   template<typename Real>
-  typename FIQuery<Real, Ray<Real>, Plane<Real>>::Result
-    FIQuery<Real, Ray<Real>, Plane<Real>>::operator()
-    (Ray<Real> const & a_ray, Plane<Real> const & a_plane)
+  typename FIQuery<Real, R3::Ray<Real>, R3::Plane<Real>>::Result
+    FIQuery<Real, R3::Ray<Real>, R3::Plane<Real>>::operator()
+    (R3::Ray<Real> const & a_ray, R3::Plane<Real> const & a_plane)
   {
     Result result;
 
-    Vector4<Real> pn(a_plane.Normal());
+    R3::Vector4<Real> pn(a_plane.Normal());
     Real          po(a_plane.Offset());
-    Vector4<Real> ro(a_ray.Origin());
-    Vector4<Real> rd(a_ray.Direction());
+    R3::Vector4<Real> ro(a_ray.Origin());
+    R3::Vector4<Real> rd(a_ray.Direction());
 
     Real denom = pn.Dot(rd);
 

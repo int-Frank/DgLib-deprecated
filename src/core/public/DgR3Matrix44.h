@@ -1,24 +1,26 @@
-//! @file DgMatrix44.h
+//! @file DgR3Matrix44.h
 //!
 //! @author: James M. Van Verth, Lars M. Bishop, Frank B. Hart
 //! @date 4/10/2015
 //!
 //! Class declaration: Matrix44
 
-#ifndef DGMATRIX44_H
-#define DGMATRIX44_H
+#ifndef DGR3MATRIX44_H
+#define DGR3MATRIX44_H
 
 #include "DgMath.h"
 #include "DgMatrix.h"
-#include "DgVector4.h"
-#include "DgQuaternion.h"
+#include "DgR3Vector4.h"
+#include "DgR3Quaternion.h"
 
 //--------------------------------------------------------------------------------
 //	@	Matrix44
 //--------------------------------------------------------------------------------
 namespace Dg
 {
-  template<typename Real> class Matrix44;
+  namespace R3
+  {
+    template<typename Real> class Matrix44;
 
   //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
   template<typename Real>
@@ -92,7 +94,7 @@ namespace Dg
     Matrix44& AffineInverse();
 
     //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
-    friend Matrix44 Dg::AffineInverse(Matrix44<Real> const &);
+    friend Matrix44 Dg::R3::AffineInverse(Matrix44<Real> const &);
 
     //! Set as translation matrix based on vector
     Matrix44& Translation(Matrix<1, 4, Real> const &);
@@ -268,9 +270,9 @@ namespace Dg
 
     //compute upper left 3x3 matrix determinant
     Real cofactor0 = a_mat.m_V[5] * a_mat.m_V[10] - a_mat.m_V[9] * a_mat.m_V[6];
-    Real cofactor1 = a_mat.m_V[4] * a_mat.m_V[10] - a_mat.m_V[6] * a_mat.m_V[8];
+    Real cofactor1 = a_mat.m_V[6] * a_mat.m_V[8] - a_mat.m_V[4] * a_mat.m_V[10];
     Real cofactor2 = a_mat.m_V[4] * a_mat.m_V[9] - a_mat.m_V[8] * a_mat.m_V[5];
-    Real det = a_mat.m_V[0] * cofactor0 - a_mat.m_V[1] * cofactor1 + a_mat.m_V[2] * cofactor2;
+    Real det = a_mat.m_V[0] * cofactor0 + a_mat.m_V[1] * cofactor1 + a_mat.m_V[2] * cofactor2;
     if (Dg::IsZero(det))
     {
       return result;
@@ -279,7 +281,7 @@ namespace Dg
     // create adjunct matrix and multiply by 1/det to get upper 3x3
     Real invDet = static_cast<Real>(1.0) / det;
     result.m_V[0] = invDet*cofactor0;
-    result.m_V[4] = invDet*(-cofactor1);
+    result.m_V[4] = invDet*cofactor1;
     result.m_V[8] = invDet*cofactor2;
 
     result.m_V[1] = invDet*(a_mat.m_V[2] * a_mat.m_V[9] - a_mat.m_V[1] * a_mat.m_V[10]);
@@ -871,6 +873,6 @@ namespace Dg
       a_out.m_z = static_cast<Real>(0.25) * S;
     }
   } // End: Matrix44::GetQuaternion()
-
+  }
 }
 #endif

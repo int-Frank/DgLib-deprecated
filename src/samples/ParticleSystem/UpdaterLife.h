@@ -31,7 +31,7 @@ void UpdaterLife<Real>::UpdateNew(Dg::ParticleData<Real> & a_data
                                 , int a_start
                                 , Real a_dt)
 {
-  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
   Real * pLifes = a_data.GetLife();
   Real * pLifeMaxes = a_data.GetLifeMax();
   Real * pDLifes = a_data.GetDLife();
@@ -71,7 +71,7 @@ void UpdaterLife<Real>::Update(Dg::ParticleData<Real> & a_data
                              , int a_start
                              , Real a_dt)
 {
-  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
   Real * pLifes = a_data.GetLife();
   Real * pLifeMaxes = a_data.GetLifeMax();
   Real * pDLifes = a_data.GetDLife();

@@ -1,13 +1,13 @@
 #include "TestHarness.h"
-#include "DgVector4.h"
-#include "DgQuaternion.h"
-#include "DgMatrix44.h"
-#include "DgVQS.h"
+#include "DgR3Vector4.h"
+#include "DgR3Quaternion.h"
+#include "DgR3Matrix44.h"
+#include "DgR3VQS.h"
 
-typedef Dg::Matrix44< double >     mat44;
-typedef Dg::Quaternion < double >  quat;
-typedef Dg::Vector4 < double >     vec4;
-typedef Dg::VQS<double>            VQS;
+typedef Dg::R3::Matrix44< double >     mat44;
+typedef Dg::R3::Quaternion < double >  quat;
+typedef Dg::R3::Vector4 < double >     vec4;
+typedef Dg::R3::VQS<double>            VQS;
 
 //--------------------------------------------------------------------------------
 //	VQS Construction

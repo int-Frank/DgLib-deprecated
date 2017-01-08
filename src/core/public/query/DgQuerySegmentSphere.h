@@ -8,15 +8,15 @@
 
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
-#include "..\DgSegment.h"
-#include "..\DgSphere.h"
+#include "..\DgR3Segment.h"
+#include "..\DgR3Sphere.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
   //! Test for intersection between a line and a sphere.
   template <typename Real>
-  class TIQuery<Real, Segment<Real>, Sphere<Real>>
+  class TIQuery<Real, R3::Segment<Real>, R3::Sphere<Real>>
   {
   public:
 
@@ -28,21 +28,21 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(Segment<Real> const &, Sphere<Real> const &);
+    Result operator()(R3::Segment<Real> const &, R3::Sphere<Real> const &);
   };
 
 
   //! Template alias for convenience
   template<typename Real>
-  using TISegmentSphere = TIQuery<Real, Segment<Real>, Sphere<Real>>;
+  using TISegmentSphere = TIQuery<Real, R3::Segment<Real>, R3::Sphere<Real>>;
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename TIQuery<Real, Segment<Real>, Sphere<Real>>::Result
-    TIQuery<Real, Segment<Real>, Sphere<Real>>::operator()
-    (Segment<Real> const & a_seg, Sphere<Real> const & a_sphere)
+  typename TIQuery<Real, R3::Segment<Real>, R3::Sphere<Real>>::Result
+    TIQuery<Real, R3::Segment<Real>, R3::Sphere<Real>>::operator()
+    (R3::Segment<Real> const & a_seg, R3::Sphere<Real> const & a_sphere)
   {
     Result result;
     Vector4<Real> w0(a_seg.Origin() - a_sphere.Center());

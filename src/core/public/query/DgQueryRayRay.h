@@ -7,14 +7,14 @@
 #define DGQUERYRAYRAY_H
 
 #include "DgCPQuery.h"
-#include "..\DgRay.h"
+#include "..\DgR3Ray.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Ray, Ray
+  //! Distance and closest-point query: R3::Ray, R3::Ray
   template <typename Real>
-  class CPQuery<Real, Ray<Real>, Ray<Real>>
+  class CPQuery<Real, R3::Ray<Real>, R3::Ray<Real>>
   {
   public:
 
@@ -28,10 +28,10 @@ namespace Dg
       Real u1;
 
       //! Closest point on ray 0 to ray 1
-      Vector4<Real> cp0;
+      R3::Vector4<Real> cp0;
 
       //! Closest point on ray 1 to ray 0
-      Vector4<Real> cp1;
+      R3::Vector4<Real> cp1;
 
       //! Return code. Codes include:
       //!   - <code><b>0</b></code>: Success
@@ -40,32 +40,32 @@ namespace Dg
     };
 
     //! Perform query.
-    Result operator()(Ray<Real> const &, Ray<Real> const &);
+    Result operator()(R3::Ray<Real> const &, R3::Ray<Real> const &);
   };
 
   //! Template alias for convenience.
   template<typename Real>
-  using CPRayRay = CPQuery<Real, Ray<Real>, Ray<Real>>;
+  using CPRayRay = CPQuery<Real, R3::Ray<Real>, R3::Ray<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename CPQuery<Real, Ray<Real>, Ray<Real>>::Result
-    CPQuery<Real, Ray<Real>, Ray<Real>>::operator()
-    (Ray<Real> const & a_ray0, Ray<Real> const & a_ray1)
+  typename CPQuery<Real, R3::Ray<Real>, R3::Ray<Real>>::Result
+    CPQuery<Real, R3::Ray<Real>, R3::Ray<Real>>::operator()
+    (R3::Ray<Real> const & a_ray0, R3::Ray<Real> const & a_ray1)
   {
     Result result;
     result.code = 0;
 
-    Vector4<Real> o0(a_ray0.Origin());
-    Vector4<Real> o1(a_ray1.Origin());
-    Vector4<Real> d0(a_ray0.Direction());
-    Vector4<Real> d1(a_ray1.Direction());
+    R3::Vector4<Real> o0(a_ray0.Origin());
+    R3::Vector4<Real> o1(a_ray1.Origin());
+    R3::Vector4<Real> d0(a_ray0.Direction());
+    R3::Vector4<Real> d1(a_ray1.Direction());
 
     //compute intermediate parameters
-    Vector4<Real> w0(o0 - o1);
+    R3::Vector4<Real> w0(o0 - o1);
     Real a = d0.Dot(d1);
     Real b = d0.Dot(w0);
     Real c = d1.Dot(w0);

@@ -3,9 +3,9 @@
 
 #include "particle_system/DgAttractor.h"
 #include "particle_system/DgParticleData.h"
-#include "DgPlane.h"
+#include "DgR3Plane.h"
 #include "./query/DgQueryPointPlane.h"
-#include "DgVQS.h"
+#include "DgR3VQS.h"
 
 template<typename Real>
 class AttractorPlane : public Dg::Attractor<Real>
@@ -30,12 +30,12 @@ public:
   virtual void UpdateNew(Dg::ParticleData<Real> &, int, Real) {}
   virtual void Update(Dg::ParticleData<Real> &, int, Real);
 
-  virtual void SetTransformation(Dg::VQS<Real> const &);
+  virtual void SetTransformation(Dg::R3::VQS<Real> const &);
 
   virtual AttractorPlane<Real> * Clone() const { return new AttractorPlane<Real>(*this); }
 
 protected:
-  Dg::Plane<Real> m_plane;
+  Dg::R3::Plane<Real> m_plane;
 };
 
 template<typename Real>
@@ -54,10 +54,10 @@ AttractorPlane<Real> & AttractorPlane<Real>::operator=(AttractorPlane<Real> cons
 }
 
 template<typename Real>
-void AttractorPlane<Real>::SetTransformation(Dg::VQS<Real> const & a_vqs)
+void AttractorPlane<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_plane.Set(a_vqs.Rotate(Dg::Vector4<Real>::xAxis())
-            , Dg::Vector4<Real>::Origin() + a_vqs.V());
+  m_plane.Set(a_vqs.Rotate(Dg::R3::Vector4<Real>::xAxis())
+            , Dg::R3::Vector4<Real>::Origin() + a_vqs.V());
 }
 
 template<typename Real>
@@ -65,8 +65,8 @@ void AttractorPlane<Real>::Update(Dg::ParticleData<Real> & a_data
                                 , int a_start
                                 , Real a_dt)
 {
-  Dg::Vector4<Real> * pPos = a_data.GetPosition();
-  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
 
   Dg::CPPointPlane<Real> query;
   Dg::CPPointPlane<Real>::Result result;

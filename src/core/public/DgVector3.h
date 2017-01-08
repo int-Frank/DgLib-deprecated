@@ -1,9 +1,9 @@
-//! @file DgVector2D.h
+//! @file DgVector3.h
 //!
 //! @author: Frank B. Hart
 //! @date 4/10/2015
 //!
-//! Class declaration: Vector2D
+//! Class declaration: Vector3
 
 #ifndef DGVECTOR2D_H
 #define DGVECTOR2D_H
@@ -14,57 +14,57 @@
 
 namespace Dg
 {
-  template<typename Real> class Vector2D;
+  template<typename Real> class Vector3;
   template<typename Real> class Matrix33;
 
   //! VQS transform
   template<typename Real>
-  Vector2D<Real> operator*(Vector2D<Real> const &, VQS<Real> const &);
+  Vector3<Real> operator*(Vector3<Real> const &, VQS<Real> const &);
 
   //! Perpendicular dot product, assumes 2D vector
   template<typename Real>
-  Real PerpDot(Vector2D<Real> const &, Vector2D<Real> const &);
+  Real PerpDot(Vector3<Real> const &, Vector3<Real> const &);
 
   //! Returns a perpendicular vector.
   template<typename Real>
-  Vector2D<Real> Perpendicular(Vector2D<Real> const & axis);
+  Vector3<Real> Perpendicular(Vector3<Real> const & axis);
 
   //! Squared distance between two points.
   template<typename Real>
-  Real SquaredDistance(Vector2D<Real> const &, Vector2D<Real> const &);
+  Real SquaredDistance(Vector3<Real> const &, Vector3<Real> const &);
 
   //! Distance between two points.
   template<typename Real>
-  Real Distance(Vector2D<Real> const &, Vector2D<Real> const &);
+  Real Distance(Vector3<Real> const &, Vector3<Real> const &);
 
   //! @ingroup DgMath_types
   //!
-  //! @class Vector2D
+  //! @class Vector3
   //!
   //! @brief Two dimensional homogeneous vector class [x, y, w].
   //!
   //! @author Frank Hart
   //! @date 4/10/2015
   template<typename Real>
-  class Vector2D : public Matrix<1, 3, Real>
+  class Vector3 : public Matrix<1, 3, Real>
   {
     friend class Matrix33<Real>;
 
   public:
 
     //! Default constructor. Members not initialized.
-    Vector2D() {}
+    Vector3() {}
 
     //! Construct vector from coefficients
-    Vector2D(Real x, Real y, Real w);
-    Vector2D(Vector4<Real> const &);
-    ~Vector2D() {}
+    Vector3(Real x, Real y, Real w);
+    Vector3(Vector4<Real> const &);
+    ~Vector3() {}
 
     //! Copy constructor
-    Vector2D(Matrix<1, 3, Real> const & a_other) : Matrix<1, 3, Real>(a_other) {}
+    Vector3(Matrix<1, 3, Real> const & a_other) : Matrix<1, 3, Real>(a_other) {}
 
     //! Assignment
-    Vector2D& operator=(Matrix<1, 3, Real> const &);
+    Vector3& operator=(Matrix<1, 3, Real> const &);
 
     //! Determines if the vector is the unit vector within some tolerance.
     bool IsUnit() const;
@@ -82,10 +82,10 @@ namespace Dg
     Real LengthSquared() const;
 
     //! Squared distance between two points.
-    friend Real Dg::SquaredDistance(Vector2D<Real> const &, Vector2D<Real> const &);
+    friend Real Dg::SquaredDistance(Vector3<Real> const &, Vector3<Real> const &);
 
     //! Distance between two points.
-    friend Real Dg::Distance(Vector2D<Real> const &, Vector2D<Real> const &);
+    friend Real Dg::Distance(Vector3<Real> const &, Vector3<Real> const &);
 
     //! Access element-x by value
     Real x() const { return m_V[0]; }
@@ -108,148 +108,161 @@ namespace Dg
   public:
 
     //! v = [0, 0, 0, 1]
-    static Vector2D Origin();
+    static Vector3 Origin();
 
     //! v = [0, 0, 0, 0]
-    static Vector2D ZeroVector();
+    static Vector3 ZeroVector();
 
     //! v = [1, 0, 0, 0]
-    static Vector2D xAxis();
+    static Vector3 xAxis();
 
     //! v = [0, 1, 0, 0]
-    static Vector2D yAxis();
+    static Vector3 yAxis();
 
     //! v = [1, 1, 1, 1]
-    static Vector2D Ones();
+    static Vector3 Ones();
   };
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::Origin()
+  //	@	Vector3::Origin()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector2D<Real> Vector2D<Real>::Origin()
+  Vector3<Real> Vector3<Real>::Origin()
   {
-    return Vector2D(static_cast<Real>(0.0),
+    return Vector3(static_cast<Real>(0.0),
                    static_cast<Real>(0.0),
                    static_cast<Real>(1.0));
-  }   // End:  Vector2D::Origin()
+  }   // End:  Vector3::Origin()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::ZeroVector()
+  //	@	Vector3::ZeroVector()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector2D<Real> Vector2D<Real>::ZeroVector()
+  Vector3<Real> Vector3<Real>::ZeroVector()
   {
-    return Vector2D(static_cast<Real>(0.0),
+    return Vector3(static_cast<Real>(0.0),
                    static_cast<Real>(0.0),
                    static_cast<Real>(0.0));
-  }   // End:  Vector2D::ZeroVector()
+  }   // End:  Vector3::ZeroVector()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::xAxis()
+  //	@	Vector3::xAxis()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector2D<Real> Vector2D<Real>::xAxis()
+  Vector3<Real> Vector3<Real>::xAxis()
   {
-    return Vector2D(static_cast<Real>(1.0),
+    return Vector3(static_cast<Real>(1.0),
                    static_cast<Real>(0.0),
                    static_cast<Real>(0.0));
-  }   // End:  Vector2D::xAxis()
+  }   // End:  Vector3::xAxis()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::yAxis()
+  //	@	Vector3::yAxis()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector2D<Real> Vector2D<Real>::yAxis()
+  Vector3<Real> Vector3<Real>::yAxis()
   {
-    return Vector2D(static_cast<Real>(0.0),
+    return Vector3(static_cast<Real>(0.0),
                    static_cast<Real>(1.0),
                    static_cast<Real>(0.0));
-  }   // End:  Vector2D::yAxis()
+  }   // End:  Vector3::yAxis()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::Ones()
+  //	@	Vector3::Ones()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector2D<Real> Vector2D<Real>::Ones()
+  Vector3<Real> Vector3<Real>::Ones()
   {
-    return Vector2D(static_cast<Real>(1.0),
+    return Vector3(static_cast<Real>(1.0),
                    static_cast<Real>(1.0),
                    static_cast<Real>(1.0));
-  }   // End:  Vector2D::Ones()
+  }   // End:  Vector3::Ones()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::operator=()
+  //	@	Vector3::operator=()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector2D<Real>& Vector2D<Real>::operator=(Matrix<1, 3, Real> const & a_other)
+  Vector3<Real>& Vector3<Real>::operator=(Matrix<1, 3, Real> const & a_other)
   {
     Matrix<1, 3, Real>::operator=(a_other);
     return *this;
-  }   // End:  Vector2D::operator=()
+  }   // End:  Vector3::operator=()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::Vector2D()
+  //	@	Vector3::Vector3()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Vector2D<Real>::Vector2D(Real a_x, Real a_y, Real a_w)
+  Vector3<Real>::Vector3(Real a_x, Real a_y, Real a_w)
+  {
+    m_V[0] = a_x;
+    m_V[1] = a_y;
+    m_V[2] = a_w;
+  }   // End:  Vector3::Vector3()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector3::Vector3()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  Vector3<Real>::Vector3(Vector4<Real> const & a_v)
+  {
+    m_V[0] = a_v.x();
+    m_V[1] = a_v.y();
+    m_V[2] = a_v.w();
+  }   // End:  Vector3::Vector3()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Vector3::Set()
+  //-------------------------------------------------------------------------------
+  template<typename Real>
+  void Vector3<Real>::Set(Real a_x, Real a_y, Real a_w)
   {
     m_V[0] = a_x;
     m_V[1] = a_y;
     m_V[3] = a_w;
-  }   // End:  Vector2D::Vector2D()
+
+  }   // End: Vector3::Set()
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::Set()
+  //	@	Vector3::Length()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  void Vector2D<Real>::Set(Real a_x, Real a_y, Real a_w)
-  {
-    m_V[0] = a_x;
-    m_V[1] = a_y;
-    m_V[3] = a_w;
-
-  }   // End: Vector2D::Set()
-
-  //-------------------------------------------------------------------------------
-  //	@	Vector2D::Length()
-  //-------------------------------------------------------------------------------
-  template<typename Real>
-  Real Vector2D<Real>::Length() const
+  Real Vector3<Real>::Length() const
   {
     return sqrt(m_V[0] * m_V[0] + 
                 m_V[1] * m_V[1] + 
                 m_V[2] * m_V[2]);
 
-  }   // End:  Vector2D::Length()
+  }   // End:  Vector3::Length()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::LengthSquared()
+  //	@	Vector3::LengthSquared()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Real Vector2D<Real>::LengthSquared() const
+  Real Vector3<Real>::LengthSquared() const
   {
     return (m_V[0] * m_V[0] + 
             m_V[1] * m_V[1] + 
             m_V[2] * m_V[2]);
 
-  }   // End:  Vector2D::LengthSquared()
+  }   // End:  Vector3::LengthSquared()
 
 
   //-------------------------------------------------------------------------------
   //	@	SquaredDistance()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Real SquaredDistance(Vector2D<Real> const & a_p0,
-                       Vector2D<Real> const & a_p1)
+  Real SquaredDistance(Vector3<Real> const & a_p0,
+                       Vector3<Real> const & a_p1)
   {
     Real a = a_p0.m_V[0] - a_p1.m_V[0];
     Real b = a_p0.m_V[1] - a_p1.m_V[1];
@@ -263,8 +276,8 @@ namespace Dg
   //	@	Distance()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Real Distance(Vector2D<Real> const & a_p0,
-                Vector2D<Real> const & a_p1)
+  Real Distance(Vector3<Real> const & a_p0,
+                Vector3<Real> const & a_p1)
   {
     Real a = a_p0.m_V[0] - a_p1.m_V[0];
     Real b = a_p0.m_V[1] - a_p1.m_V[1];
@@ -275,21 +288,21 @@ namespace Dg
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::IsUnit()
+  //	@	Vector3::IsUnit()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  bool Vector2D<Real>::IsUnit() const
+  bool Vector3<Real>::IsUnit() const
   {
     return Dg::IsZero(static_cast<Real>(1.0) - LengthSquared());
 
-  }   // End:  Vector2D::IsUnit()
+  }   // End:  Vector3::IsUnit()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Vector2D::Normalize()
+  //	@	Vector3::Normalize()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  void Vector2D<Real>::Normalize()
+  void Vector3<Real>::Normalize()
   {
     Real lengthsq = LengthSquared();
 
@@ -307,14 +320,14 @@ namespace Dg
       m_V[2] *= factor;
     }
 
-  }   // End:  Vector2D::Normalize()
+  }   // End:  Vector3::Normalize()
 
 
   //-------------------------------------------------------------------------------
   //	@	PerpDot()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Real PerpDot(Vector2D<Real> const & v1, Vector2D<Real> const & v2)
+  Real PerpDot(Vector3<Real> const & v1, Vector3<Real> const & v2)
   {
     return v1[0] * v2[1] - v1[1] * v2[0];
 
@@ -325,9 +338,9 @@ namespace Dg
   //	@	Perpendicular()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Vector2D<Real> Perpendicular(Vector2D<Real> const & a_vector)
+  Vector3<Real> Perpendicular(Vector3<Real> const & a_vector)
   {
-    return Vector2D(-a_vector[1]
+    return Vector3(-a_vector[1]
                  , a_vector[0]
                  , static_cast<Real>(0.0));
 

@@ -7,15 +7,15 @@
 #define DGQUERYRAYLINE_H
 
 #include "DgCPQuery.h"
-#include "..\DgLine.h"
-#include "..\DgRay.h"
+#include "..\DgR3Line.h"
+#include "..\DgR3Ray.h"
 
 namespace Dg
 {
   //! @ingroup DgMath_geoQueries
-  //! Distance and closest-point query: Ray, Line
+  //! Distance and closest-point query: R3::Ray, R3::Line
   template <typename Real>
-  class CPQuery<Real, Ray<Real>, Line<Real>>
+  class CPQuery<Real, R3::Ray<Real>, R3::Line<Real>>
   {
   public:
 
@@ -29,41 +29,41 @@ namespace Dg
       Real ur;
 
       //! Closest point on line to the ray
-      Vector4<Real> cpl;
+      R3::Vector4<Real> cpl;
 
       //! Closest point on ray to the line
-      Vector4<Real> cpr;
+      R3::Vector4<Real> cpr;
 
       //! Return code. Codes include:
       //!   - <code><b>0</b></code>: Success
-      //!   - <code><b>1</b></code>: Ray and line are parallel. Closest points are based off the ray origin.
+      //!   - <code><b>1</b></code>: R3::Ray and line are parallel. Closest points are based off the ray origin.
       int code;
     };
 
     //! Perform query.
-    Result operator()(Ray<Real> const &, Line<Real> const &);
+    Result operator()(R3::Ray<Real> const &, R3::Line<Real> const &);
   };
 
   //! Template alias for convenience.
   template<typename Real>
-  using CPRayLine = CPQuery<Real, Ray<Real>, Line<Real>>;
+  using CPRayLine = CPQuery<Real, R3::Ray<Real>, R3::Line<Real>>;
 
 
   //--------------------------------------------------------------------------------
   //	@	CPQuery::operator()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  typename CPQuery<Real, Ray<Real>, Line<Real>>::Result
-    CPQuery<Real, Ray<Real>, Line<Real>>::operator()
-    (Ray<Real> const & a_ray, Line<Real> const & a_line)
+  typename CPQuery<Real, R3::Ray<Real>, R3::Line<Real>>::Result
+    CPQuery<Real, R3::Ray<Real>, R3::Line<Real>>::operator()
+    (R3::Ray<Real> const & a_ray, R3::Line<Real> const & a_line)
   {
-    Vector4<Real> or (a_ray.Origin());
-    Vector4<Real> ol(a_line.Origin());
-    Vector4<Real> dr(a_ray.Direction());
-    Vector4<Real> dl(a_line.Direction());
+    R3::Vector4<Real> or (a_ray.Origin());
+    R3::Vector4<Real> ol(a_line.Origin());
+    R3::Vector4<Real> dr(a_ray.Direction());
+    R3::Vector4<Real> dl(a_line.Direction());
 
     //compute intermediate parameters
-    Vector4<Real> diff(or -ol);
+    R3::Vector4<Real> diff(or -ol);
     Real a = dr.Dot(dl);
     Real b = dl.Dot(diff);
     Real c = static_cast<Real>(1.0) - a * a;

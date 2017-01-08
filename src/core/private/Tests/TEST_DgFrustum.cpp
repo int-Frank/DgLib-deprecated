@@ -1,13 +1,13 @@
 #include "TestHarness.h"
-#include "DgFrustum.h"
-#include "DgSphere.h"
+#include "DgR3Frustum.h"
+#include "DgR3Sphere.h"
 #include "query/DgQueryFrustumSphere.h"
 
 typedef double Real;
-typedef Dg::Vector4<Real>      vec;
-typedef Dg::Sphere<Real>       sphere;
-typedef Dg::Frustum<Real>      frustum;
-typedef Dg::FrustumData<Real>  frustumData;
+typedef Dg::R3::Vector4<Real>      vec;
+typedef Dg::R3::Sphere<Real>       sphere;
+typedef Dg::R3::Frustum<Real>      frustum;
+typedef Dg::R3::FrustumData<Real>  frustumData;
 
 TEST(Stack_DgFrustum, DgFrustum)
 {

@@ -1,11 +1,11 @@
 #include "TestHarness.h"
-#include "DgVector4.h"
-#include "DgQuaternion.h"
-#include "DgMatrix44.h"
+#include "DgR3Vector4.h"
+#include "DgR3Quaternion.h"
+#include "DgR3Matrix44.h"
 
-typedef Dg::Quaternion < float >  quat;
-typedef Dg::Vector4 < float >     vec4;
-typedef Dg::Matrix44<float>       mat44;
+typedef Dg::R3::Quaternion < float >  quat;
+typedef Dg::R3::Vector4 < float >     vec4;
+typedef Dg::R3::Matrix44<float>       mat44;
 
 //--------------------------------------------------------------------------------
 //	Quaternion Construction
@@ -246,7 +246,7 @@ TEST(Stack_Quaternion_Operations, creation_Quaternion_Operations)
 
   q3 = q2 * q1 * q0;
 
-  q1 = Dg::Inverse(q3);
+  q1 = Dg::R3::Inverse(q3);
   q1 = q3;
   q1.Inverse();
   q2 = q1 * q3;
@@ -255,7 +255,7 @@ TEST(Stack_Quaternion_Operations, creation_Quaternion_Operations)
 
   q1.Conjugate();
   q2 = q1;
-  q2 = Dg::Conjugate(q1);
+  q2 = Dg::R3::Conjugate(q1);
 
   q1 = q1 + q0;
   q1 = q0 * q1;
@@ -264,7 +264,7 @@ TEST(Stack_Quaternion_Operations, creation_Quaternion_Operations)
   q1 -= q0;
   q1 *= q0;
 
-  float r_dot = Dg::Dot(q1, q0);
+  float r_dot = Dg::R3::Dot(q1, q0);
 
   vec4 v(1.0f, 0.0f, 0.0f, 0.0f);
   vec4 v0 = v;
@@ -303,13 +303,13 @@ TEST(Stack_Quaternion_Slerp, creation_Quaternion_Slerp)
 
   q3 = q2 * q1 * q0;
 
-  Dg::Lerp(q2, q0, q1, 1.0f);
+  Dg::R3::Lerp(q2, q0, q1, 1.0f);
   CHECK(q2 == q1);
 
-  Dg::Slerp(q2, q0, q1, 1.0f);
+  Dg::R3::Slerp(q2, q0, q1, 1.0f);
   CHECK(q2 == q1);
 
-  Dg::ApproxSlerp(q2, q0, q1, 1.0f);
+  Dg::R3::ApproxSlerp(q2, q0, q1, 1.0f);
   CHECK(q2 == q1);
 }
 

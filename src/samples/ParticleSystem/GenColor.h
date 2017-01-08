@@ -10,8 +10,8 @@ class GenColor : public Dg::ParticleGenerator<Real>
 {
 public:
   GenColor() : Dg::ParticleGenerator<Real>()
-             , m_startColor(Dg::Vector4<Real>::Ones())
-             , m_dColor(Dg::Vector4<Real>::Ones()) {}
+             , m_startColor(Dg::R3::Vector4<Real>::Ones())
+             , m_dColor(Dg::R3::Vector4<Real>::Ones()) {}
 
   ~GenColor() {}
 
@@ -28,24 +28,24 @@ public:
     return *this;
   }
 
-  void SetColors(Dg::Vector4<Real> const & a_startColor
-               , Dg::Vector4<Real> const & a_endColor);
+  void SetColors(Dg::R3::Vector4<Real> const & a_startColor
+               , Dg::R3::Vector4<Real> const & a_endColor);
 
   void Generate(Dg::ParticleData<Real> &, int, int);
 
   GenColor<Real> * Clone() const { return new GenColor<Real>(*this); }
 
 private:
-  Dg::Vector4<Real> m_startColor;
-  Dg::Vector4<Real> m_dColor;
+  Dg::R3::Vector4<Real> m_startColor;
+  Dg::R3::Vector4<Real> m_dColor;
 };
 
 template<typename Real>
 void GenColor<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
-  Dg::Vector4<Real> * pColor = a_data.GetColor();
-  Dg::Vector4<Real> * pStartColor = a_data.GetStartColor();
-  Dg::Vector4<Real> * pDColor = a_data.GetDColor();
+  Dg::R3::Vector4<Real> * pColor = a_data.GetColor();
+  Dg::R3::Vector4<Real> * pStartColor = a_data.GetStartColor();
+  Dg::R3::Vector4<Real> * pDColor = a_data.GetDColor();
 
   if (pColor)
   {
@@ -72,8 +72,8 @@ void GenColor<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int 
 
 
 template<typename Real>
-void GenColor<Real>::SetColors(Dg::Vector4<Real> const & a_startColor
-                             , Dg::Vector4<Real> const & a_endColor)
+void GenColor<Real>::SetColors(Dg::R3::Vector4<Real> const & a_startColor
+                             , Dg::R3::Vector4<Real> const & a_endColor)
 {
   m_startColor = a_startColor;
   m_dColor = a_endColor - a_startColor;

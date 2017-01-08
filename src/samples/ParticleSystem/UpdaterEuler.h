@@ -34,9 +34,9 @@ void UpdaterEuler<Real>::UpdateNew(Dg::ParticleData<Real> & a_data
                                  , int a_start
                                  , Real a_dt)
 {
-  Dg::Vector4<Real> * pPos = a_data.GetPosition();
-  Dg::Vector4<Real> * pVels = a_data.GetVelocity();
-  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector4<Real> * pVels = a_data.GetVelocity();
+  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
   Real * ptimeSinceBirth = a_data.GetTimeSinceBirth();
 
   if (ptimeSinceBirth == nullptr)
@@ -72,9 +72,9 @@ void UpdaterEuler<Real>::Update(Dg::ParticleData<Real> & a_data
                               , int a_start
                               , Real a_dt)
 {
-  Dg::Vector4<Real> * pPos = a_data.GetPosition();
-  Dg::Vector4<Real> * pVels = a_data.GetVelocity();
-  Dg::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector4<Real> * pVels = a_data.GetVelocity();
+  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
 
   int maxParCount = a_data.GetCountAlive();
 
