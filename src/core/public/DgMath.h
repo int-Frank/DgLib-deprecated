@@ -166,7 +166,7 @@ namespace Dg
 
   //! Tests number to see if in range
   template<typename Real>
-  void IsInRange(Real lower, Real upper, Real val)
+  bool IsInRange(Real lower, Real upper, Real val)
   {
     return (val >= lower && val <= upper);
   }	//End: WrapNum()

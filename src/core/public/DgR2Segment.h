@@ -9,6 +9,7 @@
 #define DGR2SEGMENT2D_H
 
 #include "DgR2Vector3.h"
+#include "DgR2Matrix33.h"
 #include "dgmath.h"
 
 namespace Dg
@@ -77,6 +78,12 @@ namespace Dg
 
       //! Get the squared length of the line segment
       Real LengthSquared() const;
+
+      //! Transform the line segment
+      Segment GetTransformed(Matrix33<Real> const &) const;
+
+      //! Transform the line segment, assign to self
+      Segment & TransformSelf(Matrix33<Real> const &);
 
     private:
 
@@ -196,6 +203,31 @@ namespace Dg
       return m_direction.LengthSquared();
 
     }	//End: Segment::LengthSquared()
+
+
+      //--------------------------------------------------------------------------------
+      //	@	Segment::GetTransformed()
+      //--------------------------------------------------------------------------------
+    template<typename Real>
+    Segment<Real> Segment<Real>::GetTransformed(Matrix33<Real> const & a_mat) const
+    {
+      Vector3<Real> p0(m_origin * a_mat);
+      Vector3<Real> p1(p0 + m_direction * a_mat);
+      return Segment<Real>(p0, p1);
+    }	//End: Segment::GetTransformed()
+
+
+      //--------------------------------------------------------------------------------
+      //	@	Segment::TransformSelf()
+      //--------------------------------------------------------------------------------
+    template<typename Real>
+    Segment<Real>& Segment<Real>::TransformSelf(Matrix33<Real> const & a_mat)
+    {
+      Vector3<Real> p0(m_origin * a_mat);
+      Vector3<Real> p1(p0 + m_direction * a_mat);
+      Set(p0, p1);
+      return *this;
+    }	//End: Segment::TransformSelf()
   }
 }
 #endif

@@ -100,8 +100,8 @@ namespace Dg
         //Segments lie on the same line
         else
         {
-          Real v0 = a_seg0.Direction() / a_seg0.Direction().LengthSquared();
-          Real v1 = a_seg1.Direction() / a_seg1.Direction().LengthSquared();
+          Vector3<Real>  v0 = a_seg0.Direction() / a_seg0.Direction().LengthSquared();
+          Vector3<Real>  v1 = a_seg1.Direction() / a_seg1.Direction().LengthSquared();
           Vector3<Real> q = a_seg1.GetP0() - a_seg1.GetP0();
 
           result.isIntersecting = (IsInRange(static_cast<Real>(0), static_cast<Real>(1), Dot(w, v1))
