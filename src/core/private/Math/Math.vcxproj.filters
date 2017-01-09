@@ -89,9 +89,6 @@
     <ClInclude Include="..\..\public\DgR2Vector3.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Segment.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\query\DgR3QueryFrustumSphere.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
@@ -166,6 +163,24 @@
     </ClInclude>
     <ClInclude Include="..\..\public\query\DgR2QueryPointSegment.h">
       <Filter>Public Headers\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Line.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgGeometryTypes.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Segment.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgSegment_general.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgGeometryTypesR2.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgGeometryTypesR3.h">
+      <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
