@@ -1,7 +1,7 @@
 #include "TestHarness.h"
 #include "DgR2Segment.h"
 #include "DgR2Matrix33.h"
-//#include "query/DgR3QueryPointSegment.h"
+#include "query/DgR2QueryPointSegment.h"
 #include "query/DgR2QuerySegmentSegment.h"
 
 typedef double Real;
@@ -34,34 +34,34 @@ TEST(Stack_DgR2Segment, DgR2Segment)
   //Geometric tests
   ls0.Set(vec(2.0, 0.0, 1.0), vec(6.0, 0.0, 1.0));
 
-  ////seg-point
-  //Dg::R2::CPPointSegment<Real>           dcpPointLS;
-  //Dg::R2::CPPointSegment<Real>::Result   dcpPointLS_res;
-  //vec pIn;
+  //seg-point
+  Dg::R2::CPPointSegment<Real>           dcpPointLS;
+  Dg::R2::CPPointSegment<Real>::Result   dcpPointLS_res;
+  vec pIn;
 
-  ////Point behind p0
-  //pIn.Set(0.0, 3.0, -6.0, 1.0);
-  //dcpPointLS_res = dcpPointLS(pIn, ls0);
-  //CHECK(dcpPointLS_res.u == 0.0);
-  //CHECK(dcpPointLS_res.cp == ls0.GetP0());
-  ////CHECK(dcpPointLS_res.distance == 7.0);
-  ////CHECK(dcpPointLS_res.sqDistance == 49.0);
+  //Point behind p0
+  pIn.Set(0.0, 3.0, 1.0);
+  dcpPointLS_res = dcpPointLS(pIn, ls0);
+  CHECK(dcpPointLS_res.u == 0.0);
+  CHECK(dcpPointLS_res.cp == ls0.GetP0());
+  //CHECK(dcpPointLS_res.distance == 7.0);
+  //CHECK(dcpPointLS_res.sqDistance == 49.0);
 
-  ////Point behind p1
-  //pIn.Set(8.0, 3.0, -6.0, 1.0);
-  //dcpPointLS_res = dcpPointLS(pIn, ls0);
-  //CHECK(dcpPointLS_res.u == 1.0);
-  //CHECK(dcpPointLS_res.cp == ls0.GetP1());
-  ////CHECK(dcpPointLS_res.distance == 7.0);
-  ////CHECK(dcpPointLS_res.sqDistance == 49.0);
+  //Point behind p1
+  pIn.Set(8.0, 3.0, 1.0);
+  dcpPointLS_res = dcpPointLS(pIn, ls0);
+  CHECK(dcpPointLS_res.u == 1.0);
+  CHECK(dcpPointLS_res.cp == ls0.GetP1());
+  //CHECK(dcpPointLS_res.distance == 7.0);
+  //CHECK(dcpPointLS_res.sqDistance == 49.0);
 
-  ////Closest point along seg
-  //pIn.Set(3.0, 3.0, -4.0, 1.0);
-  //dcpPointLS_res = dcpPointLS(pIn, ls0);
-  //CHECK(dcpPointLS_res.u == 0.25);
-  //CHECK(dcpPointLS_res.cp == vec(3.0, 0.0, 0.0, 1.0));
-  ////CHECK(dcpPointLS_res.distance == 5.0);
-  ////CHECK(dcpPointLS_res.sqDistance == 25.0);
+  //Closest point along seg
+  pIn.Set(3.0, 3.0, 1.0);
+  dcpPointLS_res = dcpPointLS(pIn, ls0);
+  CHECK(dcpPointLS_res.u == 0.25);
+  CHECK(dcpPointLS_res.cp == vec(3.0, 0.0, 1.0));
+  //CHECK(dcpPointLS_res.distance == 5.0);
+  //CHECK(dcpPointLS_res.sqDistance == 25.0);
 
   ////seg-Line
   //Dg::R2::CPSegmentLine<Real>           dcpLSLine;
