@@ -9,7 +9,7 @@
 #define DGR2LINE_H
 
 #include "impl/DgLine_general.h"
-#include "DgGeometryTypesR2.h"
+#include "DgR2GeometryTypes.h"
 
 namespace Dg
 {

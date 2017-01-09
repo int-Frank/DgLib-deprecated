@@ -9,7 +9,7 @@
 #define DGR3LINE_H
 
 #include "impl/DgLine_general.h"
-#include "DgGeometryTypesR3.h"
+#include "DgR3GeometryTypes.h"
 
 namespace Dg
 {

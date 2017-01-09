@@ -1,4 +1,4 @@
-//! @file DgGeometryTypesR2.h
+//! @file DgR2GeometryTypes.h
 
 #ifndef DGGEOMETRYTYPESR2_H
 #define DGGEOMETRYTYPESR2_H

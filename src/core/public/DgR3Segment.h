@@ -9,7 +9,7 @@
 #define DGR3SEGMENT_H
 
 #include "impl/DgSegment_general.h"
-#include "DgGeometryTypesR3.h"
+#include "DgR3GeometryTypes.h"
 
 namespace Dg
 {

@@ -22,6 +22,12 @@
     <Filter Include="Public Headers\impl">
       <UniqueIdentifier>{45779bfd-869b-469f-9d46-7acb99ca5ffd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public Headers\R2">
+      <UniqueIdentifier>{61bb3b04-cd65-46a1-9441-f36d0c1c7404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Headers\R3">
+      <UniqueIdentifier>{d65647a5-4b42-4004-9544-1670e6ae2f33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgRNG.cpp">
@@ -45,33 +51,6 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgFixedPoint.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Frustum.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Line.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3OBB.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Plane.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Quaternion.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Ray.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Segment.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Sphere.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3VQS.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\query\DgR3QueryFrustumSphere.h">
@@ -146,37 +125,7 @@
     <ClInclude Include="..\..\public\query\DgR2QueryPointSegment.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Line.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgGeometryTypes.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Segment.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgGeometryTypesR2.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgGeometryTypesR3.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Vector.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Vector_ancillary.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Vector.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Vector_ancillary.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Matrix.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Matrix.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\impl\DgMath_impl.h">
@@ -191,8 +140,65 @@
     <ClInclude Include="..\..\public\impl\DgRay_general.h">
       <Filter>Public Headers\impl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Line.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\public\DgR2Ray.h">
-      <Filter>Public Headers</Filter>
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Vector_ancillary.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Matrix.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Segment.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Vector.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3VQS.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Vector_ancillary.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Vector.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Sphere.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Segment.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Ray.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Quaternion.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Plane.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3OBB.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Matrix.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Line.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Frustum.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3GeometryTypes.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2GeometryTypes.h">
+      <Filter>Public Headers\R2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

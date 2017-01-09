@@ -9,7 +9,7 @@
 #define DGR3RAY_H
 
 #include "impl/DgRay_general.h"
-#include "DgGeometryTypesR3.h"
+#include "DgR3GeometryTypes.h"
 
 namespace Dg
 {

@@ -167,8 +167,8 @@
     <ClInclude Include="..\..\public\DgR3Vector_ancillary.h" />
     <ClInclude Include="..\..\public\DgR3VQS.h" />
     <ClInclude Include="..\..\public\DgR3Segment.h" />
-    <ClInclude Include="..\..\public\DgGeometryTypesR2.h" />
-    <ClInclude Include="..\..\public\DgGeometryTypesR3.h" />
+    <ClInclude Include="..\..\public\DgR2GeometryTypes.h" />
+    <ClInclude Include="..\..\public\DgR3GeometryTypes.h" />
     <ClInclude Include="..\..\public\impl\DgLine_general.h" />
     <ClInclude Include="..\..\public\impl\DgMath_impl.h" />
     <ClInclude Include="..\..\public\impl\DgRay_general.h" />
