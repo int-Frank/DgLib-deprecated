@@ -110,7 +110,7 @@ namespace Dg
     template<typename Real>
     class Quaternion
     {
-      friend class Matrix44<Real>;
+      friend class Matrix<Real>;
       friend class VQS<Real>;
 
     public:

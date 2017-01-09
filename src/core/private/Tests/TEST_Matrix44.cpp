@@ -1,14 +1,14 @@
 #include "TestHarness.h"
 #include "DgR3Quaternion.h"
-#include "DgR3Matrix44.h"
+#include "DgR3Matrix.h"
 #include "DgR3Vector.h"
 
-typedef Dg::R3::Matrix44< float >     mat44;
+typedef Dg::R3::Matrix< float >     mat44;
 typedef Dg::R3::Quaternion < float >  quat;
 typedef Dg::R3::Vector<float>        vec4;
 
 //--------------------------------------------------------------------------------
-//	Matrix44 Construction
+//	Matrix Construction
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
 {
@@ -69,7 +69,7 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
 
 
 //--------------------------------------------------------------------------------
-//	Matrix44 Inverse
+//	Matrix Inverse
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix44_Inverse, creation_Matrix44_Inverse)
 {
@@ -100,7 +100,7 @@ TEST(Stack_Matrix44_Inverse, creation_Matrix44_Inverse)
 }
 
 //--------------------------------------------------------------------------------
-//	Matrix44 Operations
+//	Matrix Operations
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix44_Operations, creation_Matrix44_Operations)
 {
@@ -168,7 +168,7 @@ TEST(Stack_Matrix44_Operations, creation_Matrix44_Operations)
 }
 
 //--------------------------------------------------------------------------------
-//	Matrix44 VectorTransform
+//	Matrix VectorTransform
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix44_VectorTransform, creation_Matrix44_VectorTransform)
 {
@@ -203,7 +203,7 @@ TEST(Stack_Matrix44_VectorTransform, creation_Matrix44_VectorTransform)
 }
 
 //--------------------------------------------------------------------------------
-//	Matrix44 Rotation
+//	Matrix Rotation
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
 {

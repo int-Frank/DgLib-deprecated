@@ -10,7 +10,7 @@
 
 #include "DgR3Vector.h"
 #include "DgR3Quaternion.h"
-#include "DgR3Matrix44.h"
+#include "DgR3Matrix.h"
 #include "DgMath.h"
 
 namespace Dg
@@ -78,7 +78,7 @@ namespace Dg
       void Identity();
 
       //! Set VQS based on an affine matrix
-      void Set(Matrix44<Real> const &);
+      void Set(Matrix<Real> const &);
 
       //! Set VQS from vector, quaternion and scalar
       //! Inputs are NOT validated
@@ -150,7 +150,7 @@ namespace Dg
       void Get(Vector<Real>& a_v, Quaternion<Real>& a_q, Real& a_s) const;
 
       //! Conversion to Matrix.
-      void GetMatrix(Matrix44<Real>&) const;
+      void GetMatrix(Matrix<Real>&) const;
 
       //! Access vector
       Vector<Real> const & V()	    const { return m_v; }
@@ -172,7 +172,7 @@ namespace Dg
     //	@	VQS<Real>::Set()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    void VQS<Real>::Set(Matrix44<Real> const & a_m)
+    void VQS<Real>::Set(Matrix<Real> const & a_m)
     {
       m_v.x() = a_m.m_V[12];
       m_v.y() = a_m.m_V[13];
@@ -539,7 +539,7 @@ namespace Dg
       //	@	VQS<Real>::Get()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    void VQS<Real>::GetMatrix(Matrix44<Real> & a_out) const
+    void VQS<Real>::GetMatrix(Matrix<Real> & a_out) const
     {
       a_out.Rotation(m_q);
       a_out.m_V[0] *= m_s;

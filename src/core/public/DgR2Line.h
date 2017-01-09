@@ -1,22 +1,22 @@
-//! @file DgR3Line.h
+//! @file DgR2Line.h
 //!
 //! @author: Frank B. Hart
 //! @date 29/05/2016
 //!
 //! Class declaration: Line
 
-#ifndef DGR3LINE_H
-#define DGR3LINE_H
+#ifndef DGR2LINE_H
+#define DGR2LINE_H
 
 #include "impl/DgLine_general.h"
-#include "DgGeometryTypesR3.h"
+#include "DgGeometryTypesR2.h"
 
 namespace Dg
 {
-  namespace R3
+  namespace R2
   {
     template<typename Real>
-    using Line = Dg::impl::Line_general<Real, 3>;
+    using Line = Dg::impl::Line_general<Real, 2>;
   }
 }
 #endif

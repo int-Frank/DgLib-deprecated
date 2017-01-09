@@ -8,7 +8,7 @@ typedef Dg::Matrix<4, 4, double >     mat44;
 typedef Dg::Matrix<3, 3, double >     mat33;
 
 //--------------------------------------------------------------------------------
-//	Matrix44 Construction
+//	Matrix Construction
 //--------------------------------------------------------------------------------
 TEST(Stack_DgMatrix_Construction, creation_DgMatrix_Construction)
 {
@@ -127,7 +127,7 @@ TEST(Stack_DgMatrix_Construction, creation_DgMatrix_Construction)
 }
 
 //--------------------------------------------------------------------------------
-//	Matrix44 Methods
+//	Matrix Methods
 //--------------------------------------------------------------------------------
 TEST(Stack_DgMatrix_Methods, creation_DgMatrix_Methods)
 {

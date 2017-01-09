@@ -19,6 +19,9 @@
     <Filter Include="Public Headers\Query">
       <UniqueIdentifier>{34dd14d9-e48d-4266-adc0-d8b912b5e78c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public Headers\impl">
+      <UniqueIdentifier>{45779bfd-869b-469f-9d46-7acb99ca5ffd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgRNG.cpp">
@@ -44,16 +47,10 @@
     <ClInclude Include="..\..\public\DgFixedPoint.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgMath_impl.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgR3Frustum.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgR3Line.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Matrix44.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgR3OBB.h">
@@ -158,9 +155,6 @@
     <ClInclude Include="..\..\public\DgR2Segment.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgSegment_general.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgGeometryTypesR2.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -180,6 +174,24 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgR2Matrix.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Matrix.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgMath_impl.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgSegment_general.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgLine_general.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgRay_general.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Ray.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>

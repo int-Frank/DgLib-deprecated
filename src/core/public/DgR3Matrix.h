@@ -1,9 +1,9 @@
-//! @file DgR3Matrix44.h
+//! @file DgR3Matrix.h
 //!
 //! @author: James M. Van Verth, Lars M. Bishop, Frank B. Hart
 //! @date 4/10/2015
 //!
-//! Class declaration: Matrix44
+//! Class declaration: Dg::Matrix
 
 #ifndef DGR3MATRIX44_H
 #define DGR3MATRIX44_H
@@ -14,21 +14,21 @@
 #include "DgR3Quaternion.h"
 
 //--------------------------------------------------------------------------------
-//	@	Matrix44
+//	@	Matrix
 //--------------------------------------------------------------------------------
 namespace Dg
 {
   namespace R3
   {
-    template<typename Real> class Matrix44;
+    template<typename Real> class Matrix;
 
   //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
   template<typename Real>
-  Matrix44<Real> AffineInverse(Matrix44<Real> const &);
+  Matrix<Real> AffineInverse(Matrix<Real> const &);
 
   //! @ingroup DgMath_types
   //!
-  //! @class Matrix44
+  //! @class Matrix
   //!
   //! @brief 4 by 4 matrix calss.
   //!
@@ -41,7 +41,7 @@ namespace Dg
   //!                [z.x z.y z.z 0]
   //!                [p.x p.y p.z 1]
   //!
-  //! Matrix concatenation uses left-to-right convention. For example the follow lines are equivalent
+  //! Dg::Matrix concatenation uses left-to-right convention. For example the follow lines are equivalent
   //!
   //!     m_final = m_0 * m_1 * m_2 ... * m_n;
   //!     m_final = ( ... ((m_0 * m_1) * m_2) ... * m_n);
@@ -49,36 +49,36 @@ namespace Dg
   //! @author James M. Van Verth, Lars M. Bishop, modified by Frank B. Hart
   //! @date 4/10/2015
   template<typename Real>
-  class Matrix44 : public Matrix < 4, 4, Real >
+  class Matrix : public Dg::Matrix < 4, 4, Real >
   {
     friend class Quaternion<Real>;
     friend class VQS < Real >;
   public:
     //! Default constructor, initialized to identity matrix.
-    Matrix44() { Identity(); }
-    ~Matrix44() {}
+    Matrix() { Identity(); }
+    ~Matrix() {}
 
     //! Copy Constructor
-    Matrix44(Matrix < 4, 4, Real > const & a_other) : Matrix<4, 4, Real>(a_other){}
+    Matrix(Dg::Matrix < 4, 4, Real > const & a_other) : Dg::Matrix<4, 4, Real>(a_other){}
     
     //! Assignment
-    Matrix44& operator=(Matrix < 4, 4, Real > const &);
+    Matrix& operator=(Dg::Matrix < 4, 4, Real > const &);
 
     //! Set matrix by rows
-    void SetRows(Matrix<1, 4, Real> const & row0, Matrix<1, 4, Real> const & row1,
-                 Matrix<1, 4, Real> const & row2, Matrix<1, 4, Real> const & row3);
+    void SetRows(Dg::Matrix<1, 4, Real> const & row0, Dg::Matrix<1, 4, Real> const & row1,
+                 Dg::Matrix<1, 4, Real> const & row2, Dg::Matrix<1, 4, Real> const & row3);
 
     //! Get rows of the matrix
-    void GetRows(Matrix<1, 4, Real>& row0, Matrix<1, 4, Real>& row1,
-                 Matrix<1, 4, Real>& row2, Matrix<1, 4, Real>& row3) const;
+    void GetRows(Dg::Matrix<1, 4, Real>& row0, Dg::Matrix<1, 4, Real>& row1,
+                 Dg::Matrix<1, 4, Real>& row2, Dg::Matrix<1, 4, Real>& row3) const;
 
     //! Set matrix by columns
-    void SetColumns(Matrix<4, 1, Real> const & col0, Matrix<4, 1, Real> const & col1,
-                    Matrix<4, 1, Real> const & col2, Matrix<4, 1, Real> const & col3);
+    void SetColumns(Dg::Matrix<4, 1, Real> const & col0, Dg::Matrix<4, 1, Real> const & col1,
+                    Dg::Matrix<4, 1, Real> const & col2, Dg::Matrix<4, 1, Real> const & col3);
 
     //! Get matrix columns
-    void GetColumns(Matrix<4, 1, Real>& col0, Matrix<4, 1, Real>& col1,
-                    Matrix<4, 1, Real>& col2, Matrix<4, 1, Real>& col3) const;
+    void GetColumns(Dg::Matrix<4, 1, Real>& col0, Dg::Matrix<4, 1, Real>& col1,
+                    Dg::Matrix<4, 1, Real>& col2, Dg::Matrix<4, 1, Real>& col3) const;
 
     //! Get quaternion from the upper 3x3 rotation matrix.
     //! @pre The upper 3x3 is a rotation matrix.
@@ -91,124 +91,124 @@ namespace Dg
     void GetQuaternion(Quaternion<Real>&) const;
 
     //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
-    Matrix44& AffineInverse();
+    Matrix& AffineInverse();
 
     //! Set self to matrix inverse, assuming a standard affine matrix (bottom row is 0 0 0 1).
-    friend Matrix44 Dg::R3::AffineInverse(Matrix44<Real> const &);
+    friend Matrix Dg::R3::AffineInverse(Matrix<Real> const &);
 
     //! Set as translation matrix based on vector
-    Matrix44& Translation(Matrix<1, 4, Real> const &);
+    Matrix& Translation(Dg::Matrix<1, 4, Real> const &);
 
     //! Sets the matrix to a rotation matrix (by Euler angles).
-    Matrix44& Rotation(Real xRotation, Real yRotation, Real zRotation, EulerOrder);
+    Matrix& Rotation(Real xRotation, Real yRotation, Real zRotation, EulerOrder);
 
     //! Sets the matrix to a rotation matrix (by axis and angle).
-    Matrix44& Rotation(Matrix<1, 4, Real> const & axis, Real angle);
+    Matrix& Rotation(Dg::Matrix<1, 4, Real> const & axis, Real angle);
 
     //! Set as rotation matrix based on quaternion.
-    Matrix44& Rotation(Quaternion<Real> const &);
+    Matrix& Rotation(Quaternion<Real> const &);
 
     //! Set as scaling matrix based on vector.
-    Matrix44& Scaling(Matrix<1, 4, Real> const &);
+    Matrix& Scaling(Dg::Matrix<1, 4, Real> const &);
 
     //! Uniform scaling.
-    Matrix44& Scaling(Real);
+    Matrix& Scaling(Real);
 
     //! Set as rotation matrix, rotating by 'angle' radians around x-axis.
-    Matrix44& RotationX(Real);
+    Matrix& RotationX(Real);
 
     //! Set as rotation matrix, rotating by 'angle' radians around y-axis.
-    Matrix44& RotationY(Real);
+    Matrix& RotationY(Real);
 
     //! Set as rotation matrix, rotating by 'angle' radians around z-axis.
-    Matrix44& RotationZ(Real);
+    Matrix& RotationZ(Real);
 
     //! Set the matrix to look at a point in space
-    Matrix44& LookAt(Vector<Real> const & origin
+    Matrix& LookAt(Vector<Real> const & origin
                    , Vector<Real> const & target
                    , Vector<Real> const & up);
 
     //! Set a perspective transformation matrix
-    Matrix44& Perspective(Real a_fov, 
+    Matrix& Perspective(Real a_fov, 
                           Real a_ar, 
                           Real a_near, 
                           Real a_far);
   };
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix44::operator=()
+  //	@	Matrix::operator=()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::operator=(Matrix < 4, 4, Real > const & a_other)
+  Matrix<Real>& Matrix<Real>::operator=(Dg::Matrix < 4, 4, Real > const & a_other)
   {
-    Matrix<4, 4, Real>::operator=(a_other);
+    Dg::Matrix<4, 4, Real>::operator=(a_other);
     return *this;
   }
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix44::SetRows()
+  //	@	Matrix::SetRows()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void Matrix44<Real>::SetRows(Matrix<1, 4, Real> const & a_row0, Matrix<1, 4, Real> const & a_row1,
-                               Matrix<1, 4, Real> const & a_row2, Matrix<1, 4, Real> const & a_row3)
+  void Matrix<Real>::SetRows(Dg::Matrix<1, 4, Real> const & a_row0, Dg::Matrix<1, 4, Real> const & a_row1,
+                               Dg::Matrix<1, 4, Real> const & a_row2, Dg::Matrix<1, 4, Real> const & a_row3)
   {
     SetRow(0, a_row0);
     SetRow(1, a_row1);
     SetRow(2, a_row2);
     SetRow(3, a_row3);
 
-  }	//End: Matrix44::SetRows()
+  }	//End: Matrix::SetRows()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix44::GetRows()
+  //	@	Matrix::GetRows()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void Matrix44<Real>::GetRows(Matrix<1, 4, Real>& a_row0, Matrix<1, 4, Real>& a_row1,
-                               Matrix<1, 4, Real>& a_row2, Matrix<1, 4, Real>& a_row3) const
+  void Matrix<Real>::GetRows(Dg::Matrix<1, 4, Real>& a_row0, Dg::Matrix<1, 4, Real>& a_row1,
+                               Dg::Matrix<1, 4, Real>& a_row2, Dg::Matrix<1, 4, Real>& a_row3) const
   {
     GetRow(0, a_row0);
     GetRow(1, a_row1);
     GetRow(2, a_row2);
     GetRow(3, a_row3);
-  }	//End: Matrix44::GetRows()
+  }	//End: Matrix::GetRows()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix44::SetColumns()
+  //	@	Matrix::SetColumns()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void Matrix44<Real>::SetColumns(Matrix<4, 1, Real> const & a_col0, Matrix<4, 1, Real> const & a_col1,
-                                  Matrix<4, 1, Real> const & a_col2, Matrix<4, 1, Real> const & a_col3)
+  void Matrix<Real>::SetColumns(Dg::Matrix<4, 1, Real> const & a_col0, Dg::Matrix<4, 1, Real> const & a_col1,
+                                  Dg::Matrix<4, 1, Real> const & a_col2, Dg::Matrix<4, 1, Real> const & a_col3)
   {
     SetColumn(0, a_col0);
     SetColumn(1, a_col1);
     SetColumn(2, a_col2);
     SetColumn(3, a_col3);
 
-  }	//End: Matrix44::SetColumns()
+  }	//End: Matrix::SetColumns()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix44::GetColumns()
+  //	@	Matrix::GetColumns()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  void Matrix44<Real>::GetColumns(Matrix<4, 1, Real>& a_col0, Matrix<4, 1, Real>& a_col1,
-                                  Matrix<4, 1, Real>& a_col2, Matrix<4, 1, Real>& a_col3) const
+  void Matrix<Real>::GetColumns(Dg::Matrix<4, 1, Real>& a_col0, Dg::Matrix<4, 1, Real>& a_col1,
+                                  Dg::Matrix<4, 1, Real>& a_col2, Dg::Matrix<4, 1, Real>& a_col3) const
   {
     GetColumn(0, a_col0);
     GetColumn(1, a_col1);
     GetColumn(2, a_col2);
     GetColumn(3, a_col3);
 
-  }	//End: Matrix44::GetColumns()
+  }	//End: Matrix::GetColumns()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44<Real>::GetQuaternion()
+  //	@	Matrix<Real>::GetQuaternion()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Quaternion<Real> Matrix44<Real>::GetQuaternion() const
+  Quaternion<Real> Matrix<Real>::GetQuaternion() const
   {
     Quaternion<Real> q;
 
@@ -244,29 +244,29 @@ namespace Dg
     }
 
     return q;
-  }   // End of Matrix44<Real>::GetQuaternion()
+  }   // End of Matrix<Real>::GetQuaternion()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix44::AffineInverse()
+  //	@	Matrix::AffineInverse()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::AffineInverse()
+  Matrix<Real>& Matrix<Real>::AffineInverse()
   {
     *this = Dg::AffineInverse(*this);
 
     return *this;
 
-  }	//End: Matrix44::AffineInverse
+  }	//End: Matrix::AffineInverse
 
 
   //--------------------------------------------------------------------------------
   //	@	AffineInverse()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real> AffineInverse(Matrix44<Real> const & a_mat)
+  Matrix<Real> AffineInverse(Matrix<Real> const & a_mat)
   {
-    Matrix44<Real> result;
+    Matrix<Real> result;
 
     //compute upper left 3x3 matrix determinant
     Real cofactor0 = a_mat.m_V[5] * a_mat.m_V[10] - a_mat.m_V[9] * a_mat.m_V[6];
@@ -304,10 +304,10 @@ namespace Dg
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44::Translation()
+  //	@	Matrix::Translation()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::Translation(Matrix<1, 4, Real> const & a_xlate)
+  Matrix<Real>& Matrix<Real>::Translation(Dg::Matrix<1, 4, Real> const & a_xlate)
   {
     m_V[0] = static_cast<Real>(1.0);
     m_V[1] = static_cast<Real>(0.0);
@@ -328,14 +328,14 @@ namespace Dg
 
     return *this;
 
-  }   // End: Matrix44::Translation()
+  }   // End: Matrix::Translation()
 
 
   //----------------------------------------------------------------------------
-  //	@	Matrix44::Rotation()
+  //	@	Matrix::Rotation()
   //----------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::Rotation(Real a_xRotation,
+  Matrix<Real>& Matrix<Real>::Rotation(Real a_xRotation,
                                            Real a_yRotation,
                                            Real a_zRotation,
                                            EulerOrder a_order)
@@ -539,14 +539,14 @@ namespace Dg
 
     return *this;
 
-  }  // End: Matrix44::Rotation()
+  }  // End: Matrix::Rotation()
 
 
   //----------------------------------------------------------------------------
-  //	@	Matrix44::Rotation()
+  //	@	Matrix::Rotation()
   //----------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::Rotation(Matrix<1, 4, Real> const & a_axis, Real a_angle)
+  Matrix<Real>& Matrix<Real>::Rotation(Dg::Matrix<1, 4, Real> const & a_axis, Real a_angle)
   {
     Real cs = cos(a_angle);
     Real sn = sin(a_angle);
@@ -575,14 +575,14 @@ namespace Dg
     m_V[15] = static_cast<Real>(1.0);
     return *this;
 
-  }  // End: Matrix44::Rotation()
+  }  // End: Matrix::Rotation()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44::Rotation()
+  //	@	Matrix::Rotation()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::Rotation(Quaternion<Real> const & a_rotate)
+  Matrix<Real>& Matrix<Real>::Rotation(Quaternion<Real> const & a_rotate)
   {
     //assert(a_rotate.IsUnit());
 
@@ -620,14 +620,14 @@ namespace Dg
 
     return *this;
 
-  }   // End of Matrix44::Rotation()
+  }   // End of Matrix::Rotation()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44::Scaling()
+  //	@	Matrix::Scaling()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::Scaling(Matrix<1, 4, Real> const & a_scaleFactors)
+  Matrix<Real>& Matrix<Real>::Scaling(Dg::Matrix<1, 4, Real> const & a_scaleFactors)
   {
     m_V[0] = a_scaleFactors.m_V[0];
     m_V[1] = static_cast<Real>(0.0);
@@ -648,14 +648,14 @@ namespace Dg
 
     return *this;
 
-  }   // End: Matrix44::Scaling()
+  }   // End: Matrix::Scaling()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44::Scaling()
+  //	@	Matrix::Scaling()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::Scaling(Real a_val)
+  Matrix<Real>& Matrix<Real>::Scaling(Real a_val)
   {
     m_V[0] = a_val;
     m_V[1] = static_cast<Real>(0.0);
@@ -676,14 +676,14 @@ namespace Dg
 
     return *this;
 
-  }   // End: Matrix44::Scaling()
+  }   // End: Matrix::Scaling()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44::RotationX()
+  //	@	Matrix::RotationX()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::RotationX(Real a_angle)
+  Matrix<Real>& Matrix<Real>::RotationX(Real a_angle)
   {
     Real sintheta = Real(sin(a_angle));
     Real costheta = Real(cos(a_angle));
@@ -707,14 +707,14 @@ namespace Dg
 
     return *this;
 
-  }   // End: Matrix44::RotationX()
+  }   // End: Matrix::RotationX()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44::RotationY()
+  //	@	Matrix::RotationY()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::RotationY(Real a_angle)
+  Matrix<Real>& Matrix<Real>::RotationY(Real a_angle)
   {
     Real sintheta = Real(sin(a_angle));
     Real costheta = Real(cos(a_angle));
@@ -738,14 +738,14 @@ namespace Dg
 
     return *this;
 
-  }   // End: Matrix44::RotationY()
+  }   // End: Matrix::RotationY()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44::RotationZ()
+  //	@	Matrix::RotationZ()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::RotationZ(Real a_angle)
+  Matrix<Real>& Matrix<Real>::RotationZ(Real a_angle)
   {
     Real sintheta = Real(sin(a_angle));
     Real costheta = Real(cos(a_angle));
@@ -769,14 +769,14 @@ namespace Dg
 
     return *this;
 
-  }   // End: Matrix44::RotationZ()
+  }   // End: Matrix::RotationZ()
 
 
   //-------------------------------------------------------------------------------
-  //	@	Matrix44::LookAt()
+  //	@	Matrix::LookAt()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::LookAt(Vector<Real> const & a_origin
+  Matrix<Real>& Matrix<Real>::LookAt(Vector<Real> const & a_origin
                                        , Vector<Real> const & a_target
                                        , Vector<Real> const & a_up)
   {
@@ -798,14 +798,14 @@ namespace Dg
 
     return *this;
 
-  }   // End: Matrix44::LookAt()
+  }   // End: Matrix::LookAt()
 
 
   //--------------------------------------------------------------------------------
-  //	@	Matrix44::Perspective()
+  //	@	Matrix::Perspective()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::Perspective(Real a_fov,
+  Matrix<Real>& Matrix<Real>::Perspective(Real a_fov,
                                               Real a_ar,
                                               Real a_near,
                                               Real a_far)
@@ -833,14 +833,14 @@ namespace Dg
     m_V[15] = static_cast<Real>(0.0);
 
     return *this;
-  }	//End: Matrix44::Perspective()
+  }	//End: Matrix::Perspective()
 
 
   //----------------------------------------------------------------------------
-  //	@	Matrix44::GetQuaternion()
+  //	@	Matrix::GetQuaternion()
   // ---------------------------------------------------------------------------
   template<typename Real>
-  void Matrix44<Real>::GetQuaternion(Quaternion<Real>& a_out) const
+  void Matrix<Real>::GetQuaternion(Quaternion<Real>& a_out) const
   {
     //Get trace
     Real tr = m_V[0] + m_V[5] + m_V[10];
@@ -872,7 +872,7 @@ namespace Dg
       a_out.m_y = (m_V[9] + m_V[6]) / S;
       a_out.m_z = static_cast<Real>(0.25) * S;
     }
-  } // End: Matrix44::GetQuaternion()
+  } // End: Matrix::GetQuaternion()
   }
 }
 #endif

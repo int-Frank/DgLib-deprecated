@@ -1,22 +1,22 @@
-//! @file DgR3Ray.h
+//! @file DgR2Ray.h
 //!
 //! @author: Frank B. Hart
 //! @date 29/05/2016
 //!
 //! Class declaration: Ray
 
-#ifndef DGR3RAY_H
-#define DGR3RAY_H
+#ifndef DGR2RAY_H
+#define DGR2RAY_H
 
 #include "impl/DgRay_general.h"
-#include "DgGeometryTypesR3.h"
+#include "DgGeometryTypesR2.h"
 
 namespace Dg
 {
-  namespace R3
+  namespace R2
   {
     template<typename Real>
-    using Ray = Dg::impl::Ray_general<Real, 3>;
+    using Ray = Dg::impl::Ray_general<Real, 2>;
   }
 }
 #endif

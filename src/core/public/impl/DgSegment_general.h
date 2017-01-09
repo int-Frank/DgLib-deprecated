@@ -5,8 +5,8 @@
 //!
 //! Class declaration: Segment_general
 
-#ifndef DGR2SEGMENT2D_H
-#define DGR2SEGMENT2D_H
+#ifndef DGSEGMENT_GENERAL_H
+#define DGSEGMENT_GENERAL_H
 
 #include "DgGeometryTypes.h"
 #include "dgmath.h"

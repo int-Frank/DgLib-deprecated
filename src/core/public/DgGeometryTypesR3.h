@@ -5,7 +5,7 @@
 
 #include "DgGeometryTypes.h"
 #include "DgR3Vector.h"
-#include "DgR3Matrix44.h"
+#include "DgR3Matrix.h"
 #include "DgR3VQS.h"
 
 namespace Dg
@@ -14,7 +14,7 @@ namespace Dg
   struct GeometryTypes<Real, 3>
   {
     typedef R3::Vector<Real>   vec;
-    typedef R3::Matrix44<Real>  matrix;
+    typedef R3::Matrix<Real>  matrix;
     typedef R3::VQS<Real>       vqs;
   };
 }

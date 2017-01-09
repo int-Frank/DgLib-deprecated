@@ -6,7 +6,7 @@ typedef Dg::R2::Matrix< float >     mat33;
 typedef Dg::R2::Vector<float>        vec3;
 
 //--------------------------------------------------------------------------------
-//	Matrix44 Construction
+//	Matrix Construction
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix33_Construction, creation_Matrix33_Construction)
 {
@@ -61,7 +61,7 @@ TEST(Stack_Matrix33_Construction, creation_Matrix33_Construction)
 
 
 //--------------------------------------------------------------------------------
-//	Matrix44 Inverse
+//	Matrix Inverse
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix33_Inverse, creation_Matrix33_Inverse)
 {
@@ -93,7 +93,7 @@ TEST(Stack_Matrix33_Inverse, creation_Matrix33_Inverse)
 
 
 //--------------------------------------------------------------------------------
-//	Matrix44 VectorTransform
+//	Matrix VectorTransform
 //--------------------------------------------------------------------------------
 TEST(Stack_Matrix33_VectorTransform, creation_Matrix33_VectorTransform)
 {

@@ -3,7 +3,7 @@
 //! @author: Frank B. Hart
 //! @date 29/05/2016
 //!
-//! Class declaration: Segment_general
+//! Class declaration: Segment
 
 #ifndef DGR2SEGMENT_H
 #define DGR2SEGMENT_H

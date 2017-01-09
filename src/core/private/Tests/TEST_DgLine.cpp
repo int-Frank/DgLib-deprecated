@@ -7,7 +7,7 @@
 typedef double                          Real;
 typedef Dg::R3::Vector<Real>               vec;
 typedef Dg::R3::Plane<Real>                 plane;
-typedef Dg::R3::Matrix44<Real>              mat44;
+typedef Dg::R3::Matrix<Real>              mat44;
 typedef Dg::R3::VQS<Real>                   vqs;
 typedef Dg::R3::Quaternion<Real>            quat;
 typedef Dg::R3::Line<Real>                  line;

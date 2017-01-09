@@ -148,13 +148,14 @@
     <ClInclude Include="..\..\public\DgFixedPoint.h" />
     <ClInclude Include="..\..\public\DgGeometryTypes.h" />
     <ClInclude Include="..\..\public\DgR2Line.h" />
+    <ClInclude Include="..\..\public\DgR2Ray.h" />
     <ClInclude Include="..\..\public\DgR2Vector_ancillary.h" />
     <ClInclude Include="..\..\public\DgR3Frustum.h" />
     <ClInclude Include="..\..\public\DgR3Line.h" />
     <ClInclude Include="..\..\public\DgMath.h" />
     <ClInclude Include="..\..\public\DgMatrix.h" />
     <ClInclude Include="..\..\public\DgR2Matrix.h" />
-    <ClInclude Include="..\..\public\DgR3Matrix44.h" />
+    <ClInclude Include="..\..\public\DgR3Matrix.h" />
     <ClInclude Include="..\..\public\DgR3OBB.h" />
     <ClInclude Include="..\..\public\DgR3Plane.h" />
     <ClInclude Include="..\..\public\DgR3Quaternion.h" />
@@ -168,7 +169,9 @@
     <ClInclude Include="..\..\public\DgR3Segment.h" />
     <ClInclude Include="..\..\public\DgGeometryTypesR2.h" />
     <ClInclude Include="..\..\public\DgGeometryTypesR3.h" />
+    <ClInclude Include="..\..\public\impl\DgLine_general.h" />
     <ClInclude Include="..\..\public\impl\DgMath_impl.h" />
+    <ClInclude Include="..\..\public\impl\DgRay_general.h" />
     <ClInclude Include="..\..\public\impl\DgSegment_general.h" />
     <ClInclude Include="..\..\public\query\DgQueryCommon.h" />
     <ClInclude Include="..\..\public\query\DgR2CPQuery.h" />

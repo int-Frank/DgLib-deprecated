@@ -16,7 +16,7 @@ namespace Dg
   namespace R3
   {
     template<typename Real> class Vector;
-    template<typename Real> class Matrix44;
+    template<typename Real> class Matrix;
     template<typename Real> class Plane;
     template<typename Real> class Quaternion;
     template<typename Real> class VQS;
@@ -62,10 +62,10 @@ namespace Dg
     //! @author Frank Hart
     //! @date 4/10/2015
     template<typename Real>
-    class Vector : public Matrix<1, 4, Real>
+    class Vector : public Dg::Matrix<1, 4, Real>
     {
       friend class Plane<Real>;
-      friend class Matrix44<Real>;
+      friend class Matrix<Real>;
       friend class Quaternion<Real>;
       friend class VQS<Real>;
 
@@ -79,10 +79,10 @@ namespace Dg
       ~Vector() {}
 
       //! Copy constructor
-      Vector(Matrix<1, 4, Real> const & a_other) : Matrix<1, 4, Real>(a_other) {}
+      Vector(Dg::Matrix<1, 4, Real> const & a_other) : Dg::Matrix<1, 4, Real>(a_other) {}
 
       //! Assignment
-      Vector& operator=(Matrix<1, 4, Real> const &);
+      Vector& operator=(Dg::Matrix<1, 4, Real> const &);
 
       //! Determines if the vector is the unit vector within some tolerance.
       bool IsUnit() const;
@@ -233,7 +233,7 @@ namespace Dg
         //	@	Vector::operator=()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    Vector<Real>& Vector<Real>::operator=(Matrix<1, 4, Real> const & a_other)
+    Vector<Real>& Vector<Real>::operator=(Dg::Matrix<1, 4, Real> const & a_other)
     {
       Matrix<1, 4, Real>::operator=(a_other);
       return *this;
