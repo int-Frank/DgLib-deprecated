@@ -149,7 +149,6 @@
     <ClInclude Include="..\..\public\DgR2Vector3_ancillary.h" />
     <ClInclude Include="..\..\public\DgR3Frustum.h" />
     <ClInclude Include="..\..\public\DgR3Line.h" />
-    <ClInclude Include="..\..\public\DgR2Line.h" />
     <ClInclude Include="..\..\public\DgMath.h" />
     <ClInclude Include="..\..\public\DgMatrix.h" />
     <ClInclude Include="..\..\public\DgR2Matrix33.h" />
@@ -158,7 +157,6 @@
     <ClInclude Include="..\..\public\DgR3Plane.h" />
     <ClInclude Include="..\..\public\DgR3Quaternion.h" />
     <ClInclude Include="..\..\public\DgR3Ray.h" />
-    <ClInclude Include="..\..\public\DgR2Ray.h" />
     <ClInclude Include="..\..\public\DgRNG.h" />
     <ClInclude Include="..\..\public\DgR3Sphere.h" />
     <ClInclude Include="..\..\public\DgR2Vector3.h" />

@@ -53,9 +53,6 @@
     <ClInclude Include="..\..\public\DgR3Line.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Line.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgR2Matrix33.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -72,9 +69,6 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgR3Ray.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Ray.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgR3Segment.h">

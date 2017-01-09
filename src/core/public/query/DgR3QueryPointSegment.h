@@ -1,4 +1,4 @@
-//! @file DgR3QueryPointSegment.h
+//! @file DgR2QueryPointSegment.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
