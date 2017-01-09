@@ -21,6 +21,15 @@ namespace Dg
     class Vector4;
   }
 
+  namespace R2
+  {
+    template<typename Real>
+    class Matrix33;
+
+    template<typename Real>
+    class Vector3;
+  }
+
   template<size_t M, size_t N, typename Real> class Matrix;
 
   //! Compute the transpose matrix.
@@ -69,6 +78,8 @@ namespace Dg
     template<size_t _M, size_t _N, typename Real> friend class Matrix;
     template<typename Real> friend class R3::Matrix44;
     template<typename Real> friend class R3::Vector4;
+    template<typename Real> friend class R2::Matrix33;
+    template<typename Real> friend class R2::Vector3;
 
   public:
     //! Default constructor. Elements ore not initialised.
