@@ -32,10 +32,10 @@ namespace Dg
         Real us;
 
         //! Closest point on ray to the line segment
-        Vector4<Real> cpr;
+        Vector<Real> cpr;
 
         //! Closest point on line segment to the ray
-        Vector4<Real> cps;
+        Vector<Real> cps;
 
         //! Return code. Codes include:
         //! Success, Parallel
@@ -62,13 +62,13 @@ namespace Dg
       Result result;
       result.code = QueryCode::Success;
 
-      Vector4<Real> os(a_seg.Origin());
-      Vector4<Real> or (a_ray.Origin());
-      Vector4<Real> ds(a_seg.Direction());
-      Vector4<Real> dr(a_ray.Direction());
+      Vector<Real> os(a_seg.Origin());
+      Vector<Real> or (a_ray.Origin());
+      Vector<Real> ds(a_seg.Direction());
+      Vector<Real> dr(a_ray.Direction());
 
       //compute intermediate parameters
-      Vector4<Real> w0(os - or );
+      Vector<Real> w0(os - or );
       Real a = ds.Dot(ds);
       Real b = ds.Dot(dr);
       Real c = ds.Dot(w0);
@@ -86,7 +86,7 @@ namespace Dg
         tn = d;
 
         //Does the live segment overlap the ray?
-        Vector4<Real> w1((os + ds) - or );
+        Vector<Real> w1((os + ds) - or );
         if (!(d < static_cast<Real>(0.0) &&
           w1.Dot(dr) < static_cast<Real>(0.0)))
         {

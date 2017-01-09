@@ -31,10 +31,10 @@ namespace Dg
         Real u1;
 
         //! Closest point on line 0 to line 1
-        Vector4<Real> cp0;
+        Vector<Real> cp0;
 
         //! Closest point on line 1 to line 0
-        Vector4<Real> cp1;
+        Vector<Real> cp1;
 
         //! Return codes include:
         //! Success, Parallel
@@ -60,13 +60,13 @@ namespace Dg
     {
       Result result;
 
-      Vector4<Real> o0(a_line0.Origin());
-      Vector4<Real> o1(a_line1.Origin());
-      Vector4<Real> d0(a_line0.Direction());
-      Vector4<Real> d1(a_line1.Direction());
+      Vector<Real> o0(a_line0.Origin());
+      Vector<Real> o1(a_line1.Origin());
+      Vector<Real> d0(a_line0.Direction());
+      Vector<Real> d1(a_line1.Direction());
 
       //compute intermediate parameters
-      Vector4<Real> w0(o0 - o1);
+      Vector<Real> w0(o0 - o1);
       Real a = d0.Dot(d1);
       Real b = d0.Dot(w0);
       Real c = d1.Dot(w0);

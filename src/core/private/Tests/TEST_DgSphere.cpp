@@ -3,7 +3,7 @@
 #include "query/DgR3QueryLineSphere.h"
 
 typedef double                  Real;
-typedef Dg::R3::Vector4<Real>       vec;
+typedef Dg::R3::Vector<Real>       vec;
 typedef Dg::R3::Line<Real>          line;
 typedef Dg::R3::Sphere<Real>        sphere;
 

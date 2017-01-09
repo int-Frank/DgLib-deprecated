@@ -8,7 +8,7 @@
 #ifndef DGR3FRUSTUM_H
 #define DGR3FRUSTUM_H
 
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 #include "DgR3Plane.h"
 #include "DgR3Sphere.h"
 #include "DgR3VQS.h"
@@ -24,8 +24,8 @@ namespace Dg
     struct FrustumData
     {
       Plane<Real>            planes[6];    //[t, b, f, n, l, r]
-      Vector4<Real>          origin;
-      Vector4<Real>          basis[3];     //[f, l, u]
+      Vector<Real>          origin;
+      Vector<Real>          basis[3];     //[f, l, u]
     };
 
 
@@ -43,17 +43,17 @@ namespace Dg
     public:
       //! Default constructor.
       Frustum()
-        : m_basis{ Vector4<Real>::xAxis(), Vector4<Real>::yAxis(), Vector4<Real>::zAxis() }
-        , m_origin(Vector4<Real>::Origin())
+        : m_basis{ Vector<Real>::xAxis(), Vector<Real>::yAxis(), Vector<Real>::zAxis() }
+        , m_origin(Vector<Real>::Origin())
         , m_near(static_cast<Real>(0.1))
         , m_far(static_cast<Real>(100.0))
         , m_nearHalfLengths{ static_cast<Real>(1.0), static_cast<Real>(1.0) }
       {}
 
-      Frustum(Vector4<Real> const & forward
-        , Vector4<Real> const & left
-        , Vector4<Real> const & up
-        , Vector4<Real> const & origin
+      Frustum(Vector<Real> const & forward
+        , Vector<Real> const & left
+        , Vector<Real> const & up
+        , Vector<Real> const & origin
         , Real nearL, Real farL, Real verL, Real horL)
         : m_basis{ forward, left, up }
         , m_nearHalfLengths{ verL, farL }
@@ -151,8 +151,8 @@ namespace Dg
       }
 
     private:
-      Vector4<Real>       m_basis[3];           //[f, l, u]
-      Vector4<Real>       m_origin;
+      Vector<Real>       m_basis[3];           //[f, l, u]
+      Vector<Real>       m_origin;
       Real                m_near;
       Real                m_far;
       Real                m_nearHalfLengths[2]; //[vertical, horizontal]

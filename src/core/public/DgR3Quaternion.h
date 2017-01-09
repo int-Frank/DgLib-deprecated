@@ -9,13 +9,13 @@
 #define DGR3QUATERNION_H
 
 #include "DgMath.h"
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 
 namespace Dg
 {
   namespace R3
   {
-    template<typename Real> class Vector4;
+    template<typename Real> class Vector;
     template<typename Real> class Quaternion;
     template<typename Real> class VQS;
 
@@ -125,13 +125,13 @@ namespace Dg
       ~Quaternion() {}
 
       //! Construct quaternion based on axis-angle.
-      Quaternion(const Vector4<Real>& axis, Real angle);
+      Quaternion(const Vector<Real>& axis, Real angle);
 
       //! Construct quaternion based on start and end vectors.
-      Quaternion(const Vector4<Real>& from, const Vector4<Real>& to);
+      Quaternion(const Vector<Real>& from, const Vector<Real>& to);
 
       //! Construct quaternion from vector elements.
-      explicit Quaternion(const Vector4<Real>&);
+      explicit Quaternion(const Vector<Real>&);
 
       //! Copy constructor
       Quaternion(Quaternion const &);
@@ -182,21 +182,21 @@ namespace Dg
       void SetRotation(Real rx, Real ry, Real rz, EulerOrder);
 
       //! Set quaternion based on axis-angle.
-      void Set(const Vector4<Real>& axis, Real angle);
+      void Set(const Vector<Real>& axis, Real angle);
 
       //! Set quaternion based on start and end vectors.
-      void Set(const Vector4<Real>& from, const Vector4<Real>& to);
+      void Set(const Vector<Real>& from, const Vector<Real>& to);
 
       //! Ensures quaternion is a valid rotational quaternion.
       void MakeValid();
 
       //! Get axis-angle based on quaternion.
-      void GetAxisAngle(Vector4<Real>& axis, Real& angle);
+      void GetAxisAngle(Vector<Real>& axis, Real& angle);
 
       //! Get the set of basis vectors associated with the quaternion
-      void GetBasis(Vector4<Real>& a_x0,
-        Vector4<Real>& a_x1,
-        Vector4<Real>& a_x2) const;
+      void GetBasis(Vector<Real>& a_x0,
+        Vector<Real>& a_x1,
+        Vector<Real>& a_x2) const;
 
       //! Sets near-zero elements to 0.
       void Clean();
@@ -256,11 +256,11 @@ namespace Dg
       //! @pre Quaternion is normalized.
       //!
       //! @return Rotated vector
-      Vector4<Real> Rotate(const Vector4<Real>&) const;
+      Vector<Real> Rotate(const Vector<Real>&) const;
 
       //! Vector rotation. 
       //! @pre Quaternion is normalized.
-      void RotateSelf(Vector4<Real>&) const;
+      void RotateSelf(Vector<Real>&) const;
 
       //! Linearly interpolate two quaternions.
       //! This will always take the shorter path between them.
@@ -344,7 +344,7 @@ namespace Dg
         //	@	Quaternion::Quaternion()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    Quaternion<Real>::Quaternion(const Vector4<Real>& a_axis, Real a_angle)
+    Quaternion<Real>::Quaternion(const Vector<Real>& a_axis, Real a_angle)
     {
       Set(a_axis, a_angle);
 
@@ -355,7 +355,7 @@ namespace Dg
         //	@	Quaternion::Quaternion()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    Quaternion<Real>::Quaternion(const Vector4<Real>& a_from, const Vector4<Real>& a_to)
+    Quaternion<Real>::Quaternion(const Vector<Real>& a_from, const Vector<Real>& a_to)
     {
       Set(a_from, a_to);
 
@@ -366,7 +366,7 @@ namespace Dg
         //	@	Quaternion::Quaternion()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    Quaternion<Real>::Quaternion(const Vector4<Real>& a_vector)
+    Quaternion<Real>::Quaternion(const Vector<Real>& a_vector)
     {
       Set(static_cast<Real>(0.0), a_vector.m_V[0], a_vector.m_V[1], a_vector.m_V[2]);
 
@@ -663,7 +663,7 @@ namespace Dg
         //	@	Quaternion::Set()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    void Quaternion<Real>::Set(const Vector4<Real>& a_axis, Real a_angle)
+    void Quaternion<Real>::Set(const Vector<Real>& a_axis, Real a_angle)
     {
       // if axis of rotation is zero vector, just set to identity quat
       Real length = a_axis.LengthSquared();
@@ -693,10 +693,10 @@ namespace Dg
         //	@	Quaternion::()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    void Quaternion<Real>::Set(const Vector4<Real>& a_from, const Vector4<Real>& a_to)
+    void Quaternion<Real>::Set(const Vector<Real>& a_from, const Vector<Real>& a_to)
     {
       // get axis of rotation
-      Vector4<Real> axis = Cross<Real>(a_from, a_to);
+      Vector<Real> axis = Cross<Real>(a_from, a_to);
 
       // get scaled cos of angle between vectors and set initial quaternion
       Set(a_from.Dot(a_to), axis.m_V[0], axis.m_V[1], axis.m_V[2]);
@@ -776,7 +776,7 @@ namespace Dg
         //	@	Quaternion::GetAxisAngle()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    void Quaternion<Real>::GetAxisAngle(Vector4<Real>& a_axis, Real& a_angle)
+    void Quaternion<Real>::GetAxisAngle(Vector<Real>& a_axis, Real& a_angle)
     {
       a_angle = static_cast<Real>(2.0) * Real(acos(m_w));
       Real length = sqrt(static_cast<Real>(1.0) - m_w * m_w);
@@ -800,9 +800,9 @@ namespace Dg
         //	@	Quaternion::GetBasis()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    void Quaternion<Real>::GetBasis(Vector4<Real>& a_x0,
-      Vector4<Real>& a_x1,
-      Vector4<Real>& a_x2) const
+    void Quaternion<Real>::GetBasis(Vector<Real>& a_x0,
+      Vector<Real>& a_x1,
+      Vector<Real>& a_x2) const
     {
       Real xs, ys, zs, wx, wy, wz, xx, xy, xz, yy, yz, zz;
 
@@ -1091,13 +1091,13 @@ namespace Dg
         //	@	Quaternion::Rotate()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    Vector4<Real> Quaternion<Real>::Rotate(const Vector4<Real>& a_vector) const
+    Vector<Real> Quaternion<Real>::Rotate(const Vector<Real>& a_vector) const
     {
       Real vMult = static_cast<Real>(2.0) * (m_x*a_vector.m_V[0] + m_y*a_vector.m_V[1] + m_z*a_vector.m_V[2]);
       Real crossMult = static_cast<Real>(2.0) * m_w;
       Real pMult = crossMult * m_w - static_cast<Real>(1.0);
 
-      Vector4<Real> result;
+      Vector<Real> result;
       result.m_V[0] = pMult*a_vector.m_V[0] + vMult*m_x + crossMult*(m_y*a_vector.m_V[2] - m_z*a_vector.m_V[1]);
       result.m_V[1] = pMult*a_vector.m_V[1] + vMult*m_y + crossMult*(m_z*a_vector.m_V[0] - m_x*a_vector.m_V[2]);
       result.m_V[2] = pMult*a_vector.m_V[2] + vMult*m_z + crossMult*(m_x*a_vector.m_V[1] - m_y*a_vector.m_V[0]);
@@ -1112,7 +1112,7 @@ namespace Dg
         //	@	Quaternion::RotateSelf()
         //-------------------------------------------------------------------------------
     template<typename Real>
-    void Quaternion<Real>::RotateSelf(Vector4<Real>& a_vector) const
+    void Quaternion<Real>::RotateSelf(Vector<Real>& a_vector) const
     {
       Real vMult = static_cast<Real>(2.0) * (m_x*a_vector.m_V[0] + m_y*a_vector.m_V[1] + m_z*a_vector.m_V[2]);
       Real crossMult = static_cast<Real>(2.0) * m_w;

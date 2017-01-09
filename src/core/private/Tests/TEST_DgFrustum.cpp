@@ -4,7 +4,7 @@
 #include "query/DgR3QueryFrustumSphere.h"
 
 typedef double Real;
-typedef Dg::R3::Vector4<Real>      vec;
+typedef Dg::R3::Vector<Real>      vec;
 typedef Dg::R3::Sphere<Real>       sphere;
 typedef Dg::R3::Frustum<Real>      frustum;
 typedef Dg::R3::FrustumData<Real>  frustumData;

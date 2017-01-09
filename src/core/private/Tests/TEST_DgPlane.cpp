@@ -3,7 +3,7 @@
 #include "query/DgR3QueryPointPlane.h"
 
 typedef double Real;
-typedef Dg::R3::Vector4<Real> vec;
+typedef Dg::R3::Vector<Real> vec;
 typedef Dg::R3::Plane<Real>   plane;
 
 TEST(Stack_DgPlane, DgPlane)

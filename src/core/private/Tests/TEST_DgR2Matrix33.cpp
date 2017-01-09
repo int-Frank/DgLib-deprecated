@@ -1,9 +1,9 @@
 #include "TestHarness.h"
-#include "DgR2Matrix33.h"
-#include "DgR2Vector3.h"
+#include "DgR2Matrix.h"
+#include "DgR2Vector.h"
 
-typedef Dg::R2::Matrix33< float >     mat33;
-typedef Dg::R2::Vector3<float>        vec3;
+typedef Dg::R2::Matrix< float >     mat33;
+typedef Dg::R2::Vector<float>        vec3;
 
 //--------------------------------------------------------------------------------
 //	Matrix44 Construction

@@ -31,10 +31,10 @@ namespace Dg
         Real u1;
 
         //! Closest point on ray 0 to ray 1
-        Vector4<Real> cp0;
+        Vector<Real> cp0;
 
         //! Closest point on ray 1 to ray 0
-        Vector4<Real> cp1;
+        Vector<Real> cp1;
 
         //! Return code. Codes include:
         //! Success, Overlapping
@@ -61,13 +61,13 @@ namespace Dg
       Result result;
       result.code = QueryCode::Success;
 
-      Vector4<Real> o0(a_ray0.Origin());
-      Vector4<Real> o1(a_ray1.Origin());
-      Vector4<Real> d0(a_ray0.Direction());
-      Vector4<Real> d1(a_ray1.Direction());
+      Vector<Real> o0(a_ray0.Origin());
+      Vector<Real> o1(a_ray1.Origin());
+      Vector<Real> d0(a_ray0.Direction());
+      Vector<Real> d1(a_ray1.Direction());
 
       //compute intermediate parameters
-      Vector4<Real> w0(o0 - o1);
+      Vector<Real> w0(o0 - o1);
       Real a = d0.Dot(d1);
       Real b = d0.Dot(w0);
       Real c = d1.Dot(w0);

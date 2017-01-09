@@ -1,12 +1,12 @@
 #include "TestHarness.h"
 #include "DgR2Segment.h"
-#include "DgR2Matrix33.h"
+#include "DgR2Matrix.h"
 #include "query/DgR2QueryPointSegment.h"
 #include "query/DgR2QuerySegmentSegment.h"
 
 typedef double Real;
-typedef Dg::R2::Vector3<Real>           vec;
-typedef Dg::R2::Matrix33<Real>          mat33;
+typedef Dg::R2::Vector<Real>            vec;
+typedef Dg::R2::Matrix<Real>          mat33;
 typedef Dg::R2::Segment<Real>           seg;
 
 TEST(Stack_DgR2Segment, DgR2Segment)

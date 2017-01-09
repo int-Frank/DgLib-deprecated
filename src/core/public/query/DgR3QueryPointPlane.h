@@ -16,7 +16,7 @@ namespace Dg
     //! @ingroup DgMath_geoQueries
     //! Distance and closest-point query: Point, Plane.
     template <typename Real>
-    class CPQuery<Real, Vector4<Real>, Plane<Real>>
+    class CPQuery<Real, Vector<Real>, Plane<Real>>
     {
     public:
 
@@ -30,25 +30,25 @@ namespace Dg
         Real sDistance;
 
         //! Closest point on the plane to the point.
-        Vector4<Real> cp;
+        Vector<Real> cp;
       };
 
       //! Perform query
-      Result operator()(Vector4<Real> const &, Plane<Real> const &);
+      Result operator()(Vector<Real> const &, Plane<Real> const &);
     };
 
     //! Template alias for convenience
     template<typename Real>
-    using CPPointPlane = CPQuery<Real, Vector4<Real>, Plane<Real>>;
+    using CPPointPlane = CPQuery<Real, Vector<Real>, Plane<Real>>;
 
 
     //--------------------------------------------------------------------------------
     //	@	CPQuery::operator()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    typename CPQuery<Real, Vector4<Real>, Plane<Real>>::Result
-      CPQuery<Real, Vector4<Real>, Plane<Real>>::operator()
-      (Vector4<Real> const & a_point, Plane<Real> const & a_plane)
+    typename CPQuery<Real, Vector<Real>, Plane<Real>>::Result
+      CPQuery<Real, Vector<Real>, Plane<Real>>::operator()
+      (Vector<Real> const & a_point, Plane<Real> const & a_plane)
     {
       Result result;
 

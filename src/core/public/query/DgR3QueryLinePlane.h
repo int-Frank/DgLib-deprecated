@@ -46,7 +46,7 @@ namespace Dg
       struct Result
       {
         //! Point of intersection. Set to origin if line is parallel to plane.
-        Vector4<Real> point;
+        Vector<Real> point;
 
         //! Distance from the line origin to the point of intersection. Set to 0 if line is parallel to the plane.
         Real u;
@@ -93,10 +93,10 @@ namespace Dg
       FIQuery<Real, Line<Real>, Plane<Real>>::operator()
       (Line<Real> const & a_line, Plane<Real> const & a_plane)
     {
-      Vector4<Real> pn(a_plane.Normal());
+      Vector<Real> pn(a_plane.Normal());
       Real          po(a_plane.Offset());
-      Vector4<Real> lo(a_line.Origin());
-      Vector4<Real> ld(a_line.Direction());
+      Vector<Real> lo(a_line.Origin());
+      Vector<Real> ld(a_line.Direction());
 
       Real denom = pn.Dot(ld);
       Result result;

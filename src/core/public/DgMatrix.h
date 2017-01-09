@@ -18,16 +18,16 @@ namespace Dg
     class Matrix44;
 
     template<typename Real>
-    class Vector4;
+    class Vector;
   }
 
   namespace R2
   {
     template<typename Real>
-    class Matrix33;
+    class Matrix;
 
     template<typename Real>
-    class Vector3;
+    class Vector;
   }
 
   template<size_t M, size_t N, typename Real> class Matrix;
@@ -77,9 +77,9 @@ namespace Dg
 
     template<size_t _M, size_t _N, typename Real> friend class Matrix;
     template<typename Real> friend class R3::Matrix44;
-    template<typename Real> friend class R3::Vector4;
-    template<typename Real> friend class R2::Matrix33;
-    template<typename Real> friend class R2::Vector3;
+    template<typename Real> friend class R3::Vector;
+    template<typename Real> friend class R2::Matrix;
+    template<typename Real> friend class R2::Vector;
 
   public:
     //! Default constructor. Elements ore not initialised.

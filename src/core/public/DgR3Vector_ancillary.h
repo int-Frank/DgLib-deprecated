@@ -1,14 +1,14 @@
-//! @file DgR3Vector4_ancillary.h
+//! @file DgR3Vector_ancillary.h
 //!
 //! @author: Frank B. Hart
 //! @date 4/10/2015
 //!
-//! Class declaration: Vector4
+//! Class declaration: Vector
 
-#ifndef DGR3VECTOR4_ANCILLARY_H
-#define DGR3VECTOR4_ANCILLARY_H
+#ifndef DGR3VECTOR_ANCILLARY_H
+#define DGR3VECTOR_ANCILLARY_H
 
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 #include "DgRNG.h"
 
 namespace Dg
@@ -19,7 +19,7 @@ namespace Dg
     //		@	GetRandomVector()
     //-------------------------------------------------------------------------------
     template<typename Real>
-    Vector4<Real> GetRandomVector()
+    Vector<Real> GetRandomVector()
     {
       RNG generator;
 
@@ -32,7 +32,7 @@ namespace Dg
       Real y = val * sin(theta);
       Real z = rho;
 
-      return Vector4<Real>({ x, y, z, static_cast<Real>(0.0) });
+      return Vector<Real>({ x, y, z, static_cast<Real>(0.0) });
     }	//End: GetRandomVector()
 
 
@@ -40,11 +40,11 @@ namespace Dg
       //		@ GetRandomOrthonormalVector()
       //-------------------------------------------------------------------------------
     template<typename Real>
-    Vector4<Real> GetRandomOrthonormalVector(Vector4<Real> const & a_axis)
+    Vector<Real> GetRandomOrthonormalVector(Vector<Real> const & a_axis)
     {
       RNG gen;
-      Vector4<Real> perp = Perpendicular(a_axis);
-      Vector4<Real> crs = Cross(a_axis, perp);
+      Vector<Real> perp = Perpendicular(a_axis);
+      Vector<Real> crs = Cross(a_axis, perp);
       Real phi = gen.GetUniform(static_cast<Real>(0.0)
         , Dg::Constants<Real>::PI * static_cast<Real>(2.0));
 
@@ -56,7 +56,7 @@ namespace Dg
       //		@ GetRandomVector()
       //-------------------------------------------------------------------------------
     template<typename Real>
-    Vector4<Real> GetRandomVector(Vector4<Real> const & a_axis, Real theta)
+    Vector<Real> GetRandomVector(Vector<Real> const & a_axis, Real theta)
     {
       RNG generator;
 

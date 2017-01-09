@@ -32,10 +32,10 @@ namespace Dg
         Real us;
 
         //! Closest point on line to the line segment
-        Vector4<Real> cpl;
+        Vector<Real> cpl;
 
         //! Closest point on line segment to the line
-        Vector4<Real> cps;
+        Vector<Real> cps;
 
         //! Return code. Codes include:
         //! Success, Parallel.
@@ -61,13 +61,13 @@ namespace Dg
     {
       Result result;
 
-      Vector4<Real> os(a_seg.Origin());
-      Vector4<Real> ol(a_line.Origin());
-      Vector4<Real> ds(a_seg.Direction());
-      Vector4<Real> dl(a_line.Direction());
+      Vector<Real> os(a_seg.Origin());
+      Vector<Real> ol(a_line.Origin());
+      Vector<Real> ds(a_seg.Direction());
+      Vector<Real> dl(a_line.Direction());
 
       //compute intermediate parameters
-      Vector4<Real> w0(os - ol);
+      Vector<Real> w0(os - ol);
       Real a = ds.Dot(ds);
       Real b = ds.Dot(dl);
       Real c = ds.Dot(w0);

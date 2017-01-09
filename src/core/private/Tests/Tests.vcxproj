@@ -177,7 +177,7 @@
     <ClCompile Include="TEST_DgPlane.cpp" />
     <ClCompile Include="TEST_DgR2Matrix33.cpp" />
     <ClCompile Include="TEST_DgR2Segment.cpp" />
-    <ClCompile Include="TEST_DgR2Vector3.cpp" />
+    <ClCompile Include="TEST_DgR2Vector.cpp" />
     <ClCompile Include="TEST_DgRay.cpp" />
     <ClCompile Include="TEST_DgSharedPtr.cpp" />
     <ClCompile Include="TEST_DgSphere.cpp" />

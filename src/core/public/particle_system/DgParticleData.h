@@ -10,20 +10,20 @@
 
 #include <stdint.h>
 
-#include "../DgR3Vector4.h"
+#include "../DgR3Vector.h"
 #include "DgVariadicMacros.h"
 #include "../impl/DgParticleData_impl.inl"
 
 
 //! Attribute must be a list on name, type pairs:
 //!
-//!   \#define ATTIBUTES ID, int, Position, Dg::Vector4<Real>, Life, float
+//!   \#define ATTIBUTES ID, int, Position, Dg::Vector<Real>, Life, float
 //!
 //! Be sure there are no spaces after the final '\' on each line.
 #define ATTRIBUTES ID,                  int,\
-                   Position,            Dg::R3::Vector4<Real>,\
-                   Velocity,            Dg::R3::Vector4<Real>,\
-                   Acceleration,        Dg::R3::Vector4<Real>,\
+                   Position,            Dg::R3::Vector<Real>,\
+                   Velocity,            Dg::R3::Vector<Real>,\
+                   Acceleration,        Dg::R3::Vector<Real>,\
                    Force,               Real,\
                    Size,                Real,\
                    StartSize,           Real,\
@@ -32,9 +32,9 @@
                    LifeMax,             Real,\
                    DLife,               Real,\
                    TimeSinceBirth,      Real,\
-                   Color,               Dg::R3::Vector4<float>,\
-                   StartColor,          Dg::R3::Vector4<float>,\
-                   DColor,              Dg::R3::Vector4<float>
+                   Color,               Dg::R3::Vector<float>,\
+                   StartColor,          Dg::R3::Vector<float>,\
+                   DColor,              Dg::R3::Vector<float>
 
 
 namespace Dg
@@ -103,7 +103,7 @@ namespace Dg
 
     //! For each entry in ATTRIBUTES, there exists a Get function.
     //! For example, for the Position attribute:
-    //!   Dg::Vector4<Real> * GetPosition();
+    //!   Dg::Vector<Real> * GetPosition();
     //!  An uninitialized attributed will return a null pointer.
     ADD_METHODS(ATTRIBUTES)
 

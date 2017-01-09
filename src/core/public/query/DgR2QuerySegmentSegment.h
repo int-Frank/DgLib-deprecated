@@ -49,10 +49,10 @@ namespace Dg
         Real u1;
 
         //! Closest point on segment 0 to segment 1
-        Vector3<Real> cp0;
+        Vector<Real> cp0;
 
         //! Closest point on segment 1 to segment 0
-        Vector3<Real> cp1;
+        Vector<Real> cp1;
 
         //! Return code. Codes include:
         //!   Success, Overlapping
@@ -81,10 +81,10 @@ namespace Dg
     {
       Result result;
 
-      Vector3<Real> const & dir0 = a_seg0.Direction();
-      Vector3<Real> const & dir1 = a_seg1.Direction();
+      Vector<Real> const & dir0 = a_seg0.Direction();
+      Vector<Real> const & dir1 = a_seg1.Direction();
 
-      Vector3<Real> w = a_seg0.GetP0() - a_seg1.GetP0();
+      Vector<Real> w = a_seg0.GetP0() - a_seg1.GetP0();
       Real denom = PerpDot(a_seg0.Direction(), a_seg1.Direction());
       Real u0_numerator = PerpDot(a_seg1.Direction(), w);
       Real u1_numerator = PerpDot(a_seg0.Direction(), w);
@@ -100,9 +100,9 @@ namespace Dg
         //Segments lie on the same line
         else
         {
-          Vector3<Real>  v0 = a_seg0.Direction() / a_seg0.Direction().LengthSquared();
-          Vector3<Real>  v1 = a_seg1.Direction() / a_seg1.Direction().LengthSquared();
-          Vector3<Real> q = a_seg1.GetP0() - a_seg1.GetP0();
+          Vector<Real>  v0 = a_seg0.Direction() / a_seg0.Direction().LengthSquared();
+          Vector<Real>  v1 = a_seg1.Direction() / a_seg1.Direction().LengthSquared();
+          Vector<Real> q = a_seg1.GetP0() - a_seg1.GetP0();
 
           result.isIntersecting = (IsInRange(static_cast<Real>(0), static_cast<Real>(1), Dot(w, v1))
                                 || IsInRange(static_cast<Real>(0), static_cast<Real>(1), Dot(q, v1))
@@ -131,13 +131,13 @@ namespace Dg
       Result result;
       result.code = QueryCode::Success;
 
-      Vector3<Real> o0(a_seg0.Origin());
-      Vector3<Real> o1(a_seg1.Origin());
-      Vector3<Real> d0(a_seg0.Direction());
-      Vector3<Real> d1(a_seg1.Direction());
+      Vector<Real> o0(a_seg0.Origin());
+      Vector<Real> o1(a_seg1.Origin());
+      Vector<Real> d0(a_seg0.Direction());
+      Vector<Real> d1(a_seg1.Direction());
 
       //compute intermediate parameters
-      Vector3<Real> w0(o0 - o1);
+      Vector<Real> w0(o0 - o1);
       Real a = d0.Dot(d0);
       Real b = d0.Dot(d1);
       Real c = d1.Dot(d1);
@@ -156,9 +156,9 @@ namespace Dg
         tn = e;
 
         //Do the line segments overlap?
-        Vector3<Real> w1((o0 + d0) - o1);
-        Vector3<Real> w2(o0 - (o1 + d1));
-        Vector3<Real> w3((o0 + d0) - (o1 + d1));
+        Vector<Real> w1((o0 + d0) - o1);
+        Vector<Real> w2(o0 - (o1 + d1));
+        Vector<Real> w3((o0 + d0) - (o1 + d1));
         bool bse = (e < static_cast<Real>(0.0));
         if (!(
           bse == (w1.Dot(d1) < static_cast<Real>(0.0)) &&

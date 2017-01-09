@@ -99,13 +99,13 @@
     <ClCompile Include="NonPODTests.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_DgR2Vector3.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="TEST_DgR2Segment.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_DgR2Matrix33.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR2Vector.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>

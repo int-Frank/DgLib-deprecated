@@ -46,7 +46,7 @@ namespace Dg
       struct Result
       {
         //! Point of intersection. Set to origin if ray is parallel to plane.
-        Vector4<Real> point;
+        Vector<Real> point;
 
         //! Distance from the ray origin to the point of intersection. Set to 0 if ray is parallel to the plane.
         Real u;
@@ -80,10 +80,10 @@ namespace Dg
     {
       Result result;
 
-      Vector4<Real> pn(a_plane.Normal());
+      Vector<Real> pn(a_plane.Normal());
       Real          po(a_plane.Offset());
-      Vector4<Real> ro(a_ray.Origin());
-      Vector4<Real> rd(a_ray.Direction());
+      Vector<Real> ro(a_ray.Origin());
+      Vector<Real> rd(a_ray.Direction());
 
       Real denom = pn.Dot(rd);
 
@@ -129,10 +129,10 @@ namespace Dg
     {
       Result result;
 
-      Vector4<Real> pn(a_plane.Normal());
+      Vector<Real> pn(a_plane.Normal());
       Real          po(a_plane.Offset());
-      Vector4<Real> ro(a_ray.Origin());
-      Vector4<Real> rd(a_ray.Direction());
+      Vector<Real> ro(a_ray.Origin());
+      Vector<Real> rd(a_ray.Direction());
 
       Real denom = pn.Dot(rd);
 

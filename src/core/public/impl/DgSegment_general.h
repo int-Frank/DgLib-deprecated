@@ -20,7 +20,7 @@ namespace Dg
     //! @class Segment_general
     //!
     //! A Linesgment is a line that connects two points. It is represented by a Point4 
-    //! and a Vector3, the length of the vector being the distance between the points.
+    //! and a Vector, the length of the vector being the distance between the points.
     //! This file also declares methods to test LineSegments against other 
     //! geometric entities.
     //!

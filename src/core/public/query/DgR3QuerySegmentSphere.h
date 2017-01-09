@@ -47,7 +47,7 @@ namespace Dg
       (Segment<Real> const & a_seg, Sphere<Real> const & a_sphere)
     {
       Result result;
-      Vector4<Real> w0(a_seg.Origin() - a_sphere.Center());
+      Vector<Real> w0(a_seg.Origin() - a_sphere.Center());
       Real a = a_seg.Direction().LengthSquared();
       Real inv_a = static_cast<Real>(1.0) / a;
       Real b = inv_a * w0.Dot(a_seg.Direction());

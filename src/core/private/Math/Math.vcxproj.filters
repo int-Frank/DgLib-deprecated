@@ -53,9 +53,6 @@
     <ClInclude Include="..\..\public\DgR3Line.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Matrix33.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgR3Matrix44.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -77,16 +74,7 @@
     <ClInclude Include="..\..\public\DgR3Sphere.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Vector4.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR3Vector4_ancillary.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgR3VQS.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Vector3.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\query\DgR3QueryFrustumSphere.h">
@@ -155,9 +143,6 @@
     <ClInclude Include="..\..\public\query\DgQueryCommon.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgR2Vector3_ancillary.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\query\DgR2TIQuery.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
@@ -180,6 +165,21 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgGeometryTypesR3.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Vector.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Vector_ancillary.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Vector.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Vector_ancillary.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Matrix.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>

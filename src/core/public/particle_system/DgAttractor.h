@@ -10,11 +10,11 @@
 
 #include <climits>
 
-#include "..\DgR3Vector4.h"
+#include "..\DgR3Vector.h"
 #include "..\DgR3VQS.h"
 #include "DgParticleUpdater.h"
 #include "DgMath.h"
-#include "DgR3Vector4_ancillary.h"
+#include "DgR3Vector_ancillary.h"
 
 namespace Dg
 {
@@ -86,14 +86,14 @@ namespace Dg
   
   protected:
 
-    R3::Vector4<Real> GetAccel_Constant(R3::Vector4<Real> const & p0
-                                  , R3::Vector4<Real> const & p1) const;
+    R3::Vector<Real> GetAccel_Constant(R3::Vector<Real> const & p0
+                                  , R3::Vector<Real> const & p1) const;
 
-    R3::Vector4<Real> GetAccel_Inverse(R3::Vector4<Real> const & p0
-                                 , R3::Vector4<Real> const & p1) const;
+    R3::Vector<Real> GetAccel_Inverse(R3::Vector<Real> const & p0
+                                 , R3::Vector<Real> const & p1) const;
 
-    R3::Vector4<Real> GetAccel_InverseSquare(R3::Vector4<Real> const & p0
-                                       , R3::Vector4<Real> const & p1) const;
+    R3::Vector<Real> GetAccel_InverseSquare(R3::Vector<Real> const & p0
+                                       , R3::Vector<Real> const & p1) const;
  
   protected:
     int   m_attenuation;
@@ -173,10 +173,10 @@ namespace Dg
   //	@	Attractor::GetAccel_Constant()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  R3::Vector4<Real> Attractor<Real>::GetAccel_Constant(R3::Vector4<Real> const & a_p0
-                                                 , R3::Vector4<Real> const & a_p1) const
+  R3::Vector<Real> Attractor<Real>::GetAccel_Constant(R3::Vector<Real> const & a_p0
+                                                 , R3::Vector<Real> const & a_p1) const
   {
-    R3::Vector4<Real> v(a_p1 - a_p0);
+    R3::Vector<Real> v(a_p1 - a_p0);
     Real dist = v.Length();
     if (Dg::IsZero(dist))
     {
@@ -193,10 +193,10 @@ namespace Dg
   //	@	Attractor::GetAccel_Inverse()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  R3::Vector4<Real> Attractor<Real>::GetAccel_Inverse(R3::Vector4<Real> const & a_p0
-                                               , R3::Vector4<Real> const & a_p1) const
+  R3::Vector<Real> Attractor<Real>::GetAccel_Inverse(R3::Vector<Real> const & a_p0
+                                               , R3::Vector<Real> const & a_p1) const
   {
-    R3::Vector4<Real> v(a_p1 - a_p0);
+    R3::Vector<Real> v(a_p1 - a_p0);
 
     Real sqDist = v.LengthSquared();
     Real invSqDist;
@@ -225,10 +225,10 @@ namespace Dg
   //	@	Attractor::GetAccel_InverseSquare()
   //--------------------------------------------------------------------------------
   template<typename Real>
-  R3::Vector4<Real> Attractor<Real>::GetAccel_InverseSquare(R3::Vector4<Real> const & a_p0
-                                              , R3::Vector4<Real> const & a_p1) const
+  R3::Vector<Real> Attractor<Real>::GetAccel_InverseSquare(R3::Vector<Real> const & a_p0
+                                              , R3::Vector<Real> const & a_p1) const
   {
-    R3::Vector4<Real> v(a_p1 - a_p0);
+    R3::Vector<Real> v(a_p1 - a_p0);
 
     Real dist = v.Length();
     if (Dg::IsZero(dist))

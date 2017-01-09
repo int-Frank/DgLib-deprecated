@@ -1,25 +1,25 @@
 #include "TestHarness.h"
-#include "DgR2Vector3.h"
-#include "DgR3Vector4.h"
-#include "DgR2Vector3_ancillary.h"
+#include "DgR2Vector.h"
+#include "DgR3Vector.h"
+#include "DgR2Vector_ancillary.h"
 
-typedef Dg::R2::Vector3 < float > vec3;
-typedef Dg::R3::Vector4 < float > vec4;
+typedef Dg::R2::Vector < float > vec2;
+typedef Dg::R3::Vector < float > vec4;
 
 //--------------------------------------------------------------------------------
-//	Vector4 Construction
+//	Vector Construction
 //--------------------------------------------------------------------------------
 TEST(Stack_Vector3_Construction, creation_Vector3_Construction)
 {
-  vec3 v0(1.0f, -4.0f, 0.0f);
-  vec3 v1(v0);
+  vec2 v0(1.0f, -4.0f, 0.0f);
+  vec2 v1(v0);
 
   CHECK(v1 == v0);
   CHECK(!(v1 != v0));
   CHECK(!v0.IsZero());
   CHECK(!v0.IsUnit());
 
-  vec3 p1;
+  vec2 p1;
   p1.Set(2.0f, -8.12f, 1.0);
   p1.Clean();
   v0.Zero();
@@ -29,28 +29,28 @@ TEST(Stack_Vector3_Construction, creation_Vector3_Construction)
   CHECK(v0.IsUnit());
 
   //Statics
-  vec3 vec = vec3::Origin();
+  vec2 vec = vec2::Origin();
   CHECK(vec[0] == 0.0f);
   CHECK(vec[1] == 0.0f);
   CHECK(vec[2] == 1.0f);
 
-  vec = vec3::ZeroVector();
+  vec = vec2::ZeroVector();
   CHECK(vec[0] == 0.0f);
   CHECK(vec[1] == 0.0f);
   CHECK(vec[2] == 0.0f);
 
-  vec = vec3::xAxis();
+  vec = vec2::xAxis();
   CHECK(vec[0] == 1.0f);
   CHECK(vec[1] == 0.0f);
   CHECK(vec[2] == 0.0f);
 
-  vec = vec3::yAxis();
+  vec = vec2::yAxis();
   CHECK(vec[0] == 0.0f);
   CHECK(vec[1] == 1.0f);
   CHECK(vec[2] == 0.0f);
 
   vec4 v4(0.5f, 2.0f, 3.0f, 1.0f);
-  vec3 v3(v4);
+  vec2 v3(v4);
   CHECK(v3.x() == 0.5f);
   CHECK(v3.y() == 2.0f);
   CHECK(v3.w() == 1.0f);
@@ -58,7 +58,7 @@ TEST(Stack_Vector3_Construction, creation_Vector3_Construction)
 
 
 //--------------------------------------------------------------------------------
-//	Vector4 Accessors
+//	Vector Accessors
 //--------------------------------------------------------------------------------
 TEST(Stack_Vector3_Accessors, creation_Vector3_Accessors)
 {
@@ -66,7 +66,7 @@ TEST(Stack_Vector3_Accessors, creation_Vector3_Accessors)
   float y = 4.2f;
   float w = 2.3f;
 
-  vec3 v(x, y, w);
+  vec2 v(x, y, w);
 
   CHECK(v[0] == x);
   CHECK(v[1] == y);
@@ -75,14 +75,14 @@ TEST(Stack_Vector3_Accessors, creation_Vector3_Accessors)
 
 
 //--------------------------------------------------------------------------------
-//	Vector4 Arithmetic
+//	Vector Arithmetic
 //--------------------------------------------------------------------------------
 TEST(Stack_Vector3_Arithmetic, creation_Vector3_Arithmetic)
 {
-  vec3 v0(1.6431f, 2.9012345f, 0.0f);
-  vec3 v1(-0.032456f, 23.45809f, 0.0f);
+  vec2 v0(1.6431f, 2.9012345f, 0.0f);
+  vec2 v1(-0.032456f, 23.45809f, 0.0f);
 
-  vec3 v2 = v0 + v1;
+  vec2 v2 = v0 + v1;
   v2 = v0 - v2;
   v2 = v2 * 3.4f;
   v2 = 1.2f * v2;
@@ -93,25 +93,25 @@ TEST(Stack_Vector3_Arithmetic, creation_Vector3_Arithmetic)
   v2 *= 4.3f;
   v2 /= -3.8f;
 
-  CHECK(v2 == vec3(-1.15278351f, 71.7770462f, 0.0f));
+  CHECK(v2 == vec2(-1.15278351f, 71.7770462f, 0.0f));
 }
 
 
 //--------------------------------------------------------------------------------
-//	Vector4 Other functions
+//	Vector Other functions
 //--------------------------------------------------------------------------------
 TEST(Stack_Vector3_Other, creation_Vector3_Other)
 {
   // Dot ///////////////////////////////////////////////
 
-  float r_Dot = vec3(2.0f, 0.0f, 0.0f).Dot(vec3(0.0f, 3.2f, -3.5f));
+  float r_Dot = vec2(2.0f, 0.0f, 0.0f).Dot(vec2(0.0f, 3.2f, -3.5f));
   CHECK(r_Dot == 0.0f);
 
   // Cross /////////////////////////////////////////////
 
-  vec3 c0(1.0f, 1.0f, 0.0f);
+  vec2 c0(1.0f, 1.0f, 0.0f);
   c0.Normalize();
-  vec3 c1(Perpendicular(c0));
+  vec2 c1(Perpendicular(c0));
 
   float c2 = PerpDot(c0, c1);
 
@@ -120,7 +120,7 @@ TEST(Stack_Vector3_Other, creation_Vector3_Other)
 
   // Length ///////////////////////////////////////////
 
-  vec3 v(3.0f, 4.0f, 0.0f);
+  vec2 v(3.0f, 4.0f, 0.0f);
 
   float length = v.Length();
   float lengthSquared = v.LengthSquared();

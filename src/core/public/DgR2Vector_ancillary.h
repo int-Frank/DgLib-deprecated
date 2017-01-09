@@ -1,14 +1,14 @@
-//! @file DgR2Vector3_ancillary.h
+//! @file DgR2Vector_ancillary.h
 //!
 //! @author: Frank B. Hart
 //! @date 4/10/2015
 //!
-//! Class declaration: Vector3
+//! Class declaration: Vector
 
 #ifndef DGR2VECTOR3_ANCILLARY_H
 #define DGR2VECTOR3_ANCILLARY_H
 
-#include "DgR2Vector3.h"
+#include "DgR2Vector.h"
 #include "DgRNG.h"
 
 namespace Dg
@@ -19,7 +19,7 @@ namespace Dg
     //		@	GetRandomVector()
     //-------------------------------------------------------------------------------
     template<typename Real>
-    Vector3<Real> GetRandomVector()
+    Vector<Real> GetRandomVector()
     {
       RNG generator;
 
@@ -28,7 +28,7 @@ namespace Dg
       Real x = cos(theta);
       Real y = sin(theta);
 
-      return Vector3<Real>({ x, y, static_cast<Real>(0.0) });
+      return Vector<Real>({ x, y, static_cast<Real>(0.0) });
     }	//End: GetRandomVector()
   }
 }

@@ -1,10 +1,10 @@
 #include "TestHarness.h"
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 #include "DgR3Quaternion.h"
 #include "DgR3Matrix44.h"
 
 typedef Dg::R3::Quaternion < float >  quat;
-typedef Dg::R3::Vector4 < float >     vec4;
+typedef Dg::R3::Vector < float >     vec4;
 typedef Dg::R3::Matrix44<float>       mat44;
 
 //--------------------------------------------------------------------------------

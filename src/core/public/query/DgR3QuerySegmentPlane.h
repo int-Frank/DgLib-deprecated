@@ -46,7 +46,7 @@ namespace Dg
       struct Result
       {
         //! Point of intersection. Set to origin if line segment is parallel to plane.
-        Vector4<Real> point;
+        Vector<Real> point;
 
         //! Distance from the line segment origin to the point of intersection. Set to 0 if line segment is parallel to the plane.
         Real u;
@@ -80,10 +80,10 @@ namespace Dg
     {
       Result result;
 
-      Vector4<Real> pn(a_plane.Normal());
+      Vector<Real> pn(a_plane.Normal());
       Real          po(a_plane.Offset());
-      Vector4<Real> so(a_seg.Origin());
-      Vector4<Real> sd(a_seg.Direction());
+      Vector<Real> so(a_seg.Origin());
+      Vector<Real> sd(a_seg.Direction());
 
       Real denom = pn.Dot(sd);
 
@@ -129,10 +129,10 @@ namespace Dg
     {
       Result result;
 
-      Vector4<Real> pn(a_plane.Normal());
+      Vector<Real> pn(a_plane.Normal());
       Real          po(a_plane.Offset());
-      Vector4<Real> so(a_seg.Origin());
-      Vector4<Real> sd(a_seg.Direction());
+      Vector<Real> so(a_seg.Origin());
+      Vector<Real> sd(a_seg.Direction());
 
       Real denom = pn.Dot(sd);
 

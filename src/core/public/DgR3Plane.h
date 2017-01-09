@@ -8,7 +8,7 @@
 #ifndef DGR3PLANE_H
 #define DGR3PLANE_H
 
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 #include "dgmath.h"
 
 namespace Dg
@@ -32,7 +32,7 @@ namespace Dg
     {
     public:
       //! Default constructor.
-      Plane() : m_normal(Vector4<Real>::xAxis()),
+      Plane() : m_normal(Vector<Real>::xAxis()),
         m_offset(static_cast<Real>(0.0)) {}
 
       //! Construct plane form coefficients of the equation:
@@ -45,13 +45,13 @@ namespace Dg
       Plane(Real A, Real B, Real C, Real D);
 
       //! Construct plane from three points that lie on the plane.
-      Plane(Vector4<Real> const & p0, Vector4<Real> const & p1, Vector4<Real> const & p2);
+      Plane(Vector<Real> const & p0, Vector<Real> const & p1, Vector<Real> const & p2);
 
       //! Construct plane from normal vector and offset.
-      Plane(Vector4<Real> const & n, Real d);
+      Plane(Vector<Real> const & n, Real d);
 
       //! Construct plane from a normal vector and a point which lies on the plane.
-      Plane(Vector4<Real> const & n, Vector4<Real> const & p);
+      Plane(Vector<Real> const & n, Vector<Real> const & p);
       ~Plane() {}
 
       //! Copy constructor
@@ -61,13 +61,13 @@ namespace Dg
       Plane& operator= (Plane const &);
 
       //! Get the plane normal.
-      Vector4<Real> const & Normal() const { return m_normal; }
+      Vector<Real> const & Normal() const { return m_normal; }
 
       //! Get the plane offset.
       Real Offset() const { return m_offset; }
 
       //! Get the plane normal and offset.
-      void Get(Vector4<Real>& normal, Real& offset) const;
+      void Get(Vector<Real>& normal, Real& offset) const;
 
       //! Are two planes equal?
       bool operator== (Plane const &) const;
@@ -85,28 +85,28 @@ namespace Dg
       void Set(Real A, Real B, Real C, Real D);
 
       //! Set the plane from normal vector and offset.
-      void Set(Vector4<Real> const & n, Real d);
+      void Set(Vector<Real> const & n, Real d);
 
       //! Set the plane from a normal vector and a point which lies on the plane.
-      void Set(Vector4<Real> const & n, Vector4<Real> const & p);
+      void Set(Vector<Real> const & n, Vector<Real> const & p);
 
       //! Set the plane from three points that lie on the plane.
-      void Set(Vector4<Real> const & p0, Vector4<Real> const & p1, Vector4<Real> const & p2);
+      void Set(Vector<Real> const & p0, Vector<Real> const & p1, Vector<Real> const & p2);
 
       //! Signed distance from point to plane.
       //! @return Negative if behind the plane.
       //!
       //! @param[in] a_point Input point
-      Real SignedDistance(Vector4<Real> const & a_point) const;
+      Real SignedDistance(Vector<Real> const & a_point) const;
 
       //! Distance from point to plane.
-      Real Distance(Vector4<Real> const & a_point) const;
+      Real Distance(Vector<Real> const & a_point) const;
 
       //! Dot procuct of a vector against the plane normal.
-      Real NormalDot(Vector4<Real> const & a_v) const;
+      Real NormalDot(Vector<Real> const & a_v) const;
 
     private:
-      Vector4<Real>   m_normal;
+      Vector<Real>   m_normal;
       Real            m_offset;
     };
 
@@ -114,7 +114,7 @@ namespace Dg
     //		@ Plane::SignedDistance()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    Real Plane<Real>::SignedDistance(Vector4<Real> const & a_point) const
+    Real Plane<Real>::SignedDistance(Vector<Real> const & a_point) const
     {
       return a_point.Dot(m_normal) + m_offset;
 
@@ -125,7 +125,7 @@ namespace Dg
       //		@ Plane::Distance()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    Real Plane<Real>::Distance(Vector4<Real> const & a_point) const
+    Real Plane<Real>::Distance(Vector<Real> const & a_point) const
     {
       return abs(a_point.Dot(m_normal) + m_offset);
 
@@ -136,7 +136,7 @@ namespace Dg
       //		@ Plane::NormalDot()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    Real Plane<Real>::NormalDot(Vector4<Real> const & a_v) const
+    Real Plane<Real>::NormalDot(Vector<Real> const & a_v) const
     {
       return m_normal.Dot(a_v);
 
@@ -158,7 +158,7 @@ namespace Dg
       //		@ Plane::Plane()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    Plane<Real>::Plane(Vector4<Real> const & n, Real d)
+    Plane<Real>::Plane(Vector<Real> const & n, Real d)
     {
       Set(n.x(), n.y(), n.z(), d);
 
@@ -169,9 +169,9 @@ namespace Dg
       //		@ Plane::Plane()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    Plane<Real>::Plane(Vector4<Real> const & p0,
-      Vector4<Real> const & p1,
-      Vector4<Real> const & p2)
+    Plane<Real>::Plane(Vector<Real> const & p0,
+      Vector<Real> const & p1,
+      Vector<Real> const & p2)
     {
       Set(p0, p1, p2);
 
@@ -182,7 +182,7 @@ namespace Dg
       //	@	Plane::Plane<Real>()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    Plane<Real>::Plane(Vector4<Real> const & n, Vector4<Real> const & p)
+    Plane<Real>::Plane(Vector<Real> const & n, Vector<Real> const & p)
     {
       Set(n, p);
     }	//End: Plane4::Plane<Real>()
@@ -215,7 +215,7 @@ namespace Dg
       //		@ Plane::Get()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    void Plane<Real>::Get(Vector4<Real> & normal, Real & offset) const
+    void Plane<Real>::Get(Vector<Real> & normal, Real & offset) const
     {
       normal = m_normal;
       offset = m_offset;
@@ -254,7 +254,7 @@ namespace Dg
       //recover gracefully
       if (Dg::IsZero(lensq))
       {
-        m_normal = Vector4<Real>::xAxis();
+        m_normal = Vector<Real>::xAxis();
         m_offset = static_cast<Real>(0.0);
       }
       else
@@ -271,7 +271,7 @@ namespace Dg
       //	@	Plane::Set()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    void Plane<Real>::Set(Vector4<Real> const & n, Real d)
+    void Plane<Real>::Set(Vector<Real> const & n, Real d)
     {
       //normalise for cheap distance checks
       Real lensq = n.x()*n.x() + n.y()*n.y() + n.z()*n.z();
@@ -279,7 +279,7 @@ namespace Dg
       //recover gracefully
       if (Dg::IsZero(lensq))
       {
-        m_normal = Vector4<Real>::xAxis();
+        m_normal = Vector<Real>::xAxis();
         m_offset = static_cast<Real>(0.0);
       }
       else
@@ -296,7 +296,7 @@ namespace Dg
       //	@	Plane::Set()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    void Plane<Real>::Set(Vector4<Real> const & n, Vector4<Real> const & p)
+    void Plane<Real>::Set(Vector<Real> const & n, Vector<Real> const & p)
     {
       //normalise for cheap distance checks
       Real lensq = n.x()*n.x() + n.y()*n.y() + n.z()*n.z();
@@ -304,7 +304,7 @@ namespace Dg
       //recover gracefully
       if (Dg::IsZero(lensq))
       {
-        m_normal = Vector4<Real>::xAxis();
+        m_normal = Vector<Real>::xAxis();
         m_offset = static_cast<Real>(0.0);
       }
       else
@@ -321,14 +321,14 @@ namespace Dg
       //	@	Plane::Set()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    void Plane<Real>::Set(Vector4<Real> const & p0,
-      Vector4<Real> const & p1,
-      Vector4<Real> const & p2)
+    void Plane<Real>::Set(Vector<Real> const & p0,
+      Vector<Real> const & p1,
+      Vector<Real> const & p2)
     {
       //Get plane vector
-      Vector4<Real> u = p1 - p0;
-      Vector4<Real> v = p2 - p0;
-      Vector4<Real> w = Cross(u, v);
+      Vector<Real> u = p1 - p0;
+      Vector<Real> v = p2 - p0;
+      Vector<Real> w = Cross(u, v);
 
       //normalise for cheap distance checks
       Real lensq = w.x()*w.x() + w.y()*w.y() + w.z()*w.z();
@@ -336,7 +336,7 @@ namespace Dg
       //recover gracefully
       if (Dg::IsZero(lensq))
       {
-        m_normal = Vector4<Real>::xAxis();
+        m_normal = Vector<Real>::xAxis();
         m_offset = static_cast<Real>(0.0);
       }
       else

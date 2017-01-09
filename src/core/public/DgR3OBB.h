@@ -8,7 +8,7 @@
 #ifndef DGR3OBB_H
 #define DGR3OBB_H
 
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 #include "DgR3VQS.h"
 #include "dgmath.h"
 #include "DgRNG.h"
@@ -33,17 +33,17 @@ namespace Dg
     {
     public:
       //! Default constructor.
-      OBB() : m_basis{ Vector4<Real>::xAxis(), Vector4<Real>::yAxis(), Vector4<Real>::zAxis() }
-        , m_center(Vector4<Real>::Origin())
+      OBB() : m_basis{ Vector<Real>::xAxis(), Vector<Real>::yAxis(), Vector<Real>::zAxis() }
+        , m_center(Vector<Real>::Origin())
         , m_halfLengths{ static_cast<Real>(1.0), static_cast<Real>(1.0), static_cast<Real>(1.0) }
       {}
 
       //! Constructor.
-      OBB(Vector4<Real> const & forward
-        , Vector4<Real> const & left
-        , Vector4<Real> const & up
+      OBB(Vector<Real> const & forward
+        , Vector<Real> const & left
+        , Vector<Real> const & up
         , Real lf, Real ll, Real lu
-        , Vector4<Real> const & center)
+        , Vector<Real> const & center)
         : m_basis{ forward, left, up }
         , m_center(center)
         , m_halfLengths{ lf, ll, lu }
@@ -74,9 +74,9 @@ namespace Dg
       }
 
       //! Get the OBB basis vectors.
-      void GetBasis(Vector4<Real> & a_forward,
-        Vector4<Real> & a_left,
-        Vector4<Real> & a_up) const
+      void GetBasis(Vector<Real> & a_forward,
+        Vector<Real> & a_left,
+        Vector<Real> & a_up) const
       {
         a_forward = m_basis[0];
         a_left = m_basis[1];
@@ -94,13 +94,13 @@ namespace Dg
       }
 
       //! Get the OBB center.
-      Vector4<Real> const & GetCenter() const { return m_center; }
+      Vector<Real> const & GetCenter() const { return m_center; }
 
       //! Set the OBB basis vectors. It is up to the user to ensure
       //! this is a valid orthogonal basis.
-      void SetBasis(Vector4<Real> const & a_forward
-        , Vector4<Real> const & a_left
-        , Vector4<Real> const & a_up)
+      void SetBasis(Vector<Real> const & a_forward
+        , Vector<Real> const & a_left
+        , Vector<Real> const & a_up)
       {
         m_basis[0] = a_forward;
         m_basis[1] = a_left;
@@ -116,7 +116,7 @@ namespace Dg
       }
 
       //! Set the OBB center.
-      void SetCenter(Vector4<Real> const & a_center)
+      void SetCenter(Vector<Real> const & a_center)
       {
         m_center = a_center;
       }
@@ -146,10 +146,10 @@ namespace Dg
       }
 
       //! Get a random point inside the OBB
-      Vector4<Real> GetRandomPointInside() const
+      Vector<Real> GetRandomPointInside() const
       {
         RNG rng;
-        return Vector4<Real>
+        return Vector<Real>
           (
             m_center + rng.GetUniform(-m_halfLengths[0], m_halfLengths[0]) * m_basis[0],
             m_center + rng.GetUniform(-m_halfLengths[1], m_halfLengths[1]) * m_basis[1],
@@ -159,8 +159,8 @@ namespace Dg
       }
 
     private:
-      Vector4<Real>   m_basis[3];       //[f, l, u]
-      Vector4<Real>   m_center;
+      Vector<Real>   m_basis[3];       //[f, l, u]
+      Vector<Real>   m_center;
       Real            m_halfLengths[3]; //[f, l, u]
     };
   }

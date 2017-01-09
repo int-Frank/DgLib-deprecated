@@ -32,10 +32,10 @@ namespace Dg
         Real ur;
 
         //! Closest point on line to the ray
-        Vector4<Real> cpl;
+        Vector<Real> cpl;
 
         //! Closest point on ray to the line
-        Vector4<Real> cpr;
+        Vector<Real> cpr;
 
         //! Return code. Codes include:
         //! Success, Parallel
@@ -59,13 +59,13 @@ namespace Dg
       CPQuery<Real, Ray<Real>, Line<Real>>::operator()
       (Ray<Real> const & a_ray, Line<Real> const & a_line)
     {
-      Vector4<Real> or (a_ray.Origin());
-      Vector4<Real> ol(a_line.Origin());
-      Vector4<Real> dr(a_ray.Direction());
-      Vector4<Real> dl(a_line.Direction());
+      Vector<Real> or (a_ray.Origin());
+      Vector<Real> ol(a_line.Origin());
+      Vector<Real> dr(a_ray.Direction());
+      Vector<Real> dl(a_line.Direction());
 
       //compute intermediate parameters
-      Vector4<Real> diff(or -ol);
+      Vector<Real> diff(or -ol);
       Real a = dr.Dot(dl);
       Real b = dl.Dot(diff);
       Real c = static_cast<Real>(1.0) - a * a;

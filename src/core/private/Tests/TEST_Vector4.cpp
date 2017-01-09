@@ -1,11 +1,11 @@
 #include "TestHarness.h"
-#include "DgR3Vector4.h"
-#include "DgR3Vector4_ancillary.h"
+#include "DgR3Vector.h"
+#include "DgR3Vector_ancillary.h"
 
-typedef Dg::R3::Vector4 < float > vec4;
+typedef Dg::R3::Vector < float > vec4;
 
 //--------------------------------------------------------------------------------
-//	Vector4 Construction
+//	Vector Construction
 //--------------------------------------------------------------------------------
 TEST(Stack_Vector4_Construction, creation_Vector4_Construction)
 {
@@ -61,7 +61,7 @@ TEST(Stack_Vector4_Construction, creation_Vector4_Construction)
 
 
 //--------------------------------------------------------------------------------
-//	Vector4 Accessors
+//	Vector Accessors
 //--------------------------------------------------------------------------------
 TEST(Stack_Vector4_Accessors, creation_Vector4_Accessors)
 {
@@ -80,7 +80,7 @@ TEST(Stack_Vector4_Accessors, creation_Vector4_Accessors)
 
 
 //--------------------------------------------------------------------------------
-//	Vector4 Arithmetic
+//	Vector Arithmetic
 //--------------------------------------------------------------------------------
 TEST(Stack_Vector4_Arithmetic, creation_Vector4_Arithmetic)
 {
@@ -103,7 +103,7 @@ TEST(Stack_Vector4_Arithmetic, creation_Vector4_Arithmetic)
 
 
 //--------------------------------------------------------------------------------
-//	Vector4 Other functions
+//	Vector Other functions
 //--------------------------------------------------------------------------------
 TEST(Stack_Vector4_Other, creation_Vector4_Other)
 {

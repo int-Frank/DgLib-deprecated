@@ -8,7 +8,7 @@
 #ifndef DGR3LINE_H
 #define DGR3LINE_H
 
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 #include "DgR3Matrix44.h"
 #include "DgR3VQS.h"
 #include "dgmath.h"
@@ -37,7 +37,7 @@ namespace Dg
       Line();
 
       //! Construct from an origin and direction
-      Line(Vector4<Real> const & origin, Vector4<Real> const & direction);
+      Line(Vector<Real> const & origin, Vector<Real> const & direction);
       ~Line() {}
 
       //! Copy constructor
@@ -47,13 +47,13 @@ namespace Dg
       Line& operator=(Line const &);
 
       //! Get the origin of the line
-      Vector4<Real> const & Origin() const { return m_origin; }
+      Vector<Real> const & Origin() const { return m_origin; }
 
       //! Get the direction of the line
-      Vector4<Real> const & Direction() const { return m_direction; }
+      Vector<Real> const & Direction() const { return m_direction; }
 
       //! Get the origin and direction of the line
-      void Get(Vector4<Real>& origin, Vector4<Real>& direction) const;
+      void Get(Vector<Real>& origin, Vector<Real>& direction) const;
 
       //! Comparison
       bool operator== (Line const &) const;
@@ -62,7 +62,7 @@ namespace Dg
       bool operator!= (Line const &) const;
 
       //! Set line from an origin and direction
-      void Set(Vector4<Real> const & origin, Vector4<Real> const & direction);
+      void Set(Vector<Real> const & origin, Vector<Real> const & direction);
 
       //! Transform the line
       Line GetTransformed(Matrix44<Real> const &) const;
@@ -79,8 +79,8 @@ namespace Dg
     private:
 
       //Data members
-      Vector4<Real> m_origin;
-      Vector4<Real> m_direction;
+      Vector<Real> m_origin;
+      Vector<Real> m_direction;
     };
 
 
@@ -88,8 +88,8 @@ namespace Dg
     //	@	Line::Line()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    Line<Real>::Line() : m_origin(Vector4<Real>::Origin())
-      , m_direction(Vector4<Real>::xAxis())
+    Line<Real>::Line() : m_origin(Vector<Real>::Origin())
+      , m_direction(Vector<Real>::xAxis())
     {
     }	//End: Line::Line()
 
@@ -98,7 +98,7 @@ namespace Dg
     //	@	Line::Line()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    Line<Real>::Line(Vector4<Real> const & a_origin, Vector4<Real> const & a_direction)
+    Line<Real>::Line(Vector<Real> const & a_origin, Vector<Real> const & a_direction)
     {
       Set(a_origin, a_direction);
     }	//End: Line::Line()
@@ -131,7 +131,7 @@ namespace Dg
     //	@	Line::Get()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    void Line<Real>::Get(Vector4<Real> & a_origin, Vector4<Real> & a_direction) const
+    void Line<Real>::Get(Vector<Real> & a_origin, Vector<Real> & a_direction) const
     {
       a_origin = m_origin;
       a_direction = m_direction;
@@ -162,7 +162,7 @@ namespace Dg
     //	@	Line::Set()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    void Line<Real>::Set(Vector4<Real> const & a_origin, Vector4<Real> const & a_direction)
+    void Line<Real>::Set(Vector<Real> const & a_origin, Vector<Real> const & a_direction)
     {
       //Assign
       m_origin = a_origin;

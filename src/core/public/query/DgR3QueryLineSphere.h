@@ -46,10 +46,10 @@ namespace Dg
       struct Result
       {
         //! Point of intersection from u0. Not set if line does not intersect sphere.
-        Vector4<Real> p0;
+        Vector<Real> p0;
 
         //! Point of intersection from u1. Not set if line does not intersect sphere.
-        Vector4<Real> p1;
+        Vector<Real> p1;
 
         //! Distance from the line origin to the first point of intersection. Not set if line does not intersect sphere.
         Real u0;
@@ -85,7 +85,7 @@ namespace Dg
       (Line<Real> const & a_line, Sphere<Real> const & a_sphere)
     {
       Result result;
-      Vector4<Real> w0(a_line.Origin() - a_sphere.Center());
+      Vector<Real> w0(a_line.Origin() - a_sphere.Center());
       Real a = a_line.Direction().LengthSquared();
       Real b = w0.Dot(a_line.Direction());
       Real c = w0.LengthSquared() - a_sphere.Radius() *a_sphere.Radius();
@@ -103,7 +103,7 @@ namespace Dg
       (Line<Real> const & a_line, Sphere<Real> const & a_sphere)
     {
       Result result;
-      Vector4<Real> w0(a_line.Origin() - a_sphere.Center());
+      Vector<Real> w0(a_line.Origin() - a_sphere.Center());
       Real a = a_line.Direction().LengthSquared();
       Real b = static_cast<Real>(2.0) * w0.Dot(a_line.Direction());
       Real c = w0.LengthSquared() - a_sphere.Radius() * a_sphere.Radius();

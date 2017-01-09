@@ -10,7 +10,7 @@
 
 #include "DgMath.h"
 #include "DgMatrix.h"
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 #include "DgR3Quaternion.h"
 
 //--------------------------------------------------------------------------------
@@ -124,9 +124,9 @@ namespace Dg
     Matrix44& RotationZ(Real);
 
     //! Set the matrix to look at a point in space
-    Matrix44& LookAt(Vector4<Real> const & origin
-                   , Vector4<Real> const & target
-                   , Vector4<Real> const & up);
+    Matrix44& LookAt(Vector<Real> const & origin
+                   , Vector<Real> const & target
+                   , Vector<Real> const & up);
 
     //! Set a perspective transformation matrix
     Matrix44& Perspective(Real a_fov, 
@@ -776,23 +776,23 @@ namespace Dg
   //	@	Matrix44::LookAt()
   //-------------------------------------------------------------------------------
   template<typename Real>
-  Matrix44<Real>& Matrix44<Real>::LookAt(Vector4<Real> const & a_origin
-                                       , Vector4<Real> const & a_target
-                                       , Vector4<Real> const & a_up)
+  Matrix44<Real>& Matrix44<Real>::LookAt(Vector<Real> const & a_origin
+                                       , Vector<Real> const & a_target
+                                       , Vector<Real> const & a_up)
   {
-    Vector4<Real> forward = a_target - a_origin;
+    Vector<Real> forward = a_target - a_origin;
     if (Dg::IsZero(forward.LengthSquared()))
     {
-      forward = Vector4<Real>::xAxis();
+      forward = Vector<Real>::xAxis();
     }
 
-    Vector4<Real> right = Cross(forward, a_up);
+    Vector<Real> right = Cross(forward, a_up);
     if (Dg::IsZero(right.LengthSquared()))
     {
       right = Perpendicular(forward);
     }
 
-    Vector4<Real> camUp = Cross(forward, right);
+    Vector<Real> camUp = Cross(forward, right);
 
     SetRows(right, up, forward, a_origin);
 

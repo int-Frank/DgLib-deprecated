@@ -8,7 +8,7 @@
 #ifndef DGR3SPHERE_H
 #define DGR3SPHERE_H
 
-#include "DgR3Vector4.h"
+#include "DgR3Vector.h"
 #include "DgR3VQS.h"
 #include "dgmath.h"
 #include "DgRNG.h"
@@ -32,11 +32,11 @@ namespace Dg
     {
     public:
       //! Default constructor.
-      Sphere() : m_origin(Vector4<Real>::Origin()),
+      Sphere() : m_origin(Vector<Real>::Origin()),
         m_radius(static_cast<Real>(1.0)) {}
 
       //! Construct sphere from origin and radius
-      Sphere(Vector4<Real> const &, Real);
+      Sphere(Vector<Real> const &, Real);
       ~Sphere() {}
 
       //! Copy constructor
@@ -47,13 +47,13 @@ namespace Dg
       Sphere& operator= (Sphere const &);
 
       //! Get the sphere center.
-      Vector4<Real> const & Center() const { return m_origin; }
+      Vector<Real> const & Center() const { return m_origin; }
 
       //! Get the sphere radius.
       Real Radius() const { return m_radius; }
 
       //! Get the plane center and .
-      void Get(Vector4<Real>&, Real&) const;
+      void Get(Vector<Real>&, Real&) const;
 
       //! Are two planes equal?
       bool operator== (Sphere const &) const;
@@ -62,13 +62,13 @@ namespace Dg
       bool operator!= (Sphere const &) const;
 
       //! Set the sphere center
-      void SetCenter(Vector4<Real> const &);
+      void SetCenter(Vector<Real> const &);
 
       //! Set the sphere radius
       void SetRadius(Real);
 
       //! Set the center and radius.
-      void Set(Vector4<Real> const & n, Real);
+      void Set(Vector<Real> const & n, Real);
 
       //! Transform the sphere
       Sphere GetTransformed(VQS<Real> const &) const;
@@ -77,10 +77,10 @@ namespace Dg
       Sphere & TransformSelf(VQS<Real> const &);
 
       //! Get a random point inside the sphere
-      Vector4<Real> GetRandomPointInside() const;
+      Vector<Real> GetRandomPointInside() const;
 
     private:
-      Vector4<Real>   m_origin;
+      Vector<Real>   m_origin;
       Real            m_radius;
     };
 
@@ -89,7 +89,7 @@ namespace Dg
     //	@	Sphere::Sphere()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    Sphere<Real>::Sphere(Vector4<Real> const & a_center, Real a_radius)
+    Sphere<Real>::Sphere(Vector<Real> const & a_center, Real a_radius)
     {
       Set(a_center, a_radius);
     }	//End: Sphere::Sphere()
@@ -110,7 +110,7 @@ namespace Dg
       //	@	Sphere::Set()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    void Sphere<Real>::Set(Vector4<Real> const & a_center, Real a_radius)
+    void Sphere<Real>::Set(Vector<Real> const & a_center, Real a_radius)
     {
       m_origin = a_center;
       m_origin.w() = static_cast<Real>(1.0);
@@ -152,7 +152,7 @@ namespace Dg
       //	@	Sphere::SetCenter()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    void Sphere<Real>::SetCenter(Vector4<Real> const & a_center)
+    void Sphere<Real>::SetCenter(Vector<Real> const & a_center)
     {
       m_origin = a_center;
       m_origin.w() = static_cast<Real>(1.0);
@@ -173,7 +173,7 @@ namespace Dg
       //	@	Sphere::Get()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    void Sphere<Real>::Get(Vector4<Real> & a_center, Real & a_radius) const
+    void Sphere<Real>::Get(Vector<Real> & a_center, Real & a_radius) const
     {
       a_center = m_origin;
       a_radius = m_radius;
@@ -205,12 +205,12 @@ namespace Dg
       //	@	Sphere::GetRandomPointInside()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    Vector4<Real> Sphere<Real>::GetRandomPointInside() const
+    Vector<Real> Sphere<Real>::GetRandomPointInside() const
     {
-      Vector4<Real> result(m_origin);
+      Vector<Real> result(m_origin);
       if (!Dg::IsZero(m_radius))
       {
-        Vector4<Real> diff;
+        Vector<Real> diff;
         RNG rng;
         do
         {

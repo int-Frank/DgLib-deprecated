@@ -31,10 +31,10 @@ namespace Dg
         Real u1;
 
         //! Closest point on segment 0 to segment 1
-        Vector4<Real> cp0;
+        Vector<Real> cp0;
 
         //! Closest point on segment 1 to segment 0
-        Vector4<Real> cp1;
+        Vector<Real> cp1;
 
         //! Return code. Codes include:
         //! Success, Overlapping
@@ -61,13 +61,13 @@ namespace Dg
       Result result;
       result.code = QueryCode::Success;
 
-      Vector4<Real> o0(a_seg0.Origin());
-      Vector4<Real> o1(a_seg1.Origin());
-      Vector4<Real> d0(a_seg0.Direction());
-      Vector4<Real> d1(a_seg1.Direction());
+      Vector<Real> o0(a_seg0.Origin());
+      Vector<Real> o1(a_seg1.Origin());
+      Vector<Real> d0(a_seg0.Direction());
+      Vector<Real> d1(a_seg1.Direction());
 
       //compute intermediate parameters
-      Vector4<Real> w0(o0 - o1);
+      Vector<Real> w0(o0 - o1);
       Real a = d0.Dot(d0);
       Real b = d0.Dot(d1);
       Real c = d1.Dot(d1);
@@ -86,9 +86,9 @@ namespace Dg
         tn = e;
 
         //Do the line segments overlap?
-        Vector4<Real> w1((o0 + d0) - o1);
-        Vector4<Real> w2(o0 - (o1 + d1));
-        Vector4<Real> w3((o0 + d0) - (o1 + d1));
+        Vector<Real> w1((o0 + d0) - o1);
+        Vector<Real> w2(o0 - (o1 + d1));
+        Vector<Real> w3((o0 + d0) - (o1 + d1));
         bool bse = (e < static_cast<Real>(0.0));
         if (!(
           bse == (w1.Dot(d1) < static_cast<Real>(0.0)) &&
