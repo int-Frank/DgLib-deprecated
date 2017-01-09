@@ -55,7 +55,7 @@ namespace Dg
         Vector3<Real> cp1;
 
         //! Return code. Codes include:
-        //!   Intersecting, Parallel, Overlapping
+        //!   Success, Overlapping
         QueryCode code;
       };
 
@@ -72,11 +72,11 @@ namespace Dg
 
 
     //--------------------------------------------------------------------------------
-    //	@	CPQuery::operator()
+    //	@	TIQuery::operator()
     //--------------------------------------------------------------------------------
     template<typename Real>
-    typename CPQuery<Real, Segment<Real>, Segment<Real>>::Result
-      CPQuery<Real, Segment<Real>, Segment<Real>>::operator()
+    typename TIQuery<Real, Segment<Real>, Segment<Real>>::Result
+      TIQuery<Real, Segment<Real>, Segment<Real>>::operator()
       (Segment<Real> const & a_seg0, Segment<Real> const & a_seg1)
     {
       Result result;
@@ -89,160 +89,157 @@ namespace Dg
       Real u0_numerator = PerpDot(a_seg1.Direction(), w);
       Real u1_numerator = PerpDot(a_seg0.Direction(), w);
 
-      //Parallel, or one or both segments length is zero.
       if (Dg::IsZero(denom))
       {
-        Real ls0 = dir0.LengthSquared();
-        Real ls1 = dir1.LengthSquared();
-
-        //If length of seg_0 is zero
-        if (Dg::IsZero(ls0))
+        //Parallel
+        if (!Dg::IsZero(u0_numerator))
         {
-          result.u0 = static_cast<Real>(0);
-
-          //If both segments have zero length
-          if (Dg::IsZero(ls1))
-          {
-            result.u1 = static_cast<Real>(0);
-            if (Dg::IsZero(w))
-            {
-              result.code = QueryCode::Overlapping;
-            }
-            else
-            {
-              result.code = QueryCode::NotIntersecting
-            }
-          }
-          //Only seg_0 has zero length
-          else
-          {
-            result.u1 = Dot(w, a_seg1.Direction()) / a_seg1.Direction().LengthSquared();
-            result.code = QueryCode::NotIntersecting;
-            if (result.u1 < static_cast<Real>(0))
-            {
-              result.u1 = static_cast<Real>(0);
-            }
-            else if (result.u1 > static_cast<Real>(1))
-            {
-              result.u1 = static_cast<Real>(1);
-            }
-            else if (Dg::IsZero(PerpDot(w, dir1)))
-            {
-              result.code = QueryCode::Overlapping;
-            }
-          }
-        }
-        //Only seg_1 has zero length
-        else if (Dg::IsZero(ls1))
-        {
-          result.u1 = static_cast<Real>(0);
-          result.u0 = Dot(w, dir0) / dir0.LengthSquared();
-          result.code = QueryCode::NotIntersecting;
-          if (result.u0 < static_cast<Real>(0))
-          {
-            result.u0 = static_cast<Real>(0);
-          }
-          else if (result.u0 > static_cast<Real>(1))
-          {
-            result.u0 = static_cast<Real>(1);
-          }
-          else if (Dg::IsZero(PerpDot(w, dir0)))
-          {
-            result.code = QueryCode::Overlapping;
-          }
+          result.isIntersecting = false;
         }
 
-        //Both segments have non-zero lengths
+        //Segments lie on the same line
         else
         {
-          Vector3<Real> v0 = a_seg0.Direction() / a_seg0.LengthSquared();
-          Vector3<Real> v1 = a_seg1.Direction() / a_seg1.LengthSquared();
-          Vector3<Real> v = a_seg0.GetP1() - a_seg1.GetP0();
-          Real a = Dot(w, v1);                               //s1.p0 to s0.p0 dot s1.direction
-          Real b = Dot(a_seg0.GetP1() - a_seg1.GetP0(), v1); //s1.p0 to s0.P1 dor s1.direction
+          Real v0 = a_seg0.Direction() / a_seg0.Direction().LengthSquared();
+          Real v1 = a_seg1.Direction() / a_seg1.Direction().LengthSquared();
+          Vector3<Real> q = a_seg1.GetP0() - a_seg1.GetP0();
 
-          if (a > static_cast<Real>(1))
-          {
-            if (b > static_cast<Real>(1))
-            {
-              if (b > a)
-              {
-                result.u0 = static_cast<Real>(0);
-                result.u1 = static_cast<Real>(1);
-              }
-              else
-              {
-                result.u0 = static_cast<Real>(1);
-                result.u1 = static_cast<Real>(1);
-              }
-              result.code = QueryCode::NotIntersecting;
-            }
-            else
-            {
-              result.u0 = Dot(-w, v0);
-              result.u1 = static_cast<Real>(1);
-
-              if (Dg::IsZero(u0_numerator))
-              {
-                result.code = QueryCode::Overlapping;
-              }
-              else
-              {
-                result.code = QueryCode::NotIntersecting;
-              }
-            }
-          }
-          else if (a < static_cast<Real>(0))
-          {
-            if (b < static_cast<Real>(0))
-            {
-              if (b > a)
-              {
-                result.u0 = static_cast<Real>(0);
-                result.u1 = static_cast<Real>(0);
-              }
-              else
-              {
-                result.u0 = static_cast<Real>(1);
-                result.u1 = static_cast<Real>(0);
-              }
-              result.code = QueryCode::NotIntersecting;
-            }
-            else
-            {
-              result.u0 = Dot(-w, v0);
-              result.u1 = static_cast<Real>(0);
-
-              if (Dg::IsZero(u0_numerator))
-              {
-                result.code = QueryCode::Overlapping;
-              }
-              else
-              {
-                result.code = QueryCode::NotIntersecting;
-              }
-            }
-          }
-          else
-          {
-            result.u0 = static_cast<Real>(0);
-            result.u1 = Dot(w, v0);
-
-            if (Dg::IsZero(u0_numerator))
-            {
-              result.code = QueryCode::Overlapping;
-            }
-            else
-            {
-              result.code = QueryCode::NotIntersecting;
-            }
-          }
+          result.isIntersecting = (IsInRange(static_cast<Real>(0), static_cast<Real>(1), Dot(w, v1))
+                                || IsInRange(static_cast<Real>(0), static_cast<Real>(1), Dot(q, v1))
+                                || IsInRange(static_cast<Real>(0), static_cast<Real>(1), Dot(-w, v0)));
         }
       }
       else
       {
-
+        Real u0 = u0_numerator / denom;
+        Real u1 = u1_numerator / denom;
+        result.isIntersecting = (IsInRange(static_cast<Real>(0), static_cast<Real>(1), u0)
+                              && IsInRange(static_cast<Real>(0), static_cast<Real>(1), u1));
       }
+      return result;
+    }
+
+
+    //--------------------------------------------------------------------------------
+    //	@	CPQuery::operator()
+    //--------------------------------------------------------------------------------
+    template<typename Real>
+    typename CPQuery<Real, Segment<Real>, Segment<Real>>::Result
+      CPQuery<Real, Segment<Real>, Segment<Real>>::operator()
+      (Segment<Real> const & a_seg0, Segment<Real> const & a_seg1)
+    {
+      Result result;
+      result.code = QueryCode::Success;
+
+      Vector3<Real> o0(a_seg0.Origin());
+      Vector3<Real> o1(a_seg1.Origin());
+      Vector3<Real> d0(a_seg0.Direction());
+      Vector3<Real> d1(a_seg1.Direction());
+
+      //compute intermediate parameters
+      Vector3<Real> w0(o0 - o1);
+      Real a = d0.Dot(d0);
+      Real b = d0.Dot(d1);
+      Real c = d1.Dot(d1);
+      Real d = d0.Dot(w0);
+      Real e = d1.Dot(w0);
+      Real denom = a*c - b*b;
+
+      Real sn, sd, tn, td;
+
+      // if denom is zero, try finding closest point on segment1 to origin0
+      if (Dg::IsZero(denom))
+      {
+        // clamp result.u0 to 0
+        sd = td = c;
+        sn = static_cast<Real>(0.0);
+        tn = e;
+
+        //Do the line segments overlap?
+        Vector3<Real> w1((o0 + d0) - o1);
+        Vector3<Real> w2(o0 - (o1 + d1));
+        Vector3<Real> w3((o0 + d0) - (o1 + d1));
+        bool bse = (e < static_cast<Real>(0.0));
+        if (!(
+          bse == (w1.Dot(d1) < static_cast<Real>(0.0)) &&
+          bse == (w2.Dot(d1) < static_cast<Real>(0.0)) &&
+          bse == (w3.Dot(d1) < static_cast<Real>(0.0))
+          ))
+        {
+          result.code = QueryCode::Overlapping;
+        }
+      }
+      else
+      {
+        // clamp result.u0 within [0,1]
+        sd = td = denom;
+        sn = b*e - c*d;
+        tn = a*e - b*d;
+
+        // clamp result.u0 to 0
+        if (sn < static_cast<Real>(0.0))
+        {
+          sn = static_cast<Real>(0.0);
+          tn = e;
+          td = c;
+        }
+        // clamp result.u0 to 1
+        else if (sn > sd)
+        {
+          sn = sd;
+          tn = e + b;
+          td = c;
+        }
+      }
+
+      // clamp result.u1 within [0,1]
+      // clamp result.u1 to 0
+      if (tn < static_cast<Real>(0.0))
+      {
+        result.u1 = static_cast<Real>(0.0);
+        // clamp result.u0 to 0
+        if (-d < static_cast<Real>(0.0))
+        {
+          result.u0 = static_cast<Real>(0.0);
+        }
+        // clamp result.u0 to 1
+        else if (-d > a)
+        {
+          result.u0 = static_cast<Real>(1.0);
+        }
+        else
+        {
+          result.u0 = -d / a;
+        }
+      }
+      // clamp result.u1 to 1
+      else if (tn > td)
+      {
+        result.u1 = static_cast<Real>(1.0);
+        // clamp result.u0 to 0
+        if ((-d + b) < static_cast<Real>(0.0))
+        {
+          result.u0 = static_cast<Real>(0.0);
+        }
+        // clamp result.u0 to 1
+        else if ((-d + b) > a)
+        {
+          result.u0 = static_cast<Real>(1.0);
+        }
+        else
+        {
+          result.u0 = (-d + b) / a;
+        }
+      }
+      else
+      {
+        result.u1 = tn / td;
+        result.u0 = sn / sd;
+      }
+
+      result.cp0 = o0 + result.u0*d0;
+      result.cp1 = o1 + result.u1*d1;
+      return result;
 
     } //End: CPQuery::operator()
   }
