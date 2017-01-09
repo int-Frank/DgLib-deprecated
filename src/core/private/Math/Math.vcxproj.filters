@@ -167,5 +167,8 @@
     <ClInclude Include="..\..\public\DgR2Vector3_ancillary.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2TIQuery.h">
+      <Filter>Public Headers\Query</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
