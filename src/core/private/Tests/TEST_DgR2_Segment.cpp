@@ -1,5 +1,6 @@
 #include "TestHarness.h"
 #include "DgR2Segment.h"
+#include "DgR2Vector.h"
 #include "DgR2Matrix.h"
 #include "query/DgR2QueryPointSegment.h"
 #include "query/DgR2QuerySegmentSegment.h"

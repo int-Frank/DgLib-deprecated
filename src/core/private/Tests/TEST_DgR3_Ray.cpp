@@ -1,5 +1,6 @@
 #include "TestHarness.h"
 #include "DgR3Ray.h"
+#include "DgR3Line.h"
 #include "DgR3Matrix.h"
 #include "DgR3VQS.h"
 #include "query/DgR3QueryPointRay.h"

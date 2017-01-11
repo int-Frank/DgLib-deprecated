@@ -15,7 +15,6 @@ namespace Dg
 {
   namespace R3
   {
-    template<typename Real> class Vector;
     template<typename Real> class Quaternion;
     template<typename Real> class VQS;
 
@@ -110,9 +109,6 @@ namespace Dg
     template<typename Real>
     class Quaternion
     {
-      friend class Matrix<Real>;
-      friend class VQS<Real>;
-
     public:
 
       //! Default constructed to the identity quaternion (w(1), x(0), y(0), z(0)).
@@ -299,6 +295,30 @@ namespace Dg
         , const Quaternion<Real>& a_end
         , Real a_t);
 
+      //! Access element-x by value
+      Real x() const { return m_x; }
+
+      //! Access element-y by value
+      Real y() const { return m_y; }
+
+      //! Access element-z by value
+      Real z() const { return m_z; }
+
+      //! Access element-w by value
+      Real w() const { return m_w; }
+
+      //! Access element-x by reference
+      Real & x() { return m_x; }
+
+      //! Access element-y by reference
+      Real & y() { return m_y; }
+
+      //! Access element-z by reference
+      Real & z() { return m_z; }
+
+      //! Access element-w by reference
+      Real & w() { return m_w; }
+
     private:
       // member variables
       Real m_w, m_x, m_y, m_z;
@@ -368,7 +388,7 @@ namespace Dg
     template<typename Real>
     Quaternion<Real>::Quaternion(const Vector<Real>& a_vector)
     {
-      Set(static_cast<Real>(0.0), a_vector.m_V[0], a_vector.m_V[1], a_vector.m_V[2]);
+      Set(static_cast<Real>(0.0), a_vector[0], a_vector[1], a_vector[2]);
 
     }   // End of Quaternion::Quaternion()
 
@@ -682,9 +702,9 @@ namespace Dg
       Real scaleFactor = sintheta / Real(sqrt(length));
 
       m_w = costheta;
-      m_x = scaleFactor * a_axis.m_V[0];
-      m_y = scaleFactor * a_axis.m_V[1];
-      m_z = scaleFactor * a_axis.m_V[2];
+      m_x = scaleFactor * a_axis[0];
+      m_y = scaleFactor * a_axis[1];
+      m_z = scaleFactor * a_axis[2];
 
     }   // End of Quaternion::Set()
 
@@ -696,10 +716,10 @@ namespace Dg
     void Quaternion<Real>::Set(const Vector<Real>& a_from, const Vector<Real>& a_to)
     {
       // get axis of rotation
-      Vector<Real> axis = Cross<Real>(a_from, a_to);
+      Vector<Real> axis = a_from.Cross(a_to);
 
       // get scaled cos of angle between vectors and set initial quaternion
-      Set(a_from.Dot(a_to), axis.m_V[0], axis.m_V[1], axis.m_V[2]);
+      Set(a_from.Dot(a_to), axis[0], axis[1], axis[2]);
       // quaternion at this point is ||from||*||a_to||*( cos(theta), r*sin(theta) )
 
       // normalize a_to remove ||from||*||a_to|| factor
@@ -725,11 +745,11 @@ namespace Dg
       {
         // rotate pi radians around orthogonal vector
         // take cross product with x axis
-        if (a_from.m_V[2] * a_from.m_V[2] > a_from.m_V[0] * a_from.m_V[0])
-          Set(static_cast<Real>(0.0), static_cast<Real>(0.0), a_from.m_V[2], -a_from.m_V[1]);
+        if (a_from[2] * a_from[2] > a_from[0] * a_from[0])
+          Set(static_cast<Real>(0.0), static_cast<Real>(0.0), a_from[2], -a_from[1]);
         // or take cross product with z axis
         else
-          Set(static_cast<Real>(0.0), a_from.m_V[1], -a_from.m_V[0], static_cast<Real>(0.0));
+          Set(static_cast<Real>(0.0), a_from[1], -a_from[0], static_cast<Real>(0.0));
       }
 
       // normalize again a_to get rotation quaternion
@@ -787,10 +807,10 @@ namespace Dg
       else
       {
         length = static_cast<Real>(1.0) / length;
-        a_axis.m_V[0] = m_x * length;
-        a_axis.m_V[1] = m_y * length;
-        a_axis.m_V[2] = m_z * length;
-        a_axis.m_V[3] = static_cast<Real>(0.0);
+        a_axis[0] = m_x * length;
+        a_axis[1] = m_y * length;
+        a_axis[2] = m_z * length;
+        a_axis[3] = static_cast<Real>(0.0);
       }
 
     }   // End of Quaternion::GetAxisAngle()
@@ -819,20 +839,20 @@ namespace Dg
       yz = m_y * zs;
       zz = m_z * zs;
 
-      a_x0.m_V[0] = static_cast<Real>(1.0) - (yy + zz);
-      a_x0.m_V[1] = xy + wz;
-      a_x0.m_V[2] = xz - wy;
-      a_x0.m_V[3] = static_cast<Real>(0.0);
+      a_x0[0] = static_cast<Real>(1.0) - (yy + zz);
+      a_x0[1] = xy + wz;
+      a_x0[2] = xz - wy;
+      a_x0[3] = static_cast<Real>(0.0);
 
-      a_x1.m_V[0] = xy - wz;
-      a_x1.m_V[1] = static_cast<Real>(1.0) - (xx + zz);
-      a_x1.m_V[2] = yz + wx;
-      a_x1.m_V[3] = static_cast<Real>(0.0);
+      a_x1[0] = xy - wz;
+      a_x1[1] = static_cast<Real>(1.0) - (xx + zz);
+      a_x1[2] = yz + wx;
+      a_x1[3] = static_cast<Real>(0.0);
 
-      a_x2.m_V[0] = xz + wy;
-      a_x2.m_V[1] = yz - wx;
-      a_x2.m_V[2] = static_cast<Real>(1.0) - (xx + yy);
-      a_x2.m_V[3] = static_cast<Real>(0.0);
+      a_x2[0] = xz + wy;
+      a_x2[1] = yz - wx;
+      a_x2[2] = static_cast<Real>(1.0) - (xx + yy);
+      a_x2[3] = static_cast<Real>(0.0);
 
     }   // End of Quaternion::GetGetBasis()
 
@@ -1093,15 +1113,15 @@ namespace Dg
     template<typename Real>
     Vector<Real> Quaternion<Real>::Rotate(const Vector<Real>& a_vector) const
     {
-      Real vMult = static_cast<Real>(2.0) * (m_x*a_vector.m_V[0] + m_y*a_vector.m_V[1] + m_z*a_vector.m_V[2]);
+      Real vMult = static_cast<Real>(2.0) * (m_x*a_vector[0] + m_y*a_vector[1] + m_z*a_vector[2]);
       Real crossMult = static_cast<Real>(2.0) * m_w;
       Real pMult = crossMult * m_w - static_cast<Real>(1.0);
 
       Vector<Real> result;
-      result.m_V[0] = pMult*a_vector.m_V[0] + vMult*m_x + crossMult*(m_y*a_vector.m_V[2] - m_z*a_vector.m_V[1]);
-      result.m_V[1] = pMult*a_vector.m_V[1] + vMult*m_y + crossMult*(m_z*a_vector.m_V[0] - m_x*a_vector.m_V[2]);
-      result.m_V[2] = pMult*a_vector.m_V[2] + vMult*m_z + crossMult*(m_x*a_vector.m_V[1] - m_y*a_vector.m_V[0]);
-      result.m_V[3] = a_vector.m_V[3];
+      result[0] = pMult*a_vector[0] + vMult*m_x + crossMult*(m_y*a_vector[2] - m_z*a_vector[1]);
+      result[1] = pMult*a_vector[1] + vMult*m_y + crossMult*(m_z*a_vector[0] - m_x*a_vector[2]);
+      result[2] = pMult*a_vector[2] + vMult*m_z + crossMult*(m_x*a_vector[1] - m_y*a_vector[0]);
+      result[3] = a_vector[3];
 
       return result;
 
@@ -1114,17 +1134,17 @@ namespace Dg
     template<typename Real>
     void Quaternion<Real>::RotateSelf(Vector<Real>& a_vector) const
     {
-      Real vMult = static_cast<Real>(2.0) * (m_x*a_vector.m_V[0] + m_y*a_vector.m_V[1] + m_z*a_vector.m_V[2]);
+      Real vMult = static_cast<Real>(2.0) * (m_x*a_vector[0] + m_y*a_vector[1] + m_z*a_vector[2]);
       Real crossMult = static_cast<Real>(2.0) * m_w;
       Real pMult = crossMult * m_w - static_cast<Real>(1.0);
 
-      Real x = pMult*a_vector.m_V[0] + vMult*m_x + crossMult*(m_y*a_vector.m_V[2] - m_z*a_vector.m_V[1]);
-      Real y = pMult*a_vector.m_V[1] + vMult*m_y + crossMult*(m_z*a_vector.m_V[0] - m_x*a_vector.m_V[2]);
-      Real z = pMult*a_vector.m_V[2] + vMult*m_z + crossMult*(m_x*a_vector.m_V[1] - m_y*a_vector.m_V[0]);
+      Real x = pMult*a_vector[0] + vMult*m_x + crossMult*(m_y*a_vector[2] - m_z*a_vector[1]);
+      Real y = pMult*a_vector[1] + vMult*m_y + crossMult*(m_z*a_vector[0] - m_x*a_vector[2]);
+      Real z = pMult*a_vector[2] + vMult*m_z + crossMult*(m_x*a_vector[1] - m_y*a_vector[0]);
 
-      a_vector.m_V[0] = x;
-      a_vector.m_V[1] = y;
-      a_vector.m_V[2] = z;
+      a_vector[0] = x;
+      a_vector[1] = y;
+      a_vector[2] = z;
     }   // End of Quaternion::RotateSelf()
 
 

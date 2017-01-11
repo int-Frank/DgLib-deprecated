@@ -1,30 +1,33 @@
-//! @file DgR3CPQuery.h
+//! @file DgTIQuery.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 //!
-//! Class declaration: CPQuery
+//! Class declaration: TIQuery
 
-#ifndef DGCPQUERY_H
-#define DGCPQUERY_H
+#ifndef DGTIQUERY_H
+#define DGTIQUERY_H
 
 namespace Dg
 {
-  namespace R3
+  namespace impl
   {
     //! @ingroup DgMath_geoQueries
     //!
     //! Closest-point queries.
-    template <typename Real, typename Type0, typename Type1>
-    class CPQuery
+    template <typename Real,
+              int R,
+              typename Type0,
+              typename Type1>
+    class TIQuery
     {
     public:
 
-      //! A CPQuery-base class B must define a B::Result struct with member
-      //! 'Real distance'.  A CPQuery-derived class D must also derive a
+      //! A TIQuery-base class B must define a B::Result struct with member
+      //! 'Real distance'.  A TIQuery-derived class D must also derive a
       //! D::Result from B:Result but may have no members.  The idea is to
       //! allow Result to store closest-point information in addition to the
-      //! distance.  The operator() is non-const to allow CPQuery to store
+      //! distance.  The operator() is non-const to allow TIQuery to store
       //! and modify private state that supports the query.
       struct Result
       {

@@ -1,5 +1,8 @@
 #include "TestHarness.h"
 #include "DgR3Segment.h"
+#include "DgR3Plane.h"
+#include "DgR3Line.h"
+#include "DgR3Ray.h"
 #include "DgR3Matrix.h"
 #include "DgR3VQS.h"
 #include "query/DgR3QueryPointSegment.h"
@@ -274,14 +277,14 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   Dg::R3::CPSegmentSegment<Real>::Result   dcpLSLS_res;
 
   //Segmnets have zero length
-  ls1.Set(vec(1.0, 4.0, 12.0, 1.0), vec(1.0, 4.0, 12.0, 1.0));
-  ls2 = ls1;
-  dcpLSLS_res = dcpLSLS(ls1, ls2);
-  CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
-  CHECK(dcpLSLS_res.u0 == 0.0);
-  CHECK(dcpLSLS_res.u1 == 0.0);
-  CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
-  CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
+  //ls1.Set(vec(1.0, 4.0, 12.0, 1.0), vec(1.0, 4.0, 12.0, 1.0));
+  //ls2 = ls1;
+  //dcpLSLS_res = dcpLSLS(ls1, ls2);
+  //CHECK(dcpLSLS_res.code == Dg::QueryCode::Success);
+  //CHECK(dcpLSLS_res.u0 == 0.0);
+  //CHECK(dcpLSLS_res.u1 == 0.0);
+  //CHECK(dcpLSLS_res.cp0 == ls0.GetP0());
+  //CHECK(dcpLSLS_res.cp1 == ls1.GetP0());
 
   //LineSegs parallel, no overlap, closest points ls0-p0, ls1-p0
   ls1.Set(vec(-1.0, -4.0, 12.0, 1.0), vec(-5.0, -4.0, 12.0, 1.0));

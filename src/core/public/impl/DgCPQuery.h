@@ -1,26 +1,29 @@
-//! @file DgR3TIQuery.h
+//! @file DgCPQuery.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 //!
 //! Class declaration: CPQuery
 
-#ifndef DGTIQUERY_H
-#define DGTIQUERY_H
+#ifndef DGCPQUERY_H
+#define DGCPQUERY_H
 
 namespace Dg
 {
-  namespace R3
+  namespace impl
   {
     //! @ingroup DgMath_geoQueries
     //!
-    //! Test for intersection queries.
-    template <typename Real, typename Type0, typename Type1>
-    class TIQuery
+    //! Closest-point queries.
+    template <typename Real,
+              int R,
+              typename Type0,
+              typename Type1>
+    class CPQuery
     {
     public:
 
-      //! A TIQuery-base class B must define a B::Result struct with member
+      //! A CPQuery-base class B must define a B::Result struct with member
       //! 'Real distance'.  A CPQuery-derived class D must also derive a
       //! D::Result from B:Result but may have no members.  The idea is to
       //! allow Result to store closest-point information in addition to the

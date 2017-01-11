@@ -8,15 +8,14 @@
 #ifndef DGR3SEGMENT_H
 #define DGR3SEGMENT_H
 
-#include "impl/DgSegment_general.h"
-#include "DgR3GeometryTypes.h"
+#include "impl/DgSegment_generic.h"
 
 namespace Dg
 {
   namespace R3
   {
     template<typename Real>
-    using Segment = Dg::impl::Segment_general<Real, 3>;
+    using Segment = Dg::impl::Segment_generic<Real, 3>;
   }
 }
 #endif

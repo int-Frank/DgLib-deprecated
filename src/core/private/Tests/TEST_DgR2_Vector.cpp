@@ -4,7 +4,7 @@
 #include "DgR2Vector_ancillary.h"
 
 typedef Dg::R2::Vector < float > vec2;
-typedef Dg::R3::Vector < float > vec4;
+typedef Dg::R3::Vector < float > vec3;
 
 //--------------------------------------------------------------------------------
 //	Vector Construction
@@ -49,7 +49,7 @@ TEST(Stack_Vector3_Construction, creation_Vector3_Construction)
   CHECK(vec[1] == 1.0f);
   CHECK(vec[2] == 0.0f);
 
-  vec4 v4(0.5f, 2.0f, 3.0f, 1.0f);
+  vec3 v4(0.5f, 2.0f, 3.0f, 1.0f);
   vec2 v3(v4);
   CHECK(v3.x() == 0.5f);
   CHECK(v3.y() == 2.0f);
@@ -111,9 +111,9 @@ TEST(Stack_Vector3_Other, creation_Vector3_Other)
 
   vec2 c0(1.0f, 1.0f, 0.0f);
   c0.Normalize();
-  vec2 c1(Perpendicular(c0));
+  vec2 c1(c0.Perpendicular());
 
-  float c2 = PerpDot(c0, c1);
+  float c2 = c0.PerpDot(c1);
 
   CHECK(Dg::IsZero(Dot(c0, c1)) &&
         Dg::IsZero(1.0f - c2));

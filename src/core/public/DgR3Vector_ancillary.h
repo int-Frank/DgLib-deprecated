@@ -2,8 +2,6 @@
 //!
 //! @author: Frank B. Hart
 //! @date 4/10/2015
-//!
-//! Class declaration: Vector
 
 #ifndef DGR3VECTOR_ANCILLARY_H
 #define DGR3VECTOR_ANCILLARY_H
@@ -36,15 +34,15 @@ namespace Dg
     }	//End: GetRandomVector()
 
 
-      //-------------------------------------------------------------------------------
-      //		@ GetRandomOrthonormalVector()
-      //-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    //		@ GetRandomOrthonormalVector()
+    //-------------------------------------------------------------------------------
     template<typename Real>
     Vector<Real> GetRandomOrthonormalVector(Vector<Real> const & a_axis)
     {
       RNG gen;
-      Vector<Real> perp = Perpendicular(a_axis);
-      Vector<Real> crs = Cross(a_axis, perp);
+      Vector<Real> perp = a_axis.Perpendicular();
+      Vector<Real> crs = a_axis.Cross(perp);
       Real phi = gen.GetUniform(static_cast<Real>(0.0)
         , Dg::Constants<Real>::PI * static_cast<Real>(2.0));
 
@@ -52,9 +50,9 @@ namespace Dg
     }	//End: GetRandomOrthonormalVector()
 
 
-      //-------------------------------------------------------------------------------
-      //		@ GetRandomVector()
-      //-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    //		@ GetRandomVector()
+    //-------------------------------------------------------------------------------
     template<typename Real>
     Vector<Real> GetRandomVector(Vector<Real> const & a_axis, Real theta)
     {

@@ -16,6 +16,9 @@
     <Filter Include="Tests">
       <UniqueIdentifier>{1a67e748-eea5-4b84-884b-ce3d7d3c0512}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tests\Geometry">
+      <UniqueIdentifier>{c206b245-dab0-462b-8086-adf6c18e7fef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,43 +30,13 @@
     <ClCompile Include="TEST_dg_map.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_DgMatrix.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="TEST_math.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_Matrix44.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_Quaternion.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_Vector4.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_VQS.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_ResourceManager.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_DgSharedPtr.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_DgPlane.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_DgLine.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_DgRay.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_DgLineSegment.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_DgSphere.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_ParticleSystems.cpp">
@@ -81,9 +54,6 @@
     <ClCompile Include="TEST_DGFixedPoint.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_DgFrustum.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="TEST_dg_HASHTABLE.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
@@ -99,14 +69,47 @@
     <ClCompile Include="NonPODTests.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_DgR2Segment.cpp">
-      <Filter>Tests</Filter>
+    <ClCompile Include="TEST_DgR2_Matrix.cpp">
+      <Filter>Tests\Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_DgR2Matrix33.cpp">
-      <Filter>Tests</Filter>
+    <ClCompile Include="TEST_DgR2_Vector.cpp">
+      <Filter>Tests\Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_DgR2Vector.cpp">
-      <Filter>Tests</Filter>
+    <ClCompile Include="TEST_DgR3_Vector.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_Matrix.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_Quaternion.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_VQS.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_Line.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_Frustum.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_Dg_Matrix.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_Ray.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_Sphere.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_Plane.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR3_Segment.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_DgR2_Segment.cpp">
+      <Filter>Tests\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

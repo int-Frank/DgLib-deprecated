@@ -28,6 +28,12 @@
     <Filter Include="Public Headers\R3">
       <UniqueIdentifier>{d65647a5-4b42-4004-9544-1670e6ae2f33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public Headers\Query\R2">
+      <UniqueIdentifier>{bde5e934-ae23-490f-baa8-e62183e164ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Headers\Query\R3">
+      <UniqueIdentifier>{0da85935-61d2-4a7d-abac-652dbb02fd85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgRNG.cpp">
@@ -53,91 +59,10 @@
     <ClInclude Include="..\..\public\DgFixedPoint.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryFrustumSphere.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryLineLine.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryLinePlane.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryLineSphere.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryPointLine.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryPointPlane.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryPointRay.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryPointSegment.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryRayLine.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryRayPlane.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QueryRayRay.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QuerySegmentLine.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QuerySegmentPlane.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QuerySegmentRay.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QuerySegmentSegment.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3CPQuery.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3FIQuery.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR3TIQuery.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR2CPQuery.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR2QuerySegmentSegment.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\query\DgQueryCommon.h">
       <Filter>Public Headers\Query</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR2TIQuery.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\query\DgR2QueryPointSegment.h">
-      <Filter>Public Headers\Query</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgGeometryTypes.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\impl\DgMath_impl.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgSegment_general.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgLine_general.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgRay_general.h">
       <Filter>Public Headers\impl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgR2Line.h">
@@ -194,11 +119,164 @@
     <ClInclude Include="..\..\public\DgR3Frustum.h">
       <Filter>Public Headers\R3</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgR3GeometryTypes.h">
-      <Filter>Public Headers\R3</Filter>
+    <ClInclude Include="..\..\public\impl\DgQueryPointLine.h">
+      <Filter>Public Headers\impl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgR2GeometryTypes.h">
-      <Filter>Public Headers\R2</Filter>
+    <ClInclude Include="..\..\public\impl\DgCPQuery.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryPointLine.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QueryPointLine.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgFIQuery.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgTIQuery.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryPointSegment.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QueryPointSegment.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryPointSegment.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryPointRay.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryPointRay.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QueryPointRay.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQuerySegmentSegment.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QuerySegmentSegment.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QuerySegmentSegment.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryFrustumSphere.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryFrustumSphere.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryLineLine.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryLineLine.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QueryLineLine.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryLinePlane.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryLinePlane.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryLineSphere.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryLineSphere.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgLine_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgR2Vector_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgR3Vector_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgRay_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgSegment_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgVector_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgMatrix_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgR2Matrix_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgR3Matrix_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryRayLine.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryRayLine.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgR2QueryRayLine.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryPointPlane.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryPointPlane.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryRayPlane.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryRayPlane.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryRayRay.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryRayRay.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QueryRayRay.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQuerySegmentLine.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QuerySegmentLine.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QuerySegmentLine.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QuerySegmentPlane.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQuerySegmentPlane.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQuerySegmentRay.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QuerySegmentRay.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QuerySegmentRay.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQuerySegmentSphere.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h">
+      <Filter>Public Headers\Query\R3</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

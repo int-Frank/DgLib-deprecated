@@ -17,12 +17,6 @@ namespace Dg
 {
   namespace R3
   {
-    template<typename Real> class VQS;
-
-    //! Inverse of a vqs
-    template<typename Real>
-    VQS<Real> Inverse(VQS<Real> const &);
-
     //! @ingroup DgMath_types
     //!
     //! @class VQS
@@ -47,20 +41,27 @@ namespace Dg
     public:
       //! Default constructor set to identity
       VQS() : m_q(static_cast<Real>(1.0),
-        static_cast<Real>(0.0),
-        static_cast<Real>(0.0),
-        static_cast<Real>(0.0)),
-        m_s(static_cast<Real>(1.0)),
-        m_v(Vector<Real>::ZeroVector()) {}
+                  static_cast<Real>(0.0),
+                  static_cast<Real>(0.0),
+                  static_cast<Real>(0.0)),
+                  m_s(static_cast<Real>(1.0)),
+                  m_v(Vector<Real>::ZeroVector()) {}
 
       //! Construct vqs from vector, quaternion and scalar
-      VQS(Vector<Real> const & a_v, Quaternion<Real> const & a_q, Real a_s) :
-        m_v(a_v), m_q(a_q), m_s(a_s) {}
+      VQS(Vector<Real> const & a_v, Quaternion<Real> const & a_q, Real a_s) 
+        : m_v(a_v)
+        , m_q(a_q)
+        , m_s(a_s) 
+      {}
 
       ~VQS() {}
 
       //! Copy constructor
-      VQS(VQS<Real> const & a_other) : m_v(a_other.m_v), m_q(a_other.m_q), m_s(a_other.m_s) {}
+      VQS(VQS<Real> const & a_other) 
+        : m_v(a_other.m_v)
+        , m_q(a_other.m_q)
+        , m_s(a_other.m_s) 
+      {}
 
       //! Assignment
       VQS<Real>& operator=(VQS<Real> const &);
@@ -117,10 +118,10 @@ namespace Dg
       Vector<Real> TransformVector(Vector<Real> const &) const;
 
       //! Point transformations also apply translation.
-      Vector<Real>& TransformPointSelf(Vector<Real>&) const;
+      Vector<Real> & TransformPointSelf(Vector<Real> &) const;
 
       //! Vector transformations do not apply translation.
-      Vector<Real>& TransformVectorSelf(Vector<Real>&) const;
+      Vector<Real> & TransformVectorSelf(Vector<Real> &) const;
 
       //! Apply translation to Vector.
       Vector<Real> Translate(Vector<Real> const &) const;
@@ -141,10 +142,10 @@ namespace Dg
       Vector<Real> & ScaleSelf(Vector<Real>&) const;
 
       //! Inverse.
-      const VQS& Inverse();
+      VQS & SetInverse();
 
       //! Inverse.
-      friend VQS Dg::R3::Inverse(VQS<Real> const &);
+      VQS GetInverse() const;
 
       //! Get the vector, quaternion and scalar
       void Get(Vector<Real>& a_v, Quaternion<Real>& a_q, Real& a_s) const;
@@ -174,14 +175,14 @@ namespace Dg
     template<typename Real>
     void VQS<Real>::Set(Matrix<Real> const & a_m)
     {
-      m_v.x() = a_m.m_V[12];
-      m_v.y() = a_m.m_V[13];
-      m_v.z() = a_m.m_V[14];
+      m_v.x() = a_m[12];
+      m_v.y() = a_m[13];
+      m_v.z() = a_m[14];
 
       a_m.GetQuaternion(m_q);
 
       //Just use matrix x-scaling
-      m_s = sqrt((a_m.m_V[0] * a_m.m_V[0]) + (a_m.m_V[4] * a_m.m_V[4]) + (a_m.m_V[8] * a_m.m_V[8]));
+      m_s = sqrt((a_m[0] * a_m[0]) + (a_m[4] * a_m[4]) + (a_m[8] * a_m[8]));
 
     }	//End: VQS<Real>::Set()
 
@@ -300,7 +301,7 @@ namespace Dg
     void VQS<Real>::MakeValid()
     {
       //Clean vector
-      m_v.m_V[3] = static_cast<Real>(0.0);
+      m_v[3] = static_cast<Real>(0.0);
 
       //Clean quaternion
       m_q.MakeValid();
@@ -336,9 +337,9 @@ namespace Dg
       Vector<Real> result(a_v);
 
       //Scale
-      result.m_V[0] *= m_s;
-      result.m_V[1] *= m_s;
-      result.m_V[2] *= m_s;
+      result[0] *= m_s;
+      result[1] *= m_s;
+      result[2] *= m_s;
 
       //Rotate;
       m_q.RotateSelf(result);
@@ -358,9 +359,9 @@ namespace Dg
     Vector<Real>& VQS<Real>::TransformPointSelf(Vector<Real> & a_v) const
     {
       //Scale
-      a_v.m_V[0] *= m_s;
-      a_v.m_V[1] *= m_s;
-      a_v.m_V[2] *= m_s;
+      a_v[0] *= m_s;
+      a_v[1] *= m_s;
+      a_v[2] *= m_s;
 
       //Rotate;
       m_q.RotateSelf(a_v);
@@ -382,9 +383,9 @@ namespace Dg
       Vector<Real> result(a_v);
 
       //Scale
-      result.m_V[0] *= m_s;
-      result.m_V[1] *= m_s;
-      result.m_V[2] *= m_s;
+      result[0] *= m_s;
+      result[1] *= m_s;
+      result[2] *= m_s;
 
       //Rotate;
       m_q.RotateSelf(result);
@@ -401,9 +402,9 @@ namespace Dg
     Vector<Real>& VQS<Real>::TransformVectorSelf(Vector<Real> & a_v) const
     {
       //Scale
-      a_v.m_V[0] *= m_s;
-      a_v.m_V[1] *= m_s;
-      a_v.m_V[2] *= m_s;
+      a_v[0] *= m_s;
+      a_v[1] *= m_s;
+      a_v[2] *= m_s;
 
       //Rotate;
       m_q.RotateSelf(a_v);
@@ -542,19 +543,19 @@ namespace Dg
     void VQS<Real>::GetMatrix(Matrix<Real> & a_out) const
     {
       a_out.Rotation(m_q);
-      a_out.m_V[0] *= m_s;
-      a_out.m_V[1] *= m_s;
-      a_out.m_V[2] *= m_s;
-      a_out.m_V[4] *= m_s;
-      a_out.m_V[5] *= m_s;
-      a_out.m_V[6] *= m_s;
-      a_out.m_V[8] *= m_s;
-      a_out.m_V[9] *= m_s;
-      a_out.m_V[10] *= m_s;
+      a_out[0] *= m_s;
+      a_out[1] *= m_s;
+      a_out[2] *= m_s;
+      a_out[4] *= m_s;
+      a_out[5] *= m_s;
+      a_out[6] *= m_s;
+      a_out[8] *= m_s;
+      a_out[9] *= m_s;
+      a_out[10] *= m_s;
 
-      a_out.m_V[12] = m_v.x();
-      a_out.m_V[13] = m_v.y();
-      a_out.m_V[14] = m_v.z();
+      a_out[12] = m_v.x();
+      a_out[13] = m_v.y();
+      a_out[14] = m_v.z();
 
     }	//End: VQS<Real>::Get()
 
@@ -589,7 +590,7 @@ namespace Dg
       //	@	VQS<Real>::Inverse()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    VQS<Real> const & VQS<Real>::Inverse()
+    VQS<Real> & VQS<Real>::SetInverse()
     {
       //The method to find a VQS inverse
       //[1/m_s*(m_q-1*(-m_v)*m_q), m_q-1, 1/m_s]
@@ -612,18 +613,18 @@ namespace Dg
       //	@	Inverse()
       //--------------------------------------------------------------------------------
     template<typename Real>
-    VQS<Real> Inverse(VQS<Real> const & a_other)
+    VQS<Real> VQS<Real>::GetInverse() const
     {
       VQS<Real> temp;
 
       //Inverse scale
-      temp.m_s = static_cast<Real>(1.0) / a_other.m_s;
+      temp.m_s = static_cast<Real>(1.0) / m_s;
 
       //Inverse quaternion
-      temp.m_q = Inverse(a_other.m_q);
+      temp.m_q = Inverse(m_q);
 
       //Inverse vector
-      temp.m_v = temp.m_q.Rotate(-a_other.m_v) * temp.m_s;
+      temp.m_v = temp.m_q.Rotate(-m_v) * temp.m_s;
 
       return temp;
 

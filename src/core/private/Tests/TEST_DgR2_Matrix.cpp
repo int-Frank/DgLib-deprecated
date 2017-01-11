@@ -71,23 +71,23 @@ TEST(Stack_Matrix33_Inverse, creation_Matrix33_Inverse)
   mt.Translation(vec3( 2.3f, 53.24f, 0.0f ));
 
   m0 = mt;
-  m1 = AffineInverse(m0);
-  m2 = AffineInverse(m1);
+  m1 = m0.GetInverse();
+  m2 = m1.GetInverse();
   CHECK(m2 == m0);
 
   m0 = mr;
-  m1 = AffineInverse(m0);
-  m2 = AffineInverse(m1);
+  m1 = m0.GetInverse();
+  m2 = m1.GetInverse();
   CHECK(m2 == m0);
 
   m0 = ms;
-  m1 = AffineInverse(m0);
-  m2 = AffineInverse(m1);
+  m1 = m0.GetInverse();
+  m2 = m1.GetInverse();
   CHECK(m2 == m0);
 
   m0 = mt * mr * ms;
-  m1 = AffineInverse(m0);
-  m2 = AffineInverse(m1);
+  m1 = m0.GetInverse();
+  m2 = m1.GetInverse();
   CHECK(m2 == m0);
 }
 

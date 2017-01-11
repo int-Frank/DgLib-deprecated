@@ -328,7 +328,7 @@ namespace Dg
       //Get plane vector
       Vector<Real> u = p1 - p0;
       Vector<Real> v = p2 - p0;
-      Vector<Real> w = Cross(u, v);
+      Vector<Real> w = u.Cross(v);
 
       //normalise for cheap distance checks
       Real lensq = w.x()*w.x() + w.y()*w.y() + w.z()*w.z();

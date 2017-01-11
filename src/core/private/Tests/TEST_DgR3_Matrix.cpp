@@ -3,9 +3,9 @@
 #include "DgR3Matrix.h"
 #include "DgR3Vector.h"
 
-typedef Dg::R3::Matrix< float >     mat44;
+typedef Dg::R3::Matrix< float >       mat44;
 typedef Dg::R3::Quaternion < float >  quat;
-typedef Dg::R3::Vector<float>        vec4;
+typedef Dg::R3::Vector<float>         vec3;
 
 //--------------------------------------------------------------------------------
 //	Matrix Construction
@@ -31,15 +31,15 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
   CHECK(!m1.IsZero());
   CHECK(!m1.IsIdentity());
 
-  vec4 v0( 1.0f, 1.25f, 1.5f, 1.75f );
-  vec4 v1( 2.0f, 2.25f, 2.5f, 2.75f );
-  vec4 v2( 3.0f, 3.25f, 3.5f, 3.75f );
-  vec4 v3( 4.0f, 4.25f, 4.5f, 4.75f );
+  vec3 v0( 1.0f, 1.25f, 1.5f, 1.75f );
+  vec3 v1( 2.0f, 2.25f, 2.5f, 2.75f );
+  vec3 v2( 3.0f, 3.25f, 3.5f, 3.75f );
+  vec3 v3( 4.0f, 4.25f, 4.5f, 4.75f );
 
-  vec4 v4( 1.0f, 2.0f, 3.0f, 4.0f );
-  vec4 v5( 1.25f, 2.25f, 3.25f, 4.25f );
-  vec4 v6( 1.5f, 2.5f, 3.5f, 4.5f );
-  vec4 v7( 1.75f, 2.75f, 3.75f, 4.75f );
+  vec3 v4( 1.0f, 2.0f, 3.0f, 4.0f );
+  vec3 v5( 1.25f, 2.25f, 3.25f, 4.25f );
+  vec3 v6( 1.5f, 2.5f, 3.5f, 4.5f );
+  vec3 v7( 1.75f, 2.75f, 3.75f, 4.75f );
 
   m0.SetRow(0, v0);
   m0.SetRow(1, v1);
@@ -74,28 +74,28 @@ TEST(Stack_Matrix44_Construction, creation_Matrix44_Construction)
 TEST(Stack_Matrix44_Inverse, creation_Matrix44_Inverse)
 {
   mat44 m0, m1, m2, ms, mr, mt;
-  ms.Scaling(vec4({ 1.34f, 0.39f, 14.3f, 0.0f }));
+  ms.Scaling(vec3({ 1.34f, 0.39f, 14.3f, 0.0f }));
   mr.Rotation(0.234f, -1.49f, 2.457f, Dg::EulerOrder::ZXY);
-  mt.Translation(vec4({ 2.3f, 53.24f, -12.9f, 0.0f }));
+  mt.Translation(vec3({ 2.3f, 53.24f, -12.9f, 0.0f }));
 
   m0 = mt;
-  m1 = AffineInverse(m0);
-  m2 = AffineInverse(m1);
+  m1 = m0.GetAffineInverse();
+  m2 = m1.GetAffineInverse();
   CHECK(m2 == m0);
 
   m0 = mr;
-  m1 = AffineInverse(m0);
-  m2 = AffineInverse(m1);
+  m1 = m0.GetAffineInverse();
+  m2 = m1.GetAffineInverse();
   CHECK(m2 == m0);
 
   m0 = ms;
-  m1 = AffineInverse(m0);
-  m2 = AffineInverse(m1);
+  m1 = m0.GetAffineInverse();
+  m2 = m1.GetAffineInverse();
   CHECK(m2 == m0);
 
   m0 = mt * mr * ms;
-  m1 = AffineInverse(m0);
-  m2 = AffineInverse(m1);
+  m1 = m0.GetAffineInverse();
+  m2 = m1.GetAffineInverse();
   CHECK(m2 == m0);
 }
 
@@ -181,24 +181,24 @@ TEST(Stack_Matrix44_VectorTransform, creation_Matrix44_VectorTransform)
   m1 *= m0;
   m0.Rotation(0.32f, -2.84f, 1.29f, Dg::EulerOrder::ZXY);
   m1 *= m0;
-  m0.Translation(vec4({ 12.4f, 9.3f, -6.39f, 0.0f }));
+  m0.Translation(vec3({ 12.4f, 9.3f, -6.39f, 0.0f }));
   m1 *= m0;
 
   m0.Scaling(1.43f);
   m2 *= m0;
   m0.Rotation(1.32f, 1.84f, -1.83f, Dg::EulerOrder::ZXY);
   m2 *= m0;
-  m0.Translation(vec4({ 9.04f, -3.3f, 2.39f, 0.0f }));
+  m0.Translation(vec3({ 9.04f, -3.3f, 2.39f, 0.0f }));
   m2 *= m0;
 
   m0.Scaling(2.354f);
   m3 *= m0;
   m0.Rotation(0.034f, -1.23f, -1.89f, Dg::EulerOrder::ZXY);
   m3 *= m0;
-  m0.Translation(vec4({ -1.3f, -5.3f, 1.39f, 0.0f }));
+  m0.Translation(vec3({ -1.3f, -5.3f, 1.39f, 0.0f }));
   m3 *= m0;
 
-  vec4 v({ 1.34f, -18.834f, -9.38f, 1.0f });
+  vec3 v({ 1.34f, -18.834f, -9.38f, 1.0f });
   CHECK(v * m1 * m2 * m3 == v * (m1 * m2 * m3));
 }
 
@@ -213,21 +213,21 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   my.RotationY(Dg::Constants<float>::PI * 0.5f);
   mz.RotationZ(Dg::Constants<float>::PI * 0.5f);
   ms.Scaling(2.0f);
-  mt.Translation(vec4( -10.0f, 0.0f, 0.0f, 0.0f ));
-  vec4 v({ 1.0f, 0.0f, 0.0f, 0.0f }), vr;
+  mt.Translation(vec3( -10.0f, 0.0f, 0.0f, 0.0f ));
+  vec3 v({ 1.0f, 0.0f, 0.0f, 0.0f }), vr;
 
   v = v * my;
-  CHECK(v == vec4( 0.0f, 0.0f, -1.0f, 0.0f ));
+  CHECK(v == vec3( 0.0f, 0.0f, -1.0f, 0.0f ));
 
   v = v * mx;
-  CHECK(v == vec4( 0.0f, 1.0f, 0.0f, 0.0f ));
+  CHECK(v == vec3( 0.0f, 1.0f, 0.0f, 0.0f ));
 
   v = v * mz;
-  CHECK(v == vec4( -1.0f, 0.0f, 0.0f, 0.0f ));
+  CHECK(v == vec3( -1.0f, 0.0f, 0.0f, 0.0f ));
 
   v.Set( 1.0f, 0.0f, 0.0f, 1.0f );
   v = v * my * mx * mz * ms * mt;
-  CHECK(v == vec4( -12.0f, 0.0f, 0.0f, 1.0f ));
+  CHECK(v == vec3( -12.0f, 0.0f, 0.0f, 1.0f ));
 
   float rx = 1.43f;
   float ry = 0.2901f;
@@ -251,8 +251,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);        //Check: Set matrix fom quaternion
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);        //Check: Set quaternion from matrix
   CHECK(vr == v * m0);
 
@@ -266,8 +264,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -281,8 +277,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -296,8 +290,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -311,8 +303,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -326,8 +316,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -341,8 +329,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -356,8 +342,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   
@@ -371,8 +355,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -386,8 +368,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -401,8 +381,6 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
@@ -416,32 +394,30 @@ TEST(Stack_Matrix44_Rotation, creation_Matrix44_Rotation)
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
   q0 = m0.GetQuaternion();
-  m0.GetQuaternion(q1);
-  CHECK(q0 == q1);
   CHECK(q0.Rotate(v) == v * m0);
   CHECK(vr == v * m0);
 
   //Axis-angle
 
   m0.RotationX(rx);
-  m1.Rotation(vec4({ 1.0f, 0.0f, 0.0f, 0.0f }), rx);
+  m1.Rotation(vec3({ 1.0f, 0.0f, 0.0f, 0.0f }), rx);
   CHECK(m0 == m1);
-  q0.Set(vec4({ 1.0f, 0.0f, 0.0f, 0.0f }), rx);
+  q0.Set(vec3({ 1.0f, 0.0f, 0.0f, 0.0f }), rx);
   CHECK(q0.Rotate(v) == v * m0);
 
   m0.RotationY(rx);
-  m1.Rotation(vec4({ 0.0f, 1.0f, 0.0f, 0.0f }), rx);
+  m1.Rotation(vec3({ 0.0f, 1.0f, 0.0f, 0.0f }), rx);
   CHECK(m0 == m1);
-  q0.Set(vec4({ 0.0f, 1.0f, 0.0f, 0.0f }), rx);
+  q0.Set(vec3({ 0.0f, 1.0f, 0.0f, 0.0f }), rx);
   CHECK(q0.Rotate(v) == v * m0);
 
   m0.RotationZ(rx);
-  m1.Rotation(vec4({ 0.0f, 0.0f, 1.0f, 0.0f }), rx);
+  m1.Rotation(vec3({ 0.0f, 0.0f, 1.0f, 0.0f }), rx);
   CHECK(m0 == m1);
-  q0.Set(vec4({ 0.0f, 0.0f, 1.0f, 0.0f }), rx);
+  q0.Set(vec3({ 0.0f, 0.0f, 1.0f, 0.0f }), rx);
   CHECK(q0.Rotate(v) == v * m0);
 
-  vec4 axis({ 1.25f, 0.43f, -0.9345f, 0.0f });
+  vec3 axis({ 1.25f, 0.43f, -0.9345f, 0.0f });
   axis.Normalize();
   float angle = 0.9435f;
 
