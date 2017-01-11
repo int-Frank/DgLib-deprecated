@@ -1,4 +1,4 @@
-//! @file DgR3QueryLineLine.h
+//! @file DgQueryLineLine.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016

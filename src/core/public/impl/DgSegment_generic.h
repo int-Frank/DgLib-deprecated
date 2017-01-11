@@ -1,4 +1,4 @@
-//! @file DgSegment.h
+//! @file DgSegment_generic.h
 //!
 //! @author: Frank B. Hart
 //! @date 29/05/2016

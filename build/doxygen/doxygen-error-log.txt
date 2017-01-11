@@ -1,0 +1,1 @@
+C:/dev/projects/DgLib/deploy/DgLib/include/query/DgR2QueryLineLine.h:16: warning: documented symbol `typedef Dg::R2::impl::CPQuery< Real, 2, impl::Vector_generic< Real, 2 >, impl::Line_generic< Real, 2 >> CPLineLine' was not declared or defined.

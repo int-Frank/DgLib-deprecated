@@ -14,6 +14,9 @@ namespace Dg
   {
     template<typename Real>
     using CPSegmentLine = impl::CPQuery<Real, 2, impl::Segment_generic<Real, 2>, impl::Line_generic<Real, 2>>;
+
+    template<typename Real>
+    using FISegmentLine = impl::FIQuery<Real, 2, impl::Segment_generic<Real, 2>, impl::Line_generic<Real, 2>>;
   }
 }
 

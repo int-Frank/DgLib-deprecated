@@ -8,6 +8,7 @@
 
 #include "../query/DgQueryCommon.h"
 #include "DgCPQuery.h"
+#include "DgFIQuery.h"
 #include "DgLine_generic.h"
 #include "DgSegment_generic.h"
 
@@ -47,6 +48,93 @@ namespace Dg
       //! Perform query.
       Result operator()(Segment_generic<Real, R> const &, Line_generic<Real, R> const &);
     };
+
+
+	//! @ingroup DgMath_geoQueries
+	//! Distance and closest-point query: Line segment, Line
+	template <typename Real>
+	class FIQuery<Real, 2,
+		          Segment_generic<Real, 2>,
+		          Line_generic<Real, 2>>
+	{
+	public:
+
+		//! Query return data
+		struct Result
+		{
+			//! Distance from the line origin to closest point to the line segment
+			Real us;
+
+			//! Distance from the line segment origin to closest point to the line
+			Real ul;
+
+			//! Intersection point
+			Vector_generic<Real, 2> p;
+
+			//! Return code. Codes include:
+			//! NotIntersecting, Intersecting, Overlapping
+			QueryCode code;
+		};
+
+		//! Perform query.
+		Result operator()(Segment_generic<Real, 2> const &, Line_generic<Real, 2> const &);
+	};
+
+
+	//--------------------------------------------------------------------------------
+	//	@	FIQuery::operator()
+	//--------------------------------------------------------------------------------
+	template<typename Real>
+	typename FIQuery<Real, 2, Segment_generic<Real, 2>, Line_generic<Real, 2>>::Result
+		FIQuery<Real, 2, Segment_generic<Real, 2>, Line_generic<Real, 2>>::operator()
+		(Segment_generic<Real, 2> const & a_seg, Line_generic<Real, 2> const & a_line)
+	{
+		Result result;
+
+		Vector_generic<Real, 2> const & dir_s = a_seg.Direction();
+		Vector_generic<Real, 2> const & dir_l = a_line.Direction();
+
+		Vector_generic<Real, 2> w = a_seg.GetP0() - a_line.Origin();
+		Real denom = dir_s.PerpDot(dir_l);
+		Real us_numerator = dir_l.PerpDot(w);
+		Real ul_numerator = dir_s.PerpDot(w);
+
+		if (Dg::IsZero(denom))
+		{
+			//Parallel
+			if (!Dg::IsZero(us_numerator))
+			{
+				result.code = QueryCode::NotIntersecting;
+			}
+
+			//Segments lie on the same line
+			else
+			{
+				result.code = QueryCode::Overlapping;
+				result.p = a_seg.GetP0();
+				result.us = static_cast<Real>(0);
+				result.ul = a_line.Direction().Dot(w);
+			}
+		}
+		else
+		{
+			Real us = us_numerator / denom;
+			Real ul = ul_numerator / denom;
+
+			if (IsInRange(static_cast<Real>(0), static_cast<Real>(1), us))
+			{
+				result.code = QueryCode::Intersecting;
+				result.us = us;
+				result.ul = ul;
+				result.p = a_seg.GetP0() + us * dir_s;
+			}
+			else
+			{
+        result.code = QueryCode::NotIntersecting;
+			}
+		}
+		return result;
+	} //End: FIQuery::operator()
 
 
     //--------------------------------------------------------------------------------

@@ -1,14 +1,20 @@
 #include "TestHarness.h"
 #include "DgR2Segment.h"
+#include "DgR2Ray.h"
+#include "DgR2Line.h"
 #include "DgR2Vector.h"
 #include "DgR2Matrix.h"
 #include "query/DgR2QueryPointSegment.h"
 #include "query/DgR2QuerySegmentSegment.h"
+#include "query/DgR2QuerySegmentRay.h"
+#include "query/DgR2QuerySegmentLine.h"
 
 typedef double Real;
 typedef Dg::R2::Vector<Real>            vec;
-typedef Dg::R2::Matrix<Real>          mat33;
+typedef Dg::R2::Matrix<Real>            mat33;
 typedef Dg::R2::Segment<Real>           seg;
+typedef Dg::R2::Ray<Real>               ray;
+typedef Dg::R2::Line<Real>              line;
 
 TEST(Stack_DgR2Segment, DgR2Segment)
 {
@@ -64,65 +70,80 @@ TEST(Stack_DgR2Segment, DgR2Segment)
   //CHECK(dcpPointLS_res.distance == 5.0);
   //CHECK(dcpPointLS_res.sqDistance == 25.0);
 
-  ////seg-Line
-  //Dg::R2::CPSegmentLine<Real>           dcpLSLine;
-  //Dg::R2::CPSegmentLine<Real>::Result   dcpLSLine_res;
-  //line l;
+  //seg-Line
+  Dg::R2::CPSegmentLine<Real>           dcpLSLine;
+  Dg::R2::CPSegmentLine<Real>::Result   dcpLSLine_res;
+  Dg::R2::FISegmentLine<Real>           fiSL;
+  Dg::R2::FISegmentLine<Real>::Result   fiSL_res;
+  line l;
 
-  ////LineSeg parallel to line
-  //l.Set(vec(3.0, 3.0, 4.0, 1.0), vec::xAxis());
-  //dcpLSLine_res = dcpLSLine(ls0, l);
-  //CHECK(dcpLSLine_res.code == Dg::QueryCode::Parallel);
-  //CHECK(dcpLSLine_res.ul == -1.0);
-  //CHECK(dcpLSLine_res.us == 0.0);
-  //CHECK(dcpLSLine_res.cps == ls0.GetP0());
-  //CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 4.0, 1.0));
-  ////CHECK(dcpLSLine_res.distance == 5.0);
-  ////CHECK(dcpLSLine_res.sqDistance == 25.0);
+  //LineSeg parallel to line
+  l.Set(vec(3.0, 3.0, 1.0), vec::xAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  fiSL_res = fiSL(ls0, l);
+  CHECK(fiSL_res.code == Dg::QueryCode::NotIntersecting);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Parallel);
+  CHECK(dcpLSLine_res.ul == -1.0);
+  CHECK(dcpLSLine_res.us == 0.0);
+  CHECK(dcpLSLine_res.cps == ls0.GetP0());
+  CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 1.0));
+  //CHECK(dcpLSLine_res.distance == 5.0);
+  //CHECK(dcpLSLine_res.sqDistance == 25.0);
 
-  ////LineSeg parallel to line, opposite direction
-  //l.Set(vec(3.0, 3.0, 4.0, 1.0), -vec::xAxis());
-  //dcpLSLine_res = dcpLSLine(ls0, l);
-  //CHECK(dcpLSLine_res.code == Dg::QueryCode::Parallel);
-  //CHECK(dcpLSLine_res.ul == 1.0);
-  //CHECK(dcpLSLine_res.us == 0.0);
-  //CHECK(dcpLSLine_res.cps == ls0.GetP0());
-  //CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 4.0, 1.0));
-  ////CHECK(dcpLSLine_res.distance == 5.0);
-  ////CHECK(dcpLSLine_res.sqDistance == 25.0);
+  //LineSeg parallel to line, opposite direction
+  l.Set(vec(3.0, 3.0, 1.0), -vec::xAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  fiSL_res = fiSL(ls0, l);
+  CHECK(fiSL_res.code == Dg::QueryCode::NotIntersecting);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Parallel);
+  CHECK(dcpLSLine_res.ul == 1.0);
+  CHECK(dcpLSLine_res.us == 0.0);
+  CHECK(dcpLSLine_res.cps == ls0.GetP0());
+  CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 1.0));
+  //CHECK(dcpLSLine_res.distance == 5.0);
+  //CHECK(dcpLSLine_res.sqDistance == 25.0);
 
-  ////seg-p0 closest point
-  //l.Set(vec(-1.0, 4.0, 3.0, 1.0), -vec::zAxis());
-  //dcpLSLine_res = dcpLSLine(ls0, l);
-  //CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
-  //CHECK(dcpLSLine_res.ul == 3.0);
-  //CHECK(dcpLSLine_res.us == 0.0);
-  //CHECK(dcpLSLine_res.cps == ls0.GetP0());
-  //CHECK(dcpLSLine_res.cpl == vec(-1.0, 4.0, 0.0, 1.0));
-  ////CHECK(dcpLSLine_res.distance == 5.0);
-  ////CHECK(dcpLSLine_res.sqDistance == 25.0);
+  //seg-p0 closest point
+  l.Set(vec(-1.0, 4.0, 1.0), -vec::yAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  fiSL_res = fiSL(ls0, l);
+  CHECK(fiSL_res.code == Dg::QueryCode::NotIntersecting);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
+  CHECK(dcpLSLine_res.ul == 4.0);
+  CHECK(dcpLSLine_res.us == 0.0);
+  CHECK(dcpLSLine_res.cps == ls0.GetP0());
+  CHECK(dcpLSLine_res.cpl == vec(-1.0, 0.0, 1.0));
+  //CHECK(dcpLSLine_res.distance == 5.0);
+  //CHECK(dcpLSLine_res.sqDistance == 25.0);
 
-  ////seg-p1 closest point
-  //l.Set(vec(9.0, 4.0, 3.0, 1.0), -vec::zAxis());
-  //dcpLSLine_res = dcpLSLine(ls0, l);
-  //CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
-  //CHECK(dcpLSLine_res.ul == 3.0);
-  //CHECK(dcpLSLine_res.us == 1.0);
-  //CHECK(dcpLSLine_res.cps == ls0.GetP1());
-  //CHECK(dcpLSLine_res.cpl == vec(9.0, 4.0, 0.0, 1.0));
-  ////CHECK(dcpLSLine_res.distance == 5.0);
-  ////CHECK(dcpLSLine_res.sqDistance == 25.0);
+  //seg-p1 closest point
+  l.Set(vec(9.0, 4.0, 1.0), -vec::yAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  fiSL_res = fiSL(ls0, l);
+  CHECK(fiSL_res.code == Dg::QueryCode::NotIntersecting);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
+  CHECK(dcpLSLine_res.ul == 4.0);
+  CHECK(dcpLSLine_res.us == 1.0);
+  CHECK(dcpLSLine_res.cps == ls0.GetP1());
+  CHECK(dcpLSLine_res.cpl == vec(9.0, 0.0, 1.0));
+  //CHECK(dcpLSLine_res.distance == 5.0);
+  //CHECK(dcpLSLine_res.sqDistance == 25.0);
 
-  ////Closest point along seg
-  //l.Set(vec(3.0, 4.0, 3.0, 1.0), vec::zAxis());
-  //dcpLSLine_res = dcpLSLine(ls0, l);
-  //CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
-  //CHECK(dcpLSLine_res.ul == -3.0);
-  //CHECK(dcpLSLine_res.us == 0.25);
-  //CHECK(dcpLSLine_res.cps == vec(3.0, 0.0, 0.0, 1.0));
-  //CHECK(dcpLSLine_res.cpl == vec(3.0, 4.0, 0.0, 1.0));
-  ////CHECK(dcpLSLine_res.distance == 4.0);
-  ////CHECK(dcpLSLine_res.sqDistance == 16.0);
+  //Intersecting
+  l.Set(vec(3.0, 4.0, 1.0), -vec::yAxis());
+  dcpLSLine_res = dcpLSLine(ls0, l);
+  fiSL_res = fiSL(ls0, l);
+  CHECK(fiSL_res.code == Dg::QueryCode::Intersecting);
+  CHECK(fiSL_res.ul == 4.0);
+  CHECK(fiSL_res.us == 0.25);
+  CHECK(fiSL_res.p == vec(3.0, 0.0, 1.0));
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
+  CHECK(dcpLSLine_res.ul == 4.0);
+  CHECK(dcpLSLine_res.us == 0.25);
+  CHECK(dcpLSLine_res.cps == vec(3.0, 0.0, 1.0));
+  CHECK(dcpLSLine_res.cpl == vec(3.0, 0.0, 1.0));
+  //CHECK(dcpLSLine_res.distance == 4.0);
+  //CHECK(dcpLSLine_res.sqDistance == 16.0);
 
   ////seg-Ray
   //ray r;

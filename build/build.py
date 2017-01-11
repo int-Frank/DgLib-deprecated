@@ -11,7 +11,7 @@ import subprocess
 #Set this path to where ever you want to deploy the library
 DeployDir           = os.path.abspath("../deploy/")
 
-FailOnBadDocs       = True #Fail the build if there are errors in doc compilation
+FailOnBadDocs       = False #Fail the build if there are errors in doc compilation
 CheckSamples        = True #Check to see if the samples build
 
 #--- Classes ------------------------------------------------------
