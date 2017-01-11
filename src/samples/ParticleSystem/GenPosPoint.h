@@ -10,7 +10,7 @@ class GenPosPoint : public Dg::ParticleGenerator<Real>
 {
 public:
   GenPosPoint() : Dg::ParticleGenerator<Real>() 
-                , m_origin(Dg::R3::Vector4<Real>::Origin())
+                , m_origin(Dg::R3::Vector<Real>::Origin())
   {}
 
   ~GenPosPoint() {}
@@ -27,24 +27,24 @@ public:
   }
 
   void SetTransformation(Dg::R3::VQS<Real> const &);
-  void SetOrigin(Dg::R3::Vector4<Real> const &);
+  void SetOrigin(Dg::R3::Vector<Real> const &);
 
   void Generate(Dg::ParticleData<Real> &, int, int);
 
   GenPosPoint<Real> * Clone() const { return new GenPosPoint<Real>(*this); }
 
 private:
-  Dg::R3::Vector4<Real> m_origin;
+  Dg::R3::Vector<Real> m_origin;
 };
 
 template<typename Real>
 void GenPosPoint<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_origin = a_vqs.Translate(Dg::R3::Vector4<Real>::Origin());
+  m_origin = a_vqs.Translate(Dg::R3::Vector<Real>::Origin());
 }
 
 template<typename Real>
-void GenPosPoint<Real>::SetOrigin(Dg::R3::Vector4<Real> const & a_pos)
+void GenPosPoint<Real>::SetOrigin(Dg::R3::Vector<Real> const & a_pos)
 {
   m_origin = a_pos;
   m_origin.w() = static_cast<Real>(1.0);
@@ -53,7 +53,7 @@ void GenPosPoint<Real>::SetOrigin(Dg::R3::Vector4<Real> const & a_pos)
 template<typename Real>
 void GenPosPoint<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
-  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector<Real> * pPos = a_data.GetPosition();
 
   if (pPos)
   {

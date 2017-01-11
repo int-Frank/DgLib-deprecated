@@ -56,8 +56,8 @@ AttractorPlane<Real> & AttractorPlane<Real>::operator=(AttractorPlane<Real> cons
 template<typename Real>
 void AttractorPlane<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_plane.Set(a_vqs.Rotate(Dg::R3::Vector4<Real>::xAxis())
-            , Dg::R3::Vector4<Real>::Origin() + a_vqs.V());
+  m_plane.Set(a_vqs.Rotate(Dg::R3::Vector<Real>::xAxis())
+            , Dg::R3::Vector<Real>::Origin() + a_vqs.V());
 }
 
 template<typename Real>
@@ -65,8 +65,8 @@ void AttractorPlane<Real>::Update(Dg::ParticleData<Real> & a_data
                                 , int a_start
                                 , Real a_dt)
 {
-  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
-  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector<Real> * pAccels = a_data.GetAcceleration();
 
   Dg::R3::CPPointPlane<Real> query;
   Dg::R3::CPPointPlane<Real>::Result result;

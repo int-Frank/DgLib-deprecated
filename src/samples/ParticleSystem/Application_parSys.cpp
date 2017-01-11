@@ -28,7 +28,7 @@
 
 using namespace Dg;
 
-typedef Dg::R3::Vector4<float>      vec4;
+typedef Dg::R3::Vector<float>      vec4;
 typedef Dg::R3::Quaternion<float>   quat;
 typedef Dg::R3::VQS<float>          Vqs;
 

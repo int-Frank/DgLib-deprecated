@@ -10,7 +10,7 @@ class GenVelCone : public Dg::ParticleGenerator<Real>
 {
 public:
   GenVelCone() : Dg::ParticleGenerator<Real>()
-               , m_axis(Dg::R3::Vector4<Real>::yAxis())
+               , m_axis(Dg::R3::Vector<Real>::yAxis())
                , m_angle(static_cast<Real>(0.785))
                , m_velocity(static_cast<Real>(1.0))
                   {}
@@ -40,7 +40,7 @@ public:
   GenVelCone<Real> * Clone() const { return new GenVelCone<Real>(*this); }
 
 private:
-  Dg::R3::Vector4<Real> m_axis;
+  Dg::R3::Vector<Real> m_axis;
   Real              m_angle;
   Real              m_velocity;
 };
@@ -48,7 +48,7 @@ private:
 template<typename Real>
 void GenVelCone<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_axis = a_vqs.Rotate(Dg::R3::Vector4<Real>::xAxis());
+  m_axis = a_vqs.Rotate(Dg::R3::Vector<Real>::xAxis());
 }
 
 
@@ -61,14 +61,14 @@ void GenVelCone<Real>::SetAngle(Real a_ang)
 template<typename Real>
 void GenVelCone<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
-  Dg::R3::Vector4<Real> * pVels = a_data.GetVelocity();
-  Dg::R3::Vector4<Real> * pAccel = a_data.GetAcceleration();
+  Dg::R3::Vector<Real> * pVels = a_data.GetVelocity();
+  Dg::R3::Vector<Real> * pAccel = a_data.GetAcceleration();
 
   if (pVels)
   {
     for (int i = a_start; i <= a_end; ++i)
     {
-      Dg::R3::Vector4<float> vec = Dg::R3::GetRandomVector(m_axis, m_angle);
+      Dg::R3::Vector<float> vec = Dg::R3::GetRandomVector(m_axis, m_angle);
       pVels[i] = m_velocity * vec;
     }
   }

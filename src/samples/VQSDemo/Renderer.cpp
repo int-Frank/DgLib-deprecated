@@ -60,8 +60,8 @@ void Renderer::Update()
 }
 
 
-void Renderer::Render(Dg::R3::Matrix44<float> const & a_proj
-                    , Dg::R3::Matrix44<float> const * a_pMV
+void Renderer::Render(Dg::R3::Matrix<float> const & a_proj
+                    , Dg::R3::Matrix<float> const * a_pMV
                     , int a_nObjects)
 {
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

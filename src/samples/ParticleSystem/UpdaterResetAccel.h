@@ -34,7 +34,7 @@ void UpdaterResetAccel<Real>::implUpdate(Dg::ParticleData<Real> & a_data
                                       , int a_start
                                       , Real a_dt)
 {
-  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector<Real> * pAccels = a_data.GetAcceleration();
 
   int maxParCount = a_data.GetCountAlive();
 

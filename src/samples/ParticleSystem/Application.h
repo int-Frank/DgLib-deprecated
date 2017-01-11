@@ -97,8 +97,8 @@ private:
                     , char const *
                     , int *);
   void BuildLineRenderData(std::vector<LineRenderData> & a_out);
-  void GetRenderTransforms(Dg::R3::Matrix44<float> & a_mv
-                         , Dg::R3::Matrix44<float> & a_proj
+  void GetRenderTransforms(Dg::R3::Matrix<float> & a_mv
+                         , Dg::R3::Matrix<float> & a_proj
                          , float & a_parScale);
   void UpdateProjectTitle(std::string const &);
 

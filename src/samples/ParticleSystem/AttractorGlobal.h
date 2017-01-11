@@ -10,7 +10,7 @@ class AttractorGlobal : public Dg::Attractor<Real>
 {
 public:
 
-  AttractorGlobal() : Dg::Attractor<Real>(), m_globalAccel(Dg::R3::Vector4<Real>::ZeroVector()) {}
+  AttractorGlobal() : Dg::Attractor<Real>(), m_globalAccel(Dg::R3::Vector<Real>::ZeroVector()) {}
   ~AttractorGlobal() {}
 
   AttractorGlobal(AttractorGlobal<Real> const & a_other) 
@@ -19,7 +19,7 @@ public:
 
   AttractorGlobal(Dg::Attractor<Real> const & a_attr)
     : Dg::Attractor<Real>(a_attr)
-    , m_globalAccel(Dg::R3::Vector4<Real>::ZeroVector())
+    , m_globalAccel(Dg::R3::Vector<Real>::ZeroVector())
   {}
 
   AttractorGlobal<Real> & operator=(AttractorGlobal<Real> const & a_other)
@@ -38,13 +38,13 @@ public:
   AttractorGlobal<Real> * Clone() const { return new AttractorGlobal<Real>(*this); }
 
 private:
-  Dg::R3::Vector4<Real> m_globalAccel;
+  Dg::R3::Vector<Real> m_globalAccel;
 };
 
 template<typename Real>
 void AttractorGlobal<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_globalAccel = a_vqs.Rotate(Dg::R3::Vector4<Real>::xAxis());
+  m_globalAccel = a_vqs.Rotate(Dg::R3::Vector<Real>::xAxis());
 }
 
 template<typename Real>
@@ -52,7 +52,7 @@ void AttractorGlobal<Real>::Update(Dg::ParticleData<Real> & a_data
 									                      , int a_start
                                         , Real a_dt)
 {
-  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector<Real> * pAccels = a_data.GetAcceleration();
   Real mag(m_strength);
   if (mag * mag > m_maxAppliedAccel * m_maxAppliedAccel)
   {
@@ -61,7 +61,7 @@ void AttractorGlobal<Real>::Update(Dg::ParticleData<Real> & a_data
 
   if (pAccels)
   {
-    Dg::R3::Vector4<Real> accel = m_globalAccel * mag;
+    Dg::R3::Vector<Real> accel = m_globalAccel * mag;
     for (int i = a_start; i < a_data.GetCountAlive(); ++i)
     {
       pAccels[i] += accel;

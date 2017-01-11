@@ -35,7 +35,7 @@ void UpdaterRelativeForce<Real>::Update(Dg::ParticleData<Real> & a_data
                                       , int a_start
                                       , Real a_dt)
 {
-  Dg::R3::Vector4<Real> * pVels = a_data.GetVelocity();
+  Dg::R3::Vector<Real> * pVels = a_data.GetVelocity();
   Real * pForces = a_data.GetForce();
 
   int maxParCount = a_data.GetCountAlive();

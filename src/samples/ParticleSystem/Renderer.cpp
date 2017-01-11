@@ -3,7 +3,7 @@
 
 #include "Renderer.h"
 #include "particle_system/DgParticleData.h"
-#include "DgR3Matrix44.h"
+#include "DgR3Matrix.h"
 #include "DgMakeGrid.h"
 #include "imgui/imgui.h"
 #include "Types.h"
@@ -180,8 +180,8 @@ static int GetAlphaEnumFromListVal(int a_val)
 }
 
 
-void Renderer::Render(Dg::R3::Matrix44<float> const & a_modelView
-                    , Dg::R3::Matrix44<float> const & a_proj
+void Renderer::Render(Dg::R3::Matrix<float> const & a_modelView
+                    , Dg::R3::Matrix<float> const & a_proj
                     , float a_parScale
                     , std::vector<LineRenderData> const & a_lineRenderData)
 {

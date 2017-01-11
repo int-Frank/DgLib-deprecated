@@ -29,7 +29,7 @@ public:
   }
 
   void SetTransformation(Dg::R3::VQS<Real> const &);
-  void SetOrigin(Dg::R3::Vector4<Real> const &);
+  void SetOrigin(Dg::R3::Vector<Real> const &);
   void SetRadius(Real);
 
   void Generate(Dg::ParticleData<Real> &, int, int);
@@ -43,12 +43,12 @@ private:
 template<typename Real>
 void GenPosSphere<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_sphere.Set(Dg::R3::Vector4<Real>::Origin(), static_cast<Real>(1.0));
+  m_sphere.Set(Dg::R3::Vector<Real>::Origin(), static_cast<Real>(1.0));
   m_sphere.TransformSelf(a_vqs);
 }
 
 template<typename Real>
-void GenPosSphere<Real>::SetOrigin(Dg::R3::Vector4<Real> const & a_origin)
+void GenPosSphere<Real>::SetOrigin(Dg::R3::Vector<Real> const & a_origin)
 {
   m_sphere.SetCenter(a_origin);
 }
@@ -62,7 +62,7 @@ void GenPosSphere<Real>::SetRadius(Real a_radius)
 template<typename Real>
 void GenPosSphere<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
-  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector<Real> * pPos = a_data.GetPosition();
 
   if (pPos)
   {

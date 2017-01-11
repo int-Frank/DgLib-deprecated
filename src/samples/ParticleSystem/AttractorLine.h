@@ -56,7 +56,7 @@ AttractorLine<Real> & AttractorLine<Real>::operator=(AttractorLine<Real> const &
 template<typename Real>
 void AttractorLine<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_line.Set(Dg::R3::Vector4<Real>::Origin(), Dg::R3::Vector4<Real>::xAxis());
+  m_line.Set(Dg::R3::Vector<Real>::Origin(), Dg::R3::Vector<Real>::xAxis());
   m_line.TransformSelf(a_vqs);
 }
 
@@ -65,8 +65,8 @@ void AttractorLine<Real>::Update(Dg::ParticleData<Real> & a_data
   , int a_start
   , Real a_dt)
 {
-  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
-  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector<Real> * pAccels = a_data.GetAcceleration();
 
   if (pPos && pAccels)
   {

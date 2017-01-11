@@ -4,7 +4,7 @@
 #include "particle_system/DgParticleData.h"
 #include "particle_system/DgParticleGenerator.h"
 #include "DgMath.h"
-#include "DgR3Vector4_ancillary.h"
+#include "DgR3Vector_ancillary.h"
 
 //! Updates particle color
 template<typename Real>
@@ -13,7 +13,7 @@ class GenVelOutwards : public Dg::ParticleGenerator<Real>
 public:
   GenVelOutwards() 
     : Dg::ParticleGenerator<Real>()
-    , m_origin(Dg::R3::Vector4<Real>::yAxis())
+    , m_origin(Dg::R3::Vector<Real>::yAxis())
     , m_velocity(static_cast<Real>(1.0))
   {}
 
@@ -34,7 +34,7 @@ public:
   }
 
   void SetTransformation(Dg::R3::VQS<Real> const &);
-  void SetOrigin(Dg::R3::Vector4<Real> const &);
+  void SetOrigin(Dg::R3::Vector<Real> const &);
   void SetVelocity(Real a_vel) { m_velocity = a_vel; }
 
   void Generate(Dg::ParticleData<Real> &, int, int);
@@ -42,19 +42,19 @@ public:
   GenVelOutwards<Real> * Clone() const { return new GenVelOutwards<Real>(*this); }
 
 private:
-  Dg::R3::Vector4<Real> m_origin;
+  Dg::R3::Vector<Real> m_origin;
   Real              m_velocity;
 };
 
 template<typename Real>
 void GenVelOutwards<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_origin = a_vqs.Translate(Dg::R3::Vector4<Real>::Origin());
+  m_origin = a_vqs.Translate(Dg::R3::Vector<Real>::Origin());
 }
 
 
 template<typename Real>
-void GenVelOutwards<Real>::SetOrigin(Dg::R3::Vector4<Real> const & a_origin)
+void GenVelOutwards<Real>::SetOrigin(Dg::R3::Vector<Real> const & a_origin)
 {
   m_origin = a_origin;
 }
@@ -62,15 +62,15 @@ void GenVelOutwards<Real>::SetOrigin(Dg::R3::Vector4<Real> const & a_origin)
 template<typename Real>
 void GenVelOutwards<Real>::Generate(Dg::ParticleData<Real> & a_data, int a_start, int a_end)
 {
-  Dg::R3::Vector4<Real> * pVels = a_data.GetVelocity();
-  Dg::R3::Vector4<Real> * pAccel = a_data.GetAcceleration();
-  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector<Real> * pVels = a_data.GetVelocity();
+  Dg::R3::Vector<Real> * pAccel = a_data.GetAcceleration();
+  Dg::R3::Vector<Real> * pPos = a_data.GetPosition();
 
   if (pVels && pPos)
   {
     for (int i = a_start; i <= a_end; ++i)
     {
-      Dg::R3::Vector4<Real> vec(pPos[i] - m_origin);
+      Dg::R3::Vector<Real> vec(pPos[i] - m_origin);
       if (vec.IsZero())
       {
         vec = Dg::R3::GetRandomVector<float>();

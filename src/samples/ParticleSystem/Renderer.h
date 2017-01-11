@@ -1,6 +1,8 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include "DgR3Matrix.h"
+
 #include <string>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -12,9 +14,6 @@ namespace Dg
 {
   template<typename Real>
   class ParticleData;
-
-  template<typename Real>
-  class Matrix44;
 }
 
 class Renderer
@@ -26,8 +25,8 @@ public:
 
   void Update(Dg::ParticleData<float> *);
 
-  void Render(Dg::R3::Matrix44<float> const & modelView
-            , Dg::R3::Matrix44<float> const & proj
+  void Render(Dg::R3::Matrix<float> const & modelView
+            , Dg::R3::Matrix<float> const & proj
             , float parScale
             , std::vector<LineRenderData> const & lineRenderData);
 

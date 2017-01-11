@@ -12,7 +12,7 @@ public:
 
   AttractorPoint() 
     : Dg::Attractor<Real>()
-    , m_point(Dg::R3::Vector4<Real>::Origin())
+    , m_point(Dg::R3::Vector<Real>::Origin())
   {}
 
   virtual ~AttractorPoint() {}
@@ -22,7 +22,7 @@ public:
   //TODO Properly implement UpdateNew
   AttractorPoint(Dg::Attractor<Real> const & a_attr)
     : Dg::Attractor<Real>(a_attr)
-    , m_point(Dg::R3::Vector4<Real>::Origin())
+    , m_point(Dg::R3::Vector<Real>::Origin())
   {}
   
   AttractorPoint<Real> & operator=(AttractorPoint<Real> const &);
@@ -35,7 +35,7 @@ public:
   virtual AttractorPoint<Real> * Clone() const { return new AttractorPoint<Real>(*this); }
 
 protected:
-  Dg::R3::Vector4<Real> m_point;
+  Dg::R3::Vector<Real> m_point;
 };
 
 template<typename Real>
@@ -56,7 +56,7 @@ AttractorPoint<Real> & AttractorPoint<Real>::operator=(AttractorPoint<Real> cons
 template<typename Real>
 void AttractorPoint<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_point = a_vqs.Translate(Dg::R3::Vector4<Real>::Origin());
+  m_point = a_vqs.Translate(Dg::R3::Vector<Real>::Origin());
 }
 
 template<typename Real>
@@ -64,8 +64,8 @@ void AttractorPoint<Real>::Update(Dg::ParticleData<Real> & a_data
 									                     , int a_start
                                        , Real a_dt)
 {
-  Dg::R3::Vector4<Real> * pPos = a_data.GetPosition();
-  Dg::R3::Vector4<Real> * pAccels = a_data.GetAcceleration();
+  Dg::R3::Vector<Real> * pPos = a_data.GetPosition();
+  Dg::R3::Vector<Real> * pAccels = a_data.GetAcceleration();
 
   if (pPos && pAccels)
   {

@@ -35,9 +35,9 @@ void UpdaterColor<Real>::implUpdate(Dg::ParticleData<Real> & a_data
                                   , int a_start
                                   , Real a_dt)
 {
-  Dg::R3::Vector4<float> * pColors = a_data.GetColor();
-  Dg::R3::Vector4<float> * pStartColors = a_data.GetStartColor();
-  Dg::R3::Vector4<float> * pDColors = a_data.GetDColor();
+  Dg::R3::Vector<float> * pColors = a_data.GetColor();
+  Dg::R3::Vector<float> * pStartColors = a_data.GetStartColor();
+  Dg::R3::Vector<float> * pDColors = a_data.GetDColor();
   Real * pDLifes = a_data.GetDLife();
 
   int maxParCount = a_data.GetCountAlive();

@@ -221,11 +221,11 @@ void Application::Render()
     , float(m_camRotZ)
     , Dg::EulerOrder::ZYX);
   T.SetQ(q);
-  T.SetV(Dg::R3::Vector4<float>(0.0f, -camHeight, float(-m_camZoom), 0.0f));
+  T.SetV(Dg::R3::Vector<float>(0.0f, -camHeight, float(-m_camZoom), 0.0f));
   T.SetS(2.0f);
 
   m_model.SetTransform(T);
-  Dg::R3::Matrix44<float> mats[ArmSkeleton::BONE_COUNT];
+  Dg::R3::Matrix<float> mats[ArmSkeleton::BONE_COUNT];
   m_model.SetMatrices(mats);
   
   //Set up the viewport
@@ -238,7 +238,7 @@ void Application::Render()
   glViewport(0, 0, width, height);
 
   //Set up the perspective matrix;
-  Dg::R3::Matrix44<float> proj;
+  Dg::R3::Matrix<float> proj;
   proj.Perspective(fov, ratio, nearClip, farClip);
 
   m_renderer.Render(proj, mats, ArmSkeleton::BONE_COUNT);

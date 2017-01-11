@@ -3,6 +3,9 @@
 #include <shlwapi.h>
 #pragma comment(lib,"shlwapi.lib")
 
+#include "DgR3Matrix.h"
+#include "DgR3Vector.h"
+
 #include "Application.h"
 #include "UI.h"
 #include "DgParser_INI.h"
@@ -16,8 +19,8 @@
 
 Application* Application::s_app(nullptr);
 
-typedef Dg::R3::Matrix44<float> mat44;
-typedef Dg::R3::Vector4<float>  vec4;
+typedef Dg::R3::Matrix<float> mat44;
+typedef Dg::R3::Vector<float>  vec4;
 
 //TODO Create some samples
 
@@ -270,8 +273,8 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
     {
       LineRenderData lineRenderData; 
       lineRenderData.model = m_projData.aData[i].first.type;
-      Dg::R3::Vector4<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
-      Dg::R3::Vector4<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
+      Dg::R3::Vector<float> lineCol(1.0f, 0.4588f, 0.102f, 1.0f);
+      Dg::R3::Vector<float> lineColFocus(51.f / 255.f, 204.f / 255.f, 51.f / 255.f, 1.0f);
       lineRenderData.col = (i == m_projData.attrFocus) ? lineColFocus : lineCol;
       switch (m_projData.aData[i].first.type)
       {
@@ -287,7 +290,7 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
       {
         lineRenderData.mat.Translation
         (
-          Dg::R3::Vector4<float>(m_projData.aData[i].first.transform[0]
+          Dg::R3::Vector<float>(m_projData.aData[i].first.transform[0]
             , m_projData.aData[i].first.transform[1]
             , m_projData.aData[i].first.transform[2]
             , 0.0f)
@@ -299,7 +302,7 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
         mat44 trans, rot;
         trans.Translation
         (
-          Dg::R3::Vector4<float>(m_projData.aData[i].first.transform[0]
+          Dg::R3::Vector<float>(m_projData.aData[i].first.transform[0]
             , m_projData.aData[i].first.transform[1]
             , m_projData.aData[i].first.transform[2]
             , 0.0f)
@@ -317,7 +320,7 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
         mat44 trans, rot;
         trans.Translation
         (
-          Dg::R3::Vector4<float>(m_projData.aData[i].first.transform[0]
+          Dg::R3::Vector<float>(m_projData.aData[i].first.transform[0]
             , m_projData.aData[i].first.transform[1]
             , m_projData.aData[i].first.transform[2]
             , 0.0f)
@@ -337,8 +340,8 @@ void Application::BuildLineRenderData(std::vector<LineRenderData> & a_out)
 }
 
 
-void Application::GetRenderTransforms(Dg::R3::Matrix44<float> & a_mv
-                                    , Dg::R3::Matrix44<float> & a_proj
+void Application::GetRenderTransforms(Dg::R3::Matrix<float> & a_mv
+                                    , Dg::R3::Matrix<float> & a_proj
                                     , float & a_parScale)
 {
   float camHeight = 2.0f;
@@ -372,7 +375,7 @@ void Application::GetRenderTransforms(Dg::R3::Matrix44<float> & a_mv
 
 void Application::Render()
 {
-  Dg::R3::Matrix44<float> mv, proj;
+  Dg::R3::Matrix<float> mv, proj;
   float parScale(0.0f);
   GetRenderTransforms(mv, proj, parScale);
 
