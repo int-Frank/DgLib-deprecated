@@ -45,8 +45,8 @@ bool Renderer::SetModels(std::vector<Mesh> const & a_models)
 
   GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
   GLuint vNormal = glGetAttribLocation(m_shaderProgram, "normal");
-  glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-  glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(sizeof(float) * 3));
+  glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+  glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
   glEnableVertexAttribArray(vPosition);
   glEnableVertexAttribArray(vNormal);
 

@@ -38,7 +38,7 @@ void Mesh::GetData(std::vector<float> & a_vertices,
                     std::vector<float> & a_normals,
                     std::vector<unsigned short> & a_faces) const
 {
-  for (auto v : m_vertices)
+  for (auto const & v : m_vertices)
   {
     for (int i = 0; i < 3; ++i)
     {
@@ -46,7 +46,7 @@ void Mesh::GetData(std::vector<float> & a_vertices,
     }
   }
 
-  for (auto vn : m_normals)
+  for (auto const & vn : m_normals)
   {
     for (int i = 0; i < 3; ++i)
     {
@@ -54,7 +54,7 @@ void Mesh::GetData(std::vector<float> & a_vertices,
     }
   }
 
-  for (auto f : m_faces)
+  for (auto const & f : m_faces)
   {
     for (int i = 0; i < 3; ++i)
     {
@@ -131,7 +131,6 @@ bool Mesh::Load(std::string const & a_fileName)
       m_normals[m_faces[i].verts[j]] = vn_list[fvn_list[i].verts[j]];
     }
   }
-
   return true;
 }
 
@@ -163,7 +162,7 @@ void Mesh::NormalizeData(vec4 const & a_center, float a_maxCoord)
   RecenterData(a_center);
 
   float currentMax = 0.f;
-  for (auto v : m_vertices)
+  for (auto const & v : m_vertices)
   {
     for (int i = 0; i < 3; ++i)
     {
@@ -178,7 +177,7 @@ void Mesh::NormalizeData(vec4 const & a_center, float a_maxCoord)
     {
       for (int i = 0; i < 3; ++i)
       {
-        v[i] *= scaleFactor;
+        //v[i] *= scaleFactor;
       }
     }
   }
