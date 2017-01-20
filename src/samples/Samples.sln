@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TableGeneration", "TableGen
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VQSDemo", "VQSDemo\VQSDemo.vcxproj", "{BC34A977-36CE-4B8B-9543-A49F615FEFA5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExplodingObjects", "ExplodingObjects\ExplodingObjects.vcxproj", "{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -41,6 +43,14 @@ Global
 		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Release|Win32.Build.0 = Release|Win32
 		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Release|x64.ActiveCfg = Release|x64
 		{BC34A977-36CE-4B8B-9543-A49F615FEFA5}.Release|x64.Build.0 = Release|x64
+		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Debug|Win32.Build.0 = Debug|Win32
+		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Debug|x64.ActiveCfg = Debug|x64
+		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Debug|x64.Build.0 = Debug|x64
+		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Release|Win32.ActiveCfg = Release|Win32
+		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Release|Win32.Build.0 = Release|Win32
+		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Release|x64.ActiveCfg = Release|x64
+		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

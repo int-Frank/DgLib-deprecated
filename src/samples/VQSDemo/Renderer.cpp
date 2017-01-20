@@ -19,11 +19,11 @@ bool Renderer::Init()
   }
   m_nFvs = int(fv.size());
 
+  m_shaderProgram = CompileShaders("vs.glsl", "fs.glsl");
+
   //Verts
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
-
-  m_shaderProgram = CompileShaders("vs.glsl", "fs.glsl");
 
   //Vertices
   glBindBuffer(GL_ARRAY_BUFFER, m_buffer[0]);
