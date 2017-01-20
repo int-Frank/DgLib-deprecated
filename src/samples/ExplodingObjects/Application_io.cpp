@@ -41,7 +41,7 @@ bool Application::LoadProject(std::string const & a_file)
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);
 
-  newModel.NormalizeData(vec4::Origin(), 0.5f);
+  newModel.NormalizeData(vec4::Origin(), 3.f);
 
   m_models.push_back(newModel);
   m_renderer.SetModels(m_models);

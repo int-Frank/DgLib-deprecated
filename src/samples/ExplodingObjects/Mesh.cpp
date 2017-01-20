@@ -177,7 +177,7 @@ void Mesh::NormalizeData(vec4 const & a_center, float a_maxCoord)
     {
       for (int i = 0; i < 3; ++i)
       {
-        //v[i] *= scaleFactor;
+        v[i] *= scaleFactor;
       }
     }
   }
