@@ -148,6 +148,7 @@
     <ClInclude Include="..\..\public\DgFixedPoint.h" />
     <ClInclude Include="..\..\public\DgR2Line.h" />
     <ClInclude Include="..\..\public\DgR2Ray.h" />
+    <ClInclude Include="..\..\public\DgR2Triangle.h" />
     <ClInclude Include="..\..\public\DgR2Vector_ancillary.h" />
     <ClInclude Include="..\..\public\DgR3Frustum.h" />
     <ClInclude Include="..\..\public\DgR3Line.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="..\..\public\DgR3Plane.h" />
     <ClInclude Include="..\..\public\DgR3Quaternion.h" />
     <ClInclude Include="..\..\public\DgR3Ray.h" />
+    <ClInclude Include="..\..\public\DgR3Triangle.h" />
     <ClInclude Include="..\..\public\DgRNG.h" />
     <ClInclude Include="..\..\public\DgR3Sphere.h" />
     <ClInclude Include="..\..\public\DgR2Vector.h" />
@@ -182,6 +184,7 @@
     <ClInclude Include="..\..\public\impl\DgQueryRayLine.h" />
     <ClInclude Include="..\..\public\impl\DgQueryRayPlane.h" />
     <ClInclude Include="..\..\public\impl\DgQueryRayRay.h" />
+    <ClInclude Include="..\..\public\impl\DgQueryRayTriangle.h" />
     <ClInclude Include="..\..\public\impl\DgQuerySegmentLine.h" />
     <ClInclude Include="..\..\public\impl\DgQuerySegmentRay.h" />
     <ClInclude Include="..\..\public\impl\DgQuerySegmentSegment.h" />
@@ -194,6 +197,7 @@
     <ClInclude Include="..\..\public\impl\DgRay_generic.h" />
     <ClInclude Include="..\..\public\impl\DgSegment_generic.h" />
     <ClInclude Include="..\..\public\impl\DgTIQuery.h" />
+    <ClInclude Include="..\..\public\impl\DgTriangle_generic.h" />
     <ClInclude Include="..\..\public\impl\DgVector_generic.h" />
     <ClInclude Include="..\..\public\impl\DgQuerySegmentPlane.h" />
     <ClInclude Include="..\..\public\query\DgQueryCommon.h" />
@@ -205,6 +209,7 @@
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentLine.h" />
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentRay.h" />
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentSegment.h" />
+    <ClInclude Include="..\..\public\query\DgR3QueryRayTriangle.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentLine.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSegment.h" />

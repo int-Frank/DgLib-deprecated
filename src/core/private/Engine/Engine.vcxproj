@@ -144,10 +144,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\public\DgMeshBase.cpp" />
     <ClCompile Include="ResourceHandle.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\public\DgMeshBase.h" />
     <ClInclude Include="..\..\public\particle_system\DgAttractor.h" />
     <ClInclude Include="..\..\public\particle_system\DgParticleEmitter.h" />
     <ClInclude Include="..\..\public\particle_system\DgParticleGenerator.h" />

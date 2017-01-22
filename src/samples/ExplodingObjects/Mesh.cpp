@@ -4,71 +4,105 @@
 
 #include "Mesh.h"
 
+typedef Dg::DgArray<size_t, 3>          tri_ind;
 
-Mesh::Mesh(Mesh const & a_other)
-: m_vertices(a_other.m_vertices)
-, m_normals(a_other.m_normals)
-, m_faces(a_other.m_faces)
+seg Mesh::Segment(Dg::eHandle a_eh) const
 {
-
+  Dg::vHandle vh0 = Dg::MeshTools::Source(a_eh);
+  Dg::vHandle vh1 = Dg::MeshTools::Target(a_eh);
+  return seg(GetData(vh0).point,
+             GetData(vh1).point);
 }
 
-
-Mesh & Mesh::operator=(Mesh const & a_other)
+triangle Mesh::Triangle(Dg::fHandle a_fh) const
 {
-  if (this != &a_other)
+  Dg::vHandle_3 vh3 = Vertices(a_fh);
+  return triangle(GetData(vh3[0]).point, 
+                  GetData(vh3[1]).point,
+                  GetData(vh3[2]).point);
+}
+
+void Mesh::CollateData(std::vector<float> & a_vertices,
+                       std::vector<float> & a_normals,
+                       std::vector<unsigned short> & a_faces) const
+{
+  std::map<Dg::vHandle, size_t> handleIndexMap;
+  size_t ind = 0;
+  for (auto const & kv : m_vertexData)
   {
-    m_vertices = a_other.m_vertices;
-    m_normals = a_other.m_normals;
-    m_faces = a_other.m_faces;
-  }
-  return *this;
-}
-
-
-void Mesh::Clear()
-{
-  m_vertices.clear();
-  m_normals.clear();
-  m_faces.clear();
-}
-
-
-void Mesh::GetData(std::vector<float> & a_vertices,
-                    std::vector<float> & a_normals,
-                    std::vector<unsigned short> & a_faces) const
-{
-  for (auto const & v : m_vertices)
-  {
+    handleIndexMap.insert(std::pair<Dg::vHandle, size_t>(kv.first, ind));
+    ++ind;
     for (int i = 0; i < 3; ++i)
     {
-      a_vertices.push_back(v[i]);
+      a_vertices.push_back(kv.second.point[i]);
+      a_normals.push_back(kv.second.normal[i]);
     }
   }
 
-  for (auto const & vn : m_normals)
+  for (auto const & kv : m_faceData)
   {
     for (int i = 0; i < 3; ++i)
     {
-      a_normals.push_back(vn[i]);
-    }
-  }
-
-  for (auto const & f : m_faces)
-  {
-    for (int i = 0; i < 3; ++i)
-    {
-      a_faces.push_back(unsigned short(f.verts[i]));
+      unsigned short val = unsigned short(handleIndexMap.at(kv.second.first[i]));
+      a_faces.push_back(val);
     }
   }
 }
 
-int Mesh::NumberFaces() const
+
+static void RecenterData(std::vector<vec4> & a_points)
 {
-  return int(m_faces.size());
+  if (a_points.size() == 0) return;
+
+  vec4 centroid(vec4::ZeroVector());
+  for (auto const & v : a_points)
+  {
+    centroid += v;
+  }
+
+  centroid /= float(a_points.size());
+  centroid.w() = 1.f;
+
+  vec4 moveVector = vec4::Origin() - centroid;
+
+  for (auto it = a_points.begin();
+    it != a_points.end();
+    ++it)
+  {
+    *it += moveVector;
+  }
 }
 
-bool Mesh::Load(std::string const & a_fileName)
+static void NormalizeData(std::vector<vec4> & a_points)
+{
+  RecenterData(a_points);
+
+  float currentMax = 0.f;
+  for (auto const & v : a_points)
+  {
+    for (int i = 0; i < 3; ++i)
+    {
+      if (abs(v[i]) > currentMax) currentMax = v[i];
+    }
+  }
+
+  if (currentMax != 0.f)
+  {
+    float scaleFactor = 0.5f / currentMax;
+    for (auto & v : a_points)
+    {
+      for (int i = 0; i < 3; ++i)
+      {
+        v[i] *= scaleFactor;
+      }
+    }
+  }
+}
+
+static bool __LoadOBJ(std::string const & a_fileName,
+                      std::vector<vec4> & a_points,
+                      std::vector<vec4> & a_normals,
+                      std::vector<tri_ind> & a_faces)
 {
   std::ifstream ifs;
   ifs.open(a_fileName);
@@ -79,11 +113,9 @@ bool Mesh::Load(std::string const & a_fileName)
     return false;
   }
 
-  Clear();
-
   std::string firstWord;
   std::vector<vec4> vn_list;
-  std::vector<Face> fvn_list;
+  std::vector<tri_ind> fvn_list;
 
   while (ifs >> firstWord)
   {
@@ -93,7 +125,7 @@ bool Mesh::Load(std::string const & a_fileName)
       float vy = 0.0f;
       float vz = 0.0f;
       ifs >> vx >> vy >> vz;
-      m_vertices.push_back(vec4(vx, vy, vz, 1.f));
+      a_points.push_back(vec4(vx, vy, vz, 1.f));
     }
     else if (firstWord == "vn")
     {
@@ -105,17 +137,24 @@ bool Mesh::Load(std::string const & a_fileName)
     }
     else if (firstWord == "f")
     {
-      unsigned short vi0 = 0, vi1 = 0, vi2 = 0;
-      unsigned short vni0 = 0, vni1 = 0, vni2 = 0;
+      size_t vi0 = 0, vi1 = 0, vi2 = 0;
+      size_t vni0 = 0, vni1 = 0, vni2 = 0;
       char s = 0;
       ifs >> vi0 >> s >> s >> vni0;
       ifs >> vi1 >> s >> s >> vni1;
       ifs >> vi2 >> s >> s >> vni2;
 
-      Face fv = { vi0 - 1, vi1 - 1, vi2 - 1 };
-      Face fvn = {vni0 - 1, vni1 - 1, vni2 - 1 };
+      tri_ind fv; 
+      tri_ind fvn;
 
-      m_faces.push_back(fv);
+      fv[0] = vi0 - 1;
+      fv[1] = vi1 - 1;
+      fv[2] = vi2 - 1;
+      fvn[0] = vni0 - 1;
+      fvn[1] = vni1 - 1;
+      fvn[2] = vni2 - 1;
+
+      a_faces.push_back(fv);
       fvn_list.push_back(fvn);
     }
 
@@ -123,62 +162,51 @@ bool Mesh::Load(std::string const & a_fileName)
   }
 
   //Make sure vertices and normals share the same index.
-  m_normals.resize(m_vertices.size());
-  for (size_t i = 0; i < m_faces.size(); i++)
+  a_normals.resize(a_points.size());
+  for (size_t i = 0; i < a_faces.size(); i++)
   {
     for (int j = 0; j < 3; ++j)
     {
-      m_normals[m_faces[i].verts[j]] = vn_list[fvn_list[i].verts[j]];
+      a_normals[a_faces[i][j]] = vn_list[fvn_list[i][j]];
     }
   }
+
+  NormalizeData(a_points);
+
   return true;
 }
 
-void Mesh::RecenterData(vec4 const & a_center)
+bool Mesh::LoadOBJ(std::string const & a_fileName)
 {
-  if (m_vertices.size() == 0) return;
+  std::vector<vec4>     points;
+  std::vector<vec4>     normals;
+  std::vector<tri_ind>  faces;
 
-  vec4 centroid(vec4::ZeroVector());
-  for (auto v : m_vertices)
+  if (!__LoadOBJ(a_fileName, points, normals, faces)) return false;
+
+  for (size_t i = 0; i < points.size(); ++i)
   {
-    centroid += v;
+    vData vd;
+    vd.point = points[i];
+    vd.normal = normals[i];
+    m_vertexData.insert(std::pair<Dg::vHandle, vData>(Dg::vHandle(Dg::vHandleType(i)), vd));
   }
 
-  centroid /= float(m_vertices.size());
-  centroid.w() = 1.f;
-
-  vec4 moveVector = a_center - centroid;
-
-  for (auto it = m_vertices.begin();
-       it != m_vertices.end();
-       ++it)
+  for (size_t i = 0; i < faces.size(); ++i)
   {
-    *it += moveVector;
-  }
-}
+    Dg::vHandle_3 fd;
+    //Vertex Handle values are just their index. 
+    fd[0] = Dg::vHandle(Dg::vHandleType(faces[i][0]));
+    fd[1] = Dg::vHandle(Dg::vHandleType(faces[i][1]));
+    fd[2] = Dg::vHandle(Dg::vHandleType(faces[i][2]));
+    m_faceData.insert(std::pair<Dg::fHandle, std::pair<Dg::vHandle_3, _NO_DATA>>(Dg::fHandle(Dg::fHandleType(i)), std::pair<Dg::vHandle_3, _NO_DATA>(fd, _NO_DATA())));
 
-void Mesh::NormalizeData(vec4 const & a_center, float a_maxCoord)
-{
-  RecenterData(a_center);
+    Dg::eHandle e0(Dg::MeshTools::GetEdgeHandle(fd[0], fd[1]));
+    Dg::eHandle e1(Dg::MeshTools::GetEdgeHandle(fd[0], fd[2]));
+    Dg::eHandle e2(Dg::MeshTools::GetEdgeHandle(fd[1], fd[2]));
 
-  float currentMax = 0.f;
-  for (auto const & v : m_vertices)
-  {
-    for (int i = 0; i < 3; ++i)
-    {
-      if (abs(v[i]) > currentMax) currentMax = v[i];
-    }
-  }
-
-  if (currentMax != 0.f)
-  {
-    float scaleFactor = a_maxCoord / currentMax;
-    for (auto & v : m_vertices)
-    {
-      for (int i = 0; i < 3; ++i)
-      {
-        v[i] *= scaleFactor;
-      }
-    }
+    m_edgeData.insert(std::pair<Dg::eHandle, _NO_DATA>(Dg::eHandle(e0), _NO_DATA()));
+    m_edgeData.insert(std::pair<Dg::eHandle, _NO_DATA>(Dg::eHandle(e1), _NO_DATA()));
+    m_edgeData.insert(std::pair<Dg::eHandle, _NO_DATA>(Dg::eHandle(e2), _NO_DATA()));
   }
 }

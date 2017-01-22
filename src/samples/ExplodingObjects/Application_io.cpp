@@ -32,7 +32,7 @@ bool Application::LoadProject(std::string const & a_file)
   ClearProject();
 
   Mesh newModel;
-  if (!newModel.Load(a_file))
+  if (!newModel.LoadOBJ(a_file))
   {
     printf("Failed to open file '%s'!\n", a_file.c_str());
     return false;
@@ -40,8 +40,6 @@ bool Application::LoadProject(std::string const & a_file)
 
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);
-
-  newModel.NormalizeData(vec4::Origin(), 3.f);
 
   m_models.push_back(newModel);
   m_renderer.SetModels(m_models);

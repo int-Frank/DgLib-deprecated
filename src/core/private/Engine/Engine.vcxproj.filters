@@ -18,6 +18,9 @@
     <Filter Include="Particle System">
       <UniqueIdentifier>{92eb167f-473e-4fa0-8f72-af65816a662e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3d tools">
+      <UniqueIdentifier>{f255fd7f-df69-4516-b436-173ae10fbddd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceHandle.cpp">
@@ -25,6 +28,9 @@
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\public\DgMeshBase.cpp">
+      <Filter>3d tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +60,9 @@
     </ClInclude>
     <ClInclude Include="..\..\public\particle_system\DgParticleSystem.h">
       <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgMeshBase.h">
+      <Filter>3d tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -196,8 +196,7 @@ namespace Dg
   template<typename Real>
   bool IsZero(Real a)
   {
-    return (abs(a) < Dg::Constants<Real>::EPSILON);
-
+    return (a > -Dg::Constants<Real>::EPSILON && a < Dg::Constants<Real>::EPSILON);
   }	//End: IsZero()
 
 

@@ -278,5 +278,20 @@
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h">
       <Filter>Public Headers\Query\R3</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgTriangle_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Triangle.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3Triangle.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryRayTriangle.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryRayTriangle.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

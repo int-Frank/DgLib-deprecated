@@ -169,9 +169,12 @@
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_truetype.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="BreakerBase.h" />
+    <ClInclude Include="circulator_const.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Events.h" />
+    <ClInclude Include="handlebase.h" />
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="mapkeyiterator.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Renderer.h" />

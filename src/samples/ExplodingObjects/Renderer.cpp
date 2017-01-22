@@ -80,7 +80,7 @@ bool Renderer::CollateData(std::vector<Mesh> const & a_models,
 
     size_t oldFaceDataSize = a_faceData.size();
 
-    model.GetData(vertices, normals, a_faceData);
+    model.CollateData(vertices, normals, a_faceData);
 
     if (vertices.size() != normals.size())
     {

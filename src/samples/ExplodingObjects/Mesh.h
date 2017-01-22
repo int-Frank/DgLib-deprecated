@@ -1,46 +1,32 @@
-#ifndef MODELBASE_H
-#define MODELBASE_H
+#ifndef MESH_H
+#define MESH_H
 
-#include <vector>
 #include <string>
 
 #include "Types.h"
+#include "DgMeshBase.h"
 
-struct Face
+struct _NO_DATA
 {
-  int verts[3];
 };
 
-class Mesh
+struct vData
+{
+  vec4 point;
+  vec4 normal;
+};
+
+class Mesh : public Dg::MeshBase<vData, _NO_DATA, _NO_DATA>
 {
 public:
 
-  Mesh() {}
-  ~Mesh() {}
+  bool LoadOBJ(std::string const &);
+  void CollateData(std::vector<float> & vertices,
+                   std::vector<float> & normals,
+                   std::vector<unsigned short> & faces) const;
 
-  Mesh(Mesh const &);
-  Mesh & operator=(Mesh const &);
-
-  void Clear();
-  bool Load(std::string const &);
-
-  void GetData(std::vector<float> & vertices,
-               std::vector<float> & normals,
-               std::vector<unsigned short> & faces) const;
-
-  int NumberFaces() const;
-
-  void RecenterData(vec4 const &);
-
-  //Centers and scales data
-  void NormalizeData(vec4 const &, float);
-
-private:
-
-  std::vector<vec4>   m_vertices;
-  std::vector<vec4>   m_normals;
-  std::vector<Face>   m_faces;
-
+  seg Segment(Dg::eHandle) const;
+  triangle Triangle(Dg::fHandle) const;
 };
 
 #endif

@@ -5,9 +5,13 @@
 
 #include "DgR3Vector.h"
 #include "DgR3Matrix.h"
+#include "DgR3Segment.h"
+#include "DgR3Triangle.h"
 
-typedef Dg::R3::Vector<float>   vec4;
-typedef Dg::R3::Matrix<float>   mat44;
+typedef Dg::R3::Vector<float>    vec4;
+typedef Dg::R3::Segment<float>   seg;
+typedef Dg::R3::Triangle<float>  triangle;
+typedef Dg::R3::Matrix<float>    mat44;
 
 struct AppInfo
 {

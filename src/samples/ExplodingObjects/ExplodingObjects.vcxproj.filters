@@ -107,10 +107,19 @@
     <ClInclude Include="SceneObject.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="BreakerBase.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="BreakerBase.h">
+    <ClInclude Include="circulator_const.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="handlebase.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mapkeyiterator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

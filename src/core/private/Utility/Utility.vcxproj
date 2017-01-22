@@ -145,6 +145,7 @@
     <ClCompile Include="DgStringFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\public\Dgcirculator_const.h" />
     <ClInclude Include="..\..\public\DgIDManager.h" />
     <ClInclude Include="..\..\public\DgMakeGrid.h" />
     <ClInclude Include="..\..\public\DgObject.h" />
@@ -156,6 +157,8 @@
     <ClInclude Include="..\..\public\DgTypes.h" />
     <ClInclude Include="..\..\public\DgVariadicMacros.h" />
     <ClInclude Include="..\..\public\DgErrorHandler.h" />
+    <ClInclude Include="..\..\public\DgHandleBase.h" />
+    <ClInclude Include="..\..\public\DgMapKeyIterator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
