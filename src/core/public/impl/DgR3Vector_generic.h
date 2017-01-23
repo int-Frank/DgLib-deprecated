@@ -59,6 +59,10 @@ namespace Dg
 
       Vector_generic Cross(Vector_generic const &) const;
 
+      Real Distance(Vector_generic const &) const;
+
+      Real SquaredDistance(Vector_generic const &) const;
+
       Vector_generic Perpendicular() const;
 
       //! Access element-x by value
@@ -296,6 +300,23 @@ namespace Dg
 
       return result;
     }	//End: Cross()
+
+
+    template<typename Real>
+    Real Vector_generic<Real, 3>::SquaredDistance(Vector_generic<Real, 3> const & a_v) const
+    {
+      Real x = m_V[0] - a_v.m_V[0];
+      Real y = m_V[1] - a_v.m_V[1];
+      Real z = m_V[2] - a_v.m_V[2];
+      return (x*x + y*y + z*z);
+    }
+
+
+    template<typename Real>
+    Real Vector_generic<Real, 3>::Distance(Vector_generic<Real, 3> const & a_v) const
+    {
+      return sqrt(SquaredDistance(a_v));
+    }
 
 
     //! Returns a perpendicular vector.

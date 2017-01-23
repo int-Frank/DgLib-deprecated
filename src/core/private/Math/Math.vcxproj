@@ -181,6 +181,10 @@
     <ClInclude Include="..\..\public\impl\DgQueryPointPlane.h" />
     <ClInclude Include="..\..\public\impl\DgQueryPointRay.h" />
     <ClInclude Include="..\..\public\impl\DgQueryPointSegment.h" />
+    <ClInclude Include="..\..\public\impl\DgQueryPointSphere.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="..\..\public\impl\DgQueryRayLine.h" />
     <ClInclude Include="..\..\public\impl\DgQueryRayPlane.h" />
     <ClInclude Include="..\..\public\impl\DgQueryRayRay.h" />

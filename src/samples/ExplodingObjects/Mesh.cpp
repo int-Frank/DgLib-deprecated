@@ -22,6 +22,34 @@ triangle Mesh::Triangle(Dg::fHandle a_fh) const
                   GetData(vh3[2]).point);
 }
 
+vec4 Mesh::Centroid() const
+{
+  vec4 result(vec4::ZeroVector());
+  for (auto const & kv : m_vertexData)
+  {
+    result += kv.second.point;
+  }
+  result /= float(m_vertexData.size());
+  result.w() = 1.f;
+  return result;
+}
+
+sphere Mesh::Sphere() const
+{
+  vec4 centroid = Centroid();
+  float maxSqDist = 0.0f;
+  for (auto const & kv : m_vertexData)
+  {
+    float sqDist = centroid.SquaredDistance(kv.second.point);
+    if (sqDist > maxSqDist)
+    {
+      maxSqDist = sqDist;
+    }
+  }
+
+  return sphere(centroid, sqrt(maxSqDist));
+}
+
 void Mesh::CollateData(std::vector<float> & a_vertices,
                        std::vector<float> & a_normals,
                        std::vector<unsigned short> & a_faces) const

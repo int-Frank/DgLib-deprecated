@@ -1,9 +1,9 @@
 #ifndef BREAKERBASE_H
 #define BREAKERBASE_H
 
-#include <vector>
+#include <list>
 
-#include "Model.h"
+#include "Mesh.h"
 
 class BreakerBase
 {
@@ -11,7 +11,7 @@ public:
 
   virtual ~BreakerBase() {}
 
-  virtual std::vector<Model> operator() {}
+  virtual std::list<Mesh> operator()(Mesh const &) {}
 };
 
 #endif

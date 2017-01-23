@@ -27,6 +27,8 @@ public:
 
   seg Segment(Dg::eHandle) const;
   triangle Triangle(Dg::fHandle) const;
+  vec4 Centroid() const;
+  sphere Sphere() const;
 };
 
 #endif

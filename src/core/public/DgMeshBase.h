@@ -228,12 +228,12 @@ namespace Dg
       return false;
     }
 
-    Edge_iterator edges_begin() const
+    Edge_iterator EdgesBegin() const
     {
       return Edge_iterator(m_edgeData.begin());
     }
 
-    Edge_iterator edges_end() const
+    Edge_iterator EdgesEnd() const
     {
       return Edge_iterator(m_edgeData.end());
     }

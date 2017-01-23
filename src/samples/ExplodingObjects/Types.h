@@ -6,11 +6,15 @@
 #include "DgR3Vector.h"
 #include "DgR3Matrix.h"
 #include "DgR3Segment.h"
+#include "DgR3Ray.h"
 #include "DgR3Triangle.h"
+#include "DgR3Sphere.h"
 
 typedef Dg::R3::Vector<float>    vec4;
 typedef Dg::R3::Segment<float>   seg;
+typedef Dg::R3::Ray<float>       ray;
 typedef Dg::R3::Triangle<float>  triangle;
+typedef Dg::R3::Sphere<float>    sphere;
 typedef Dg::R3::Matrix<float>    mat44;
 
 struct AppInfo
@@ -37,6 +41,17 @@ class AppData
 {
 public:
 
-  std::string           projName;
+  AppData()
+    : power(1.f)
+    , retardingForce(1.f)
+    , numberPieces(0)
+    , explode(false)
+  {}
+
+  std::string   projName;
+  float         power;
+  float         retardingForce;
+  int           numberPieces;
+  bool          explode;
 };
 #endif

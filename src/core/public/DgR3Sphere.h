@@ -55,6 +55,9 @@ namespace Dg
       //! Get the plane center and .
       void Get(Vector<Real>&, Real&) const;
 
+      //! Quick point test
+      bool IsOutside(Vector<Real> const &) const;
+
       //! Are two planes equal?
       bool operator== (Sphere const &) const;
 
@@ -177,6 +180,13 @@ namespace Dg
     {
       a_center = m_origin;
       a_radius = m_radius;
+    }	//End: Sphere::Get()
+
+
+    template<typename Real>
+    bool Sphere<Real>::IsOutside(Vector<Real> const & a_pt) const
+    {
+      return m_origin.SquaredDistance(a_pt) > (m_radius * m_radius);
     }	//End: Sphere::Get()
 
 

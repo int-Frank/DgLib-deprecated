@@ -257,6 +257,22 @@ namespace Dg
     }	//End: PerpDot()
 
 
+    template<typename Real>
+    Vector_generic<Real, 2> Vector_generic<Real, 2>::SquaredDistance(Vector_generic<Real, 2> const & a_v) const
+    {
+      Real x = m_V[0] = a_v.m_V[0];
+      Real y = m_V[1] = a_v.m_V[1];
+      return (x*x + y*y);
+    }
+
+
+    template<typename Real>
+    Vector_generic<Real, 2> Vector_generic<Real, 2>::Distance(Vector_generic<Real, 2> const & a_v) const
+    {
+      return sqrt(SquaredDistance(a_v));
+    }
+
+
     //! Returns a perpendicular vector.
     template<typename Real>
     Vector_generic<Real, 2> Vector_generic<Real, 2>::Perpendicular() const

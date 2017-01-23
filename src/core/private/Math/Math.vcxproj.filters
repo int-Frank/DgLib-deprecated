@@ -293,5 +293,8 @@
     <ClInclude Include="..\..\public\query\DgR3QueryRayTriangle.h">
       <Filter>Public Headers\Query\R3</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryPointSphere.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
