@@ -19,9 +19,6 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{6bb5c104-21b7-488d-8c8a-7f34b2b12a34}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Breakers">
-      <UniqueIdentifier>{0a789b8d-4586-47c6-9972-df5dc709bd62}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -65,12 +62,6 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MFS_Ray.cpp">
-      <Filter>Breakers</Filter>
-    </ClCompile>
-    <ClCompile Include="BreakerFracture.cpp">
-      <Filter>Breakers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,18 +109,6 @@
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BreakerBase.h">
-      <Filter>Breakers</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshFaceSelector.h">
-      <Filter>Breakers</Filter>
-    </ClInclude>
-    <ClInclude Include="MFS_Ray.h">
-      <Filter>Breakers</Filter>
-    </ClInclude>
-    <ClInclude Include="BreakerFracture.h">
-      <Filter>Breakers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

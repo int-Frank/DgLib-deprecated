@@ -13,13 +13,6 @@ class SceneObject;
 
 class Renderer
 {
-  struct ObjectData
-  {
-    GLsizei faceCount;
-    GLint   faceOffset;
-    GLint   vertexOffset;
-  };
-
 public:
   Renderer()
     : m_vao(0)
@@ -29,7 +22,7 @@ public:
   {}
 
   bool Init();
-  bool SetModels(std::vector<Mesh> const &);
+  bool SetData(Mesh const &);
   void Clear();
 
   void Begin();
@@ -39,7 +32,7 @@ public:
 
 private:
 
-  bool CollateData(std::vector<Mesh> const &,
+  void CollateData(Mesh const &,
                    std::vector<float> &,
                    std::vector<unsigned short> &);
 
@@ -48,7 +41,6 @@ private:
 
 private:
 
-  std::vector<ObjectData> m_objectData;
   GLuint                  m_vao;
   GLuint                  m_vBuf; // Interleave vertices and normals.
   GLuint                  m_fBuf; // Pack all objects into one face buffer.

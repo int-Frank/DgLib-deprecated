@@ -21,11 +21,10 @@ public:
   SceneObject & operator=(SceneObject const &);
 
   void SetModelReference(int);
-  void SetPosition(vec4 const &);
+  void SetTranslation(vec4 const &);
   void SetRotation(float, float, float);
   void SetScale(float);
 
-  void SetRetardingCoefficient(float);
   void SetVelocity(vec4 const &);
   void SetAngularVelocity(float, float, float);
 
@@ -38,11 +37,12 @@ private:
 
   int   m_modelReference;
   
-  vec4  m_translation;
-  vec4  m_rotation;
-  float m_scale;
+  vec4  m_centroid;
 
-  float m_retardingCoefficient;
+  vec4  m_T_M_W;
+  vec4  m_R_M_W;
+  float m_S_M_W;
+
   vec4  m_velocity;
   vec4  m_angularRotation;
 };

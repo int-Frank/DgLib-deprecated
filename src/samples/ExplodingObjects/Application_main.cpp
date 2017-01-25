@@ -121,7 +121,6 @@ void Application::Shutdown()
 
 void Application::ClearProject()
 {
-  m_models.clear();
   m_sceneObjects.clear();
   m_appData.projName.clear();
   m_renderer.Clear();

@@ -42,16 +42,16 @@ class AppData
 public:
 
   AppData()
-    : power(1.f)
+    : source(vec4::Origin())
+    , power(1.f)
     , retardingForce(1.f)
-    , numberPieces(0)
     , explode(false)
   {}
 
   std::string   projName;
+  vec4          source;
   float         power;
   float         retardingForce;
-  int           numberPieces;
   bool          explode;
 };
 #endif

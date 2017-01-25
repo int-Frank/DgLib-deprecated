@@ -16,7 +16,7 @@ bool Renderer::Init()
 }
 
 
-bool Renderer::SetModels(std::vector<Mesh> const & a_models)
+bool Renderer::SetData(Mesh const & a_mesh)
 {
   Clear();
 
@@ -31,7 +31,7 @@ bool Renderer::SetModels(std::vector<Mesh> const & a_models)
   std::vector<float> vertexData;
   std::vector<unsigned short> faceData;
 
-  CollateData(a_models, vertexData, faceData);
+  CollateData(a_mesh, vertexData, faceData);
 
   //Verts
   glGenVertexArrays(1, &m_vao);
@@ -64,44 +64,23 @@ bool Renderer::SetModels(std::vector<Mesh> const & a_models)
   return true;
 }
 
-bool Renderer::CollateData(std::vector<Mesh> const & a_models,
+void Renderer::CollateData(Mesh const & a_mesh,
                            std::vector<float> & a_vertexData,
                            std::vector<unsigned short> & a_faceData)
 {
-  m_objectData.clear();
-  bool result = true;
-  for (auto const & model : a_models)
+  std::vector<float> vertices, normals;
+
+  a_mesh.GetData(vertices, normals, a_faceData);
+
+  for (size_t i = 0; i < vertices.size(); i += 3)
   {
-    std::vector<float> vertices, normals;
-
-    ObjectData od;
-    od.faceOffset = a_faceData.size() * sizeof(GLshort) * 3;
-    od.vertexOffset = a_vertexData.size() / 3 / 2;
-
-    size_t oldFaceDataSize = a_faceData.size();
-
-    model.CollateData(vertices, normals, a_faceData);
-
-    if (vertices.size() != normals.size())
-    {
-      result = false;
-      break;
-    }
-
-    od.faceCount = (a_faceData.size() - oldFaceDataSize);
-    m_objectData.push_back(od);
-
-    for (size_t i = 0; i < vertices.size(); i += 3)
-    {
-      a_vertexData.push_back(vertices[i + 0]);
-      a_vertexData.push_back(vertices[i + 1]);
-      a_vertexData.push_back(vertices[i + 2]);
-      a_vertexData.push_back(normals[i + 0]);
-      a_vertexData.push_back(normals[i + 1]);
-      a_vertexData.push_back(normals[i + 2]);
-    }
+    a_vertexData.push_back(vertices[i + 0]);
+    a_vertexData.push_back(vertices[i + 1]);
+    a_vertexData.push_back(vertices[i + 2]);
+    a_vertexData.push_back(normals[i + 0]);
+    a_vertexData.push_back(normals[i + 1]);
+    a_vertexData.push_back(normals[i + 2]);
   }
-  return result;
 }
 
 void Renderer::Begin()
@@ -121,10 +100,6 @@ void Renderer::Render(mat44 const & a_projection,
                       SceneObject const & a_object)
 {
   int id = a_object.GetModelReference();
-  if (id < 0 || id >= m_objectData.size())
-  {
-    return;
-  }
 
   GLuint proj_loc = glGetUniformLocation(m_shaderProgram, "proj_matrix");
   GLuint mv_loc = glGetUniformLocation(m_shaderProgram, "mv_matrix");
@@ -134,11 +109,10 @@ void Renderer::Render(mat44 const & a_projection,
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_projection.GetData());
   glUniformMatrix4fv(mv_loc, 1, GL_FALSE, T_model_view.GetData());
 
-  glDrawElementsBaseVertex(GL_TRIANGLES, 
-                           m_objectData[id].faceCount,
-                           GL_UNSIGNED_SHORT,
-                           (void*)m_objectData[id].faceOffset,
-                           m_objectData[id].vertexOffset);
+  glDrawElements(GL_TRIANGLES, 
+                 3,
+                 GL_UNSIGNED_SHORT,
+                 (void*)(id * sizeof(GLshort) * 3));
 }
 
 void Renderer::Clear()
@@ -160,8 +134,6 @@ void Renderer::Clear()
     glDeleteVertexArrays(1, &m_vao);
     m_vao = 0;
   }
-
-  m_objectData.clear();
 }
 
 void Renderer::ShutDown()

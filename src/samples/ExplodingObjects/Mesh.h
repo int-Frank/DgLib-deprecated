@@ -4,31 +4,31 @@
 #include <string>
 
 #include "Types.h"
-#include "DgMeshBase.h"
+#include <vector>
 
-struct _NO_DATA
-{
-};
+#include "Types.h"
 
-struct vData
+//TODO Dow we even need this? all we need is a vector of triangles.
+//TODO Do NOT need a separate triangles. 
+class Mesh
 {
-  vec4 point;
-  vec4 normal;
-};
+  typedef Dg::Matrix<1, 3, unsigned short> Face;
 
-class Mesh : public Dg::MeshBase<vData, _NO_DATA, _NO_DATA>
-{
 public:
 
   bool LoadOBJ(std::string const &);
-  void CollateData(std::vector<float> & vertices,
-                   std::vector<float> & normals,
-                   std::vector<unsigned short> & faces) const;
+  void GetData(std::vector<float> & vertices,
+               std::vector<float> & normals,
+               std::vector<unsigned short> & faces) const;
+  size_t NumberTriangles() const { return m_faces.size(); }
 
-  seg Segment(Dg::eHandle) const;
-  triangle Triangle(Dg::fHandle) const;
-  vec4 Centroid() const;
-  sphere Sphere() const;
+  void Clear();
+
+private:
+
+  std::vector<vec4> m_points;
+  std::vector<vec4> m_normals;
+  std::vector<Face> m_faces;
 };
 
 #endif

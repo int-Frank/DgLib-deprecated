@@ -9,7 +9,6 @@
 
 #include "Renderer.h"
 #include "EventManager.h"
-#include "Mesh.h"
 #include "SceneObject.h"
 
 class Application
@@ -68,7 +67,6 @@ private:
 
   bool                      m_shouldQuit;
 
-  std::vector<Mesh>         m_models;
   std::vector<SceneObject>  m_sceneObjects;
 
 private:

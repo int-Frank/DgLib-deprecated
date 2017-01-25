@@ -182,15 +182,8 @@ void Application::ShowMainGUIWindow()
   //  UI...
   //----------------------------------------------------------------------------------
 
-  /*
-  Sliders: power, number of pieces [selection of few, many, lots...]
-           retarding force, 
-  Button: EXPLODE!
-  */
-
   ImGui::SliderFloat("Power", &m_appData.power, 0.f, 10.f, "%0.1f");
   ImGui::SliderFloat("Ret. Force", &m_appData.retardingForce, 0.f, 10.f, "%0.1f");
-  ImGui::SliderInt("Pieces", &m_appData.numberPieces, 1, 3, "%0.f Few    Some    Lots");
   ImGui::Separator();
   m_appData.explode = ImGui::Button("EXPLODE!", ImVec2(100, 30));
   ImGui::End();
