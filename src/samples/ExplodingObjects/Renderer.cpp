@@ -31,7 +31,7 @@ bool Renderer::SetMesh(Mesh const & a_mesh)
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
 
-  std::vector<char> vertexData;
+  std::vector<VertexData> vertexData;
   std::vector<unsigned short> faceData;
 
   CollateData(a_mesh, vertexData, faceData);
@@ -44,14 +44,14 @@ bool Renderer::SetMesh(Mesh const & a_mesh)
   //Vertices
   glBindBuffer(GL_ARRAY_BUFFER, m_vBuf);
   glBufferData(GL_ARRAY_BUFFER, 
-               vertexData.size() * sizeof(char), 
+               vertexData.size() * sizeof(VertexData), 
                vertexData.data(), GL_STATIC_DRAW);
 
   GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
   GLuint vNormal = glGetAttribLocation(m_shaderProgram, "normal");
   GLuint vIndex = glGetAttribLocation(m_shaderProgram, "index");
 
-  int stride = sizeof(float) * 6 + sizeof(int);
+  int stride = sizeof(VertexData);
 
   glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, stride, 0);
   glVertexAttribPointer(vNormal,   3, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 3));
@@ -75,7 +75,7 @@ bool Renderer::SetMesh(Mesh const & a_mesh)
 }
 
 void Renderer::CollateData(Mesh const & a_mesh,
-                           std::vector<char> & a_vertexData,
+                           std::vector<VertexData> & a_vertexData,
                            std::vector<unsigned short> & a_faceData)
 {
   for (auto const & face : a_mesh.Faces())
@@ -88,27 +88,17 @@ void Renderer::CollateData(Mesh const & a_mesh,
 
   for (size_t i = 0; i < a_mesh.Points().size(); ++i)
   {
+    VertexData vd;
     for (int j = 0; j < 3; ++j)
     {
-      float a = a_mesh.Points()[i][j];
-      for (size_t k = 0; k < sizeof(float); ++k)
+      for (int k = 0; k < 3; ++k)
       {
-        a_vertexData.push_back(reinterpret_cast<char*>(&a)[k]);
+        vd.point[k] = a_mesh.Points()[i][k];
+        vd.normal[k] = a_mesh.Normals()[i][k];
       }
     }
-    for (int j = 0; j < 3; ++j)
-    {
-      float a = a_mesh.Normals()[i][j];
-      for (size_t k = 0; k < sizeof(float); ++k)
-      {
-        a_vertexData.push_back(reinterpret_cast<char*>(&a)[k]);
-      }
-    }
-    int index = int(i / 3);
-    for (size_t k = 0; k < sizeof(int); ++k)
-    {
-      a_vertexData.push_back(reinterpret_cast<char*>(&index)[k]);
-    }
+    vd.index = int(i / 3);
+    a_vertexData.push_back(vd);
   }
 }
 

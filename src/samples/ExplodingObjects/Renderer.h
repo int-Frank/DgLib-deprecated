@@ -21,6 +21,13 @@ public:
     vec4 rotation;
   };
 
+  struct VertexData
+  {
+    float point[3];
+    float normal[3];
+    int index;
+  };
+
 public:
   Renderer()
     : m_nFaces(0)
@@ -47,7 +54,7 @@ public:
 private:
 
   void CollateData(Mesh const &,
-                   std::vector<char> &,
+                   std::vector<VertexData> &,
                    std::vector<unsigned short> &);
 
   GLuint CompileShaders(char const * vs, char const * fs);
