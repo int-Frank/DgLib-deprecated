@@ -1,7 +1,10 @@
 #include "SceneObject.h"
 
+//TODO set up centroid from mesh
+
 SceneObject::SceneObject()
   : m_modelReference(SceneObject::NoReference)
+  , m_centroid(vec4::Origin())
   , m_T_M_W(vec4::ZeroVector())
   , m_R_M_W(vec4::ZeroVector())
   , m_S_M_W(1.f)
@@ -14,6 +17,7 @@ SceneObject::SceneObject()
 
 SceneObject::SceneObject(SceneObject const & a_other)
   : m_modelReference(a_other.m_modelReference)
+  , m_centroid(a_other.m_centroid)
   , m_T_M_W(a_other.m_T_M_W)
   , m_R_M_W(a_other.m_R_M_W)
   , m_S_M_W(a_other.m_S_M_W)
@@ -29,6 +33,7 @@ SceneObject & SceneObject::operator=(SceneObject const & a_other)
   if (this != &a_other)
   {
     m_modelReference = a_other.m_modelReference;
+    m_centroid = a_other.m_centroid;
     m_T_M_W = a_other.m_T_M_W;
     m_R_M_W = a_other.m_R_M_W;
     m_S_M_W = a_other.m_S_M_W;
@@ -42,6 +47,11 @@ SceneObject & SceneObject::operator=(SceneObject const & a_other)
 void SceneObject::SetModelReference(int a_id)
 {
   m_modelReference = a_id;
+}
+
+void SceneObject::SetCentroid(vec4 const & a_vec)
+{
+  m_centroid = a_vec;
 }
 
 void SceneObject::SetTranslation(vec4 const & a_vec)

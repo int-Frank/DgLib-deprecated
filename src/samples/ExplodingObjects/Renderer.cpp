@@ -16,9 +16,14 @@ bool Renderer::Init()
 }
 
 
-bool Renderer::SetData(Mesh const & a_mesh)
+bool Renderer::SetMesh(Mesh const & a_mesh)
 {
   Clear();
+
+  /*
+    Vertex buffers are interleaved as follows:
+    positin/normal/transform index/positin/normal/transform index/...
+  */
 
   glGenBuffers(1, &m_vBuf);
   glGenBuffers(1, &m_fBuf);
@@ -26,12 +31,11 @@ bool Renderer::SetData(Mesh const & a_mesh)
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
 
-  glBindBuffer(GL_ARRAY_BUFFER, m_vBuf);
-
-  std::vector<float> vertexData;
+  std::vector<char> vertexData;
   std::vector<unsigned short> faceData;
 
   CollateData(a_mesh, vertexData, faceData);
+  m_nFaces = GLsizei(a_mesh.NumberTriangles()) * 3;
 
   //Verts
   glGenVertexArrays(1, &m_vao);
@@ -40,15 +44,21 @@ bool Renderer::SetData(Mesh const & a_mesh)
   //Vertices
   glBindBuffer(GL_ARRAY_BUFFER, m_vBuf);
   glBufferData(GL_ARRAY_BUFFER, 
-               vertexData.size() * sizeof(float), 
+               vertexData.size() * sizeof(char), 
                vertexData.data(), GL_STATIC_DRAW);
 
   GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
   GLuint vNormal = glGetAttribLocation(m_shaderProgram, "normal");
-  glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-  glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
+  GLuint vIndex = glGetAttribLocation(m_shaderProgram, "index");
+
+  int stride = sizeof(float) * 6 + sizeof(int);
+
+  glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, stride, 0);
+  glVertexAttribPointer(vNormal,   3, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 3));
+  glVertexAttribPointer(vIndex,    1, GL_INT,   GL_FALSE, stride, (void*)(sizeof(float) * 6));
   glEnableVertexAttribArray(vPosition);
   glEnableVertexAttribArray(vNormal);
+  glEnableVertexAttribArray(vIndex);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_fBuf);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
@@ -65,22 +75,63 @@ bool Renderer::SetData(Mesh const & a_mesh)
 }
 
 void Renderer::CollateData(Mesh const & a_mesh,
-                           std::vector<float> & a_vertexData,
+                           std::vector<char> & a_vertexData,
                            std::vector<unsigned short> & a_faceData)
 {
-  std::vector<float> vertices, normals;
-
-  a_mesh.GetData(vertices, normals, a_faceData);
-
-  for (size_t i = 0; i < vertices.size(); i += 3)
+  for (auto const & face : a_mesh.Faces())
   {
-    a_vertexData.push_back(vertices[i + 0]);
-    a_vertexData.push_back(vertices[i + 1]);
-    a_vertexData.push_back(vertices[i + 2]);
-    a_vertexData.push_back(normals[i + 0]);
-    a_vertexData.push_back(normals[i + 1]);
-    a_vertexData.push_back(normals[i + 2]);
+    for (int i = 0; i < 3; ++i)
+    {
+      a_faceData.push_back(face[i]);
+    }
   }
+
+  for (size_t i = 0; i < a_mesh.Points().size(); ++i)
+  {
+    for (int j = 0; j < 3; ++j)
+    {
+      float a = a_mesh.Points()[i][j];
+      for (size_t k = 0; k < sizeof(float); ++k)
+      {
+        a_vertexData.push_back(reinterpret_cast<char*>(&a)[k]);
+      }
+    }
+    for (int j = 0; j < 3; ++j)
+    {
+      float a = a_mesh.Normals()[i][j];
+      for (size_t k = 0; k < sizeof(float); ++k)
+      {
+        a_vertexData.push_back(reinterpret_cast<char*>(&a)[k]);
+      }
+    }
+    int index = int(i / 3);
+    for (size_t k = 0; k < sizeof(int); ++k)
+    {
+      a_vertexData.push_back(reinterpret_cast<char*>(&index)[k]);
+    }
+  }
+}
+
+void  Renderer::SetTransformData(std::vector<TransformData> const & a_data)
+{
+  if (m_ssboBuf != GL_INVALID_VALUE)
+  {
+    glDeleteBuffers(1, &m_ssboBuf);
+    m_ssboBuf = GL_INVALID_VALUE;
+  }
+
+  glGenBuffers(1, &m_ssboBuf);
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssboBuf);
+  GLuint vPD = glGetProgramResourceIndex(m_shaderProgram, GL_SHADER_STORAGE_BLOCK, "physics_data");
+  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, vPD, m_ssboBuf);
+  glBufferData(GL_SHADER_STORAGE_BUFFER, a_data.size() * sizeof(TransformData), (void*)a_data.data(), GL_DYNAMIC_COPY);
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+void Renderer::SetTime(float a_time)
+{
+  GLuint time_loc = glGetUniformLocation(m_shaderProgram, "totalTime");
+  glUniform1f(time_loc, a_time);
 }
 
 void Renderer::Begin()
@@ -95,44 +146,45 @@ void Renderer::End()
   glBindVertexArray(0);
 }
 
-void Renderer::Render(mat44 const & a_projection,
-                      mat44 const & a_T_world_view,
-                      SceneObject const & a_object)
+void Renderer::Render(mat44 const & a_T_S_V,
+                      mat44 const & a_T_V_W,
+                      mat44 const & a_T_W_M)
 {
-  int id = a_object.GetModelReference();
+  GLuint T_S_V_loc = glGetUniformLocation(m_shaderProgram, "T_S_V");
+  GLuint T_V_W_loc = glGetUniformLocation(m_shaderProgram, "T_V_W");
+  GLuint T_W_M_loc = glGetUniformLocation(m_shaderProgram, "T_W_M");
 
-  GLuint proj_loc = glGetUniformLocation(m_shaderProgram, "proj_matrix");
-  GLuint mv_loc = glGetUniformLocation(m_shaderProgram, "mv_matrix");
+  glUniformMatrix4fv(T_S_V_loc, 1, GL_FALSE, a_T_S_V.GetData());
+  glUniformMatrix4fv(T_V_W_loc, 1, GL_FALSE, a_T_V_W.GetData());
+  glUniformMatrix4fv(T_W_M_loc, 1, GL_FALSE, a_T_W_M.GetData());
 
-  mat44 T_model_view = a_T_world_view * a_object.GetMatrix();
-
-  glUniformMatrix4fv(proj_loc, 1, GL_FALSE, a_projection.GetData());
-  glUniformMatrix4fv(mv_loc, 1, GL_FALSE, T_model_view.GetData());
-
-  glDrawElements(GL_TRIANGLES, 
-                 3,
-                 GL_UNSIGNED_SHORT,
-                 (void*)(id * sizeof(GLshort) * 3));
+  glDrawElements(GL_TRIANGLES, m_nFaces, GL_UNSIGNED_SHORT, 0);
 }
 
 void Renderer::Clear()
 {
-  if (m_vBuf)
+  if (m_vBuf != GL_INVALID_VALUE)
   {
     glDeleteBuffers(1, &m_vBuf);
-    m_vBuf = 0;
+    m_vBuf = GL_INVALID_VALUE;
   }
 
-  if (m_fBuf)
+  if (m_fBuf != GL_INVALID_VALUE)
   {
     glDeleteBuffers(1, &m_fBuf);
-    m_fBuf = 0;
+    m_fBuf = GL_INVALID_VALUE;
   }
 
-  if (m_vao)
+  if (m_ssboBuf != GL_INVALID_VALUE)
+  {
+    glDeleteBuffers(1, &m_ssboBuf);
+    m_ssboBuf = GL_INVALID_VALUE;
+  }
+
+  if (m_vao != GL_INVALID_VALUE)
   {
     glDeleteVertexArrays(1, &m_vao);
-    m_vao = 0;
+    m_vao = GL_INVALID_VALUE;
   }
 }
 

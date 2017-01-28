@@ -9,14 +9,36 @@
 
 #include "Renderer.h"
 #include "EventManager.h"
-#include "SceneObject.h"
+
+
+class TimeManager
+{
+public:
+  virtual ~TimeManager() {}
+  virtual float GetTime(float dt) { return 0.f; }
+};
+
+class TimeAccumulator : public TimeManager
+{
+public:
+
+  TimeAccumulator() : m_totalTime(0.f) {}
+  float GetTime(float dt) 
+  { 
+    m_totalTime += dt;
+    return m_totalTime; 
+  }
+
+private:
+  float m_totalTime;
+};
 
 class Application
 {
 public:
   Application();
 
-  ~Application() {}
+  ~Application() { delete m_ptimeManager; }
 
   Application(const Application&);
   Application& operator= (const Application&);
@@ -29,6 +51,8 @@ public:
   void UpdateScroll(double);
   void KeyEvent(int key, int action);
   void ClearProject();
+
+  void Explode();
 
   static Application * GetInstance() { return s_app; }
 private:
@@ -67,7 +91,8 @@ private:
 
   bool                      m_shouldQuit;
 
-  std::vector<SceneObject>  m_sceneObjects;
+  TimeManager *             m_ptimeManager;
+  std::vector<vec4>         m_centroids;
 
 private:
   //Main initializer function. All others are called through here.

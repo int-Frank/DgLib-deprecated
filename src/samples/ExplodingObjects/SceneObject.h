@@ -21,6 +21,7 @@ public:
   SceneObject & operator=(SceneObject const &);
 
   void SetModelReference(int);
+  void SetCentroid(vec4 const &);
   void SetTranslation(vec4 const &);
   void SetRotation(float, float, float);
   void SetScale(float);
@@ -30,6 +31,9 @@ public:
 
   mat44 GetMatrix() const;
   int GetModelReference() const { return m_modelReference; }
+  vec4 const & GetTranslation() const { return m_T_M_W; }
+  vec4 const & GetRotation() const { return m_R_M_W; }
+
 
   void Update(float dt);
 

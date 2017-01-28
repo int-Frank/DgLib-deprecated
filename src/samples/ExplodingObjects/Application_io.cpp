@@ -40,13 +40,18 @@ bool Application::LoadProject(std::string const & a_file)
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);
 
-  m_renderer.SetData(mesh);
+  m_renderer.SetMesh(mesh);
 
-  for (size_t i = 0; i < mesh.NumberTriangles(); ++i)
+  size_t id = 0;
+  for (auto it = mesh.Faces().cbegin();
+       it != mesh.Faces().cend();
+       ++it, ++id)
   {
-    SceneObject so;
-    so.SetModelReference(i);
-    m_sceneObjects.push_back(so);
+    triangle tri(mesh.Points()[(*it)[0]], 
+                 mesh.Points()[(*it)[1]], 
+                 mesh.Points()[(*it)[2]]);
+
+    m_centroids.push_back(tri.Centroid());
   }
 
   return true;

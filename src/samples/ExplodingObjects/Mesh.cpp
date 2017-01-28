@@ -128,32 +128,3 @@ void Mesh::Clear()
   m_normals.clear();
   m_points.clear();
 }
-
-void Mesh::GetData(std::vector<float> & a_vertices,
-                   std::vector<float> & a_normals,
-                   std::vector<unsigned short> & a_faces) const
-{
-  for (auto const & p : m_points)
-  {
-    for (int i = 0; i < 3; ++i)
-    {
-      a_vertices.push_back(p[i]);
-    }
-  }
-
-  for (auto const & vn : m_normals)
-  {
-    for (int i = 0; i < 3; ++i)
-    {
-      a_normals.push_back(vn[i]);
-    }
-  }
-
-  for (auto const & f : m_faces)
-  {
-    for (int i = 0; i < 3; ++i)
-    {
-      a_faces.push_back(unsigned short(f[i]));
-    }
-  }
-}

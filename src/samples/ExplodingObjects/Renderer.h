@@ -14,26 +14,40 @@ class SceneObject;
 class Renderer
 {
 public:
+
+  struct TransformData
+  {
+    vec4 translation;
+    vec4 rotation;
+  };
+
+public:
   Renderer()
-    : m_vao(0)
-    , m_vBuf(0)
-    , m_fBuf(0)
-    , m_shaderProgram(0)
+    : m_nFaces(0)
+    , m_vao(GL_INVALID_VALUE)
+    , m_ssboBuf(GL_INVALID_VALUE)
+    , m_vBuf(GL_INVALID_VALUE)
+    , m_fBuf(GL_INVALID_VALUE)
+    , m_shaderProgram(GL_INVALID_VALUE)
   {}
 
   bool Init();
-  bool SetData(Mesh const &);
+  bool SetMesh(Mesh const &);
+  void SetTransformData(std::vector<TransformData> const &);
+  void SetTime(float);
   void Clear();
 
   void Begin();
   void End();
-  void Render(mat44 const &, mat44 const &, SceneObject const &);
+  void Render(mat44 const &, 
+              mat44 const &,
+              mat44 const &);
   void ShutDown();
 
 private:
 
   void CollateData(Mesh const &,
-                   std::vector<float> &,
+                   std::vector<char> &,
                    std::vector<unsigned short> &);
 
   GLuint CompileShaders(char const * vs, char const * fs);
@@ -41,7 +55,9 @@ private:
 
 private:
 
+  GLsizei                 m_nFaces;
   GLuint                  m_vao;
+  GLuint                  m_ssboBuf;
   GLuint                  m_vBuf; // Interleave vertices and normals.
   GLuint                  m_fBuf; // Pack all objects into one face buffer.
   GLuint                  m_shaderProgram;

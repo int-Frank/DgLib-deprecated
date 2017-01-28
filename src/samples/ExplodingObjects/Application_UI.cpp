@@ -186,5 +186,6 @@ void Application::ShowMainGUIWindow()
   ImGui::SliderFloat("Ret. Force", &m_appData.retardingForce, 0.f, 10.f, "%0.1f");
   ImGui::Separator();
   m_appData.explode = ImGui::Button("EXPLODE!", ImVec2(100, 30));
+  m_appData.reset = ImGui::Button("Reset", ImVec2(100, 30));
   ImGui::End();
 }

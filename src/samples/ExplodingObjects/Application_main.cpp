@@ -1,12 +1,15 @@
 ﻿
 #include <windows.h>
 #include <shlwapi.h>
+#include <time.h>
 #pragma comment(lib,"shlwapi.lib")
 
 #include "Application.h"
 #include "UI.h"
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
+#include "DgR3Vector_ancillary.h"
+#include "dgrng.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
@@ -16,6 +19,7 @@ Application* Application::s_app(nullptr);
 Application::Application() 
   : m_window(nullptr)
   , m_shouldQuit(false)
+  , m_ptimeManager(new TimeManager())
 {
   s_app = this;
 }
@@ -32,6 +36,8 @@ bool Application::Init()
   {
     return false;
   }
+
+  Dg::RNG::SetSeed(unsigned int(time(0)));
 
   ResetCamera();
   m_renderer.Init();
@@ -121,7 +127,7 @@ void Application::Shutdown()
 
 void Application::ClearProject()
 {
-  m_sceneObjects.clear();
+  m_centroids.clear();
   m_appData.projName.clear();
   m_renderer.Clear();
 }
@@ -200,6 +206,41 @@ void Application::HandleEvents()
   }
 }
 
+void Application::Explode()
+{
+  std::vector<Renderer::TransformData> td_vec;
+  vec4 source(m_appData.source_x,
+              m_appData.source_y,
+              m_appData.source_z,
+              1.f);
+
+  for (auto const & c : m_centroids)
+  {
+    Renderer::TransformData td;
+    td.translation = c - source;
+    td.rotation.Zero();
+
+    if (td.translation.IsZero())
+    {
+      td.translation = Dg::R3::GetRandomVector<float>();
+    }
+
+    float invLenSq = 1.f / td.translation.LengthSquared();
+    td.translation *= invLenSq;
+
+    Dg::RNG rng;
+
+    for (int i = 0; i < 3; ++i)
+    {
+      td.rotation[i] = 2.f;
+    }
+
+    td_vec.push_back(td);
+  }
+
+  m_renderer.SetTransformData(td_vec);
+}
+
 void Application::DoLogic(double a_dt)
 {
   //Zoom the camera
@@ -208,6 +249,23 @@ void Application::DoLogic(double a_dt)
     double diff = m_camZoomTarget - m_camZoom;
     m_camZoom = m_camZoomTarget - diff / (pow(1.3f, 26.0f * a_dt));
   }
+
+  if (m_appData.explode)
+  {
+    delete m_ptimeManager;
+    m_ptimeManager = new TimeAccumulator();
+    m_appData.explode = false;
+
+    Explode();
+  }
+  if (m_appData.reset)
+  {
+    delete m_ptimeManager;
+    m_ptimeManager = new TimeManager();
+    m_appData.reset = false;
+  }
+
+  m_renderer.SetTime(m_ptimeManager->GetTime(a_dt));
 }
 
 void Application::Render()
@@ -223,7 +281,7 @@ void Application::Render()
                   0.0f,
                   float(m_camRotZ),
                   Dg::EulerOrder::ZYX);
-  mat44 world_view = mr * mt;
+  mat44 T_V_W = mr * mt;
 
   //Set up the viewport
   float ratio;
@@ -235,14 +293,14 @@ void Application::Render()
   glViewport(0, 0, width, height);
 
   //Set up the perspective matrix;
-  Dg::R3::Matrix<float> proj;
-  proj.Perspective(fov, ratio, nearClip, farClip);
+  mat44 T_S_V;
+  T_S_V.Perspective(fov, ratio, nearClip, farClip);
+
+  mat44 T_W_M;
+  T_W_M.Identity();
 
   m_renderer.Begin();
-  for (auto & obj : m_sceneObjects)
-  {
-    m_renderer.Render(proj, world_view, obj);
-  }
+  m_renderer.Render(T_S_V, T_V_W, T_W_M);
   m_renderer.End();
 }
 

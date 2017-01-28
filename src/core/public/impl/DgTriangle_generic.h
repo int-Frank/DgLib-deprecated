@@ -55,6 +55,8 @@ namespace Dg
       Vector_generic<Real, R> const & P1() const { return m_points[1]; }
       Vector_generic<Real, R> const & P2() const { return m_points[2]; }
 
+      Vector_generic<Real, R> Centroid() const;
+
     private:
 
       //Data members
@@ -159,6 +161,17 @@ namespace Dg
       m_points[0] = a_p0;
       m_points[1] = a_p1;
       m_points[2] = a_p2;
+
+    }	//End: Triangle_generic::Set()
+
+
+    //--------------------------------------------------------------------------------
+    //  @ Triangle_generic::Centroid()
+    //--------------------------------------------------------------------------------
+    template<typename Real, int R>
+    Vector_generic<Real, R> Triangle_generic<Real, R>::Centroid() const
+    {
+      return (m_points[0] + m_points[1] + m_points[2]) / static_cast<Real>(3);
 
     }	//End: Triangle_generic::Set()
   }
