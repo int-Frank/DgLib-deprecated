@@ -1,6 +1,7 @@
 #version 430 core
 
 in vec4 position;
+in vec4 offset;
 in vec4 normal;
 in int  index;
 
@@ -80,7 +81,7 @@ void main(void)
 {
   mat4 W2W1;
   BuildMatrix(index, W2W1);
-  gl_Position = T_S_V * T_V_W * W2W1 * T_W_M * position;
+  gl_Position = T_S_V * T_V_W * T_W_M * ((W2W1 * position) + offset);
 
   vs_out.normal = normalize(T_V_W * T_W_M * vec4(normal.x, normal.y, normal.z, 0.0));
 }

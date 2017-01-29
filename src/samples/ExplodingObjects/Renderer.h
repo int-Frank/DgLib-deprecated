@@ -13,15 +13,10 @@ class Renderer
 {
 public:
 
-  struct TransformData
-  {
-    vec4 translation;
-    vec4 rotation;
-  };
-
   struct VertexData
   {
     vec4 point;
+    vec4 offset;
     vec4 normal;
     int index;
   };

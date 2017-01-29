@@ -102,8 +102,8 @@ bool Mesh::LoadOBJ(std::string const & a_fileName)
       for (int i = 0; i < 3; ++i)
       {
         ifs >> f.v[i] >> s >> s >> f.vn[i];
-        f.v[i] -= 1.f;
-        f.vn[i] -= 1.f;
+        --f.v[i];
+        --f.vn[i];
       }
 
       f_list.push_back(f);

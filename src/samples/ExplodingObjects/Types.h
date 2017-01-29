@@ -17,6 +17,12 @@ typedef Dg::R3::Triangle<float>  triangle;
 typedef Dg::R3::Sphere<float>    sphere;
 typedef Dg::R3::Matrix<float>    mat44;
 
+struct TransformData
+{
+  vec4 translation;
+  vec4 rotation;
+};
+
 struct AppInfo
 {
   char title[128];
@@ -42,22 +48,14 @@ class AppData
 public:
 
   AppData()
-    : power(1.f)
-    , retardingForce(1.f)
+    : velocityMethod(0)
     , explode(false)
     , reset(false)
-    , source_x(0.f)
-    , source_y(0.f)
-    , source_z(0.f)
   {}
 
   std::string   projName;
-  float         power;
-  float         retardingForce;
+  int           velocityMethod;
   bool          explode;
   bool          reset;
-  float         source_x;
-  float         source_y;
-  float         source_z;
 };
 #endif

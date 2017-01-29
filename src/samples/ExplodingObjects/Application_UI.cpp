@@ -7,6 +7,8 @@
 #include "imgui.h"
 #include "UI.h"
 
+#define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+
 static void CreateSpacing(int a_n)
 {
   for (int i = 0; i < a_n; ++i) { ImGui::Spacing(); }
@@ -182,8 +184,11 @@ void Application::ShowMainGUIWindow()
   //  UI...
   //----------------------------------------------------------------------------------
 
-  ImGui::SliderFloat("Power", &m_appData.power, 0.f, 10.f, "%0.1f");
-  ImGui::SliderFloat("Ret. Force", &m_appData.retardingForce, 0.f, 10.f, "%0.1f");
+  ImGui::Separator();
+
+  const char* listbox_items[] = { "Constant", "Inverse Distance", "Random", "Chunked" };
+  ImGui::ListBox("listbox\n(single select)", &m_appData.velocityMethod, listbox_items, IM_ARRAYSIZE(listbox_items), 4);
+
   ImGui::Separator();
   m_appData.explode = ImGui::Button("EXPLODE!", ImVec2(100, 30));
   m_appData.reset = ImGui::Button("Reset", ImVec2(100, 30));

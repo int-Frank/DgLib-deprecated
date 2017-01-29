@@ -9,6 +9,7 @@
 
 #include "Renderer.h"
 #include "EventManager.h"
+#include "DgR3Vector_ancillary.h"
 
 
 class TimeManager
@@ -27,11 +28,67 @@ public:
   { 
     m_totalTime += dt;
     float val = 0.2f;
-    return atan(m_totalTime) * val; 
+    return atan(m_totalTime) * val;
   }
 
 private:
   float m_totalTime;
+};
+
+class VelocityGenerator
+{
+public:
+
+  virtual ~VelocityGenerator() {}
+  void Init(vec4 const & a_source) 
+  { 
+    m_source = a_source;
+    PostInit();
+  }
+  virtual TransformData operator()(vec4 const & a_centroid) 
+  {
+    TransformData td;
+    td.translation = a_centroid - m_source;
+    td.rotation.Zero();
+
+    if (td.translation.IsZero())
+    {
+      td.translation = Dg::R3::GetRandomVector<float>();
+    }
+
+    float invLenSq = 1.f / td.translation.LengthSquared();
+    td.translation *= invLenSq;
+
+    Dg::RNG rng;
+
+    for (int i = 0; i < 3; ++i)
+    {
+      td.rotation[i] = 20.f;
+    }
+    return td;
+  }
+
+protected:
+
+  virtual void PostInit() {}
+
+protected:
+
+  vec4 m_source;
+};
+
+class VelocityGenerator_Random : public VelocityGenerator
+{
+public:
+
+  TransformData operator()(vec4 const & a_centroid)
+  {
+
+  }
+
+private:
+
+  void PostInit();
 };
 
 class Application

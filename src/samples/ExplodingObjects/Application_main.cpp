@@ -208,15 +208,12 @@ void Application::HandleEvents()
 
 void Application::Explode()
 {
-  std::vector<Renderer::TransformData> td_vec;
-  vec4 source(m_appData.source_x,
-              m_appData.source_y,
-              m_appData.source_z,
-              1.f);
+  std::vector<TransformData> td_vec;
+  vec4 source(vec4::Origin());
 
   for (auto const & c : m_centroids)
   {
-    Renderer::TransformData td;
+    TransformData td;
     td.translation = c - source;
     td.rotation.Zero();
 
@@ -232,7 +229,7 @@ void Application::Explode()
 
     for (int i = 0; i < 3; ++i)
     {
-      td.rotation[i] = 2.f;
+      td.rotation[i] = 20.f;
     }
 
     td_vec.push_back(td);

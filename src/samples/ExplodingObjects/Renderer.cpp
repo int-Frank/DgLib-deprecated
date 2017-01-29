@@ -46,15 +46,18 @@ bool Renderer::SetMesh(std::vector<Facet> const & a_facets)
                vertexData.data(), GL_STATIC_DRAW);
 
   GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
+  GLuint vOffset = glGetAttribLocation(m_shaderProgram, "offset");
   GLuint vNormal = glGetAttribLocation(m_shaderProgram, "normal");
   GLuint vIndex = glGetAttribLocation(m_shaderProgram, "index");
 
   int stride = sizeof(VertexData);
 
   glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, stride, 0);
-  glVertexAttribPointer(vNormal,   4, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 4));
-  glVertexAttribIPointer(vIndex,   1, GL_INT, stride, (void*)(sizeof(float) * 8));
+  glVertexAttribPointer(vOffset,   4, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 4));
+  glVertexAttribPointer(vNormal,   4, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 8));
+  glVertexAttribIPointer(vIndex,   1, GL_INT,             stride, (void*)(sizeof(float) * 12));
   glEnableVertexAttribArray(vPosition);
+  glEnableVertexAttribArray(vOffset);
   glEnableVertexAttribArray(vNormal);
   glEnableVertexAttribArray(vIndex);
 
@@ -79,12 +82,16 @@ void Renderer::CollateData(std::vector<Facet> const & a_facets,
   unsigned short index = 0;
   for (auto const & f : a_facets)
   {
+    triangle tri(f.points[0], f.points[1], f.points[2]);
+    vec4 offset = tri.Centroid() - vec4::Origin();
+
     for (int i = 0; i < 3; ++i, ++index)
     {
       a_faceData.push_back(index);
 
       VertexData vd;
-      vd.point = f.points[i];
+      vd.point = f.points[i] - offset;
+      vd.offset = offset;
       vd.normal = f.normals[i];
       vd.index = int(index / 3);
       a_vertexData.push_back(vd);
