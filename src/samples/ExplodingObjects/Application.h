@@ -26,7 +26,8 @@ public:
   float GetTime(float dt) 
   { 
     m_totalTime += dt;
-    return m_totalTime; 
+    float val = 0.2f;
+    return atan(m_totalTime) * val; 
   }
 
 private:

@@ -6,8 +6,6 @@
 #include "Types.h"
 #include "UI.h"
 
-#include "SceneObject.h"
-
 bool Renderer::Init()
 {
   m_shaderProgram = CompileShaders("vs.glsl", "fs.glsl");

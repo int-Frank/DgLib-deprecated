@@ -9,8 +9,6 @@
 #include "Types.h"
 #include "Mesh.h"
 
-class SceneObject;
-
 class Renderer
 {
 public:

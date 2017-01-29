@@ -57,9 +57,6 @@
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui_draw.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="SceneObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -103,9 +100,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_truetype.h">
       <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneObject.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Source Files</Filter>
