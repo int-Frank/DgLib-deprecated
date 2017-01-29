@@ -23,8 +23,8 @@ public:
 
   struct VertexData
   {
-    float point[3];
-    float normal[3];
+    vec4 point;
+    vec4 normal;
     int index;
   };
 
@@ -39,7 +39,7 @@ public:
   {}
 
   bool Init();
-  bool SetMesh(Mesh const &);
+  bool SetMesh(std::vector<Facet> const &);
   void SetTransformData(std::vector<TransformData> const &);
   void SetTime(float);
   void Clear();
@@ -53,7 +53,7 @@ public:
 
 private:
 
-  void CollateData(Mesh const &,
+  void CollateData(std::vector<Facet> const &,
                    std::vector<VertexData> &,
                    std::vector<unsigned short> &);
 

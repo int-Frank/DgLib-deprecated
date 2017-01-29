@@ -8,25 +8,25 @@
 
 #include "Types.h"
 
+struct Facet
+{
+  vec4 points[3];
+  vec4 normals[3];
+};
+
 class Mesh
 {
-  typedef Dg::Matrix<1, 3, unsigned short> Face;
-
 public:
   bool LoadOBJ(std::string const &);
-  size_t NumberTriangles() const { return m_faces.size(); }
+  size_t NumberFacets() const { return m_facets.size(); }
 
-  std::vector<vec4> const & Points() const { return m_points; }
-  std::vector<vec4> const & Normals() const { return m_normals; }
-  std::vector<Face> const & Faces() const { return m_faces; }
+  std::vector<Facet> const & Facets() const { return m_facets; }
 
   void Clear();
 
 private:
 
-  std::vector<vec4> m_points;
-  std::vector<vec4> m_normals;
-  std::vector<Face> m_faces;
+  std::vector<Facet> m_facets;
 };
 
 #endif

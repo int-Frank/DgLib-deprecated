@@ -4,6 +4,11 @@ in vec4 position;
 in vec4 normal;
 in int  index;
 
+out VS_OUT
+{
+	vec4 normal;	
+} vs_out;
+
 // Spaces...
 // M : Model
 // W : World
@@ -70,11 +75,6 @@ void BuildMatrix(in int a_index, out mat4 result)
   result[3][2] = translation.z;
   result[3][3] = 1.0;
 }
-
-out VS_OUT
-{
-	vec4 normal;	
-} vs_out;
 
 void main(void)
 {

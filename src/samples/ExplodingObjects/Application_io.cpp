@@ -40,16 +40,13 @@ bool Application::LoadProject(std::string const & a_file)
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);
 
-  m_renderer.SetMesh(mesh);
+  m_renderer.SetMesh(mesh.Facets());
 
-  size_t id = 0;
-  for (auto it = mesh.Faces().cbegin();
-       it != mesh.Faces().cend();
-       ++it, ++id)
+  for (auto const & f : mesh.Facets())
   {
-    triangle tri(mesh.Points()[(*it)[0]], 
-                 mesh.Points()[(*it)[1]], 
-                 mesh.Points()[(*it)[2]]);
+    triangle tri(f.points[0], 
+                 f.points[1], 
+                 f.points[2]);
 
     m_centroids.push_back(tri.Centroid());
   }

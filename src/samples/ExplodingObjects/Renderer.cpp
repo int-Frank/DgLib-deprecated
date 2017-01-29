@@ -16,7 +16,7 @@ bool Renderer::Init()
 }
 
 
-bool Renderer::SetMesh(Mesh const & a_mesh)
+bool Renderer::SetMesh(std::vector<Facet> const & a_facets)
 {
   Clear();
 
@@ -34,8 +34,8 @@ bool Renderer::SetMesh(Mesh const & a_mesh)
   std::vector<VertexData> vertexData;
   std::vector<unsigned short> faceData;
 
-  CollateData(a_mesh, vertexData, faceData);
-  m_nFaces = GLsizei(a_mesh.NumberTriangles()) * 3;
+  CollateData(a_facets, vertexData, faceData);
+  m_nFaces = GLsizei(a_facets.size()) * 3;
 
   //Verts
   glGenVertexArrays(1, &m_vao);
@@ -53,9 +53,9 @@ bool Renderer::SetMesh(Mesh const & a_mesh)
 
   int stride = sizeof(VertexData);
 
-  glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, stride, 0);
-  glVertexAttribPointer(vNormal,   3, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 3));
-  glVertexAttribPointer(vIndex,    1, GL_INT,   GL_FALSE, stride, (void*)(sizeof(float) * 6));
+  glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, stride, 0);
+  glVertexAttribPointer(vNormal,   4, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * 4));
+  glVertexAttribIPointer(vIndex,   1, GL_INT, stride, (void*)(sizeof(float) * 8));
   glEnableVertexAttribArray(vPosition);
   glEnableVertexAttribArray(vNormal);
   glEnableVertexAttribArray(vIndex);
@@ -74,31 +74,23 @@ bool Renderer::SetMesh(Mesh const & a_mesh)
   return true;
 }
 
-void Renderer::CollateData(Mesh const & a_mesh,
+void Renderer::CollateData(std::vector<Facet> const & a_facets,
                            std::vector<VertexData> & a_vertexData,
                            std::vector<unsigned short> & a_faceData)
 {
-  for (auto const & face : a_mesh.Faces())
+  unsigned short index = 0;
+  for (auto const & f : a_facets)
   {
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < 3; ++i, ++index)
     {
-      a_faceData.push_back(face[i]);
-    }
-  }
+      a_faceData.push_back(index);
 
-  for (size_t i = 0; i < a_mesh.Points().size(); ++i)
-  {
-    VertexData vd;
-    for (int j = 0; j < 3; ++j)
-    {
-      for (int k = 0; k < 3; ++k)
-      {
-        vd.point[k] = a_mesh.Points()[i][k];
-        vd.normal[k] = a_mesh.Normals()[i][k];
-      }
+      VertexData vd;
+      vd.point = f.points[i];
+      vd.normal = f.normals[i];
+      vd.index = int(index / 3);
+      a_vertexData.push_back(vd);
     }
-    vd.index = int(i / 3);
-    a_vertexData.push_back(vd);
   }
 }
 

@@ -66,9 +66,16 @@ bool Mesh::LoadOBJ(std::string const & a_fileName)
     return false;
   }
 
+  struct Face
+  {
+    unsigned short v[3];
+    unsigned short vn[3];
+  };
+
   std::string firstWord;
+  std::vector<vec4> v_list;
   std::vector<vec4> vn_list;
-  std::vector<Face> faceNormals;
+  std::vector<Face> f_list;
 
   while (ifs >> firstWord)
   {
@@ -78,7 +85,7 @@ bool Mesh::LoadOBJ(std::string const & a_fileName)
       float vy = 0.0f;
       float vz = 0.0f;
       ifs >> vx >> vy >> vz;
-      m_points.push_back(vec4(vx, vy, vz, 1.f));
+      v_list.push_back(vec4(vx, vy, vz, 1.f));
     }
     else if (firstWord == "vn")
     {
@@ -90,33 +97,32 @@ bool Mesh::LoadOBJ(std::string const & a_fileName)
     }
     else if (firstWord == "f")
     {
-      Face vFace, vnFace;
+      Face f;
       char s = 0;
       for (int i = 0; i < 3; ++i)
       {
-        ifs >> vFace[i] >> s >> s >> vnFace[i];
-        vFace[i] -= 1.f;
-        vnFace[i] -= 1.f;
+        ifs >> f.v[i] >> s >> s >> f.vn[i];
+        f.v[i] -= 1.f;
+        f.vn[i] -= 1.f;
       }
 
-      m_faces.push_back(vFace);
-      faceNormals.push_back(vnFace);
+      f_list.push_back(f);
     }
 
     ifs.ignore(2048, '\n');
   }
 
-  NormalizeData(m_points);
+  NormalizeData(v_list);
 
-  m_normals.resize(m_points.size());
-  for (size_t i = 0; i < m_faces.size(); i++)
+  for (auto const & face : f_list)
   {
-    for (int j = 0; j < 3; ++j)
+    Facet f;
+    for (int i = 0; i < 3; ++i)
     {
-      auto f = m_faces[i];
-      auto fn = faceNormals[i];
-      m_normals[m_faces[i][j]] = vn_list[faceNormals[i][j]];
+      f.points[i] = v_list[face.v[i]];
+      f.normals[i] = vn_list[face.vn[i]];
     }
+    m_facets.push_back(f);
   }
 
   return true;
@@ -124,7 +130,5 @@ bool Mesh::LoadOBJ(std::string const & a_fileName)
 
 void Mesh::Clear()
 {
-  m_faces.clear();
-  m_normals.clear();
-  m_points.clear();
+  m_facets.clear();
 }
