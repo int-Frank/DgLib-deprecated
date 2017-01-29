@@ -9,8 +9,6 @@
 
 #include "Renderer.h"
 #include "EventManager.h"
-#include "DgR3Vector_ancillary.h"
-
 
 class TimeManager
 {
@@ -35,66 +33,6 @@ private:
   float m_totalTime;
 };
 
-class ExplosionDataGeneratorBase
-{
-public:
-
-  virtual ~ExplosionDataGeneratorBase() {}
-  void Init(vec4 const & a_source)
-  {
-    m_source = a_source;
-    PostInit();
-  }
-  virtual TransformData GetData(vec4 const & a_centroid)
-  {
-    TransformData td;
-    td.translation = vec4::ZeroVector();
-    td.rotation = vec4::ZeroVector();
-    return td;
-  }
-
-protected:
-
-  virtual void PostInit() {}
-
-protected:
-
-  vec4 m_source;
-};
-
-class ExplosionDataGenerator_Single : public ExplosionDataGeneratorBase
-{
-public:
-
-  TransformData GetData(vec4 const & a_centroid) 
-  {
-    TransformData td;
-    td.translation = a_centroid - m_source;
-    td.rotation.Zero();
-
-    if (td.translation.IsZero())
-    {
-      td.translation = Dg::R3::GetRandomVector<float>();
-    }
-
-    float mean = 2.f;
-    float sd = 0.5;
-
-    Dg::RNG rng;
-
-    float vMod;
-    do { vMod = rng.GetNormal(mean, sd); } while (vMod < 0.f);
-
-    float invLenSq = 1.f / td.translation.LengthSquared();
-    td.translation *= (invLenSq * vMod);
-
-    for (int i = 0; i < 3; ++i)
-    {
-      td.rotation[i] = rng.GetNormal(6.f, 2.f);
-    }
-    return td;
-  }
-};
 
 class Application
 {
@@ -185,7 +123,6 @@ private:
   enum Modal
   {
     OpenWindow,
-    ViewHelp,
     ViewAbout,
     None
   };

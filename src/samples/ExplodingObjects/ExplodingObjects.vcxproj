@@ -153,6 +153,7 @@
     <ClCompile Include="Application_UI.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Events.cpp" />
+    <ClCompile Include="ExplosionTypes.cpp" />
     <ClCompile Include="imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Events.h" />
+    <ClInclude Include="ExplosionTypes.h" />
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Renderer.h" />

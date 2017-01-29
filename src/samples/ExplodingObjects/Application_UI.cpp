@@ -87,11 +87,6 @@ void Application::ShowMainGUIWindow()
     }
     if (ImGui::BeginMenu("Help"))
     {
-      if (ImGui::MenuItem("View Help", NULL, &UI::showHelp))
-      {
-        m_windowStack.push(Modal::ViewHelp);
-      }
-      ImGui::Separator();
       if (ImGui::MenuItem("About", NULL, &UI::showAbout))
       {
         m_windowStack.push(Modal::ViewAbout);
@@ -99,26 +94,6 @@ void Application::ShowMainGUIWindow()
       ImGui::EndMenu();
     }
     ImGui::EndMenuBar();
-  }
-
-  //----------------------------------------------------------------------------------
-  //  Help Window
-  //----------------------------------------------------------------------------------
-  if (!m_windowStack.empty() && m_windowStack.top() == Modal::ViewHelp)
-  {
-    ImGui::OpenPopup("Help");
-  }
-  if (ImGui::BeginPopupModal("Help", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-  {
-    ImGui::Text("Help window");
-    ImGui::Text(""); ImGui::SameLine(ImGui::GetWindowWidth() - 140.0f);
-    if (ImGui::Button("OK", ImVec2(130, 0)))
-    {
-      UI::showHelp = false;
-      m_windowStack.pop();
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::EndPopup();
   }
 
 
@@ -131,7 +106,7 @@ void Application::ShowMainGUIWindow()
   }
   if (ImGui::BeginPopupModal("About", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
-    ImGui::Text("About window");
+    ImGui::Text("A simple exploding teapot demo\n\nFrank Hart 2017");
     if (ImGui::Button("OK", ImVec2(130, 0)))
     {
       UI::showAbout = false;
@@ -186,8 +161,8 @@ void Application::ShowMainGUIWindow()
 
   ImGui::Separator();
 
-  const char* listbox_items[] = { "Constant", "Inverse Distance", "Random", "Chunked" };
-  ImGui::ListBox("listbox\n(single select)", &m_appData.velocityMethod, listbox_items, IM_ARRAYSIZE(listbox_items), 4);
+  const char* listbox_items[] = { "Complete", "Chunked"};
+  ImGui::ListBox("Explosion type", &m_appData.explodeType, listbox_items, IM_ARRAYSIZE(listbox_items), 3);
 
   ImGui::Separator();
   m_appData.explode = ImGui::Button("EXPLODE!", ImVec2(100, 30));

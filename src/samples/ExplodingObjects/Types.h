@@ -48,13 +48,13 @@ class AppData
 public:
 
   AppData()
-    : velocityMethod(0)
+    : explodeType(0)
     , explode(false)
     , reset(false)
   {}
 
   std::string   projName;
-  int           velocityMethod;
+  int           explodeType;
   bool          explode;
   bool          reset;
 };

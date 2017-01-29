@@ -5,6 +5,7 @@
 #pragma comment(lib,"shlwapi.lib")
 
 #include "Application.h"
+#include "ExplosionTypes.h"
 #include "UI.h"
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
@@ -43,6 +44,9 @@ bool Application::Init()
   m_renderer.Init();
   ImGui_ImplGlfwGL3_Init(m_window, true);
   ClearProject();
+
+  LoadProject("./objects/teapot.obj");
+
   return true;
 }
 
@@ -211,7 +215,22 @@ void Application::Explode()
   std::vector<TransformData> td_vec;
   vec4 source(vec4::Origin());
 
-  ExplosionDataGeneratorBase * pGen = new ExplosionDataGenerator_Single();
+  ExplosionTypeBase * pGen(nullptr);
+
+  switch (m_appData.explodeType)
+  {
+  case 1:
+  {
+    pGen = new ExplosionType_Chunked();
+    break;
+  }
+  default:
+  {
+    pGen = new ExplosionType_Complete();
+    break;
+  }
+  }
+
   pGen->Init(source);
 
   for (auto const & c : m_centroids)
@@ -434,13 +453,6 @@ void Application::UI_NewFrame()
     ImGui::Begin("Stats", nullptr);
     ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
     ImGui::End();
-  }
-
-  //Example UI window
-  if (UI::showExampleWindow)
-  {
-    ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-    ImGui::ShowTestWindow(&UI::showExampleWindow);
   }
 }
 
