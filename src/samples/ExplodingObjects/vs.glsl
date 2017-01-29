@@ -79,9 +79,9 @@ void BuildMatrix(in int a_index, out mat4 result)
 
 void main(void)
 {
-  mat4 W2W1;
-  BuildMatrix(index, W2W1);
-  gl_Position = T_S_V * T_V_W * T_W_M * ((W2W1 * position) + offset);
+  mat4 T_E;
+  BuildMatrix(index, T_E);
+  gl_Position = T_S_V * T_V_W * T_W_M * ((T_E * position) + offset);
 
-  vs_out.normal = normalize(T_V_W * T_W_M * vec4(normal.x, normal.y, normal.z, 0.0));
+  vs_out.normal = normalize(T_V_W * T_W_M * T_E * vec4(normal.x, normal.y, normal.z, 0.0));
 }

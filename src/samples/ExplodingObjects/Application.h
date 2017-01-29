@@ -35,36 +35,21 @@ private:
   float m_totalTime;
 };
 
-class VelocityGenerator
+class ExplosionDataGeneratorBase
 {
 public:
 
-  virtual ~VelocityGenerator() {}
-  void Init(vec4 const & a_source) 
-  { 
+  virtual ~ExplosionDataGeneratorBase() {}
+  void Init(vec4 const & a_source)
+  {
     m_source = a_source;
     PostInit();
   }
-  virtual TransformData operator()(vec4 const & a_centroid) 
+  virtual TransformData GetData(vec4 const & a_centroid)
   {
     TransformData td;
-    td.translation = a_centroid - m_source;
-    td.rotation.Zero();
-
-    if (td.translation.IsZero())
-    {
-      td.translation = Dg::R3::GetRandomVector<float>();
-    }
-
-    float invLenSq = 1.f / td.translation.LengthSquared();
-    td.translation *= invLenSq;
-
-    Dg::RNG rng;
-
-    for (int i = 0; i < 3; ++i)
-    {
-      td.rotation[i] = 20.f;
-    }
+    td.translation = vec4::ZeroVector();
+    td.rotation = vec4::ZeroVector();
     return td;
   }
 
@@ -77,18 +62,38 @@ protected:
   vec4 m_source;
 };
 
-class VelocityGenerator_Random : public VelocityGenerator
+class ExplosionDataGenerator_Single : public ExplosionDataGeneratorBase
 {
 public:
 
-  TransformData operator()(vec4 const & a_centroid)
+  TransformData GetData(vec4 const & a_centroid) 
   {
+    TransformData td;
+    td.translation = a_centroid - m_source;
+    td.rotation.Zero();
 
+    if (td.translation.IsZero())
+    {
+      td.translation = Dg::R3::GetRandomVector<float>();
+    }
+
+    float mean = 2.f;
+    float sd = 0.5;
+
+    Dg::RNG rng;
+
+    float vMod;
+    do { vMod = rng.GetNormal(mean, sd); } while (vMod < 0.f);
+
+    float invLenSq = 1.f / td.translation.LengthSquared();
+    td.translation *= (invLenSq * vMod);
+
+    for (int i = 0; i < 3; ++i)
+    {
+      td.rotation[i] = rng.GetNormal(6.f, 2.f);
+    }
+    return td;
   }
-
-private:
-
-  void PostInit();
 };
 
 class Application

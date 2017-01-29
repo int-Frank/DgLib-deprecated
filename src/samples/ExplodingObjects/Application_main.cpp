@@ -211,31 +211,16 @@ void Application::Explode()
   std::vector<TransformData> td_vec;
   vec4 source(vec4::Origin());
 
+  ExplosionDataGeneratorBase * pGen = new ExplosionDataGenerator_Single();
+  pGen->Init(source);
+
   for (auto const & c : m_centroids)
   {
-    TransformData td;
-    td.translation = c - source;
-    td.rotation.Zero();
-
-    if (td.translation.IsZero())
-    {
-      td.translation = Dg::R3::GetRandomVector<float>();
-    }
-
-    float invLenSq = 1.f / td.translation.LengthSquared();
-    td.translation *= invLenSq;
-
-    Dg::RNG rng;
-
-    for (int i = 0; i < 3; ++i)
-    {
-      td.rotation[i] = 20.f;
-    }
-
-    td_vec.push_back(td);
+    td_vec.push_back(pGen->GetData(c));
   }
 
   m_renderer.SetTransformData(td_vec);
+  delete pGen;
 }
 
 void Application::DoLogic(double a_dt)
