@@ -339,7 +339,7 @@ std::vector<std::string> Application::GetProjects()
 void Application::GetConfiguration()
 {
   //Set defaults
-  strcpy_s(m_info.title, "Dg Paricle System Example");
+  strcpy_s(m_info.title, "Exploding Teapot Example");
   m_info.windowWidth = 800;
   m_info.windowHeight = 600;
   m_info.majorVersion = 4;
