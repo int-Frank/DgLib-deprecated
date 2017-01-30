@@ -5,6 +5,8 @@
 
 #include "Application.h"
 #include "imgui.h"
+#include "imgui_impl_glfw_gl3.h"
+
 #include "UI.h"
 
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
@@ -58,6 +60,48 @@ static bool FileExists(std::string const & a_name)
   }
 }
 
+
+void Application::UI_NewFrame()
+{
+  glfwPollEvents();
+  ImGui_ImplGlfwGL3_NewFrame();
+
+  int winWidth(0), winHeight(0);
+  glfwGetWindowSize(m_window, &winWidth, &winHeight);
+
+  //Editor
+  {
+    ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_MenuBar);
+    ImGui::End();
+  }
+
+  //Title window
+  {
+    float indent = 5.0f;
+    ImGui::Begin("##Title", nullptr
+      , ImGuiWindowFlags_NoTitleBar
+      | ImGuiWindowFlags_NoResize
+      | ImGuiWindowFlags_AlwaysAutoResize
+      | ImGuiWindowFlags_NoMove
+      | ImGuiWindowFlags_NoCollapse
+      | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Text(((m_appData.projName == "") ? "New Project" : m_appData.projName.c_str()));
+
+    //ImGuiID id = ImGui::GetID("##Title");
+    ImVec2 size = ImGui::GetItemRectSize();
+    ImGui::SetWindowPos(ImVec2(((float)winWidth - size.x) / 2.0f, indent));
+    ImGui::End();
+  }
+
+  //FPS
+  if (UI::showMetrics)
+  {
+    ImGui::Begin("Stats", nullptr);
+    ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
+    ImGui::End();
+  }
+}
+
 void Application::ShowMainGUIWindow()
 {
   //Settings
@@ -106,7 +150,7 @@ void Application::ShowMainGUIWindow()
   }
   if (ImGui::BeginPopupModal("About", NULL, ImGuiWindowFlags_AlwaysAutoResize))
   {
-    ImGui::Text("A simple exploding teapot demo\n\nFrank Hart 2017");
+    ImGui::Text("A simple exploding teapot demo\n\nFrank Hart 2017\n.");
     if (ImGui::Button("OK", ImVec2(130, 0)))
     {
       UI::showAbout = false;

@@ -266,7 +266,7 @@ void Application::DoLogic(double a_dt)
     m_appData.reset = false;
   }
 
-  m_renderer.SetTime(m_ptimeManager->GetTime(a_dt));
+  m_renderer.SetTime(m_ptimeManager->GetTime(float(a_dt)));
 }
 
 void Application::Render()
@@ -415,46 +415,6 @@ void Application::GetConfiguration()
   }
 }
 
-void Application::UI_NewFrame()
-{
-  glfwPollEvents();
-  ImGui_ImplGlfwGL3_NewFrame();
-
-  int winWidth(0), winHeight(0);
-  glfwGetWindowSize(m_window, &winWidth, &winHeight);
-
-  //Editor
-  {
-    ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_MenuBar);
-    ImGui::End();
-  }
-
-  //Title window
-  {
-    float indent = 5.0f;
-    ImGui::Begin("##Title", nullptr
-      , ImGuiWindowFlags_NoTitleBar 
-      | ImGuiWindowFlags_NoResize 
-      | ImGuiWindowFlags_AlwaysAutoResize
-      | ImGuiWindowFlags_NoMove
-      | ImGuiWindowFlags_NoCollapse
-      | ImGuiWindowFlags_NoSavedSettings);
-    ImGui::Text(((m_appData.projName == "") ? "New Project" : m_appData.projName.c_str()));
-
-    //ImGuiID id = ImGui::GetID("##Title");
-    ImVec2 size = ImGui::GetItemRectSize();
-    ImGui::SetWindowPos(ImVec2(((float)winWidth - size.x) / 2.0f, indent));
-    ImGui::End();
-  }
-
-  //FPS
-  if (UI::showMetrics)
-  {
-    ImGui::Begin("Stats", nullptr);
-    ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
-    ImGui::End();
-  }
-}
 
 void Application::Run(Application* the_app)
 {
