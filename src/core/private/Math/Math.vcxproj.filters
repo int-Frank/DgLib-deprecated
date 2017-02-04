@@ -296,5 +296,8 @@
     <ClInclude Include="..\..\public\impl\DgQueryPointSphere.h">
       <Filter>Public Headers\impl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgR2AABB.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

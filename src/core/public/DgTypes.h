@@ -6,10 +6,10 @@
 #ifndef DGTYPES_H
 #define DGTYPES_H
 
-namespace Dg
-{
 #define IS_FLAGGED(x, y) static_cast<bool>(x & (1 << y))
 
+namespace Dg
+{
   //! @ingroup DgUtility_constants
   //! Error codes
   enum class ErrorCode

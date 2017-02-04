@@ -45,6 +45,10 @@ namespace Dg
 
       Real PerpDot(Vector_generic const &) const;
 
+      Real Distance(Vector_generic const &) const;
+
+      Real SquaredDistance(Vector_generic const &) const;
+
       Vector_generic Perpendicular() const;
 
       //! Access element-x by value
@@ -258,7 +262,7 @@ namespace Dg
 
 
     template<typename Real>
-    Vector_generic<Real, 2> Vector_generic<Real, 2>::SquaredDistance(Vector_generic<Real, 2> const & a_v) const
+    Real Vector_generic<Real, 2>::SquaredDistance(Vector_generic<Real, 2> const & a_v) const
     {
       Real x = m_V[0] = a_v.m_V[0];
       Real y = m_V[1] = a_v.m_V[1];
@@ -267,7 +271,7 @@ namespace Dg
 
 
     template<typename Real>
-    Vector_generic<Real, 2> Vector_generic<Real, 2>::Distance(Vector_generic<Real, 2> const & a_v) const
+    Real Vector_generic<Real, 2>::Distance(Vector_generic<Real, 2> const & a_v) const
     {
       return sqrt(SquaredDistance(a_v));
     }

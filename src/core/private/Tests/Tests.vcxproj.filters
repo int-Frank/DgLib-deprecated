@@ -114,6 +114,9 @@
     <ClCompile Include="TEST_DgR3Triangle.cpp">
       <Filter>Tests\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="TEST_DgR2_AABB.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="testini.ini">

@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\public\DgBoundedSND.h" />
     <ClInclude Include="..\..\public\DgFixedPoint.h" />
+    <ClInclude Include="..\..\public\DgR2AABB.h" />
     <ClInclude Include="..\..\public\DgR2Line.h" />
     <ClInclude Include="..\..\public\DgR2Ray.h" />
     <ClInclude Include="..\..\public\DgR2Triangle.h" />

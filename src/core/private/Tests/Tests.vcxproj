@@ -167,6 +167,7 @@
     <ClCompile Include="NonPODTests.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
     <ClCompile Include="TEST_DGFixedPoint.cpp" />
+    <ClCompile Include="TEST_DgR2_AABB.cpp" />
     <ClCompile Include="TEST_DgR3Triangle.cpp" />
     <ClCompile Include="TEST_DgR3_Frustum.cpp" />
     <ClCompile Include="TEST_DGGrids.cpp" />
