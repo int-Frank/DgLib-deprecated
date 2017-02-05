@@ -53,7 +53,7 @@ namespace Dg
       {
       public:
 
-        Node(R2::AABB<Real> const & a_bounds, NodeFlagType a_flags)
+        Node(R2::AABB<Real> const & a_bounds, I a_flags)
           : bounds(a_bounds)
           , flags(a_flags)
         {}
@@ -77,11 +77,11 @@ namespace Dg
                  x
   
   */
-  template<typename Real, typename Handle, typename DataType, int MaxDepth = (sizeof(Handle) * CHAR_BIT / 2 - 1)>
+  template<typename Real, typename Handle, typename DataType, int MaxDepth = (sizeof(typename Handle) * CHAR_BIT / 2 - 1)>
   class QuadTree
   {
-    static_assert(std::numeric_limits<I>::is_integer, "Key must be integer type.");
-    static_assert( MaxDepth > 0 && MaxDepth <= (sizeof(I) * CHAR_BIT / 2 - 1), "Invalid depth.");
+    static_assert(std::numeric_limits<Handle>::is_integer, "Key must be integer type.");
+    static_assert( MaxDepth > 0 && MaxDepth <= (sizeof(Handle) * CHAR_BIT / 2 - 1), "Invalid depth.");
 
     typedef uint8_t NodeFlagType;
 
@@ -89,7 +89,8 @@ namespace Dg
 
   public:
 
-    typedef impl::QuadTree::QuadSet<I>                QuadSet;
+    typedef Handle                                    Handle;
+    typedef impl::QuadTree::QuadSet<Handle>           QuadSet;
     typedef R2::AABB<Real>                            AABB;
     typedef impl::QuadTree::Node<Real, NodeFlagType>  Node;
 
@@ -97,7 +98,7 @@ namespace Dg
 
     QuadTree(AABB const & a_bounds)
     {
-      m_nodes.insert(s_root, Node(a_bounds, (impl::QuadTree::IsLeaf)));
+      m_nodes.insert(s_root, Node(a_bounds, impl::QuadTree::IsLeaf));
     }
 
     ErrorCode QueryPoint(Real x, Real y, Handle & a_out) const
@@ -105,12 +106,12 @@ namespace Dg
       return __QueryPoint(x, y, s_root, a_out);
     }
 
-    static Handle GetParent(Handle a_h) const
+    static Handle GetParent(Handle a_h)
     {
       return (a_h >> 2);
     }
 
-    static QuadSet GetChildren(Handle a_h) const
+    static QuadSet GetChildren(Handle a_h)
     {
       QuadSet children;
       children[0] = (a_h << 2);
@@ -132,7 +133,7 @@ namespace Dg
 
     bool Subdivide(Handle a_h)
     {
-      Node & pNode(m_nodes.at(a_h));
+      Node * pNode(m_nodes.at(a_h));
       if (!(pNode->flags & impl::QuadTree::IsLeaf) || (a_h >> (MaxDepth * 2)))
       {
         return false;
@@ -142,10 +143,12 @@ namespace Dg
 
       AABB parentBounds(pNode->bounds);
 
-      Real hx(static_cast<Real>(0);
-      Real hy(static_cast<Real>(0);
+      Real hx(static_cast<Real>(0));
+      Real hy(static_cast<Real>(0));
       R2::Vector<Real> c(parentBounds.GetCenter());
       parentBounds.GetHalfLengths(hx, hy);
+      hx /= static_cast<Real>(2);
+      hy /= static_cast<Real>(2);
 
       R2::Vector<Real> c0(c.x() - hx, c.y() - hy, static_cast<Real>(1));
       R2::Vector<Real> c1(c.x() + hx, c.y() - hy, static_cast<Real>(1));
@@ -154,10 +157,12 @@ namespace Dg
 
       QuadSet qs(GetChildren(a_h));
 
-      m_nodes.insert(qs[0], AABB(c0, impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[1], AABB(c1, impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[2], AABB(c2, impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[3], AABB(c3, impl::QuadTree::IsLeaf));
+      m_nodes.insert(qs[0], Node(AABB(c0, hx, hy), impl::QuadTree::IsLeaf));
+      m_nodes.insert(qs[1], Node(AABB(c1, hx, hy), impl::QuadTree::IsLeaf));
+      m_nodes.insert(qs[2], Node(AABB(c2, hx, hy), impl::QuadTree::IsLeaf));
+      m_nodes.insert(qs[3], Node(AABB(c3, hx, hy), impl::QuadTree::IsLeaf));
+
+      return true;
     }
 
     AABB GetAABB(Handle a_h) const
@@ -180,6 +185,16 @@ namespace Dg
       return a_h == 1;
     }
 
+    Handle Root() const
+    {
+      return s_root;
+    }
+
+    size_t Size() const
+    {
+      return m_nodes.size();
+    }
+
     void Reset(AABB const & a_bounds)
     {
       m_nodes.clear();
@@ -193,7 +208,7 @@ namespace Dg
                                Handle a_handle,
                                Handle & a_out) const
     {
-      Node * pNode(m_nodes.at(a_handle));
+      Node const * pNode(m_nodes.at(a_handle));
 
       if (pNode->flags & impl::QuadTree::IsLeaf)
       {
@@ -214,14 +229,12 @@ namespace Dg
 
   private:
 
-    Node                          m_root;
-
-    HashTable<I, Node>            m_nodes;
-    HashTable<I, DataType>        m_data;
+    HashTable<Handle, Node>            m_nodes;
+    HashTable<Handle, DataType>        m_data;
   };
 
   template<typename Real, typename Handle, typename DataType, int MaxDepth>
-  Handle const QuadTree<Real, Handle, MaxDepth>::s_root = 1;
+  Handle const QuadTree<Real, Handle, DataType, MaxDepth>::s_root = 1;
 }
 
 #endif

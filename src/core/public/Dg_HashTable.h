@@ -637,6 +637,23 @@ namespace Dg
       return nullptr;
     }
 
+    //! Returns a pointer to the element in the map which matches the key.
+    //! Returns a nullptr if there is no match.
+    T const * at(K a_key) const
+    {
+      size_t ind = m_fHasher(a_key);
+      ind %= bucket_count();
+
+      Node const * pItem = m_pBuckets[ind].pBegin;
+      while (pItem)
+      {
+        if (pItem->key == a_key)  return &pItem->data;
+        if (!pItem->pNext)        return nullptr;
+        pItem = pItem->pNext;
+      }
+      return nullptr;
+    }
+
     //! Insert a mapped value into the HashTable. This function will overwrite 
     //! any existing element mapped to this key.
     //!

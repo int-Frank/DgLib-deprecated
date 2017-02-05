@@ -19,15 +19,15 @@
     <Filter Include="Tests\Geometry">
       <UniqueIdentifier>{c206b245-dab0-462b-8086-adf6c18e7fef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tests\Containers">
+      <UniqueIdentifier>{15c8a7f5-22e2-4a90-bcc0-594c92f69ca0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TEST_BoundedSND.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_dg_map.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_math.cpp">
@@ -52,18 +52,6 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="TEST_DGFixedPoint.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_dg_HASHTABLE.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_dg_set.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_dg_list.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_dg_vector.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="NonPODTests.cpp">
@@ -116,6 +104,24 @@
     </ClCompile>
     <ClCompile Include="TEST_DgR2_AABB.cpp">
       <Filter>Tests\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_dg_list.cpp">
+      <Filter>Tests\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_dg_map.cpp">
+      <Filter>Tests\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_dg_set.cpp">
+      <Filter>Tests\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_dg_vector.cpp">
+      <Filter>Tests\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_dg_HashTable.cpp">
+      <Filter>Tests\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="TEST_dg_QuadTree.cpp">
+      <Filter>Tests\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
