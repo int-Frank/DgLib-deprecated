@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\public\Dg_HashTable.h" />
     <ClInclude Include="..\..\public\Dg_list.h" />
+    <ClInclude Include="..\..\public\Dg_ListCircular.h" />
     <ClInclude Include="..\..\public\Dg_map.h" />
     <ClInclude Include="..\..\public\Dg_QuadTree.h" />
     <ClInclude Include="..\..\public\Dg_set.h" />

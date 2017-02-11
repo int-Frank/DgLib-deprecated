@@ -68,7 +68,7 @@
     <ClInclude Include="..\..\public\DgMapKeyIterator.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dgcirculator_const.h">
+    <ClInclude Include="..\..\public\Dgcirculator.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>

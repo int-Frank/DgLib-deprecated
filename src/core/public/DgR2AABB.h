@@ -1,12 +1,12 @@
-//! @file DgR3AABB.h
+//! @file DgR2AABB.h
 //!
 //! @author: Frank B. Hart
 //! @date 29/05/2016
 //!
 //! Class declaration: AABB
 
-#ifndef DGR3AABB_H
-#define DGR3AABB_H
+#ifndef DGR2AABB_H
+#define DGR2AABB_H
 
 #include "DgR2Vector.h"
 #include "dgmath.h"

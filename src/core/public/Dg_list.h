@@ -6,8 +6,8 @@
 //! Class declaration: list
 
 
-#ifndef DG_LIST_POD_H
-#define DG_LIST_POD_H
+#ifndef DG_LIST_H
+#define DG_LIST_H
 
 #include <cstring>
 #include <new>

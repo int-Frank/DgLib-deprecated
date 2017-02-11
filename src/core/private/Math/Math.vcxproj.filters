@@ -299,5 +299,11 @@
     <ClInclude Include="..\..\public\DgR2AABB.h">
       <Filter>Public Headers\R2</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Regression.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Polygon.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

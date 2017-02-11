@@ -36,6 +36,14 @@ namespace Dg
     ZXZ
   };
 
+  enum class Orientation
+  {
+    CW,
+    CCW,
+    Colinear,
+    Coplanar
+  };
+
   template<typename Real>
   struct Constants
   {};

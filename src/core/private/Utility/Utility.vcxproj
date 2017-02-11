@@ -145,7 +145,7 @@
     <ClCompile Include="DgStringFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\public\Dgcirculator_const.h" />
+    <ClInclude Include="..\..\public\Dgcirculator.h" />
     <ClInclude Include="..\..\public\DgIDManager.h" />
     <ClInclude Include="..\..\public\DgMakeGrid.h" />
     <ClInclude Include="..\..\public\DgObject.h" />
