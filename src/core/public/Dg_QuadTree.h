@@ -146,21 +146,22 @@ namespace Dg
       Real hx(static_cast<Real>(0));
       Real hy(static_cast<Real>(0));
       R2::Vector<Real> c(parentBounds.GetCenter());
-      parentBounds.GetHalfLengths(hx, hy);
-      hx /= static_cast<Real>(2);
-      hy /= static_cast<Real>(2);
+      Real hl[2];
+      parentBounds.GetHalfLengths(hl);
+      hl[0] /= static_cast<Real>(2);
+      hl[1] /= static_cast<Real>(2);
 
-      R2::Vector<Real> c0(c.x() - hx, c.y() - hy, static_cast<Real>(1));
-      R2::Vector<Real> c1(c.x() + hx, c.y() - hy, static_cast<Real>(1));
-      R2::Vector<Real> c2(c.x() - hx, c.y() + hy, static_cast<Real>(1));
-      R2::Vector<Real> c3(c.x() + hx, c.y() + hy, static_cast<Real>(1));
+      R2::Vector<Real> c0(c.x() - hl[0], c.y() - hl[1], static_cast<Real>(1));
+      R2::Vector<Real> c1(c.x() + hl[0], c.y() - hl[1], static_cast<Real>(1));
+      R2::Vector<Real> c2(c.x() - hl[0], c.y() + hl[1], static_cast<Real>(1));
+      R2::Vector<Real> c3(c.x() + hl[0], c.y() + hl[1], static_cast<Real>(1));
 
       QuadSet qs(GetChildren(a_h));
 
-      m_nodes.insert(qs[0], Node(AABB(c0, hx, hy), impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[1], Node(AABB(c1, hx, hy), impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[2], Node(AABB(c2, hx, hy), impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[3], Node(AABB(c3, hx, hy), impl::QuadTree::IsLeaf));
+      m_nodes.insert(qs[0], Node(AABB(c0, hl), impl::QuadTree::IsLeaf));
+      m_nodes.insert(qs[1], Node(AABB(c1, hl), impl::QuadTree::IsLeaf));
+      m_nodes.insert(qs[2], Node(AABB(c2, hl), impl::QuadTree::IsLeaf));
+      m_nodes.insert(qs[3], Node(AABB(c3, hl), impl::QuadTree::IsLeaf));
 
       return true;
     }

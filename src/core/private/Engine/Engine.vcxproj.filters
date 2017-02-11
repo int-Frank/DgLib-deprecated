@@ -67,6 +67,9 @@
     <ClInclude Include="..\..\public\DgMeshBase.h">
       <Filter>3d tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\game_tools\DgGTBSPTree.h">
+      <Filter>Game Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\public\impl\DgParticleData_impl.inl">

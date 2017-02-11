@@ -1,16 +1,16 @@
-//! @file DgR3QueryLineSphere.h
+//! @file DgR3QueryLineBall.h
 //!
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 
-#ifndef DGQUERYLINESPHERE_H
-#define DGQUERYLINESPHERE_H
+#ifndef DGQUERYLINEBALL_H
+#define DGQUERYLINEBALL_H
 
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
 #include "../query/DgQueryCommon.h"
-#include "../DgR3Line.h"
-#include "../DgR3Sphere.h"
+#include "DgLine_generic.h"
+#include "DgBall_generic.h"
 
 namespace Dg
 {
@@ -18,10 +18,10 @@ namespace Dg
   {
     //! @ingroup DgMath_geoQueries
     //! Test for intersection between a line and a sphere.
-    template <typename Real>
-    class TIQuery<Real, 3,
-                  R3::Line<Real>, 
-                  R3::Sphere<Real>>
+    template <typename Real, int R>
+    class TIQuery<Real, R,
+                  Line_generic<Real, R>, 
+                  Ball_generic<Real, R>>
     {
     public:
 
@@ -33,16 +33,16 @@ namespace Dg
       };
 
       //! Perform query.
-      Result operator()(R3::Line<Real> const &, R3::Sphere<Real> const &);
+      Result operator()(Line_generic<Real, R> const &, Ball_generic<Real, R> const &);
     };
 
 
     //! @ingroup DgMath_geoQueries
     //! Find the intersection point between a line and a sphere.
-    template <typename Real>
-    class FIQuery<Real, 3,
-                  R3::Line<Real>, 
-                  R3::Sphere<Real>>
+    template<typename Real, int R>
+    class FIQuery<Real, R,
+                  Line_generic<Real, R>, 
+                  Ball_generic<Real, R>>
     {
     public:
 
@@ -50,10 +50,10 @@ namespace Dg
       struct Result
       {
         //! Point of intersection from u0. Not set if line does not intersect sphere.
-        Vector_generic<Real, 3> p0;
+        Vector_generic<Real, R> p0;
 
         //! Point of intersection from u1. Not set if line does not intersect sphere.
-        Vector_generic<Real, 3> p1;
+        Vector_generic<Real, R> p1;
 
         //! Distance from the line origin to the first point of intersection. Not set if line does not intersect sphere.
         Real u0;
@@ -67,20 +67,20 @@ namespace Dg
       };
 
       //! Perform query
-      Result operator()(R3::Line<Real> const &, R3::Sphere<Real> const &);
+      Result operator()(Line_generic<Real, R> const &, Ball_generic<Real, R> const &);
     };
 
 
     //--------------------------------------------------------------------------------
     //	@	CPQuery::operator()
     //--------------------------------------------------------------------------------
-    template<typename Real>
-    typename TIQuery<Real, 3, R3::Line<Real>, R3::Sphere<Real>>::Result
-      TIQuery<Real, 3, R3::Line<Real>, R3::Sphere<Real>>::operator()
-      (R3::Line<Real> const & a_line, R3::Sphere<Real> const & a_sphere)
+    template<typename Real, int R>
+    typename TIQuery<Real, R, Line_generic<Real, R>, Ball_generic<Real, R>>::Result
+      TIQuery<Real, R, Line_generic<Real, R>, Ball_generic<Real, R>>::operator()
+      (Line_generic<Real, R> const & a_line, Ball_generic<Real, R> const & a_sphere)
     {
       Result result;
-      Vector_generic<Real, 3> w0(a_line.Origin() - a_sphere.Center());
+      Vector_generic<Real, R> w0(a_line.Origin() - a_sphere.Center());
       Real a = a_line.Direction().LengthSquared();
       Real b = w0.Dot(a_line.Direction());
       Real c = w0.LengthSquared() - a_sphere.Radius() *a_sphere.Radius();
@@ -92,13 +92,13 @@ namespace Dg
       //--------------------------------------------------------------------------------
       //	@	CPQuery::operator()
       //--------------------------------------------------------------------------------
-    template<typename Real>
-    typename FIQuery<Real, 3, R3::Line<Real>, R3::Sphere<Real>>::Result
-      FIQuery<Real, 3, R3::Line<Real>, R3::Sphere<Real>>::operator()
-      (R3::Line<Real> const & a_line, R3::Sphere<Real> const & a_sphere)
+    template<typename Real, int R>
+    typename FIQuery<Real, R, Line_generic<Real, R>, Ball_generic<Real, R>>::Result
+      FIQuery<Real, R, Line_generic<Real, R>, Ball_generic<Real, R>>::operator()
+      (Line_generic<Real, R> const & a_line, Ball_generic<Real, R> const & a_sphere)
     {
       Result result;
-      Vector_generic<Real, 3> w0(a_line.Origin() - a_sphere.Center());
+      Vector_generic<Real, R> w0(a_line.Origin() - a_sphere.Center());
       Real a = a_line.Direction().LengthSquared();
       Real b = static_cast<Real>(2.0) * w0.Dot(a_line.Direction());
       Real c = w0.LengthSquared() - a_sphere.Radius() * a_sphere.Radius();

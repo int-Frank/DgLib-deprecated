@@ -1,5 +1,6 @@
 #include "TestHarness.h"
 #include "DgR3Sphere.h"
+#include "DgR3Line.h"
 #include "query/DgR3QueryLineSphere.h"
 
 typedef double                  Real;

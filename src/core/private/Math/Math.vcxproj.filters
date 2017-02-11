@@ -185,9 +185,6 @@
     <ClInclude Include="..\..\public\query\DgR3QueryLinePlane.h">
       <Filter>Public Headers\Query\R3</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgQueryLineSphere.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\query\DgR3QueryLineSphere.h">
       <Filter>Public Headers\Query\R3</Filter>
     </ClInclude>
@@ -272,9 +269,6 @@
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentRay.h">
       <Filter>Public Headers\Query\R2</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgQuerySegmentSphere.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h">
       <Filter>Public Headers\Query\R3</Filter>
     </ClInclude>
@@ -293,9 +287,6 @@
     <ClInclude Include="..\..\public\query\DgR3QueryRayTriangle.h">
       <Filter>Public Headers\Query\R3</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgQueryPointSphere.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgR2AABB.h">
       <Filter>Public Headers\R2</Filter>
     </ClInclude>
@@ -304,6 +295,21 @@
     </ClInclude>
     <ClInclude Include="..\..\public\DgR2Polygon.h">
       <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR2Disk.h">
+      <Filter>Public Headers\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgBall_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryLineBall.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQuerySegmentBall.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgAABB_generic.h">
+      <Filter>Public Headers\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

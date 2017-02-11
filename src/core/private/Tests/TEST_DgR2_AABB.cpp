@@ -1,5 +1,6 @@
 #include "TestHarness.h"
 #include "DgR2AABB.h"
+#include "DgR2Vector.h"
 
 typedef Dg::R2::Vector<float>     vec;
 typedef Dg::R2::AABB<float>       AABB;
@@ -7,34 +8,33 @@ typedef Dg::R2::AABB<float>       AABB;
 TEST(Stack_DgR2AABB, DgR2AABB)
 {
   AABB aabb;
-  float hx(0.f), hy(0.f);
-  aabb.GetHalfLengths(hx, hy);
+  float hl[2];
+  aabb.GetHalfLengths(hl);
   CHECK(aabb.GetCenter() == vec::Origin());
-  CHECK(hx == 0.5f);
-  CHECK(hy == 0.5f);
+  CHECK(hl[0] == 0.5f);
+  CHECK(hl[1] == 0.5f);
 
   vec center(1.f, -23.f, 1.f);
-  float x = 4.3f;
-  float y = 6.7f;
+  float hl2[2] = { 4.3f, 6.7f };
 
-  AABB aabbX(center, x, y);
-  aabbX.GetHalfLengths(hx, hy);
+  AABB aabbX(center, hl2);
+  aabbX.GetHalfLengths(hl);
   CHECK(aabbX.GetCenter() == center);
-  CHECK(hx == x);
-  CHECK(hy == y);
+  CHECK(hl[0] == hl2[0]);
+  CHECK(hl[1] == hl2[1]);
 
   aabb.SetCenter(center);
-  aabb.SetHalfLengths(x, y);
+  aabb.SetHalfLengths(hl2);
 
   AABB aabb1(aabb);
-  aabb1.GetHalfLengths(hx, hy);
+  aabb1.GetHalfLengths(hl);
   CHECK(aabb1.GetCenter() == center);
-  CHECK(hx == x);
-  CHECK(hy == y);
+  CHECK(hl[0] == hl2[0]);
+  CHECK(hl[1] == hl2[1]);
 
   aabb1 = aabb;
-  aabb1.GetHalfLengths(hx, hy);
+  aabb1.GetHalfLengths(hl);
   CHECK(aabb1.GetCenter() == center);
-  CHECK(hx == x);
-  CHECK(hy == y);
+  CHECK(hl[0] == hl2[0]);
+  CHECK(hl[1] == hl2[1]);
 }

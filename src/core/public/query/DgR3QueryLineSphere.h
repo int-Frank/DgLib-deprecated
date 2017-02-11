@@ -8,17 +8,17 @@
 #ifndef DGR3QUERYLINESPHERE_H
 #define DGR3QUERYLINESPHERE_H
 
-#include "..\impl\DgQueryLineSphere.h"
+#include "..\impl\DgQueryLineBall.h"
 
 namespace Dg
 {
   namespace R3
   {
     template<typename Real>
-    using TILineSphere = impl::TIQuery<Real, 3, Line<Real>, Sphere<Real>>;
+    using TILineSphere = impl::TIQuery<Real, 3, impl::Line_generic<Real, 3>, impl::Ball_generic<Real, 3>>;
 
     template<typename Real>
-    using FILineSphere = impl::FIQuery<Real, 3, Line<Real>, Sphere<Real>>;
+    using FILineSphere = impl::FIQuery<Real, 3, impl::Line_generic<Real, 3>, impl::Ball_generic<Real, 3>>;
   }
 }
 

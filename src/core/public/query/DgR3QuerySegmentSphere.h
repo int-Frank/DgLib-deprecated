@@ -6,14 +6,14 @@
 #ifndef DGR3QUERYSEGMENTLINE_H
 #define DGR3QUERYSEGMENTLINE_H
 
-#include "..\impl\DgQuerySegmentSphere.h"
+#include "..\impl\DgQuerySegmentBall.h"
 
 namespace Dg
 {
   namespace R3
   {
     template<typename Real>
-    using CPSegmentSphere = impl::TIQuery<Real, 3, R3::Segment<3>, Sphere<Real>>;
+    using TISegmentSphere = impl::TIQuery<Real, 3, impl::Segment_generic<Real, 3>, impl::Ball_generic<Real, 3>>;
   }
 }
 
