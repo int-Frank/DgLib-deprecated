@@ -8,14 +8,14 @@
 #ifndef DGR3SPHERE_H
 #define DGR3SPHERE_H
 
-#include "impl/DgBall_generic.h"
+#include "impl/DgHypersphere_generic.h"
 
 namespace Dg
 {
   namespace R3
   {
     template<typename Real>
-    using Sphere = Dg::impl::Ball_generic<Real, 3>;
+    using Sphere = Dg::impl::Hypersphere_generic<Real, 3>;
   }
 }
 #endif

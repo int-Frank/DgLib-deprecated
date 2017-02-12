@@ -3,10 +3,10 @@
 //! @author: Frank B. Hart
 //! @date 29/05/2016
 //!
-//! Class declaration: Ball_generic
+//! Class declaration: Hypersphere_generic
 
-#ifndef DGBALL_GENERIC_H
-#define DGBALL_GENERIC_H
+#ifndef DGHYPERSPHERE_GENERIC_H
+#define DGHYPERSPHERE_GENERIC_H
 
 #include "DgVector_generic.h"
 #include "dgmath.h"
@@ -19,7 +19,7 @@ namespace Dg
   {
     //! @ingroup DgMath_types
     //!
-    //! @class Ball_generic
+    //! @class Hypersphere_generic
     //!
     //! A sphere can be defined by the set of all points p at distance <= r away from 
     //! a central point c. It is implemented simply by defining a point and radius
@@ -27,27 +27,27 @@ namespace Dg
     //! @author: Frank Hart
     //! @date 20/06/2016
     template<typename Real, int R>
-    class Ball_generic
+    class Hypersphere_generic
     {
     public:
       //! Default constructor.
-      Ball_generic() 
+      Hypersphere_generic() 
         : m_origin(Vector_generic<Real, R>::Origin())
         , m_radius(static_cast<Real>(1.0)) 
       {}
 
       //! Construct sphere from origin and radius
-      Ball_generic(Vector_generic<Real, R> const &, Real);
-      ~Ball_generic() {}
+      Hypersphere_generic(Vector_generic<Real, R> const &, Real);
+      ~Hypersphere_generic() {}
 
       //! Copy constructor
-      Ball_generic(Ball_generic const & a_other)
+      Hypersphere_generic(Hypersphere_generic const & a_other)
         : m_origin(a_other.m_origin)
         , m_radius(a_other.m_radius) 
       {}
 
       //! Assignment
-      Ball_generic& operator= (Ball_generic const &);
+      Hypersphere_generic& operator= (Hypersphere_generic const &);
 
       //! Get the sphere center.
       Vector_generic<Real, R> const & Center() const { return m_origin; }
@@ -62,10 +62,10 @@ namespace Dg
       bool IsOutside(Vector_generic<Real, R> const &) const;
 
       //! Are two planes equal?
-      bool operator== (Ball_generic const &) const;
+      bool operator== (Hypersphere_generic const &) const;
 
       //! Are two planes not equal?
-      bool operator!= (Ball_generic const &) const;
+      bool operator!= (Hypersphere_generic const &) const;
 
       //! Set the sphere center
       void SetCenter(Vector_generic<Real, R> const &);
@@ -86,31 +86,31 @@ namespace Dg
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::Ball_generic()
+    //	@	Hypersphere_generic::Hypersphere_generic()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    Ball_generic<Real, R>::Ball_generic(Vector_generic<Real, R> const & a_center, Real a_radius)
+    Hypersphere_generic<Real, R>::Hypersphere_generic(Vector_generic<Real, R> const & a_center, Real a_radius)
     {
       Set(a_center, a_radius);
-    }	//End: Ball_generic::Ball_generic()
+    }	//End: Hypersphere_generic::Hypersphere_generic()
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::operator=()
+    //	@	Hypersphere_generic::operator=()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    Ball_generic<Real, R> & Ball_generic<Real, R>::operator=(Ball_generic<Real, R> const & a_other)
+    Hypersphere_generic<Real, R> & Hypersphere_generic<Real, R>::operator=(Hypersphere_generic<Real, R> const & a_other)
     {
       m_origin = a_other.m_origin;
       m_radius = a_other.m_radius;
-    }	//End: Ball_generic::operator=()
+    }	//End: Hypersphere_generic::operator=()
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::Set()
+    //	@	Hypersphere_generic::Set()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    void Ball_generic<Real, R>::Set(Vector_generic<Real, R> const & a_center, Real a_radius)
+    void Hypersphere_generic<Real, R>::Set(Vector_generic<Real, R> const & a_center, Real a_radius)
     {
       m_origin = a_center;
       m_origin.w() = static_cast<Real>(1.0);
@@ -127,69 +127,69 @@ namespace Dg
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::operator==()
+    //	@	Hypersphere_generic::operator==()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    bool Ball_generic<Real, R>::operator==(Ball_generic<Real, R> const & a_other) const
+    bool Hypersphere_generic<Real, R>::operator==(Hypersphere_generic<Real, R> const & a_other) const
     {
       return (m_origin == a_other.m_origin && Dg::AreEqual(m_radius, a_other.m_radius));
-    }	//End: Ball_generic::operator==()
+    }	//End: Hypersphere_generic::operator==()
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::operator!=()
+    //	@	Hypersphere_generic::operator!=()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    bool Ball_generic<Real, R>::operator!=(Ball_generic<Real, R> const & a_other) const
+    bool Hypersphere_generic<Real, R>::operator!=(Hypersphere_generic<Real, R> const & a_other) const
     {
       return (m_origin != a_other.m_origin || !Dg::AreEqual(m_radius, a_other.m_radius));
-    }	//End: Ball_generic::operator!=()
+    }	//End: Hypersphere_generic::operator!=()
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::SetCenter()
+    //	@	Hypersphere_generic::SetCenter()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    void Ball_generic<Real, R>::SetCenter(Vector_generic<Real, R> const & a_center)
+    void Hypersphere_generic<Real, R>::SetCenter(Vector_generic<Real, R> const & a_center)
     {
       m_origin = a_center;
       m_origin.w() = static_cast<Real>(1.0);
-    }	//End: Ball_generic::SetCenter()
+    }	//End: Hypersphere_generic::SetCenter()
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::SetRadius()
+    //	@	Hypersphere_generic::SetRadius()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    void Ball_generic<Real, R>::SetRadius(Real a_radius)
+    void Hypersphere_generic<Real, R>::SetRadius(Real a_radius)
     {
       m_radius = (a_radius < static_cast<Real>(0.0)) ? static_cast<Real>(0.0) : a_radius;
-    }	//End: Ball_generic::SetRadius()
+    }	//End: Hypersphere_generic::SetRadius()
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::Get()
+    //	@	Hypersphere_generic::Get()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    void Ball_generic<Real, R>::Get(Vector_generic<Real, R> & a_center, Real & a_radius) const
+    void Hypersphere_generic<Real, R>::Get(Vector_generic<Real, R> & a_center, Real & a_radius) const
     {
       a_center = m_origin;
       a_radius = m_radius;
-    }	//End: Ball_generic::Get()
+    }	//End: Hypersphere_generic::Get()
 
 
     template<typename Real, int R>
-    bool Ball_generic<Real, R>::IsOutside(Vector_generic<Real, R> const & a_pt) const
+    bool Hypersphere_generic<Real, R>::IsOutside(Vector_generic<Real, R> const & a_pt) const
     {
       return m_origin.SquaredDistance(a_pt) > (m_radius * m_radius);
-    }	//End: Ball_generic::Get()
+    }	//End: Hypersphere_generic::Get()
 
 
     //--------------------------------------------------------------------------------
-    //	@	Ball_generic::GetRandomPointInside()
+    //	@	Hypersphere_generic::GetRandomPointInside()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    Vector_generic<Real, R> Ball_generic<Real, R>::GetRandomPointInside() const
+    Vector_generic<Real, R> Hypersphere_generic<Real, R>::GetRandomPointInside() const
     {
       Vector_generic<Real, R> result(m_origin);
       if (!Dg::IsZero(m_radius))
@@ -206,7 +206,7 @@ namespace Dg
         } while ((result - m_origin).LengthSquared() > m_radius * m_radius);
       }
       return result;
-    }	//End: Ball_generic::GetRandomPointInside()
+    }	//End: Hypersphere_generic::GetRandomPointInside()
   }
 }
 

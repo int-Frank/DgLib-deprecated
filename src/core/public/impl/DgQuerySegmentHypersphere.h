@@ -3,14 +3,14 @@
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 
-#ifndef DGR3QUERYSEGMENTBALL_H
-#define DGR3QUERYSEGMENTBALL_H
+#ifndef DGR3QUERYSEGMENTHYPERSPHERE_H
+#define DGR3QUERYSEGMENTHYPERSPHERE_H
 
 #include "../query/DgQueryCommon.h"
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
 #include "DgSegment_generic.h"
-#include "DgBall_generic.h"
+#include "DgHypersphere_generic.h"
 
 namespace Dg
 {
@@ -21,7 +21,7 @@ namespace Dg
     template<typename Real, int R>
     class TIQuery<Real, R,
                   Segment_generic<Real, R>, 
-                  Ball_generic<Real, R>>
+                  Hypersphere_generic<Real, R>>
     {
     public:
 
@@ -41,9 +41,9 @@ namespace Dg
     //	@	CPQuery::operator()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    typename TIQuery<Real, R, Segment_generic<Real, R>, Ball_generic<Real, R>>::Result
-      TIQuery<Real, R, Segment_generic<Real, R>, Ball_generic<Real, R>>::operator()
-      (Segment_generic<Real, R> const & a_seg, Ball_generic<Real, R> const & a_sphere)
+    typename TIQuery<Real, R, Segment_generic<Real, R>, Hypersphere_generic<Real, R>>::Result
+      TIQuery<Real, R, Segment_generic<Real, R>, Hypersphere_generic<Real, R>>::operator()
+      (Segment_generic<Real, R> const & a_seg, Hypersphere_generic<Real, R> const & a_sphere)
     {
       Result result;
       Vector_generic<Real, R> w0(a_seg.Origin() - a_sphere.Center());

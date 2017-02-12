@@ -299,16 +299,16 @@
     <ClInclude Include="..\..\public\DgR2Disk.h">
       <Filter>Public Headers\R2</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgBall_generic.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgQueryLineBall.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgQuerySegmentBall.h">
-      <Filter>Public Headers\impl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\impl\DgAABB_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgHyperSphere_generic.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQueryLineHypersphere.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgQuerySegmentHypersphere.h">
       <Filter>Public Headers\impl</Filter>
     </ClInclude>
   </ItemGroup>

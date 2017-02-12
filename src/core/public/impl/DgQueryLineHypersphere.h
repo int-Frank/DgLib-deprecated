@@ -3,14 +3,14 @@
 //! @author: Adapted from http://www.geometrictools.com
 //! @date 29/05/2016
 
-#ifndef DGQUERYLINEBALL_H
-#define DGQUERYLINEBALL_H
+#ifndef DGQUERYLINEHYPERSPHERE_H
+#define DGQUERYLINEHYPERSPHERE_H
 
 #include "DgTIQuery.h"
 #include "DgFIQuery.h"
 #include "../query/DgQueryCommon.h"
 #include "DgLine_generic.h"
-#include "DgBall_generic.h"
+#include "DgHypersphere_generic.h"
 
 namespace Dg
 {
@@ -21,7 +21,7 @@ namespace Dg
     template <typename Real, int R>
     class TIQuery<Real, R,
                   Line_generic<Real, R>, 
-                  Ball_generic<Real, R>>
+                  Hypersphere_generic<Real, R>>
     {
     public:
 
@@ -33,7 +33,7 @@ namespace Dg
       };
 
       //! Perform query.
-      Result operator()(Line_generic<Real, R> const &, Ball_generic<Real, R> const &);
+      Result operator()(Line_generic<Real, R> const &, Hypersphere_generic<Real, R> const &);
     };
 
 
@@ -42,7 +42,7 @@ namespace Dg
     template<typename Real, int R>
     class FIQuery<Real, R,
                   Line_generic<Real, R>, 
-                  Ball_generic<Real, R>>
+                  Hypersphere_generic<Real, R>>
     {
     public:
 
@@ -67,7 +67,7 @@ namespace Dg
       };
 
       //! Perform query
-      Result operator()(Line_generic<Real, R> const &, Ball_generic<Real, R> const &);
+      Result operator()(Line_generic<Real, R> const &, Hypersphere_generic<Real, R> const &);
     };
 
 
@@ -75,9 +75,9 @@ namespace Dg
     //	@	CPQuery::operator()
     //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    typename TIQuery<Real, R, Line_generic<Real, R>, Ball_generic<Real, R>>::Result
-      TIQuery<Real, R, Line_generic<Real, R>, Ball_generic<Real, R>>::operator()
-      (Line_generic<Real, R> const & a_line, Ball_generic<Real, R> const & a_sphere)
+    typename TIQuery<Real, R, Line_generic<Real, R>, Hypersphere_generic<Real, R>>::Result
+      TIQuery<Real, R, Line_generic<Real, R>, Hypersphere_generic<Real, R>>::operator()
+      (Line_generic<Real, R> const & a_line, Hypersphere_generic<Real, R> const & a_sphere)
     {
       Result result;
       Vector_generic<Real, R> w0(a_line.Origin() - a_sphere.Center());
@@ -93,9 +93,9 @@ namespace Dg
       //	@	CPQuery::operator()
       //--------------------------------------------------------------------------------
     template<typename Real, int R>
-    typename FIQuery<Real, R, Line_generic<Real, R>, Ball_generic<Real, R>>::Result
-      FIQuery<Real, R, Line_generic<Real, R>, Ball_generic<Real, R>>::operator()
-      (Line_generic<Real, R> const & a_line, Ball_generic<Real, R> const & a_sphere)
+    typename FIQuery<Real, R, Line_generic<Real, R>, Hypersphere_generic<Real, R>>::Result
+      FIQuery<Real, R, Line_generic<Real, R>, Hypersphere_generic<Real, R>>::operator()
+      (Line_generic<Real, R> const & a_line, Hypersphere_generic<Real, R> const & a_sphere)
     {
       Result result;
       Vector_generic<Real, R> w0(a_line.Origin() - a_sphere.Center());

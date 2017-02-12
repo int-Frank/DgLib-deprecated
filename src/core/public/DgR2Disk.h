@@ -8,14 +8,14 @@
 #ifndef DGR2DISK_H
 #define DGR2DISK_H
 
-#include "impl/DgBall_generic.h"
+#include "impl/DgHypersphere_generic.h"
 
 namespace Dg
 {
   namespace R2
   {
     template<typename Real>
-    using Disk = Dg::impl::Ball_generic<Real, 2>;
+    using Disk = Dg::impl::Hypersphere_generic<Real, 2>;
   }
 }
 #endif
