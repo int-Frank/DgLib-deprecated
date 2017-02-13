@@ -7,6 +7,7 @@
 #define DGQUERYPOINTSEGMENT_H
 
 #include "DgCPQuery.h"
+#include "DgTIQuery.h"
 #include "..\query\DgQueryCommon.h"
 #include "DgSegment_generic.h"
 
@@ -38,6 +39,53 @@ namespace Dg
     };
 
 
+    //! @ingroup DgMath_geoQueries
+    //! Intersection test: Segment, Segment
+    template <typename Real>
+    class TIQuery<Real, 2,
+                  Vector_generic<Real, 2>,
+                  Segment_generic<Real, 2>>
+    {
+    public:
+
+      //! Query return data
+      struct Result
+      {
+        bool isIntersecting;
+      };
+
+      //! Perform query.
+      Result operator()(Vector_generic<Real, 2> const &,
+                        Segment_generic<Real, 2> const &);
+    };
+
+
+    //--------------------------------------------------------------------------------
+    //	@	TIQuery::operator()
+    //--------------------------------------------------------------------------------
+    template<typename Real>
+    typename TIQuery<Real, 2, Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result
+      TIQuery<Real, 2, Vector_generic<Real, 2>, Segment_generic<Real, 2>>::operator()
+      (Vector_generic<Real, 2> const & a_point, Segment_generic<Real, 2> const & a_seg)
+    {
+      Result result;
+      result.isIntersecting = false;
+
+      Vector_generic<Real, 2> w = a_point - a_seg.GetP0();
+
+      Real proj = w.Dot(a_seg.Direction());
+
+      if (proj > static_cast<Real>(0) && proj < static_cast<Real>(1))
+      {
+        Real perpDot = w.PerpDot(a_seg.Direction());
+        if (IsZero(w.PerpDot(a_seg.Direction())))
+        {
+          result.isIntersecting = true;
+        }
+      }
+      return result;
+    }
+
     //--------------------------------------------------------------------------------
     //	@	CPQuery::operator()
     //--------------------------------------------------------------------------------
@@ -51,7 +99,7 @@ namespace Dg
 
       Real proj = w.Dot(a_seg.Direction());
 
-      if (proj <= static_cast<Real>(0.0))
+      if (proj < Dg::Constants<Real>::EPSILON)
       {
         result.u = static_cast<Real>(0.0);
       }

@@ -12,14 +12,14 @@
 #include "query/DgR3QuerySegmentPlane.h"
 
 typedef double Real;
-typedef Dg::R3::Vector<Real>               vec;
-typedef Dg::R3::Plane<Real>                 plane;
-typedef Dg::R3::Line<Real>                  line;
+typedef Dg::R3::Vector<Real>              vec;
+typedef Dg::R3::Plane<Real>               plane;
+typedef Dg::R3::Line<Real>                line;
 typedef Dg::R3::Matrix<Real>              mat44;
-typedef Dg::R3::VQS<Real>                   vqs;
-typedef Dg::R3::Quaternion<Real>            quat;
-typedef Dg::R3::Ray<Real>                   ray;
-typedef Dg::R3::Segment<Real>           lineSeg;
+typedef Dg::R3::VQS<Real>                 vqs;
+typedef Dg::R3::Quaternion<Real>          quat;
+typedef Dg::R3::Ray<Real>                 ray;
+typedef Dg::R3::Segment<Real>             lineSeg;
 
 TEST(Stack_DgLineSegment, DgLineSegment)
 {
@@ -48,6 +48,8 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   //lineSeg-point
   Dg::R3::CPPointSegment<Real>           dcpPointLS;
   Dg::R3::CPPointSegment<Real>::Result   dcpPointLS_res;
+  p0.Set(2.0, 0.0, 0.0, 1.0);
+  lineSeg ls_zero(p0, p0);
   ls0.Set(vec(2.0, 0.0, 0.0, 1.0), vec(6.0, 0.0, 0.0, 1.0));
   vec pIn;
 
@@ -74,6 +76,12 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(dcpPointLS_res.cp == vec(3.0, 0.0, 0.0, 1.0));
   //CHECK(dcpPointLS_res.distance == 5.0);
   //CHECK(dcpPointLS_res.sqDistance == 25.0);
+
+  //Point - zero length Segment
+  pIn.Set(3.0, 3.0, -4.0, 1.0);
+  dcpPointLS_res = dcpPointLS(pIn, ls_zero);
+  CHECK(dcpPointLS_res.u == 0.0);
+  CHECK(dcpPointLS_res.cp == p0);
 
   //lineSeg-Line
   Dg::R3::CPSegmentLine<Real>           dcpLSLine;
@@ -134,6 +142,15 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(dcpLSLine_res.cpl == vec(3.0, 4.0, 0.0, 1.0));
   //CHECK(dcpLSLine_res.distance == 4.0);
   //CHECK(dcpLSLine_res.sqDistance == 16.0);
+
+  //Line - zero length Segment
+  l.Set(vec(3.0, 4.0, 3.0, 1.0), vec::xAxis());
+  dcpLSLine_res = dcpLSLine(ls_zero, l);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
+  CHECK(dcpLSLine_res.ul == -1.0);
+  CHECK(dcpLSLine_res.us == 0.0);
+  CHECK(dcpLSLine_res.cps == p0);
+  CHECK(dcpLSLine_res.cpl == vec(2.0, 4.0, 3.0, 1.0));
 
   //lineSeg-Ray
   ray r;
@@ -271,6 +288,25 @@ TEST(Stack_DgLineSegment, DgLineSegment)
   CHECK(dcpLSRay_res.cpr == vec(5.0, -4.0, 0.0, 1.0));
   //CHECK(dcpLSRay_res.distance == 4.0);
   //CHECK(dcpLSRay_res.sqDistance == 16.0);
+
+  //Ray- zero length Segment
+  r.Set(vec(3.0, 4.0, 3.0, 1.0), vec::xAxis());
+  dcpLSRay_res = dcpLSRay(ls_zero, r);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
+  CHECK(dcpLSRay_res.ur == 0.0);
+  CHECK(dcpLSRay_res.us == 0.0);
+  CHECK(dcpLSRay_res.cps == p0);
+  CHECK(dcpLSRay_res.cpr == vec(3.0, 4.0, 3.0, 1.0));
+
+
+  //Ray- zero length Segment
+  r.Set(vec(1.0, 4.0, 3.0, 1.0), vec::xAxis());
+  dcpLSRay_res = dcpLSRay(ls_zero, r);
+  CHECK(dcpLSRay_res.code == Dg::QueryCode::Success);
+  CHECK(dcpLSRay_res.ur == 1.0);
+  CHECK(dcpLSRay_res.us == 0.0);
+  CHECK(dcpLSRay_res.cps == p0);
+  CHECK(dcpLSRay_res.cpr == vec(2.0, 4.0, 3.0, 1.0));
 
   //lineSeg-LineSeg
   Dg::R3::CPSegmentSegment<Real>           dcpLSLS;

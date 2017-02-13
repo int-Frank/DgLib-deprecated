@@ -10,6 +10,7 @@
 #include "DgCPQuery.h"
 #include "DgSegment_generic.h"
 #include "DgRay_generic.h"
+#include "DgQueryPointRay.h"
 
 namespace Dg
 {
@@ -60,9 +61,9 @@ namespace Dg
       Result result;
       result.code = QueryCode::Success;
 
+      Vector_generic<Real, R> ds(a_seg.Direction());
       Vector_generic<Real, R> os(a_seg.Origin());
       Vector_generic<Real, R> or (a_ray.Origin());
-      Vector_generic<Real, R> ds(a_seg.Direction());
       Vector_generic<Real, R> dr(a_ray.Direction());
 
       //compute intermediate parameters
@@ -78,6 +79,17 @@ namespace Dg
       // if denom is zero, try finding closest point on segment1 to origin0
       if (Dg::IsZero(denom))
       {
+        if (IsZero(a))
+        {
+          CPQuery<Real, R, Vector_generic<Real, R>, Ray_generic<Real, R>> query;
+          CPQuery<Real, R, Vector_generic<Real, R>, Ray_generic<Real, R>>::Result res = query(os, a_ray);
+          result.ur = res.u;
+          result.us = static_cast<Real>(0);
+          result.cpr = res.cp;
+          result.cps = os;
+          return result;
+        }
+
         // clamp result.uls to 0
         sd = td = static_cast<Real>(1.0);
         sn = static_cast<Real>(0.0);
@@ -90,7 +102,6 @@ namespace Dg
         {
           result.code = QueryCode::Overlapping;
         }
-
       }
       else
       {

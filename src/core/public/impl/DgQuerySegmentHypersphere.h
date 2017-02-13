@@ -33,7 +33,7 @@ namespace Dg
       };
 
       //! Perform query.
-      Result operator()(Segment_generic<Real, R> const &, Ball_generic<Real, R> const &);
+      Result operator()(Segment_generic<Real, R> const &, Hypersphere_generic<Real, R> const &);
     };
 
 
@@ -46,8 +46,16 @@ namespace Dg
       (Segment_generic<Real, R> const & a_seg, Hypersphere_generic<Real, R> const & a_sphere)
     {
       Result result;
-      Vector_generic<Real, R> w0(a_seg.Origin() - a_sphere.Center());
       Real a = a_seg.Direction().LengthSquared();
+
+      //Zero-length segment case.
+      if (IsZero(a))
+      {
+        result.isIntersecting = !a_sphere.IsOutside(a_seg.Origin());
+        return result;
+      }
+
+      Vector_generic<Real, R> w0(a_seg.Origin() - a_sphere.Center());
       Real inv_a = static_cast<Real>(1.0) / a;
       Real b = inv_a * w0.Dot(a_seg.Direction());
       Real c = inv_a * (w0.LengthSquared() - a_sphere.Radius() *a_sphere.Radius());

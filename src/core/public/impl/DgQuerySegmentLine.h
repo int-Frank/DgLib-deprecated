@@ -101,13 +101,13 @@ namespace Dg
 
 		if (Dg::IsZero(denom))
 		{
-			//Parallel
+      //Parallel
 			if (!Dg::IsZero(us_numerator))
 			{
 				result.code = QueryCode::NotIntersecting;
 			}
 
-			//Segments lie on the same line
+      //Coincident
 			else
 			{
 				result.code = QueryCode::Overlapping;
@@ -165,7 +165,15 @@ namespace Dg
       {
         result.us = static_cast<Real>(0.0);
         result.ul = d;
-        result.code = QueryCode::Parallel;
+
+        if (IsZero(a))
+        {
+          result.code = QueryCode::Success;
+        }
+        else
+        {
+          result.code = QueryCode::Parallel;
+        }
       }
       else
       {

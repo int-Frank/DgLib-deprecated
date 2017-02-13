@@ -8,6 +8,7 @@
 
 #include "DgCPQuery.h"
 #include "DgTIQuery.h"
+#include "DgQueryPointSegment.h"
 #include "..\query\DgQueryCommon.h"
 #include "DgVector_generic.h"
 #include "DgSegment_generic.h"
@@ -91,8 +92,29 @@ namespace Dg
 
       if (Dg::IsZero(denom))
       {
+        //Either or both segment lengths are zero
+        if (dir0.IsZero())
+        {
+          if (dir1.IsZero())
+          {
+            result.isIntersecting = (a_seg0.GetP0() == a_seg1.GetP0());
+          }
+          else
+          {
+            TIQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
+            TIQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(a_seg0.GetP0(), a_seg1);
+            result.isIntersecting = qRes.isIntersecting;
+          }
+        }
+        else if (dir1.IsZero()) 
+        {
+          TIQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
+          TIQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(a_seg1.GetP0(), a_seg0);
+          result.isIntersecting = qRes.isIntersecting;
+        }
+
         //Parallel
-        if (!Dg::IsZero(u0_numerator))
+        else if (!Dg::IsZero(u0_numerator))
         {
           result.isIntersecting = false;
         }

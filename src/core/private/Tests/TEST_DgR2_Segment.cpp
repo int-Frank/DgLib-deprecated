@@ -39,7 +39,10 @@ TEST(Stack_DgR2Segment, DgR2Segment)
   CHECK(ls2 == ls0);
 
   //Geometric tests
+  p0.Set(2.0, 0.0, 1.0);
   ls0.Set(vec(2.0, 0.0, 1.0), vec(6.0, 0.0, 1.0));
+
+  seg ls_zero(p0, p0);
 
   //seg-point
   Dg::R2::CPPointSegment<Real>           dcpPointLS;
@@ -69,6 +72,13 @@ TEST(Stack_DgR2Segment, DgR2Segment)
   CHECK(dcpPointLS_res.cp == vec(3.0, 0.0, 1.0));
   //CHECK(dcpPointLS_res.distance == 5.0);
   //CHECK(dcpPointLS_res.sqDistance == 25.0);
+
+  //Point and segment of length zero
+  pIn.Set(3.0, 3.0, 1.0);
+  dcpPointLS_res = dcpPointLS(pIn, ls_zero);
+  CHECK(dcpPointLS_res.u == 0.0);
+  CHECK(dcpPointLS_res.cp == p0);
+
 
   //seg-Line
   Dg::R2::CPSegmentLine<Real>           dcpLSLine;
@@ -144,6 +154,17 @@ TEST(Stack_DgR2Segment, DgR2Segment)
   CHECK(dcpLSLine_res.cpl == vec(3.0, 0.0, 1.0));
   //CHECK(dcpLSLine_res.distance == 4.0);
   //CHECK(dcpLSLine_res.sqDistance == 16.0);
+
+  //Line-zero length segment
+  l.Set(vec(3.0, 3.0, 1.0), vec::xAxis());
+  dcpLSLine_res = dcpLSLine(ls_zero, l);
+  fiSL_res = fiSL(ls_zero, l);
+  CHECK(fiSL_res.code == Dg::QueryCode::NotIntersecting);
+  CHECK(dcpLSLine_res.code == Dg::QueryCode::Success);
+  CHECK(dcpLSLine_res.ul == -1.0);
+  CHECK(dcpLSLine_res.us == 0.0);
+  CHECK(dcpLSLine_res.cps == vec(2.0, 0.0, 1.0));
+  CHECK(dcpLSLine_res.cpl == vec(2.0, 3.0, 1.0));
 
   ////seg-Ray
   //ray r;
