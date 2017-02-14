@@ -171,6 +171,38 @@ namespace Dg
       // if denom is zero, try finding closest point on segment1 to origin0
       if (Dg::IsZero(denom))
       {
+        //Either or both segment lengths are zero
+        if (IsZero(a))
+        {
+          if (IsZero(c))
+          {
+            result.u0 = static_cast<Real>(0);
+            result.u1 = static_cast<Real>(0);
+            result.cp0 = o0;
+            result.cp1 = o1;
+          }
+          else
+          {
+            CPQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
+            CPQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(o0, a_seg1);
+            result.u0 = static_cast<Real>(0);
+            result.u1 = qRes.u;
+            result.cp0 = o0;
+            result.cp1 = qRes.cp;
+          }
+          return result;
+        }
+        else if (IsZero(c))
+        {
+          CPQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
+          CPQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(o1, a_seg0);
+          result.u0 = qRes.u;
+          result.u1 = static_cast<Real>(0);
+          result.cp0 = qRes.cp;
+          result.cp1 = o0;
+          return result;
+        }
+
         // clamp result.u0 to 0
         sd = td = c;
         sn = static_cast<Real>(0.0);
