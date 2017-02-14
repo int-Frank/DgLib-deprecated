@@ -101,15 +101,15 @@ namespace Dg
           }
           else
           {
-            TIQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
-            TIQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(a_seg0.GetP0(), a_seg1);
+            TIQuery<Real, 2, Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
+            TIQuery<Real, 2, Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(a_seg0.GetP0(), a_seg1);
             result.isIntersecting = qRes.isIntersecting;
           }
         }
         else if (dir1.IsZero()) 
         {
-          TIQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
-          TIQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(a_seg1.GetP0(), a_seg0);
+          TIQuery<Real, 2, Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
+          TIQuery<Real, 2, Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(a_seg1.GetP0(), a_seg0);
           result.isIntersecting = qRes.isIntersecting;
         }
 
@@ -183,8 +183,8 @@ namespace Dg
           }
           else
           {
-            CPQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
-            CPQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(o0, a_seg1);
+            CPQuery<Real, R, Vector_generic<Real, R>, Segment_generic<Real, R>> query;
+            CPQuery<Real, R, Vector_generic<Real, R>, Segment_generic<Real, R>>::Result qRes = query(o0, a_seg1);
             result.u0 = static_cast<Real>(0);
             result.u1 = qRes.u;
             result.cp0 = o0;
@@ -194,8 +194,8 @@ namespace Dg
         }
         else if (IsZero(c))
         {
-          CPQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>> query;
-          CPQuery<Vector_generic<Real, 2>, Segment_generic<Real, 2>>::Result qRes = query(o1, a_seg0);
+          CPQuery<Real, R, Vector_generic<Real, R>, Segment_generic<Real, R>> query;
+          CPQuery<Real, R, Vector_generic<Real, R>, Segment_generic<Real, R>>::Result qRes = query(o1, a_seg0);
           result.u0 = qRes.u;
           result.u1 = static_cast<Real>(0);
           result.cp0 = qRes.cp;
