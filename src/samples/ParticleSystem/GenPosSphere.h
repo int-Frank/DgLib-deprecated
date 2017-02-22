@@ -43,8 +43,8 @@ private:
 template<typename Real>
 void GenPosSphere<Real>::SetTransformation(Dg::R3::VQS<Real> const & a_vqs)
 {
-  m_sphere.Set(Dg::R3::Vector<Real>::Origin(), static_cast<Real>(1.0));
-  m_sphere.TransformSelf(a_vqs);
+  m_sphere.SetCenter(a_vqs.TransformPoint(Dg::R3::Vector<Real>::Origin()));
+  m_sphere.SetRadius(a_vqs.S());
 }
 
 template<typename Real>
