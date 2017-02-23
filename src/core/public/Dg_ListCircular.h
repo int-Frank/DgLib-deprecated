@@ -293,6 +293,32 @@ namespace Dg
     //! @return iterator to the newly inserted data
     iterator insert(iterator const & position, T const & data);
 
+    void reverse()
+    {
+      if (size() < 2)
+      {
+        return;
+      }
+
+      Node * pBack(m_pHead->pPrev);
+      Node * pForward(m_pHead);
+
+      if (size() % 2 != 0)
+      {
+        pForward = m_pHead->pNext;
+      }
+
+      for (size_t i = 0; i < size() / 2; ++i)
+      {
+        T temp = pBack->GetData();
+        pBack->InitData(pForward->GetData());
+        pForward->InitData(temp);
+
+        pBack = pBack->Prev();
+        pForward = pForward->Next();
+      }
+    }
+
     //! Erase an data from the ListCircular
     //! @return An iterator pointing to the data that followed 
     //!         the last data erased by the function call.

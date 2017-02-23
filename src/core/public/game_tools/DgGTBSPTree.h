@@ -20,10 +20,10 @@ namespace Dg
     {
     public:
 
-      typedef Dg::R2::Vector<Real>  Vector;
-      typedef Dg::R2::Segment<Real> Segment;
-      typedef Dg::R2::Disk<Real>    Disk;
-      typedef Dg::R2::Polygon<Real> Polygon;
+      typedef Dg::R2::Vector<Real>  DgVector;
+      typedef Dg::R2::Segment<Real> DgSegment;
+      typedef Dg::R2::Disk<Real>    DgDisk;
+      typedef Dg::R2::Polygon<Real> DgPolygon;
 
     private:
 
@@ -35,22 +35,21 @@ namespace Dg
           isLeaf = 1
         };
 
-        uint32_t      m_flags;
+        uint32_t      flags;
         union
         {
           struct Branch
           {
-            uint32_t      m_element; //index of x or y element (0, 1)
-            Real          m_offset;
-            uint32_t      m_child_LESS;
-            uint32_t      m_child_GREATER;
+            uint32_t      element; //index of x or y element (0, 1)
+            Real          offset;
+            uint32_t      child_BELOW;
+            uint32_t      child_ABOVE;
           } branch;
 
           struct Leaf
           {
-            uint32_t      m_dataOffset;
-            uint32_t      m_nEdges;
-            uint32_t      m_nPolygons;
+            uint32_t      dataOffset;
+            uint32_t      nPolygons;
           } leaf;
         };
       };
@@ -66,7 +65,31 @@ namespace Dg
       {
         //Elements 0 and 1 will be the same for boundary edges 
         uint32_t     adjacentPolygonOffsets[2];
-        Segment      edge;
+        DgSegment    edge;
+      };
+
+      struct SplitData
+      {
+        std::vector<uint32_t> belowPolys;
+        std::vector<uint32_t> abovePolys;
+        uint32_t              element;
+        Real                  offset;
+      };
+
+    public:
+
+      class Criteria
+      {
+      public:
+
+      };
+
+    public:
+
+      struct DataInput
+      {
+        std::vector<Vector>                 points;
+        std::map<Key, std::vector<size_t>>  polygons;
       };
 
     public:
@@ -96,7 +119,22 @@ namespace Dg
         return *this;
       }
 
-      Dg::ErrorCode Build(std::map<Key, Polygon> const &);
+      Dg::ErrorCode Build(DataInput const & a_input, Criteria a_criteria = Criteria())
+      {
+        Clear();
+        LoadPolygons(a_input);
+
+        std::vector<Node>     nodes;
+        std::vector<uint32_t> edgeIndices;
+        std::vector<uint32_t> polygonIndices;
+
+        //Our first node will contain every polygon and edge.
+        for (uint32_t i = 0; i < m_nEdges; ++i)     edgeIndices.push_back(i);
+        for (uint32_t i = 0; i < m_nPolygons; ++i)  polygonIndices.push_back(i);
+
+        Split(edgeIndices, polygonIndices, nodes, a_criteria);
+        AssignTree(edgeIndices, polygonIndices, nodes);
+      }
 
       void Clear()
       {
@@ -119,6 +157,126 @@ namespace Dg
       std::vector<Key> Query(Vector const &) const;
       std::vector<Key> Query(Disk const &) const;
       //std::vector<Key> Query(Capsule const &) const;
+
+    private:
+
+      void LoadPolygons(DataInput const & a_input)
+      {
+        delete[] m_pPolygons;
+        delete[] m_pEdges;
+        m_pPolygons = nullptr;
+        m_pEdges = nullptr;
+
+        std::vector<DgSegment>  edges;
+        std::vector<Polygon>    polygons;
+
+        for (auto const & kv : a_input.polygons)
+        {
+          DgPolygon dgpolygon;
+          for (auto const & index : kv.second)
+          {
+            dgpolygon.push_back(a_input.points[index]);
+          }
+
+          //Make sure all our polygons are CCW
+          if (dgpolygon.Orientation() != Dg::Orientation::CCW)
+          {
+            dgpolygon.reverse();
+          }
+
+          Polygon polygon;
+          polygon.key = kv.first;
+          polygon.offset = edges.size();
+          polygon.nEdges = dgpolygon.size();
+          polygons.push_back(polygon);
+
+          DgPolygon::const_iterator it = dgpolygon.chead();
+          DgPolygon::const_iterator it_next = ++dgpolygon.chead();
+          for (size_t i = 0; i < dgpolygon.size(); ++i, ++it, ++it_next)
+          {
+            Edge e;
+            GetAdjacentPolygons(e, a_input, *it, *it_next);
+            e.segment = Segment(a_input.points[*it], a_input.points[*it_next]);
+            edges.push_back(e);
+          }
+        }
+
+        m_pEdges = new Edge[edges.size()];
+        for (size_t i = 0; i < edges.size(); ++i) m_pEdges[i] = edges[i];
+
+        m_pPolygons = new Polygon[polygons.size()];
+        for (size_t i = 0; i < polygons.size(); ++i) m_pPolygons[i] = polygons[i];
+      }
+      
+      bool GetAdjacentPolygons(Edge & a_out, DataInput const & a_dataIn, uint32_t a_i0, uint32_t a_i1)
+      {
+        int ind = 0;
+        size_t polyInd = 0;
+        for (auto const & kv : a_input.polygons)
+        {
+          for (size_t i = 0; i < kv.second.size(); ++i)
+          {
+            i_next = (i + 1) % kv.second.size();
+            if ((kv.second[i] == a_i0 && kv.second[i_next] == a_i1) ||
+                (kv.second[i] == a_i1 && kv.second[i_next] == a_i0))
+            {
+              a_out.adjacentPolygons[ind] = polyInd;
+              ind++;
+              if (ind == 2)
+              {
+                goto endLoop;
+              }
+
+              //For ind == 1, write the value in the second element, for the case of border
+              //edges (only one adjacent polygon).
+              a_out.adjacentPolygons[ind] = polyInd;
+              break;
+            }
+          }
+          polyInd++;
+        }
+        endLoop:
+        return ind > 0;
+      }
+
+      void Split(std::vector<uint32_t> const & a_parentPolygons,
+                 uint32_t a_parentIndex,
+                 std::vector<Node> & a_output,
+                 Criteria const & a_criteria)
+      {
+        SplitData sdata;
+
+        PartitionPolygons(a_parentPolygons, adata);
+
+        bool validPartition = true;
+        validPartition &= (sdata.belowPolys.size() < a_parentPolygons.size() || sdata.abovePolys.size() < a_parentPolygons.size());
+        //...other criteria here...
+
+        if (validPartition)
+        {
+          a_output[a_parentIndex].m_flags = 0;
+          a_output[a_parentIndex].branch.element = sdata.element;
+          a_output[a_parentIndex].branch.offset = sdata.offset;
+
+          a_output[a_parentIndex].branch.child_BELOW = a_output.size();
+          a_output.push_back(Node());
+          Split(sdata.belowPolys, a_output[a_parentIndex].branch.child_BELOW, a_output, a_criteria);
+
+          a_output[a_parentIndex].branch.child_ABOVE = a_output.size();
+          a_output.push_back(Node());
+          Split(sdata.abovePolys, a_output[a_parentIndex].branch.child_ABOVE, a_output, a_criteria);
+        }
+        else
+        {
+
+        }
+      }
+      
+      void AssignTree(std::vector<uint32_t> const & a_edgeIndices,
+                      std::vector<uint32_t> const & a_polygonIndices, 
+                      std::vector<Node> const & a_nodes );
+
+      uint32_t Parent(uint32_t a_ind, std::vector<Node> const & a_nodes) const;
 
     private:
 
@@ -154,7 +312,7 @@ namespace Dg
       Polygon *      m_pPolygons;
 
       // {Leaf data, Polygon data} where:
-      // Leaf data: {edgeIndex0, edgeIndex1, ..., edgeIndexN, polygonIndex0, polygonIndex1, ... }
+      // Leaf data: {polygonIndex0, polygonIndex1, ... }
       // Polygon data: {edgeIndex0, edgeIndex1, ... }
       uint32_t *       m_pData; 
     };
