@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\public\DgMeshBase.h" />
     <ClInclude Include="..\..\public\game_tools\DgGTBSPTree.h" />
+    <ClInclude Include="..\..\public\game_tools\DgGTBSPTreePath.h" />
     <ClInclude Include="..\..\public\particle_system\DgAttractor.h" />
     <ClInclude Include="..\..\public\particle_system\DgParticleEmitter.h" />
     <ClInclude Include="..\..\public\particle_system\DgParticleGenerator.h" />

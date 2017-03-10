@@ -1,10 +1,12 @@
-#ifndef BSPTREE_H
-#define BSPTREE_H
+#ifndef DGGTBSPTREE_H
+#define DGGTBSPTREE_H
 
 #include <stdint.h>
 #include <vector>
 #include <map>
+#include <limits>
 
+#include "DgGTBSPTreePath.h"
 #include "Dg_map.h"
 #include "DgR2Vector.h"
 #include "DgR2Segment.h"
@@ -22,6 +24,7 @@ namespace Dg
     {
     public:
 
+      typedef std::vector<Key>      KeyList;
       typedef Dg::R2::Vector<Real>  DgVector;
       typedef Dg::R2::Segment<Real> DgSegment;
       typedef Dg::R2::Line<Real>    DgLine;
@@ -30,15 +33,21 @@ namespace Dg
 
     private:
 
-      struct Node
+      class Node
       {
-        enum
-        {
-          //Flags
-          Leaf = 1
-        };
+      public:
 
-        uint32_t      flags;
+        void IsLeaf(bool a_value)
+        {
+          m_isLeaf = a_value;
+        }
+
+        bool IsLeaf() const
+        {
+          return a_value;
+        }
+
+      public:
         union
         {
           struct Branch
@@ -55,6 +64,11 @@ namespace Dg
             uint32_t      nPolygons;
           } leaf;
         };
+
+      private:
+
+        bool m_isLeaf;
+
       };
 
       struct Polygon
@@ -95,8 +109,30 @@ namespace Dg
 
       struct DataInput
       {
-        std::vector<Vector>                 points;
-        std::map<Key, std::vector<size_t>>  polygons;
+        std::vector<DgVector>                 points;
+        std::map<Key, std::vector<size_t>>    polygons;
+      };
+
+      //DEBUG
+      class NodeData
+      {
+      public:
+
+        NodeData()
+          : upperBounds{ std::numeric_limits<Real>::max, std::numeric_limits<Real>::max }
+          , lowerBounds{ -std::numeric_limits<Real>::max, -std::numeric_limits<Real>::max }
+        {}
+
+        Real      upperBounds[2];
+        Real      lowerBounds[2];
+        KeyList   polygons;
+      };
+
+      //DEBUG
+      struct DebugQueryData
+      {
+        BSPTreePath       path;
+        std::vector<Key>  enclosingPolygons;
       };
 
     public:
@@ -161,11 +197,81 @@ namespace Dg
         m_nDataItems = 0;
       }
 
-      std::vector<Key> Query(DgVector const &) const;
-      std::vector<Key> Query(DgDisk const &) const;
+      KeyList Query(DgVector const &) const;
+      KeyList Query(DgDisk const &) const;
+
+      //DEBUG
+      //Returns false if the input path is too deep for the BSPTree.
+      bool GetBranchData(std::vector<bool> const & a_path, NodeData & a_out)
+      {
+        uint32_t nodeInd = 0;
+        for (bool isAbove : a_path)
+        {
+          if (m_pNodes[nodeInd].IsLeaf())
+          {
+            return false;
+          }
+
+          if (isAbove)
+          {
+            a_out.lowerBounds[m_pNodes[nodeInd].branch.element] = m_pNodes[nodeInd].branch.offset;
+          }
+          else
+          {
+            a_out.upperBounds[m_pNodes[nodeInd].branch.element] = m_pNodes[nodeInd].branch.offset;
+          }
+        }
+
+        AddPolygons(nodeInd, a_out.polygons);
+
+        return true;
+      }
+
+      //DEBUG
+      //Returns path to the leaf.
+      DebugQueryData DebugQuery(DgVector const & a_point) const
+      {
+        DebugQueryData data;
+        uint32_t nodeInd = 0;
+        while (!m_pNodes[nodeInd].IsLeaf())
+        {
+          uint32_t element = m_pNodes[nodeInd].branch.element;
+          Real offset = m_pNodes[nodeInd].branch.offset;
+          //if (a_point[element] <= )
+        }
+      }
+
       //std::vector<Key> Query(Capsule const &) const;
 
     private:
+
+      static inline bool UniqueInsert(Key a_target, KeyList & a_keys) const
+      {
+        for (auto const & key : a_keys)
+        {
+          if (key == a_target) return;
+        }
+        a_keys.push_back(a_target);
+      }
+
+      void AddPolygons(uint32_t a_nodeInd, KeyList & a_out) const
+      {
+        Node const & node(m_pNodes[a_nodeInd]);
+        if (node.IsLeaf())
+        {
+          for (uint32_t i = node.leaf.dataOffset;
+               i < node.leaf.dataOffset + node.leaf.nPolygons;
+               ++i)
+          {
+            UniqueInsert(m_data[i].key, a_out);
+          }
+        }
+        else
+        {
+          AddPolygons(node.branch.child_BELOW, a_out);
+          AddPolygons(node.branch.child_ABOVE, a_out);
+        }
+      }
 
       void LoadPolygons(DataInput const & a_input)
       {
