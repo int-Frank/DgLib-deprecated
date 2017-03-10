@@ -60,7 +60,7 @@ namespace Dg
 
           struct Leaf
           {
-            uint32_t      dataOffset;
+            uint32_t      offset;
             uint32_t      nPolygons;
           } leaf;
         };
@@ -230,26 +230,53 @@ namespace Dg
       DebugQueryData DebugQuery(DgVector const & a_point) const
       {
         DebugQueryData data;
-        uint32_t nodeInd = 0;
-        while (!m_pNodes[nodeInd].IsLeaf())
-        {
-          uint32_t element = m_pNodes[nodeInd].branch.element;
-          Real offset = m_pNodes[nodeInd].branch.offset;
-          if (a_point[element] <= )
-        }
+        BSPTreePath path;
+        std::vector<uint32_t> polyIndices;
+        DebugGetPolygons(a_point, 0, polyIndices, &path);
+
+
       }
 
       //std::vector<Key> Query(Capsule const &) const;
 
     private:
 
-      static inline bool UniqueInsert(Key a_target, KeyList & a_keys) const
+      static inline void UniqueInsert(Key a_target, KeyList & a_keys)
       {
         for (auto const & key : a_keys)
         {
           if (key == a_target) return;
         }
         a_keys.push_back(a_target);
+      }
+
+      void DebugGetPolygons(DgVector const & a_point,
+                            uint32_t a_ind, 
+                            std::vector<uint32_t> & a_out,
+                            BSPTreePath * a_pPath) const
+      {
+        if (m_pNodes[a_ind].IsLeaf())
+        {
+          for (uint32_t i = m_pNodes[a_ind].leaf.offset;
+               i < m_pNodes[a_ind].leaf.offset + m_pNodes[a_ind].leaf.nPolygons;
+               ++i)
+          {
+            UniqueInsert(m_pData[i], a_out);
+          }
+        }
+        else
+        {
+          uint32_t i = m_pNodes[a_ind].branch.element;
+          Real offset = m_pNodes[a_ind].branch.offset;
+          if (a_point[i] <= offset)
+          {
+            GetPolygons(a_point, m_pNodes[a_ind].branch.child_BELOW, a_out, a_pPath->NewBelow());
+          }
+          if (a_point[i] >= offset)
+          {
+            GetPolygons(a_point, m_pNodes[a_ind].branch.child_ABOVE, a_out, a_pPath->NewAbove());
+          }
+        }
       }
 
       void AddPolygons(uint32_t a_nodeInd, KeyList & a_out) const

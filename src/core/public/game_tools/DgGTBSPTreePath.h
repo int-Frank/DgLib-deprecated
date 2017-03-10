@@ -46,6 +46,20 @@ namespace Dg
       BSPTreePath const * Below() const { return m_pBelow; }
       BSPTreePath const * Above() const { return m_pAbove; }
 
+      BSPTreePath * NewBelow()
+      {
+        delete m_pBelow;
+        m_pBelow = new BSPTreePath();
+        return m_pBelow;
+      }
+
+      BSPTreePath * NewAbove()
+      {
+        delete m_pAbove;
+        m_pAbove = new BSPTreePath();
+        return m_pAbove;
+      }
+
       std::vector<std::vector<bool>> GetSinglePaths() const
       {
         std::vector<std::vector<bool>> result;
@@ -53,6 +67,8 @@ namespace Dg
         OutputPath(this, 0, result);
         return result;
       }
+
+      
 
     private:
 
