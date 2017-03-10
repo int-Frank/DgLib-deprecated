@@ -8,8 +8,10 @@
 #include "Dg_map.h"
 #include "DgR2Vector.h"
 #include "DgR2Segment.h"
+#include "DgR2Line.h"
 #include "DgR2Disk.h"
 #include "DgR2Polygon.h"
+#include "DgR2Regression.h"
 
 namespace Dg
 {
@@ -22,6 +24,7 @@ namespace Dg
 
       typedef Dg::R2::Vector<Real>  DgVector;
       typedef Dg::R2::Segment<Real> DgSegment;
+      typedef Dg::R2::Line<Real>    DgLine;
       typedef Dg::R2::Disk<Real>    DgDisk;
       typedef Dg::R2::Polygon<Real> DgPolygon;
 
@@ -32,7 +35,7 @@ namespace Dg
         enum
         {
           //Flags
-          isLeaf = 1
+          Leaf = 1
         };
 
         uint32_t      flags;
@@ -61,8 +64,14 @@ namespace Dg
         uint32_t nEdges;
       };
 
-      struct Edge
+      class Edge
       {
+        static uint32_t const NONE = 0xFFFFFFFF;
+
+        Edge()
+          : adjacentPolygonOffsets{ NONE, NONE }
+        {}
+
         //Elements 0 and 1 will be the same for boundary edges 
         uint32_t     adjacentPolygonOffsets[2];
         DgSegment    edge;
@@ -83,8 +92,6 @@ namespace Dg
       public:
 
       };
-
-    public:
 
       struct DataInput
       {
@@ -133,7 +140,7 @@ namespace Dg
         for (uint32_t i = 0; i < m_nPolygons; ++i)  polygonIndices.push_back(i);
 
         Split(edgeIndices, polygonIndices, nodes, a_criteria);
-        AssignTree(edgeIndices, polygonIndices, nodes);
+        AssignTree(polygonIndices, nodes);
       }
 
       void Clear()
@@ -154,8 +161,8 @@ namespace Dg
         m_nDataItems = 0;
       }
 
-      std::vector<Key> Query(Vector const &) const;
-      std::vector<Key> Query(Disk const &) const;
+      std::vector<Key> Query(DgVector const &) const;
+      std::vector<Key> Query(DgDisk const &) const;
       //std::vector<Key> Query(Capsule const &) const;
 
     private:
@@ -226,10 +233,6 @@ namespace Dg
               {
                 goto endLoop;
               }
-
-              //For ind == 1, write the value in the second element, for the case of border
-              //edges (only one adjacent polygon).
-              a_out.adjacentPolygons[ind] = polyInd;
               break;
             }
           }
@@ -239,46 +242,104 @@ namespace Dg
         return ind > 0;
       }
 
+      SplitData PartitionPolygons(std::vector<uint32_t> a_parentPolygons)
+      {
+        std::vector<DgVector> centroids;
+        for (auto p : a_parentPolygons)
+        {
+          DgPolygon polygon(GetPolygon(p));
+          centroids.push_back(polygon.Centroid());
+        }
+
+        SplitData data;
+
+        DgLine line = Dg::R2::LineOfBestFit(centroids.data(), centroids.size());
+        DgVector slope = line.Direction();
+        data.element = (abs(slope[0]) > abs(slope[1])) ? 0 : 1;
+        data.offset = line.Origin()[a_out.element];
+
+        for (auto p : a_parentPolygons)
+        {
+          bool isBelow = false;
+          bool isAbove = false;
+
+          for (uint32_t i = m_pPolygons[p].offset; 
+               i < m_pPolygons[p].offset + m_pPolygons[p].nEdges;
+               ++i)
+          {
+            if (m_pEdges[i].GetP0()[data.element] < data.offset)
+            {
+              isBelow = true;
+            }
+            else if (m_pEdges[i].GetP0()[data.element] > data.offset)
+            {
+              isAbove = true;
+            }
+          }
+
+          if (isBelow)
+          {
+            data.belowPolys.push_back(p);
+          }
+          if (isAbove)
+          {
+            data.abovePolys.push_back(p);
+          }
+        }
+
+        return data;
+      }
+
       void Split(std::vector<uint32_t> const & a_parentPolygons,
+                 std::vector<uint32_t> & a_polyList,
                  uint32_t a_parentIndex,
                  std::vector<Node> & a_output,
                  Criteria const & a_criteria)
       {
-        SplitData sdata;
-
-        PartitionPolygons(a_parentPolygons, adata);
+        SplitData sdata = PartitionPolygons(a_parentPolygons);
 
         bool validPartition = true;
-        validPartition &= (sdata.belowPolys.size() < a_parentPolygons.size() || sdata.abovePolys.size() < a_parentPolygons.size());
+        validPartition &= (sdata.belowPolys.size() < a_parentPolygons.size());
+        validPartition &= (sdata.abovePolys.size() < a_parentPolygons.size());
         //...other criteria here...
 
         if (validPartition)
         {
-          a_output[a_parentIndex].m_flags = 0;
+          a_output[a_parentIndex].flags = 0;
           a_output[a_parentIndex].branch.element = sdata.element;
           a_output[a_parentIndex].branch.offset = sdata.offset;
 
-          a_output[a_parentIndex].branch.child_BELOW = a_output.size();
+          uint32_t childBelowInd = a_output.size();
+          a_output[a_parentIndex].branch.child_BELOW = childBelowInd;
           a_output.push_back(Node());
-          Split(sdata.belowPolys, a_output[a_parentIndex].branch.child_BELOW, a_output, a_criteria);
+          Split(sdata.belowPolys, childBelowInd, a_output, a_criteria);
 
+          uint32_t childAboveInd = a_output.size();
           a_output[a_parentIndex].branch.child_ABOVE = a_output.size();
           a_output.push_back(Node());
-          Split(sdata.abovePolys, a_output[a_parentIndex].branch.child_ABOVE, a_output, a_criteria);
+          Split(sdata.abovePolys, childAboveInd, a_output, a_criteria);
         }
         else
         {
+          a_output[a_parentIndex].flags = Node::Leaf;
+          a_output[a_parentIndex].leaf.dataOffset = a_polylist.size();
+          a_output[a_parentIndex].leaf.nPolygons = a_parentPolygons.size();
 
+          a_polyList.insert(a_polyList.end(), a_parentPolygons.begin(), a_parentPolygons.end());
         }
       }
       
-      void AssignTree(std::vector<uint32_t> const & a_edgeIndices,
-                      std::vector<uint32_t> const & a_polygonIndices, 
-                      std::vector<Node> const & a_nodes );
+      void AssignTree(std::vector<uint32_t> const & a_polygonIndices, 
+                      std::vector<Node> const & a_nodes )
+      {
+        delete[] m_pNodes;
+        m_pNodes = new Node[a_nodes.size()];
+        for (size_t i = 0; i < a_nodes.size(); ++i) m_pNodes[i] = a_nodes[i];
 
-      uint32_t Parent(uint32_t a_ind, std::vector<Node> const & a_nodes) const;
-
-    private:
+        delete[] m_pData;
+        m_pData = new uint32_t[a_polygonIndices.size()];
+        for (size_t i = 0; i < a_polygonIndices.size(); ++i) m_pData[i] = a_polygonIndices[i];
+      }
 
       void Init(BSPTree const & a_other)
       {
@@ -313,7 +374,6 @@ namespace Dg
 
       // {Leaf data, Polygon data} where:
       // Leaf data: {polygonIndex0, polygonIndex1, ... }
-      // Polygon data: {edgeIndex0, edgeIndex1, ... }
       uint32_t *       m_pData; 
     };
   }
