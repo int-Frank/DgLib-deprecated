@@ -200,8 +200,6 @@ namespace Dg
       KeyList Query(DgVector const &) const;
       KeyList Query(DgDisk const &) const;
 
-      //DEBUG
-      //Returns false if the input path is too deep for the BSPTree.
       bool GetBranchData(std::vector<bool> const & a_path, NodeData & a_out)
       {
         uint32_t nodeInd = 0;
@@ -237,7 +235,7 @@ namespace Dg
         {
           uint32_t element = m_pNodes[nodeInd].branch.element;
           Real offset = m_pNodes[nodeInd].branch.offset;
-          //if (a_point[element] <= )
+          if (a_point[element] <= )
         }
       }
 

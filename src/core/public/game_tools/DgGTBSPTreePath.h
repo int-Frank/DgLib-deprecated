@@ -68,9 +68,9 @@ namespace Dg
           size_t aboveInd = a_out.size() - 1;
 
           a_out[a_ind].push_back(false);
-          a_out[aboveInd].push_back(true);
-
           OutputPath(pBelow, a_ind, a_out);
+
+          a_out[aboveInd].push_back(true);
           OutputPath(pAbove, aboveInd, a_out);
         }
         else if (pBelow)
