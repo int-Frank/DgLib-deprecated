@@ -15,10 +15,15 @@
 #include "DgR2Polygon.h"
 #include "DgR2Regression.h"
 
+//TODO Once subdividing returns the same polygon set, maybe subdivide like a 
+//     by just cutting the region in half.
+
 namespace Dg
 {
   namespace GT
   {
+    //Key must have a constructor such that Key(-1) constructs a key
+    //flagged as invalid. For integer types this is trivial.
     template<typename Real, typename Key>
     class BSPTree
     {
@@ -197,7 +202,7 @@ namespace Dg
         m_nDataItems = 0;
       }
 
-      KeyList Query(DgVector const &) const;
+      Key     Query(DgVector const &) const;
       KeyList Query(DgDisk const &) const;
 
       bool GetBranchData(std::vector<bool> const & a_path, NodeData & a_out)
@@ -248,6 +253,42 @@ namespace Dg
           if (key == a_target) return;
         }
         a_keys.push_back(a_target);
+      }
+
+      static inline void Exists(Key a_target, KeyList const & a_keys)
+      {
+        for (auto const & key : a_keys)
+        {
+          if (key == a_target) return true;
+        }
+        return false;
+      }
+
+      Key Query(DgVector const & a_point,
+                std::vector<uint32_t> const & a_polygons) const
+      {
+        Key result(-1);
+        for (uint32_t p : a_polygons)
+        {
+          bool isInside = true;
+          for (uint32_t e = m_pPolygons[p].offset,
+               e < m_pPolygons[p].offset + m_pPolygons[p].nEdges,
+               ++e)
+          {
+            DgVector v(a_point - m_pEdges[e].edge.Origin());
+            if (m_pEdges[e].edge.Direction().PerpDot(v) < static_cast<Real>(0))
+            {
+              isInside = false;
+              break;
+            }
+          }
+          if (isInside)
+          {
+            result = m_pPolygons[p].key;
+            break;
+          }
+        }
+        return result;
       }
 
       void DebugGetPolygons(DgVector const & a_point,
