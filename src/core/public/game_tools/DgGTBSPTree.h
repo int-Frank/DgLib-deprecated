@@ -81,7 +81,7 @@ namespace Dg
         Key      key;
         uint32_t offset;
         uint32_t nEdges;
-      };
+      }; 
 
       class Edge
       {
@@ -137,7 +137,7 @@ namespace Dg
       struct DebugQueryData
       {
         BSPTreePath       path;
-        std::vector<Key>  enclosingPolygons;
+        std::vector<Key>  intersectingPolygons;
       };
 
     public:
@@ -235,11 +235,10 @@ namespace Dg
       DebugQueryData DebugQuery(DgVector const & a_point) const
       {
         DebugQueryData data;
-        BSPTreePath path;
         std::vector<uint32_t> polyIndices;
-        DebugGetPolygons(a_point, 0, polyIndices, &path);
-
-
+        DebugGetPolygons(a_point, 0, polyIndices, &data.path);
+        data.intersectingPolygons.push_back(GetEnclosingPolygon(a_point, polyIndices));
+        return data;
       }
 
       //std::vector<Key> Query(Capsule const &) const;
@@ -264,8 +263,8 @@ namespace Dg
         return false;
       }
 
-      Key Query(DgVector const & a_point,
-                std::vector<uint32_t> const & a_polygons) const
+      Key GetEnclosingPolygon(DgVector const & a_point,
+                              std::vector<uint32_t> const & a_polygons) const
       {
         Key result(-1);
         for (uint32_t p : a_polygons)
@@ -428,6 +427,9 @@ namespace Dg
         DgLine line = Dg::R2::LineOfBestFit(centroids.data(), centroids.size());
         DgVector slope = line.Direction();
         data.element = (abs(slope[0]) > abs(slope[1])) ? 0 : 1;
+
+        //TODO Ensure the offset is balanced, ie that is has equal polygons either side
+        //            of the partition.
         data.offset = line.Origin()[a_out.element];
 
         for (auto p : a_parentPolygons)

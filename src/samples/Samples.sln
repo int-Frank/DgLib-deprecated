@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VQSDemo", "VQSDemo\VQSDemo.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExplodingObjects", "ExplodingObjects\ExplodingObjects.vcxproj", "{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BSPTree", "BSPTree\BSPTree.vcxproj", "{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -51,6 +53,14 @@ Global
 		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Release|Win32.Build.0 = Release|Win32
 		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Release|x64.ActiveCfg = Release|x64
 		{6DAE9DBB-61C9-42F2-8664-D7FC717FE5B5}.Release|x64.Build.0 = Release|x64
+		{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}.Debug|Win32.Build.0 = Debug|Win32
+		{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}.Debug|x64.ActiveCfg = Debug|x64
+		{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}.Debug|x64.Build.0 = Debug|x64
+		{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}.Release|Win32.ActiveCfg = Release|Win32
+		{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}.Release|Win32.Build.0 = Release|Win32
+		{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}.Release|x64.ActiveCfg = Release|x64
+		{80E70A37-F5BE-48CF-B02F-54722C4DB7DE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
