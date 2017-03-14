@@ -76,12 +76,6 @@ void Application::ShowMainGUIWindow()
   int     const   nSpacing        = 3;
   float   const   sliderOffset    = -90.0f;
 
-  //Statics for saving...
-  static int          save_currentItem = -1;
-  static int          save_lastItem = -2;
-  static char         save_buf[128] = {};
-  static std::string  save_finalFile;
-
   //Statics for opening...
   static int          open_currentItem = -1;
 
@@ -94,36 +88,9 @@ void Application::ShowMainGUIWindow()
   {
     if (ImGui::BeginMenu("File"))
     {
-      if (ImGui::MenuItem("New")) 
-      {
-        m_windowStack.push(Modal::NewProjectRequest);
-        if (m_appData.dirty)
-        {
-          m_windowStack.push(Modal::SavePrompt);
-        }
-      }
       if (ImGui::MenuItem("Open"))
       {
         m_windowStack.push(Modal::OpenWindow);
-        if (m_appData.dirty)
-        {
-          m_windowStack.push(Modal::SavePrompt);
-        }
-      }
-      if (ImGui::MenuItem("Save")) 
-      {
-        if (m_appData.projName == "")
-        {
-          m_windowStack.push(Modal::SaveAsWindow);
-        }
-        else
-        {
-          printf("'%s' saved from menu bar!\n", (m_projectPath + m_appData.projName).c_str());
-        }
-      }
-      if (ImGui::MenuItem("Save As.."))
-      {
-        m_windowStack.push(Modal::SaveAsWindow);
       }
       ImGui::Separator();
       if (ImGui::MenuItem("Quit", "Esc")) { m_shouldQuit = true; }
@@ -185,146 +152,6 @@ void Application::ShowMainGUIWindow()
     ImGui::EndPopup();
   }
 
-  //----------------------------------------------------------------------------------
-  //  New Project created info box
-  //----------------------------------------------------------------------------------
-  if (!m_windowStack.empty() && m_windowStack.top() == Modal::NewProjectRequest)
-  {
-    Event_NewProject e;
-    m_eventManager.PushEvent(e);
-    m_windowStack.pop();
-  }
-
-
-  //----------------------------------------------------------------------------------
-  //  Save Prompt
-  //----------------------------------------------------------------------------------
-  if (!m_windowStack.empty() && m_windowStack.top() == Modal::SavePrompt)
-  {
-    ImGui::OpenPopup("Save current Project?");
-  }
-  if (ImGui::BeginPopupModal("Save current Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-  {
-    bool finished = false;
-    if (ImGui::Button("Yes", ImVec2(80, 0)))
-    {
-      m_windowStack.pop();
-      m_windowStack.push(Modal::SaveAsWindow);
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("No", ImVec2(80, 0)))
-    {
-      m_windowStack.pop();
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::EndPopup();
-  }
-
-
-  //----------------------------------------------------------------------------------
-  //  Overwrite Prompt
-  //----------------------------------------------------------------------------------
-  if (!m_windowStack.empty() && m_windowStack.top() == Modal::OverwriteWindow)
-  {
-    ImGui::OpenPopup("Overwrite?");
-  }
-  if (ImGui::BeginPopupModal("Overwrite?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-  {
-    ImGui::Text("File already exists. Overwrite?");
-    if (ImGui::Button("Yes", ImVec2(80, 0)))
-    {
-      //Save...
-      m_appData.projName = std::string(save_buf);
-      Event_SaveProject e;
-      e.SetFileName(save_finalFile);
-      m_eventManager.PushEvent(e);
-
-      //Reset
-      memset(save_buf, 0, sizeof(save_buf) / sizeof(char));
-      save_lastItem = -2;
-      save_currentItem = -1;
-      m_windowStack.pop();
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("No", ImVec2(80, 0)))
-    {
-      m_windowStack.pop();
-      m_windowStack.push(Modal::SaveAsWindow);
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::EndPopup();
-  }
-
-
-  //----------------------------------------------------------------------------------
-  //  Save As Window
-  //----------------------------------------------------------------------------------
-  if (!m_windowStack.empty() && m_windowStack.top() == Modal::SaveAsWindow)
-  {
-    ImGui::OpenPopup("Save As..");
-  }
-  if (ImGui::BeginPopupModal("Save As..", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-  {
-    std::vector<std::string> files = GetProjects();
-
-    CreateFileList(files, "Files", &save_currentItem);
-
-    if (save_currentItem != save_lastItem && save_currentItem >= 0)
-    {
-      strcpy_s(save_buf, 128, files[save_currentItem].data());
-      save_lastItem = save_currentItem;
-    }
-    ImGui::InputText("File name", save_buf, 128);
-
-    bool shouldClose = false;
-    bool shouldReset = true;
-    if (ImGui::Button("Save", ImVec2(120, 0)))
-    {
-      save_finalFile = m_projectPath + std::string(save_buf);
-      std::string dotExt = std::string(".") + m_fileExt;
-      if (save_finalFile.rfind(dotExt) != save_finalFile.size() - 4)
-      {
-        save_finalFile += dotExt;
-      }
-      m_windowStack.pop();
-      shouldClose = true;
-      if (FileExists(save_finalFile))
-      {
-        m_windowStack.push(Modal::OverwriteWindow);
-        shouldReset = false;
-      }
-      else
-      {
-        //Save...
-        m_appData.projName = std::string(save_buf);
-        Event_SaveProject e;
-        e.SetFileName(save_finalFile);
-        m_eventManager.PushEvent(e);
-      }
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Cancel", ImVec2(120, 0)))
-    {
-      m_windowStack.pop();
-      shouldClose = true;
-    }
-
-    if (shouldClose)
-    {
-      if (shouldReset)
-      {
-        memset(save_buf, 0, sizeof(save_buf) / sizeof(save_buf[0]));
-        save_lastItem = -2;
-        save_currentItem = -1;
-      }
-
-      ImGui::CloseCurrentPopup();
-    }
-    ImGui::EndPopup();
-  }
-
 
   //----------------------------------------------------------------------------------
   //  Open Project Window
@@ -363,6 +190,42 @@ void Application::ShowMainGUIWindow()
     }
     ImGui::EndPopup();
   }
+
+  ImGui::Checkbox("Example UI", &UI::showExampleWindow);
+
+  ImColor const visButtonColors[2] = { ImColor(0.227f, 0.227f, 0.227f),
+                                       ImColor(0.361f, 0.714f, 0.498f) };
+  
+  ImGui::TextColored(headingClr, "Visualizer");
+  ImGui::PushStyleColor(ImGuiCol_Button, visButtonColors[m_appData.visType == E_Visualize_Node ? 1 : 0]);
+  ImGui::Button("Node", ImVec2(60, 25));
+  ImGui::SameLine();
+  ImGui::PopStyleColor(1);
+  ImGui::PushStyleColor(ImGuiCol_Button, visButtonColors[m_appData.visType == E_Visualize_Leaves ? 1 : 0]);
+  ImGui::Button("Leaves", ImVec2(60, 25));
+  ImGui::PopStyleColor(1);
+
+  ImGui::Separator();
+  ImGui::TextColored(headingClr, "Current Node");
+  
+  int depth = 6;
+  ImGui::Text("1-0-0-1-0-1");
+  ImGui::Text("Depth: %i", depth);
+
+  ImGui::Separator();
+  ImGui::TextColored(headingClr, "Tree traversal");
+  ImGui::Button("Root");
+  ImGui::Button("Parent");
+  ImGui::Button("Current");
+  ImGui::Button("Below");
+  ImGui::SameLine();
+  ImGui::Button("Above");
+
+  ImGui::Separator();
+  ImGui::TextColored(headingClr, "Query");
+
+  ImGui::Button("Clear path");
+
 
   ImGui::End();
 }

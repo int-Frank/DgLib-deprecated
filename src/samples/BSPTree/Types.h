@@ -3,6 +3,12 @@
 
 #include <string>
 
+enum Flags
+{
+  E_Visualize_Leaves = 0,
+  E_Visualize_Node = 1,
+};
+
 struct AppInfo
 {
   char title[128];
@@ -28,10 +34,10 @@ class AppData
 public:
 
   AppData()
-    : dirty(false)
+    : visType(E_Visualize_Node)
   {}
 
-  bool                  dirty;
-  std::string           projName;
+  int                 visType;
+  std::string         projName;
 };
 #endif

@@ -26,11 +26,9 @@ public:
   void PushEvent(Event const &);
 
   bool LoadProject(std::string const &);
-  bool SaveProject(std::string const &);
   void UpdateScroll(double);
   void KeyEvent(int key, int action);
   void ClearProject();
-  void NewProject();
 
   static Application * GetInstance() { return s_app; }
 private:
@@ -45,8 +43,8 @@ private:
   EventManager              m_eventManager;
 
   std::string const         m_configFileName = "config.ini";
-  std::string const         m_projectPath = "./projects/";
-  std::string const         m_fileExt = "txt";
+  std::string const         m_projectPath = "./maps/";
+  std::string const         m_fileExt = "cp";
 
   AppInfo		                m_info;
   GLFWwindow*               m_window;

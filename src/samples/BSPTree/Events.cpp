@@ -10,11 +10,6 @@ void Event_LoadProject::DoEvent()
   Application::GetInstance()->LoadProject(m_fileName);
 }
 
-void Event_SaveProject::DoEvent()
-{
-  Application::GetInstance()->SaveProject(m_fileName);
-}
-
 void Event_DeleteFile::DoEvent()
 {
   std::remove(m_fileName.c_str());
@@ -28,9 +23,4 @@ void Event_MouseScroll::DoEvent()
 void Event_KeyEvent::DoEvent()
 {
   Application::GetInstance()->KeyEvent(m_key, m_action);
-}
-
-void Event_NewProject::DoEvent()
-{
-  Application::GetInstance()->NewProject();
 }

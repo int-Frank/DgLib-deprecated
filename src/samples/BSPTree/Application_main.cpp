@@ -33,7 +33,7 @@ bool Application::Init()
 
   m_renderer.Init();
   ImGui_ImplGlfwGL3_Init(m_window, true);
-  NewProject();
+  ClearProject();
   return true;
 }
 
@@ -107,12 +107,6 @@ void Application::Shutdown()
 void Application::ClearProject()
 {
   m_appData.projName.clear();
-}
-
-void Application::NewProject()
-{
-  printf("New project created!\n");
-  ClearProject();
 }
 
 void Application::PushEvent(Event const & a_event)

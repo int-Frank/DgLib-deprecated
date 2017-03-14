@@ -41,7 +41,6 @@ bool Application::LoadProject(std::string const & a_file)
 
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);
-  m_appData.dirty = false;
 
   return true;
 }
@@ -56,20 +55,4 @@ static std::string ToString(T const * a_data, int a_size)
     if (i != a_size - 1) ss << ',';
   }
   return ss.str();
-}
-
-bool Application::SaveProject(std::string const & a_file)
-{
-  std::ofstream fs;
-  fs.open(a_file);
-  if (!fs.good())
-  {
-    printf("Failed to open file '%s'!\n", a_file.c_str());
-    return false;
-  }
-
-  printf("'%s' saved!\n", a_file.c_str());
-  UpdateProjectTitle(a_file);
-  m_appData.dirty = false;
-  return true;
 }
