@@ -214,18 +214,32 @@ void Application::ShowMainGUIWindow()
 
   ImGui::Separator();
   ImGui::TextColored(headingClr, "Tree traversal");
-  ImGui::Button("Root");
-  ImGui::Button("Parent");
-  ImGui::Button("Current");
-  ImGui::Button("Below");
-  ImGui::SameLine();
-  ImGui::Button("Above");
+  
 
+  int spacing = 2;
+
+  for (int i = 0; i < spacing; ++i) ImGui::Spacing();
+  ImGui::Indent(60.0f);
+  ImGui::Button("Root", ImVec2(60, 23));
+  for (int i = 0; i < spacing; ++i) ImGui::Spacing();
+  ImGui::Button("Parent", ImVec2(60, 23));
+  for (int i = 0; i < spacing; ++i) ImGui::Spacing();
+  ImGui::Button("Current", ImVec2(60, 23));
+  for (int i = 0; i < spacing; ++i) ImGui::Spacing();
+  ImGui::Unindent(60.0f);
+  ImGui::Indent(20.0f);
+  ImGui::Button("Below", ImVec2(50, 23));
+  ImGui::SameLine();
+  ImGui::Indent(90.0f);
+  ImGui::Button("Above", ImVec2(50, 23));
+  ImGui::Unindent(110.0f);
+  for (int i = 0; i < spacing; ++i) ImGui::Spacing();
   ImGui::Separator();
   ImGui::TextColored(headingClr, "Query");
 
   ImGui::Button("Clear path");
-
-
+  ImGui::SliderFloat("Radius", &m_appData.objectRadius, 0.0f, 100.0f);
+  char const *  objects[] = { "Point", "Circle", "Capsule" };
+  ImGui::ListBox("Object", &m_appData.objectType, objects, 3, 4);
   ImGui::End();
 }
