@@ -8,7 +8,48 @@
 #include "Application.h"
 #include "DgStringFunctions.h"
 
-#define ARRAY_SIZE(arr) (int)((sizeof(arr))/(sizeof(*arr)))
+
+static void RecenterData(std::vector<Vector> & a_points)
+{
+  if (a_points.size() == 0) return;
+
+  Vector centroidVector(Vector::ZeroVector());
+  for (auto const & p : a_points)
+  {
+    centroidVector += Vector(p.x(), p.y(), 0.0f);
+  }
+
+  centroidVector /= float(a_points.size());
+
+  for (auto & p : a_points)
+  {
+    p -= centroidVector;
+  }
+}
+
+static void NormalizeData(std::vector<Vector> & a_points)
+{
+  RecenterData(a_points);
+
+  float currentMax = 0.f;
+  for (auto const & p : a_points)
+  {
+    for (int i = 0; i < 2; ++i)
+    {
+      if (abs(p[i]) > currentMax) currentMax = p[i];
+    }
+  }
+
+  if (currentMax != 0.f)
+  {
+    float scaleFactor = 0.5f / currentMax;
+    for (auto & v : a_points)
+    {
+      v.x() *= scaleFactor;
+      v.y() *= scaleFactor;
+    }
+  }
+}
 
 void Application::UpdateProjectTitle(std::string const & a_name)
 {
@@ -71,7 +112,7 @@ bool Application::LoadProject(std::string const & a_file)
     }
   }
 
-  //NormalizeData(v_list);
+  NormalizeData(data.points);
 
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);
