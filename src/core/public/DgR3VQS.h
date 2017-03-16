@@ -566,9 +566,9 @@ namespace Dg
     template<typename Real>
     VQS<Real> VQS<Real>::operator*(VQS<Real> const & a_rhs) const
     {
-      return VQS(a_rhs.m_q.Rotate(m_v)*a_rhs.m_s + a_rhs.m_v
-        , m_q * a_rhs.m_q
-        , m_s * a_rhs.m_s);
+      return VQS(a_rhs.m_q.Rotate(m_v)*a_rhs.m_s + a_rhs.m_v,
+                 m_q * a_rhs.m_q,
+                 m_s * a_rhs.m_s);
     }	//End: VQS<Real>::operator*()
 
 

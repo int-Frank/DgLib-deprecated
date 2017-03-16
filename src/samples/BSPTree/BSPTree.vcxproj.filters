@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{29ca6ca0-b7e1-445a-a4a6-ebfc224604a0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{b5eff16d-8caa-44c2-8835-a6629900e577}</UniqueIdentifier>
     </Filter>
@@ -100,12 +97,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="fs.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="vs.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="config.ini">
       <Filter>Resource Files</Filter>
     </None>

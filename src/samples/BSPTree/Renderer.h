@@ -12,19 +12,13 @@ class Renderer
 public:
   Renderer(){}
 
-  bool Init();
-  void Update();
-  void Render();
-  void ShutDown();
+  void Begin();
+  void End();
+
+  void DrawSegment(Segment const &, Vector const & color);
+  void DrawPolygon(Polygon const &, Vector const & color);
 
 private:
-  GLuint CompileShaders(char const * vs, char const * fs);
-  GLuint LoadShaderFromFile(std::string, GLenum shaderType);
-
-private:
-  GLuint              m_vao;
-  GLuint              m_buffer[2];
-  GLuint              m_shaderProgram;
 };
 
 #endif

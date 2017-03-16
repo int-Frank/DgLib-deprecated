@@ -2,6 +2,12 @@
 #define TYPES_H
 
 #include <string>
+#include "DgR2Segment.h"
+#include "DgR2Polygon.h"
+
+typedef Dg::R2::Vector<float>   Vector;
+typedef Dg::R2::Segment<float>  Segment;
+typedef Dg::R2::Polygon<float>  Polygon;
 
 enum Flags
 {

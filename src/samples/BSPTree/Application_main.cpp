@@ -18,7 +18,6 @@ Application::Application()
   , m_shouldQuit(false)
   , m_mouseScroll(0.0)
 {
-  m_IDManager.Init(256, 0x7FFFFFFF);
   s_app = this;
 }
 
@@ -31,9 +30,12 @@ bool Application::Init()
     return false;
   }
 
-  m_renderer.Init();
   ImGui_ImplGlfwGL3_Init(m_window, true);
   ClearProject();
+
+  //DEBUG
+  LoadProject("./maps/map_01.cp");
+
   return true;
 }
 
@@ -101,7 +103,6 @@ bool Application::InitGL()
 
 void Application::Shutdown()
 {
-  m_renderer.ShutDown();
 }
 
 void Application::ClearProject()
@@ -167,7 +168,9 @@ void Application::DoLogic(double a_dt)
 
 void Application::Render()
 {
-  m_renderer.Render();
+  m_renderer.Begin();
+
+  m_renderer.End();
 }
 
 std::vector<std::string> Application::GetProjects()
@@ -309,14 +312,6 @@ void Application::UI_NewFrame()
     //ImGuiID id = ImGui::GetID("##Title");
     ImVec2 size = ImGui::GetItemRectSize();
     ImGui::SetWindowPos(ImVec2(((float)winWidth - size.x) / 2.0f, indent));
-    ImGui::End();
-  }
-
-  //FPS
-  if (UI::showMetrics)
-  {
-    ImGui::Begin("Stats", nullptr);
-    ImGui::Text("FPS %.1f", ImGui::GetIO().Framerate);
     ImGui::End();
   }
 

@@ -183,6 +183,12 @@ namespace Dg
     //! Scalar multiplication
     friend Matrix operator*<M, N, Real> (Real, Matrix const &);
 
+    //! Element-wise product
+    Matrix ElementwiseProduct(Matrix const &) const;
+
+    //! Element-wise product, asign to self
+    Matrix & ElementwiseProductSelf(Matrix const &);
+
     //! Get pointer to internal data
     Real * GetData() { return &m_V[0]; }
 
@@ -771,6 +777,40 @@ namespace Dg
     return *this;
 
   }   // End: Matrix::operator*()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Matrix::ElementwiseProduct()
+  //-------------------------------------------------------------------------------
+  template<size_t M, size_t N, typename Real>
+  Matrix<M, N, Real> Matrix<M, N, Real>::ElementwiseProduct(Matrix<M, N, Real> const & a_other) const
+  {
+    Matrix<M, N, Real> result;
+    
+    for (size_t i = 0; i < M * N; ++i)
+    {
+      result.m_V[i] = m_V[i] * a_other.m_V[i];
+    }
+
+    return result;
+
+  }   // End: Matrix::ElementwiseProduct()
+
+
+  //-------------------------------------------------------------------------------
+  //	@	Matrix::ElementwiseProductSelf()
+  //-------------------------------------------------------------------------------
+  template<size_t M, size_t N, typename Real>
+  Matrix<M, N, Real> & Matrix<M, N, Real>::ElementwiseProductSelf(Matrix<M, N, Real> const & a_other)
+  {
+    for (size_t i = 0; i < M * N; ++i)
+    {
+      m_V[i] *= a_other.m_V[i];
+    }
+
+    return *this;
+
+  }   // End: Matrix::ElementwiseProductSelf()
 
 
   //-------------------------------------------------------------------------------

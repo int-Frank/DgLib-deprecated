@@ -8,8 +8,10 @@
 #include <stack>
 
 #include "Renderer.h"
-#include "DgIDManager.h"
 #include "EventManager.h"
+#include "game_tools/DgGTBSPTree.h"
+
+typedef Dg::GT::BSPTree<float, int> BSPTree;
 
 class Application
 {
@@ -52,7 +54,7 @@ private:
 
   double                    m_mouseScroll;
 
-  Dg::IDManager<int>        m_IDManager;
+  BSPTree                   m_bspTree;
 
   bool                      m_shouldQuit;
 

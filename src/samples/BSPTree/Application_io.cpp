@@ -1,5 +1,6 @@
 
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <stdlib.h>
@@ -38,6 +39,39 @@ bool Application::LoadProject(std::string const & a_file)
     printf("Failed to open file '%s'!\n", a_file.c_str());
     return false;
   }
+
+  BSPTree::DataInput data;
+  int key = 0;
+
+  std::string word;
+
+  while (fs >> word)
+  {
+    if (word == "v")
+    {
+      float vx = 0.0f;
+      float vy = 0.0f;
+      fs >> vx >> vy;
+      data.points.push_back(Vector(vx, vy, 1.f));
+      fs.ignore(2048, '\n');
+    }
+    else if (word == "p")
+    {
+      std::vector<size_t> polygon;
+      std::string str;
+      getline(fs, str);
+      std::istringstream ss(str);
+      size_t num;
+      while (ss >> num)
+      {
+        polygon.push_back(num);
+      }
+      data.polygons.insert(std::pair<int, std::vector<size_t>>(key, polygon));
+      ++key;
+    }
+  }
+
+  //NormalizeData(v_list);
 
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);
