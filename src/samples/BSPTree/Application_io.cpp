@@ -4,50 +4,55 @@
 #include <vector>
 #include <string>
 #include <stdlib.h>
+#include <limits>
 
 #include "Application.h"
 #include "DgStringFunctions.h"
 
 
-static void RecenterData(std::vector<Vector> & a_points)
+static AABB GetAABB(std::vector<Vector> & a_points)
 {
-  if (a_points.size() == 0) return;
+  float minx = std::numeric_limits<float>::max();
+  float maxx = -std::numeric_limits<float>::max();
+  float miny = std::numeric_limits<float>::max();
+  float maxy = -std::numeric_limits<float>::max();
 
-  Vector centroidVector(Vector::ZeroVector());
   for (auto const & p : a_points)
   {
-    centroidVector += Vector(p.x(), p.y(), 0.0f);
+    if      (p.x() < minx)  minx = p.x();
+    else if (p.x() > maxx)  maxx = p.x();
+
+    if      (p.y() < miny)  miny = p.y();
+    else if (p.y() > maxy)  maxy = p.y();
   }
 
-  centroidVector /= float(a_points.size());
+  float hl[2] = { (maxx - minx) / 2.0f,
+                  (maxy - miny) / 2.0f };
 
-  for (auto & p : a_points)
-  {
-    p -= centroidVector;
-  }
+  Vector center(minx + hl[0], miny + hl[1], 1.0f);
+
+  return AABB(center, hl);
 }
+
 
 static void NormalizeData(std::vector<Vector> & a_points)
 {
-  RecenterData(a_points);
-
-  float currentMax = 0.f;
-  for (auto const & p : a_points)
+  AABB aabb = GetAABB(a_points);
+  Vector offset(-aabb.GetCenter().x(), -aabb.GetCenter().y(), 0.0f);
+  for (auto & p : a_points)
   {
-    for (int i = 0; i < 2; ++i)
-    {
-      if (abs(p[i]) > currentMax) currentMax = p[i];
-    }
+    p += offset;
   }
 
-  if (currentMax != 0.f)
+  float hl[2] = {};
+  aabb.GetHalfLengths(hl);
+  float max_hl = (hl[0] > hl[1]) ? hl[0] : hl[1];
+
+  float scaleFactor = 0.5f / max_hl;
+  for (auto & p : a_points)
   {
-    float scaleFactor = 0.5f / currentMax;
-    for (auto & v : a_points)
-    {
-      v.x() *= scaleFactor;
-      v.y() *= scaleFactor;
-    }
+    p.x() *= scaleFactor;
+    p.y() *= scaleFactor;
   }
 }
 
@@ -113,6 +118,20 @@ bool Application::LoadProject(std::string const & a_file)
   }
 
   NormalizeData(data.points);
+  AABB aabb = GetAABB(data.points);
+
+  m_polygons.clear();
+  for (auto const & kv : data.polygons)
+  {
+    Polygon poly;
+    for (auto i : kv.second)
+    {
+      poly.push_back(data.points[i]);
+    }
+    m_polygons.insert(std::pair<int, Polygon>(kv.first, poly));
+  }
+
+
 
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);

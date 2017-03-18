@@ -538,6 +538,9 @@ namespace Dg
   template<typename T>
   ListCircular<T>::ListCircular(ListCircular const & other)
     : ContainerBase(other)
+    , m_pData(nullptr)
+    , m_pNextFree(nullptr)
+    , m_pHead(nullptr)
   {
     init(other.pool_size());
 

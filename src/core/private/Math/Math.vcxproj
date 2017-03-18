@@ -154,6 +154,7 @@
     <ClInclude Include="..\..\public\DgR2Regression.h" />
     <ClInclude Include="..\..\public\DgR2Triangle.h" />
     <ClInclude Include="..\..\public\DgR2Vector_ancillary.h" />
+    <ClInclude Include="..\..\public\DgR3AABB.h" />
     <ClInclude Include="..\..\public\DgR3Frustum.h" />
     <ClInclude Include="..\..\public\DgR3Line.h" />
     <ClInclude Include="..\..\public\DgMath.h" />

@@ -5,13 +5,13 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <vector>
+#include <map>
 #include <stack>
 
 #include "Renderer.h"
 #include "EventManager.h"
 #include "game_tools/DgGTBSPTree.h"
 
-typedef Dg::GT::BSPTree<float, int> BSPTree;
 
 class Application
 {
@@ -55,6 +55,7 @@ private:
   double                    m_mouseScroll;
 
   BSPTree                   m_bspTree;
+  std::map<int, Polygon>    m_polygons;
 
   bool                      m_shouldQuit;
 

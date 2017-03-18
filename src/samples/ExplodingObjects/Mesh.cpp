@@ -3,54 +3,68 @@
 #include <fstream>
 
 #include "Mesh.h"
+#include "DgR3AABB.h"
+
+typedef Dg::R3::AABB<float> AABB;
 
 
-static void RecenterData(std::vector<vec4> & a_points)
+static AABB GetAABB(std::vector<vec4> & a_points)
 {
-  if (a_points.size() == 0) return;
+  float minx = std::numeric_limits<float>::max();
+  float maxx = -std::numeric_limits<float>::max();
+  float miny = std::numeric_limits<float>::max();
+  float maxy = -std::numeric_limits<float>::max();
+  float minz = std::numeric_limits<float>::max();
+  float maxz = -std::numeric_limits<float>::max();
 
-  vec4 centroid(vec4::ZeroVector());
-  for (auto const & v : a_points)
+  for (auto const & p : a_points)
   {
-    centroid += v;
+    if (p.x() < minx)  minx = p.x();
+    else if (p.x() > maxx)  maxx = p.x();
+
+    if (p.y() < miny)  miny = p.y();
+    else if (p.y() > maxy)  maxy = p.y();
+
+    if (p.z() < minz)  minz = p.z();
+    else if (p.z() > maxz)  maxz = p.z();
   }
 
-  centroid /= float(a_points.size());
-  centroid.w() = 1.f;
+  float hl[3] = { (maxx - minx) / 2.0f,
+                  (maxy - miny) / 2.0f, 
+                  (maxz - minz) / 2.0f };
 
-  vec4 moveVector = vec4::Origin() - centroid;
+  vec4 center(minx + hl[0], 
+              miny + hl[1],
+              minz + hl[2], 
+              1.0f);
 
-  for (auto it = a_points.begin();
-    it != a_points.end();
-    ++it)
-  {
-    *it += moveVector;
-  }
+  return AABB(center, hl);
 }
+
 
 static void NormalizeData(std::vector<vec4> & a_points)
 {
-  RecenterData(a_points);
-
-  float currentMax = 0.f;
-  for (auto const & v : a_points)
+  AABB aabb = GetAABB(a_points);
+  vec4 offset(-aabb.GetCenter().x(), 
+              -aabb.GetCenter().y(),
+              -aabb.GetCenter().z(), 
+              0.0f);
+  for (auto & p : a_points)
   {
-    for (int i = 0; i < 3; ++i)
-    {
-      if (abs(v[i]) > currentMax) currentMax = v[i];
-    }
+    p += offset;
   }
 
-  if (currentMax != 0.f)
+  float hl[3] = {};
+  aabb.GetHalfLengths(hl);
+  float max_hl = (hl[0] > hl[1]) ? hl[0] : hl[1];
+  if (hl[2] > max_hl) max_hl = hl[2];
+
+  float scaleFactor = 0.5f / max_hl;
+  for (auto & p : a_points)
   {
-    float scaleFactor = 0.5f / currentMax;
-    for (auto & v : a_points)
-    {
-      for (int i = 0; i < 3; ++i)
-      {
-        v[i] *= scaleFactor;
-      }
-    }
+    p.x() *= scaleFactor;
+    p.y() *= scaleFactor;
+    p.z() *= scaleFactor;
   }
 }
 

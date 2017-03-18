@@ -10,7 +10,9 @@
 class Renderer
 {
 public:
-  Renderer(){}
+  Renderer();
+
+  void SetMatrix(Matrix const &);
 
   void Begin();
   void End();
@@ -19,6 +21,8 @@ public:
   void DrawPolygon(Polygon const &, Vector const & color);
 
 private:
+
+  Matrix m_T;
 };
 
 #endif

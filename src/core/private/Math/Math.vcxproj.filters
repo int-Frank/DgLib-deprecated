@@ -311,5 +311,8 @@
     <ClInclude Include="..\..\public\impl\DgQuerySegmentHypersphere.h">
       <Filter>Public Headers\impl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgR3AABB.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

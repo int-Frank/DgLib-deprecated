@@ -168,6 +168,11 @@ void Application::DoLogic(double a_dt)
 
 void Application::Render()
 {
+  int winWidth(0), winHeight(0);
+  glfwGetWindowSize(m_window, &winWidth, &winHeight);
+
+
+
   m_renderer.Begin();
 
   m_renderer.End();
