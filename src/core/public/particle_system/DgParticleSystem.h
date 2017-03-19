@@ -266,7 +266,7 @@ namespace Dg
   template<typename Real>
   void ParticleSystem<Real>::StartAllEmitters()
   {
-    for (int i = 0; i < m_emitters.size(); ++i)
+    for (int i = 0; i < m_emitters.size(); i++)
     {
       m_emitters[i]->Start();
     }
@@ -279,7 +279,7 @@ namespace Dg
   template<typename Real>
   void ParticleSystem<Real>::StopAllEmitters()
   {
-    for (int i = 0; i < m_emitters.size(); ++i)
+    for (int i = 0; i < m_emitters.size(); i++)
     {
       m_emitters[i]->Stop();
     }
@@ -305,7 +305,7 @@ namespace Dg
   void ParticleSystem<Real>::Update(Real a_dt)
   {
     //Update all particles
-    for (int i = 0; i < m_updaters.size(); ++i)
+    for (int i = 0; i < m_updaters.size(); i++)
     {
       m_updaters[i]->Update(m_particleData, 0,  a_dt);
     }
@@ -313,7 +313,7 @@ namespace Dg
     //Emit new particles, keep tally of particles emitted
     //from the various emitters
     int nNewParticles = 0;
-    for (int i = 0; i < m_emitters.size(); ++i)
+    for (int i = 0; i < m_emitters.size(); i++)
     {
       nNewParticles += m_emitters[i]->EmitParticles(m_particleData, a_dt);
     }
@@ -323,7 +323,7 @@ namespace Dg
     int startIndex = m_particleData.GetCountAlive() - nNewParticles;
     if (nNewParticles)
     {
-      for (int u = 0; u < m_updaters.size(); ++u)
+      for (int u = 0; u < m_updaters.size(); u++)
       {
         m_updaters[u]->UpdateNew(m_particleData, startIndex, a_dt);
       }

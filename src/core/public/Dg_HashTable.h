@@ -584,7 +584,7 @@ namespace Dg
     //! Returns HashTable::end() if the HashTable is empty.
     iterator begin()
     {
-      for (size_t i = 0; i < bucket_count(); ++i)
+      for (size_t i = 0; i < bucket_count(); i++)
       {
         if (m_pBuckets[i].pBegin)
         {
@@ -598,7 +598,7 @@ namespace Dg
     //! Returns HashTable::cend() if the HashTable is empty.
     const_iterator cbegin() const
     {
-      for (size_t i = 0; i < bucket_count(); ++i)
+      for (size_t i = 0; i < bucket_count(); i++)
       {
         if (m_pBuckets[i].pBegin)
         {
@@ -715,7 +715,7 @@ namespace Dg
           *it.~T();
         }
       }
-      for (size_t i = 0; i < pool_size() - 1; ++i)
+      for (size_t i = 0; i < pool_size() - 1; i++)
       {
         m_pNodes[i].pNext = &m_pNodes[i + 1];
       }
@@ -937,7 +937,7 @@ namespace Dg
     {
       size_t total(0);
 
-      for (size_t i = 0; i < bucket_count(); ++i)
+      for (size_t i = 0; i < bucket_count(); i++)
       {
         Node * n = m_pBuckets[i].pBegin;
         while (n)
@@ -962,7 +962,7 @@ namespace Dg
     friend std::ostream & operator<<(std::ostream & os
                                    , HashTable<K, T> const & ht) 
     {
-      for (size_t i = 0; i < ht.bucket_count(); ++i)
+      for (size_t i = 0; i < ht.bucket_count(); i++)
       {
         os << i << ": ";
         Node * n = ht.m_pBuckets[i].pBegin;
@@ -990,7 +990,7 @@ namespace Dg
       size_t newBucketCount = impl::validBucketCounts[newBucketCountIndex];
       Bucket * newBuckets = static_cast<Bucket*>(calloc(newBucketCount, sizeof(Bucket*)));
       DG_ASSERT(newBuckets != nullptr);
-      for (size_t bucket = 0; bucket < bucket_count(); ++bucket)
+      for (size_t bucket = 0; bucket < bucket_count(); bucket++)
       {
         Node * in = m_pBuckets[bucket].pBegin;
         while (in)
@@ -1037,7 +1037,7 @@ namespace Dg
       //Reset node pointers
       if (m_pNodes != pOldNodes)
       {
-        for (size_t i = 0; i < bucket_count(); ++i)
+        for (size_t i = 0; i < bucket_count(); i++)
         {
           if (m_pBuckets[i].pBegin)
           {
@@ -1070,7 +1070,7 @@ namespace Dg
         freeTail = freeTail->pNext;
       }
 
-      for (size_t i = oldPoolSize; i < pool_size(); ++i)
+      for (size_t i = oldPoolSize; i < pool_size(); i++)
       {
         freeTail->pNext = &m_pNodes[i];
         freeTail = freeTail->pNext;
@@ -1154,7 +1154,7 @@ namespace Dg
     int GetBucketCountIndex(size_t a_bucketCount)
     {
       int result = ARRAY_SIZE(impl::validBucketCounts) - 1;
-      for (int i = 0; i < ARRAY_SIZE(impl::validBucketCounts); ++i)
+      for (int i = 0; i < ARRAY_SIZE(impl::validBucketCounts); i++)
       {
         if (a_bucketCount <= impl::validBucketCounts[i])
         {
@@ -1181,7 +1181,7 @@ namespace Dg
     {
       //Delete current items
       iterator it = begin();
-      for (it; it != end(); ++it)
+      for (it; it != end(); it++)
       {
         if (!std::is_trivially_destructible<T>::value)
         {
@@ -1210,7 +1210,7 @@ namespace Dg
       {
         m_pNodes = static_cast<Node*>(malloc(pool_size() * sizeof(Node)));
         DG_ASSERT(m_pNodes != nullptr);
-        for (size_t i = 0; i < pool_size() - 1; ++i)
+        for (size_t i = 0; i < pool_size() - 1; i++)
         {
           m_pNodes[i].pNext = &m_pNodes[i + 1];
         }
@@ -1309,7 +1309,7 @@ namespace Dg
       }
 
       //Copy in from other
-      for (size_t bi = 0; bi < a_other.bucket_count(); ++bi)
+      for (size_t bi = 0; bi < a_other.bucket_count(); bi++)
       {
         Node const * that_node(a_other.m_pBuckets[bi].pBegin);
         if (that_node)

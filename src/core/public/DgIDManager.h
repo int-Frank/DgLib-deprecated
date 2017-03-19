@@ -201,7 +201,7 @@ namespace Dg
 
     list<Interval>::iterator it = m_intervals.begin();
     bool found = false;
-    for (it; it != m_intervals.end(); ++it)
+    for (it; it != m_intervals.end(); it++)
     {
       if (a_val <= it->m_upper)
       {
@@ -270,7 +270,7 @@ namespace Dg
   {
     list<Interval>::iterator it = m_intervals.begin();
     bool good = false;
-    for (it; it != m_intervals.end(); ++it)
+    for (it; it != m_intervals.end(); it++)
     {
       if (a_val <= it->m_upper)
       {
@@ -314,7 +314,7 @@ namespace Dg
     }
 
     list<Interval>::const_iterator it = m_intervals.cbegin();
-    for (it; it != m_intervals.cend(); ++it)
+    for (it; it != m_intervals.cend(); it++)
     {
       if (a_val <= it->m_upper)
       {

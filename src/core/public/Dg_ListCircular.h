@@ -308,7 +308,7 @@ namespace Dg
         pForward = m_pHead->pNext;
       }
 
-      for (size_t i = 0; i < size() / 2; ++i)
+      for (size_t i = 0; i < size() / 2; i++)
       {
         T temp = pBack->GetData();
         pBack->InitData(pForward->GetData());
@@ -546,7 +546,7 @@ namespace Dg
 
     //Assign m_pData
     ListCircular<T>::const_iterator it = other.chead();
-    for (size_t i = 0; i < other.size(); ++i, ++it)
+    for (size_t i = 0; i < other.size(); i++, it++)
     {
       push_back(*it);
     }
@@ -567,7 +567,7 @@ namespace Dg
 
     //Assign m_pData
     ListCircular<T>::const_iterator it = other.chead();
-    for (size_t i = 0; i < other.size(); ++i, ++it)
+    for (size_t i = 0; i < other.size(); i++, it++)
     {
       push_back(*it);
     }
@@ -681,7 +681,7 @@ namespace Dg
   void ListCircular<T>::DestructAll()
   {
     ListCircular<T>::iterator it = head();
-    for (size_t i = 0; i < size(); ++i, ++it)
+    for (size_t i = 0; i < size(); i++, it++)
     {
       it.m_pNode->DestructData();
     }
@@ -703,7 +703,7 @@ namespace Dg
     m_pData = static_cast<Node *>(realloc(m_pData, (pool_size()) * sizeof(Node)));
     DG_ASSERT(m_pData != nullptr);
 
-    for (size_t i = 0; i < oldSize; ++i)
+    for (size_t i = 0; i < oldSize; i++)
     {
       m_pData[i].Prev(&m_pData[m_pData[i].Prev() - pOldData]);
       m_pData[i].Next(&m_pData[m_pData[i].Next() - pOldData]);
@@ -712,7 +712,7 @@ namespace Dg
     m_pHead = &m_pData[0];
     m_pNextFree = &m_pData[oldSize];
 
-    for (size_t i = oldSize; i < pool_size() - 1; ++i)
+    for (size_t i = oldSize; i < pool_size() - 1; i++)
     {
       m_pData[i].Next(&m_pData[i + 1]);
     }

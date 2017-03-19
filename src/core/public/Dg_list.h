@@ -573,7 +573,7 @@ namespace Dg
 
 	  //Assign m_pData
 	  list<T>::const_iterator it = other.cbegin();
-	  for (it; it != other.cend(); ++it)
+	  for (it; it != other.cend(); it++)
 	  {
 		  push_back(*it);
 	  }
@@ -594,7 +594,7 @@ namespace Dg
 
 	  //Assign m_pData
 	  list<T>::const_iterator it = other.cbegin();
-	  for (it; it != other.cend(); ++it)
+	  for (it; it != other.cend(); it++)
 	  {
 		  push_back(*it);
 	  }
@@ -721,7 +721,7 @@ namespace Dg
   template<typename T>
   void list<T>::DestructAll()
   {
-    for (iterator it = begin(); it != end(); ++it)
+    for (iterator it = begin(); it != end(); it++)
     {
       it.m_pNode->DestructData();
     } 
@@ -744,7 +744,7 @@ namespace Dg
     m_pData = static_cast<Node *>(realloc(m_pData, (pool_size() + 1) * sizeof(Node)));
     DG_ASSERT(m_pData != nullptr);
 
-    for (size_t i = 0; i < oldSize; ++i)
+    for (size_t i = 0; i < oldSize; i++)
     {
       m_pData[i].Prev(&m_pData[m_pData[i].Prev() - pOldData]);
       m_pData[i].Next(&m_pData[m_pData[i].Next() - pOldData]);
@@ -813,7 +813,7 @@ namespace Dg
       if (*first==val) 
 		    return first;
 
-      ++first;
+      first++;
     }
 
     return last;
@@ -840,7 +840,7 @@ namespace Dg
       if (*first==val) 
 		    return first;
 
-      ++first;
+      first++;
     }
 
     return last;

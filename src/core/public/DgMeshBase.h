@@ -198,7 +198,7 @@ namespace Dg
       size_t boundaryEdges = 0;
       for (auto eit = edges_begin();
            eit != edges_end();
-           ++eit)
+           eit++)
       {
         if (IsBoundary(*eit)) boundaryEdges++;
       }
@@ -266,9 +266,9 @@ namespace Dg
       vHandle_3 fvh1 = Vertices(a_h1);
       if (byVertex)
       {
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; i++)
         {
-          for (int j = 0; j < 3; ++j)
+          for (int j = 0; j < 3; j++)
           {
             if (fvh0[i] == fvh1[j]) return true;
           }
@@ -279,9 +279,9 @@ namespace Dg
       eHandle_3 feh1 = Edges(a_h1);
       if (byEdge)
       {
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; i++)
         {
-          for (int j = 0; j < 3; ++j)
+          for (int j = 0; j < 3; j++)
           {
             if (feh0[i] == feh1[j]) return true;
           }
@@ -312,7 +312,7 @@ namespace Dg
     bool HasVertex(fHandle a_fh, vHandle a_vh) const
     {
       vHandle_3 fvh = Vertices(a_fh);
-      for (int i = 0; i < 3; ++i)
+      for (int i = 0; i < 3; i++)
       {
         if (fvh[i] == a_vh) return true;
       }
@@ -322,7 +322,7 @@ namespace Dg
     bool HasEdge(fHandle a_fh, eHandle a_eh) const
     {
       eHandle_3 feh = Edges(a_fh);
-      for (int i = 0; i < 3; ++i)
+      for (int i = 0; i < 3; i++)
       {
         if (feh[i] == a_eh) return true;
       }

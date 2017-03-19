@@ -50,7 +50,7 @@ namespace Dg
     {
       Result result;
       result.code = QueryCode::CompletelyInside;
-      for (int i = 0; i < 6; ++i)
+      for (int i = 0; i < 6; i++)
       {
         Real dist = a_fdata.planes[i].SignedDistance(a_sphere.Center());
         if (dist <= -a_sphere.Radius())

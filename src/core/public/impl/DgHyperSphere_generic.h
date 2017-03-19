@@ -197,7 +197,7 @@ namespace Dg
         RNG rng;
         do
         {
-          for (int i = 0; i < R; ++i)
+          for (int i = 0; i < R; i++)
           {
             result[i] = rng.GetUniform(m_origin[i] - m_radius, m_origin[i] + m_radius);
           }

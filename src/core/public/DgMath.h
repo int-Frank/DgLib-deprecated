@@ -81,7 +81,7 @@ namespace Dg
   {
     static_assert(impl::IsIntType<T>::value, "Can only reverse bits of int types.");
     T result(0);
-    for (int i = 0; i < sizeof(T); ++i)
+    for (int i = 0; i < sizeof(T); i++)
     {
       result |= (BitReverseTable256[(a_val >> (i * CHAR_BIT)) & 0xff] << (sizeof(T) - i) * CHAR_BIT);
     }
@@ -136,7 +136,7 @@ namespace Dg
 	  Real x = a_x;
 	  Real result = static_cast<Real>(0.0);
 	  
-	  for (unsigned i = 0; i < nTerms; ++i)
+	  for (unsigned i = 0; i < nTerms; i++)
 	  {
 		  result += x * static_cast<Real>(impl::C_INVERF[i]);
 		  x *= x0Sq;

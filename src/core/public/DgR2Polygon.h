@@ -57,7 +57,7 @@ namespace Dg
 
         Vector<Real> centroid(Vector<Real>::ZeroVector());
         const_iterator it = chead();
-        for (size_t i = 0; i < size(); ++i, ++it)
+        for (size_t i = 0; i < size(); i++, it++)
         {
           centroid += *it;
         }
@@ -96,7 +96,7 @@ namespace Dg
       {
         Real area = static_cast<Real>(0);
         const_iterator it = chead();
-        for (size_t i = 0; i < size(); ++i, ++it)
+        for (size_t i = 0; i < size(); i++, it++)
         {
           auto next(it);
           next++;

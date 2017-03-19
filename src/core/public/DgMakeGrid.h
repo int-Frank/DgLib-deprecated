@@ -19,7 +19,7 @@ namespace Dg
     a_out.clear();
     a_out.resize((a_dimension[0] - 1) * (a_dimension[1] - 1) * 2 * 3);
     INT nElems = (a_dimension[0] - 1) * (a_dimension[1] - 1);
-    for (INT i = 0; i < nElems; ++i)
+    for (INT i = 0; i < nElems; i++)
     {
       INT tl = i * 4;
       INT tr = tl + 1;
@@ -65,9 +65,9 @@ namespace Dg
 
     a_out.clear();
     a_out.resize(a_dimension[0] * a_dimension[1] * 4 * VectorSize);
-    for (int i = 0; i < a_dimension[1]; ++i)
+    for (int i = 0; i < a_dimension[1]; i++)
     {
-      for (int j = 0; j < a_dimension[0]; ++j)
+      for (int j = 0; j < a_dimension[0]; j++)
       {
         int ind = i * (dim[0]) * VectorSize + j * VectorSize;
         a_out.push_back(temp[ind]);
@@ -179,7 +179,7 @@ namespace Dg
 
     a_out.clear();
     a_out.resize((a_dimension[0] * a_dimension[1]) * VectorSize);
-    for (int i = 0; i < a_dimension[1]; ++i)
+    for (int i = 0; i < a_dimension[1]; i++)
     {
       Real frac_h = static_cast<Real>(i) / static_cast<Real>(a_dimension[1] - 1);
 
@@ -195,7 +195,7 @@ namespace Dg
       Real dy = ye - ys;
       Real dz = ze - zs;
 
-      for (int j = 0; j < a_dimension[0]; ++j)
+      for (int j = 0; j < a_dimension[0]; j++)
       {
         Real frac_w = static_cast<Real>(j) / static_cast<Real>(a_dimension[0] - 1);
         a_out.push_back(xs + frac_w * dx);
@@ -250,7 +250,7 @@ namespace Dg
 
     a_out.clear();
     a_out.resize((a_dimension[0] + a_dimension[1] + 2) * VectorSize * 2);
-    for (int i = 0; i < nDrawsH; ++i)
+    for (int i = 0; i < nDrawsH; i++)
     {
       Real frac = static_cast<Real>(i) / static_cast<Real>(a_dimension[0]);
 
@@ -265,7 +265,7 @@ namespace Dg
       if (VectorSize == 4) a_out.push_back(static_cast<Real>(1.0));
     }
 
-    for (int i = 0; i < nDrawsV; ++i)
+    for (int i = 0; i < nDrawsV; i++)
     {
       Real frac = static_cast<Real>(i) / static_cast<Real>(a_dimension[1]);
 

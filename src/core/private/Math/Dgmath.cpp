@@ -73,7 +73,7 @@ namespace Dg
 		input |= (input >> 4);
 		input |= (input >> 8);
 		input |= (input >> 16);
-		++input;
+		input++;
 		return input;
 
 	}	//End: NextPower2()

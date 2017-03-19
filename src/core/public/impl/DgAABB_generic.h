@@ -38,7 +38,7 @@ namespace Dg
       AABB_generic(Vector_generic<Real, R> const a_center, Real const * a_hl)
         : m_center(a_center)
       {
-        for (int i = 0; i < R; ++i)
+        for (int i = 0; i < R; i++)
         {
           m_halfLengths[i] = a_hl[i];
         }
@@ -51,7 +51,7 @@ namespace Dg
       AABB_generic(AABB_generic const & a_other)
         : m_center(a_other.m_center)
       {
-        for (int i = 0; i < R; ++i)
+        for (int i = 0; i < R; i++)
         {
           m_halfLengths[i] = a_other.m_halfLengths[i];
         }
@@ -62,7 +62,7 @@ namespace Dg
       {
         m_center = a_other.m_center;
 
-        for (int i = 0; i < R; ++i)
+        for (int i = 0; i < R; i++)
         {
           m_halfLengths[i] = a_other.m_halfLengths[i];
         }
@@ -73,7 +73,7 @@ namespace Dg
       //! Get the AABB_generic half lengths.
       void GetHalfLengths(Real * a_out) const
       {
-        for (int i = 0; i < R; ++i)
+        for (int i = 0; i < R; i++)
         {
           a_out[i] = m_halfLengths[i];
         }
@@ -85,7 +85,7 @@ namespace Dg
       //! Set the AABB_generic half lengths.
       void SetHalfLengths(Real const * a_data)
       {
-        for (int i = 0; i < R; ++i)
+        for (int i = 0; i < R; i++)
         {
           m_halfLengths[i] = a_data[i];
         }

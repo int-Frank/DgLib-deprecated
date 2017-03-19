@@ -239,7 +239,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real>& Matrix<M, N, Real>::operator= (Matrix<M, N, Real>const & a_other)
   {
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       m_V[i] = a_other.m_V[i];
     }
@@ -255,7 +255,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real>::Matrix(Matrix<M, N, Real> const & a_other)
   {
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       m_V[i] = a_other.m_V[i];
     }
@@ -409,7 +409,7 @@ namespace Dg
     Real result = 0;
     Real sign = static_cast<Real>(1.0);
 
-    for (size_t i = 0; i < M; ++i)
+    for (size_t i = 0; i < M; i++)
     {
       Matrix<M - 1, M - 1, Real> subMatrix;
 
@@ -463,7 +463,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   void Matrix<M, N, Real>::Set(Real const a_data[M * N])
   {
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       m_V[i] = a_data[i];
     }
@@ -478,7 +478,7 @@ namespace Dg
   {
     a_m *= N;
 
-    for (size_t i = 0; i < N; ++i)
+    for (size_t i = 0; i < N; i++)
     {
       m_V[a_m +i] = a_row.m_V[i];
     }
@@ -494,7 +494,7 @@ namespace Dg
   {
     a_m *= N;
 
-    for (size_t i = 0; i < N; ++i)
+    for (size_t i = 0; i < N; i++)
     {
       a_out.m_V[i] = m_V[a_m + i];
     }
@@ -508,7 +508,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   void Matrix<M, N, Real>::SetColumn(size_t a_n, Matrix<M, 1, Real> const & a_col)
   {
-    for (size_t i = 0; i < M; ++i)
+    for (size_t i = 0; i < M; i++)
     {
       m_V[i * N + a_n] = a_col.m_V[i];
     }
@@ -522,7 +522,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   void Matrix<M, N, Real>::GetColumn(size_t a_n, Matrix<M, 1, Real>& a_out) const
   {
-    for (size_t i = 0; i < M; ++i)
+    for (size_t i = 0; i < M; i++)
     {
       a_out.m_V[i] = m_V[i * N + a_n];
     }
@@ -621,7 +621,7 @@ namespace Dg
   Real Matrix<M, N, Real>::Dot(Matrix<M, N, Real> const & a_mat) const
   {
 	  Real result = static_cast<Real>(0.0);
-	  for (size_t i = 0; i < M * N; ++i)
+	  for (size_t i = 0; i < M * N; i++)
 	  {
 		  result += (a_mat.m_V[i] * m_V[i]);
 	  }
@@ -647,7 +647,7 @@ namespace Dg
   {
     Matrix<M, N, Real> result;
 
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       result.m_V[i] = m_V[i] + a_other.m_V[i];
     }
@@ -663,7 +663,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real>& Matrix<M, N, Real>::operator+=(Matrix<M, N, Real> const & a_other)
   {
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       m_V[i] += a_other.m_V[i];
     }
@@ -681,7 +681,7 @@ namespace Dg
   {
     Matrix<M, N, Real> result;
 
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       result.m_V[i] = m_V[i] - other.m_V[i];
     }
@@ -697,7 +697,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real>& Matrix<M, N, Real>::operator-=(Matrix<M, N, Real> const & a_other)
   {
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       m_V[i] -= a_other.m_V[i];
     }
@@ -715,7 +715,7 @@ namespace Dg
   {
     Matrix<M, N, Real> result;
 
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       result.m_V[i] = -m_V[i];
     }
@@ -765,7 +765,7 @@ namespace Dg
     {
       for (size_t n = 0; n < N; ++n)
       {
-        for (size_t i = 0; i < N; ++i)
+        for (size_t i = 0; i < N; i++)
         {
           result.m_V[m * N + n] += (m_V[m * N + i] * a_other.m_V[i * N + n]);
         }
@@ -787,7 +787,7 @@ namespace Dg
   {
     Matrix<M, N, Real> result;
     
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       result.m_V[i] = m_V[i] * a_other.m_V[i];
     }
@@ -803,7 +803,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real> & Matrix<M, N, Real>::ElementwiseProductSelf(Matrix<M, N, Real> const & a_other)
   {
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       m_V[i] *= a_other.m_V[i];
     }
@@ -819,7 +819,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real>& Matrix<M, N, Real>::operator*=(Real a_scalar)
   {
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       m_V[i] *= a_scalar;
     }
@@ -837,7 +837,7 @@ namespace Dg
   {
     Matrix<M, N, Real> result;
 
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       result.m_V[i] = matrix.m_V[i] * a_scalar;
     }
@@ -855,7 +855,7 @@ namespace Dg
   {
     Matrix<M, N, Real> result;
 
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       result.m_V[i] = m_V[i] * a_scalar;
     }
@@ -873,7 +873,7 @@ namespace Dg
   {
     Matrix<M, N, Real> result;
 
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       result.m_V[i] = m_V[i] / a_scalar;
     }
@@ -889,7 +889,7 @@ namespace Dg
   template<size_t M, size_t N, typename Real>
   Matrix<M, N, Real>& Matrix<M, N, Real>::operator/=(Real a_scalar)
   {
-    for (size_t i = 0; i < M * N; ++i)
+    for (size_t i = 0; i < M * N; i++)
     {
       m_V[i] /= a_scalar;
     }

@@ -213,7 +213,7 @@ namespace Dg
     }
     else
     {
-      for (int i = 0; i < a_other.m_nItems; ++i)
+      for (int i = 0; i < a_other.m_nItems; i++)
       {
         new (&m_pKeys[i]) K(a_other.m_pKeys[i]);
       }
@@ -225,7 +225,7 @@ namespace Dg
     }
     else
     {
-      for (int i = 0; i < a_other.m_nItems; ++i)
+      for (int i = 0; i < a_other.m_nItems; i++)
       {
         new (&m_pData[i]) T(a_other.m_pData[i]);
       }
@@ -276,7 +276,7 @@ namespace Dg
 
     if (newSize < m_nItems)
     {
-      for (int i = newSize; i < m_nItems; ++i)
+      for (int i = newSize; i < m_nItems; i++)
       {
         if (!std::is_trivially_destructible<K>::value)
         {
@@ -472,7 +472,7 @@ namespace Dg
   template<typename K, typename T>
   void map<K, T>::clear()
   {
-    for (int i = 0; i < m_nItems; ++i)
+    for (int i = 0; i < m_nItems; i++)
     {
       if (!std::is_trivially_destructible<K>::value) m_pKeys[i].~K();
       if (!std::is_trivially_destructible<T>::value) m_pData[i].~T();

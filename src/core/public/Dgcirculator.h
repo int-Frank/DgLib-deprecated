@@ -62,7 +62,7 @@ namespace Dg
       }
       else
       {
-        ++m_it;
+        m_it++;
       }
       return *this;
     }
@@ -170,7 +170,7 @@ namespace Dg
       }
       else
       {
-        ++m_it;
+        m_it++;
       }
       return *this;
     }

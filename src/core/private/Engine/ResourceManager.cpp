@@ -125,7 +125,7 @@ namespace Dg
       {
         bool isGood = true;
 
-        for (int i = 0; i < m_resourceList.size(); ++i)
+        for (int i = 0; i < m_resourceList.size(); i++)
         {
           if (m_resourceList[i].m_resource->Init() != ErrorCode::None)
           {
@@ -161,7 +161,7 @@ namespace Dg
       //--------------------------------------------------------------------------------
       void ResourceManager::DeinitAll(bool a_force)
       {
-        for (int i = 0; i < m_resourceList.size(); ++i)
+        for (int i = 0; i < m_resourceList.size(); i++)
         {
           if (a_force || m_resourceList[i].m_nUsers == 0)
           {
@@ -176,7 +176,7 @@ namespace Dg
       //--------------------------------------------------------------------------------
       ResourceManager::~ResourceManager()
       {
-        for (int i = 0; i < m_resourceList.size(); ++i)
+        for (int i = 0; i < m_resourceList.size(); i++)
         {
           delete m_resourceList[i].m_resource;
         }

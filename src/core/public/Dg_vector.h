@@ -274,7 +274,7 @@ namespace Dg
       new(&m_pData[m_nItems]) T(a_item);
     }
 
-    ++m_nItems;
+    m_nItems++;
 
   }	//End: vector<T>::push_back()
 
@@ -380,7 +380,7 @@ namespace Dg
   template<class T>
   T* find(vector<T>& container, T const & val)
   {
-    for (size_t i = 0; i < container.size(); ++i)
+    for (size_t i = 0; i < container.size(); i++)
     {
       if (container[i] == val)
         return &container[i];
@@ -400,7 +400,7 @@ namespace Dg
   template<class T>
   void fill(vector<T>& container, T const & val)
   {
-    for (size_t i = 0; i < container.size(); ++i)
+    for (size_t i = 0; i < container.size(); i++)
     {
       container[i] = val;
     }

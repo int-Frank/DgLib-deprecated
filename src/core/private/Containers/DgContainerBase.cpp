@@ -99,7 +99,7 @@ namespace Dg
   //--------------------------------------------------------------------------------
   size_t ContainerBase::pool_size(size_t a_nItems)
   {
-    for (int i = 0; i < ARRAY_SIZE(impl::validContainerPoolSizes); ++i)
+    for (int i = 0; i < ARRAY_SIZE(impl::validContainerPoolSizes); i++)
     {
       if (a_nItems <= impl::validContainerPoolSizes[i])
       {

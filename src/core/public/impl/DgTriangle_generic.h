@@ -127,7 +127,7 @@ namespace Dg
     bool Triangle_generic<Real, R>::operator==(Triangle_generic<Real, R> const & a_other) const
     {
       bool result = true;
-      for (int i = 0; i < 3; ++i)
+      for (int i = 0; i < 3; i++)
       {
         result &= (m_points[i] == a_other.m_points[i]);
       }
@@ -142,7 +142,7 @@ namespace Dg
     bool Triangle_generic<Real, R>::operator!=(Triangle_generic<Real, R> const & a_other) const
     {
       bool result = false;
-      for (int i = 0; i < 3; ++i)
+      for (int i = 0; i < 3; i++)
       {
         result |= (m_points[i] != a_other.m_points[i]);
       }

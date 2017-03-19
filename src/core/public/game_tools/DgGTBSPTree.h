@@ -110,8 +110,10 @@ namespace Dg
         NodeData()
           : upperBounds{ std::numeric_limits<Real>::max, std::numeric_limits<Real>::max }
           , lowerBounds{ -std::numeric_limits<Real>::max, -std::numeric_limits<Real>::max }
+          , isLeaf(false)
         {}
 
+        bool      isLeaf;
         Real      upperBounds[2];
         Real      lowerBounds[2];
         KeyList   polygons;
@@ -162,7 +164,7 @@ namespace Dg
 
         //Our first node will contain every polygon.
         nodes.push_back(Node());
-        for (uint32_t i = 0; i < m_nPolygons; ++i)  nodePolygons.push_back(i);
+        for (uint32_t i = 0; i < m_nPolygons; i++)  nodePolygons.push_back(i);
 
         Split(nodes, 0, nodePolygons, nodeData, a_criteria);
         AssignTree(nodeData, nodes);
@@ -191,12 +193,13 @@ namespace Dg
       Key     Query(DgVector const &) const;
       KeyList Query(DgDisk const &) const;
 
+      // Returns false if path is too deep for the tree.
       bool GetBranchData(std::vector<bool> const & a_path, NodeData & a_out)
       {
         uint32_t nodeInd = 0;
         for (bool isAbove : a_path)
         {
-          if (m_pNodes[nodeInd].IsLeaf())
+          if (m_pNodes[nodeInd].isLeaf)
           {
             return false;
           }
@@ -211,6 +214,7 @@ namespace Dg
           }
         }
 
+        a_out.isLeaf = m_pNodes[nodeInd].isLeaf;
         AddPolygons(nodeInd, a_out.polygons);
 
         return true;
@@ -258,7 +262,7 @@ namespace Dg
           bool isInside = true;
           for (uint32_t e = m_pPolygons[p].offset,
                e < m_pPolygons[p].offset + m_pPolygons[p].nEdges,
-               ++e)
+               e++)
           {
             DgVector v(a_point - m_pEdges[e].edge.Origin());
             if (m_pEdges[e].edge.Direction().PerpDot(v) < static_cast<Real>(0))
@@ -285,7 +289,7 @@ namespace Dg
         {
           for (uint32_t i = m_pNodes[a_ind].leaf.offset;
                i < m_pNodes[a_ind].leaf.offset + m_pNodes[a_ind].leaf.nPolygons;
-               ++i)
+               i++)
           {
             UniqueInsert(m_pData[i], a_out);
           }
@@ -312,7 +316,7 @@ namespace Dg
         {
           for (uint32_t i = node.leaf.dataOffset;
                i < node.leaf.dataOffset + node.leaf.nPolygons;
-               ++i)
+               i++)
           {
             UniqueInsert(m_data[i].key, a_out);
           }
@@ -328,7 +332,7 @@ namespace Dg
       {
         float area = 0.0f;
         std::vector<uint32_t> const & polygon(a_data.polygons.at(a_key));
-        for (size_t i0 = 0; i0 < polygon.size(); ++i0)
+        for (size_t i0 = 0; i0 < polygon.size(); i0++)
         {
           size_t i1 = (i0 + 1) % polygon.size();
           Vector p0 = a_data.points[polygon[i0]];
@@ -356,7 +360,7 @@ namespace Dg
           {
             for (auto it = kv.second.crbegin(); 
                  it != kv.second.crend(); 
-                 ++it)
+                 it++)
             {
               points.push_back(*it);
             }
@@ -372,7 +376,7 @@ namespace Dg
           polygon.nEdges = static_cast<uint32_t>(points.size());
           polygons.push_back(polygon);
 
-          for (size_t i = 0; i < points.size(); ++i)
+          for (size_t i = 0; i < points.size(); i++)
           {
             size_t i_next = i;
             i_next = (i_next + 1) % points.size();
@@ -384,11 +388,13 @@ namespace Dg
           }
         }
 
-        m_pEdges = new HalfEdge[edges.size()];
-        for (size_t i = 0; i < edges.size(); ++i) m_pEdges[i] = edges[i];
+        m_nEdges = static_cast<uint32_t>(edges.size());
+        m_pEdges = new HalfEdge[m_nEdges];
+        for (size_t i = 0; i < edges.size(); i++) m_pEdges[i] = edges[i];
 
-        m_pPolygons = new Polygon[polygons.size()];
-        for (size_t i = 0; i < polygons.size(); ++i) m_pPolygons[i] = polygons[i];
+        m_nPolygons = static_cast<uint32_t>(polygons.size());
+        m_pPolygons = new Polygon[m_nPolygons];
+        for (size_t i = 0; i < polygons.size(); i++) m_pPolygons[i] = polygons[i];
       }
       
       bool GetAdjacentPolygons(HalfEdge & a_out, DataInput const & a_data, uint32_t a_i0, uint32_t a_i1)
@@ -397,7 +403,7 @@ namespace Dg
         uint32_t polyInd = 0;
         for (auto const & kv : a_data.polygons)
         {
-          for (size_t i0 = 0; i0 < kv.second.size(); ++i0)
+          for (size_t i0 = 0; i0 < kv.second.size(); i0++)
           {
             size_t i1 = (i0 + 1) % kv.second.size();
             if ((kv.second[i0] == a_i0 && kv.second[i1] == a_i1) ||
@@ -427,14 +433,14 @@ namespace Dg
 
         for (uint32_t i = m_pPolygons[a_index].offset;
              i < m_pPolygons[a_index].offset + m_pPolygons[a_index].nEdges;
-             ++i)
+             i++)
         {
           DgVector p(m_pEdges[i].segment.Origin());
           if (p.x() < minx)  minx = p.x();
-          else if (p.x() > maxx)  maxx = p.x();
+          if (p.x() > maxx)  maxx = p.x();
 
           if (p.y() < miny)  miny = p.y();
-          else if (p.y() > maxy)  maxy = p.y();
+          if (p.y() > maxy)  maxy = p.y();
         }
 
         Real xhl = (maxx - minx) / static_cast<Real>(2);
@@ -469,7 +475,7 @@ namespace Dg
 
           for (uint32_t i = m_pPolygons[p].offset; 
                i < m_pPolygons[p].offset + m_pPolygons[p].nEdges;
-               ++i)
+               i++)
           {
             if (m_pEdges[i].segment.GetP0()[data.element] < data.offset)
             {
@@ -539,12 +545,14 @@ namespace Dg
                       std::vector<Node> const & a_nodes )
       {
         delete[] m_pNodes;
-        m_pNodes = new Node[a_nodes.size()];
-        for (size_t i = 0; i < a_nodes.size(); ++i) m_pNodes[i] = a_nodes[i];
+        m_nNodes = static_cast<uint32_t>(a_nodes.size());
+        m_pNodes = new Node[m_nNodes];
+        for (size_t i = 0; i < a_nodes.size(); i++) m_pNodes[i] = a_nodes[i];
 
         delete[] m_pData;
-        m_pData = new uint32_t[a_nodeData.size()];
-        for (size_t i = 0; i < a_nodeData.size(); ++i) m_pData[i] = a_nodeData[i];
+        m_nDataItems = static_cast<uint32_t>(a_nodeData.size());
+        m_pData = new uint32_t[m_nDataItems];
+        for (size_t i = 0; i < a_nodeData.size(); i++) m_pData[i] = a_nodeData[i];
       }
 
       void Init(BSPTree const & a_other)
@@ -561,10 +569,10 @@ namespace Dg
         m_pPolygons = new Polygon[m_nPolygons];
         m_pData = new uint32_t[m_nDataItems];
 
-        for (uint32_t i = 0; i < m_nNodes; ++i) m_pNodes[i] = a_other.m_pNodes[i];
-        for (uint32_t i = 0; i < m_nEdges; ++i) m_pEdges[i] = a_other.m_pEdges[i];
-        for (uint32_t i = 0; i < m_nPolygons; ++i) m_pPolygons[i] = a_other.m_pPolygons[i];
-        for (uint32_t i = 0; i < m_nDataItems; ++i) m_pData[i] = a_other.m_pData[i];
+        for (uint32_t i = 0; i < m_nNodes; i++) m_pNodes[i] = a_other.m_pNodes[i];
+        for (uint32_t i = 0; i < m_nEdges; i++) m_pEdges[i] = a_other.m_pEdges[i];
+        for (uint32_t i = 0; i < m_nPolygons; i++) m_pPolygons[i] = a_other.m_pPolygons[i];
+        for (uint32_t i = 0; i < m_nDataItems; i++) m_pData[i] = a_other.m_pData[i];
       }
 
     private:
@@ -575,12 +583,12 @@ namespace Dg
       uint32_t m_nDataItems;
 
       Node *         m_pNodes;
-      HalfEdge *         m_pEdges;
+      HalfEdge *     m_pEdges;
       Polygon *      m_pPolygons;
 
       // {Leaf data, Polygon data} where:
       // Leaf data: {polygonIndex0, polygonIndex1, ... }
-      uint32_t *       m_pData; 
+      uint32_t *     m_pData; 
     };
   }
 }

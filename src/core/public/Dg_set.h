@@ -195,7 +195,7 @@ namespace Dg
     }
     else
     {
-      for (int i = 0; i < a_other.m_nItems; ++i)
+      for (int i = 0; i < a_other.m_nItems; i++)
       {
         new (&m_pData[i]) T(a_other.m_pData[i]);
       }
@@ -249,7 +249,7 @@ namespace Dg
     {
       if (!std::is_trivially_destructible<T>::value)
       {
-        for (int i = static_cast<int>(pool_size()); i < m_nItems; ++i)
+        for (int i = static_cast<int>(pool_size()); i < m_nItems; i++)
         {
           m_pData[i].~T();
         }

@@ -17,7 +17,7 @@ namespace Dg
       Real sumXY(static_cast<Real>(0));
       Real sumXX(static_cast<Real>(0));
 
-      for (size_t i = 0; i < a_nPoints; ++i)
+      for (size_t i = 0; i < a_nPoints; i++)
       {
         sumX += a_points[i].x();
         sumY += a_points[i].y();

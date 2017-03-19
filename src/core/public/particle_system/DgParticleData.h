@@ -151,7 +151,7 @@ namespace Dg
     }
 
     a_index = m_countAlive;
-    ++m_countAlive;
+    m_countAlive++;
     return true;
   }	//End: ParticleData::Wake()
 

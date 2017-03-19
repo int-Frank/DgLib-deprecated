@@ -55,7 +55,7 @@ namespace Dg
     //! Copy constructor
     shared_ptr(shared_ptr<T> const & sp) : m_pData(sp.m_pData), m_pRefCount(sp.m_pRefCount)
     {
-      ++(*m_pRefCount);
+      (*m_pRefCount)++;
     }
 
     //! Destructor. If no other shared_ptr's are pointing to the object,
@@ -114,7 +114,7 @@ namespace Dg
 
         m_pData = sp.m_pData;
         m_pRefCount = sp.m_pRefCount;
-        ++(*m_pRefCount);
+        (*m_pRefCount)++;
       }
       return *this;
     }
