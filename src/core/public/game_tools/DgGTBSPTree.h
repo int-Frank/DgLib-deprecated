@@ -328,7 +328,7 @@ namespace Dg
       {
         float area = 0.0f;
         std::vector<uint32_t> const & polygon(a_data.polygons.at(a_key));
-        for (size_t i0 = 0; i0 <= polygon.size(); ++i0)
+        for (size_t i0 = 0; i0 < polygon.size(); ++i0)
         {
           size_t i1 = (i0 + 1) % polygon.size();
           Vector p0 = a_data.points[polygon[i0]];
