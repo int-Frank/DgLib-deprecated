@@ -376,14 +376,16 @@ namespace Dg
           polygon.nEdges = static_cast<uint32_t>(points.size());
           polygons.push_back(polygon);
 
-          for (size_t i = 0; i < points.size(); i++)
+          for (size_t i0 = 0; i0 < points.size(); i0++)
           {
-            size_t i_next = i;
-            i_next = (i_next + 1) % points.size();
+            size_t i1 = (i0 + 1) % points.size();
+
+            uint32_t p0(points[i0]);
+            uint32_t p1(points[i1]);
 
             HalfEdge e;
-            GetAdjacentPolygons(e, a_input, static_cast<uint32_t>(i), static_cast<uint32_t>(i_next));
-            e.segment = Segment(a_input.points[i], a_input.points[i_next]);
+            GetAdjacentPolygons(e, a_input, p0, p1);
+            e.segment = Segment(a_input.points[p0], a_input.points[p1]);
             edges.push_back(e);
           }
         }

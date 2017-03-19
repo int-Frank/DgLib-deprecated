@@ -120,6 +120,7 @@ bool Application::LoadProject(std::string const & a_file)
   NormalizeData(data.points);
   AABB aabb = GetAABB(data.points);
 
+  //Save off polygons
   m_polygons.clear();
   for (auto const & kv : data.polygons)
   {

@@ -34,7 +34,8 @@ bool Application::Init()
   ClearProject();
 
   //DEBUG
-  LoadProject("./maps/map_01.cp");
+  LoadProject("./maps/simple_cp.cp");
+  //LoadProject("./maps/map_01.cp");
 
   return true;
 }
