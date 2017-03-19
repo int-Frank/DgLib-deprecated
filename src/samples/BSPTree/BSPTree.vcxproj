@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\3rd_party\glfw-3.2\include;$(SolutionDir)..\..\3rd_party\glew-1.13.0\include;$(SolutionDir)..\..\src\core\public;$(SolutionDir)..\..\3rd_party\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;NOGDI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;NOGDI;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\3rd_party\glfw-3.2\lib\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\3rd_party\glew-1.13.0\lib\Release\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -103,7 +103,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\3rd_party\glfw-3.2\include;$(SolutionDir)..\..\3rd_party\glew-1.13.0\include;$(SolutionDir)..\..\src\core\public;$(SolutionDir)..\..\3rd_party\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;NOGDI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;NOGDI;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\3rd_party\glfw-3.2\lib\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\3rd_party\glew-1.13.0\lib\Release\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -118,7 +118,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\3rd_party\glfw-3.2\include;$(SolutionDir)..\..\3rd_party\glew-1.13.0\include;$(SolutionDir)..\..\src\core\public;$(SolutionDir)..\..\3rd_party\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;NOGDI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;NOGDI;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -135,7 +135,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\3rd_party\glfw-3.2\include;$(SolutionDir)..\..\3rd_party\glew-1.13.0\include;$(SolutionDir)..\..\src\core\public;$(SolutionDir)..\..\3rd_party\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;NOGDI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;NOGDI;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

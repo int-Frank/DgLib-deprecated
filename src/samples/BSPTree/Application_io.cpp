@@ -103,16 +103,16 @@ bool Application::LoadProject(std::string const & a_file)
     }
     else if (word == "p")
     {
-      std::vector<size_t> polygon;
+      std::vector<uint32_t> polygon;
       std::string str;
       getline(fs, str);
       std::istringstream ss(str);
-      size_t num;
+      uint32_t num;
       while (ss >> num)
       {
         polygon.push_back(num);
       }
-      data.polygons.insert(std::pair<int, std::vector<size_t>>(key, polygon));
+      data.polygons.insert(std::pair<int, std::vector<uint32_t>>(key, polygon));
       ++key;
     }
   }
@@ -131,7 +131,7 @@ bool Application::LoadProject(std::string const & a_file)
     m_polygons.insert(std::pair<int, Polygon>(kv.first, poly));
   }
 
-
+  m_bspTree.Build(data);
 
   printf("'%s' loaded!\n", a_file.c_str());
   UpdateProjectTitle(a_file);
