@@ -41,11 +41,11 @@ struct AppInfo
   } flags;
 };
 
-class AppData
+class AppState
 {
 public:
 
-  AppData()
+  AppState()
     : visType(E_Visualize_Node)
     , objectType(0)
     , objectRadius(1.0f)

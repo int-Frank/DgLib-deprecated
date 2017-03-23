@@ -170,7 +170,7 @@ void Application::ShowMainGUIWindow()
     {
       if (open_currentItem != -1)
       {
-        m_appData.projName = files[open_currentItem];
+        m_appState.projName = files[open_currentItem];
         Event_LoadProject e;
         e.SetFileName(m_projectPath + files[open_currentItem]);
         m_eventManager.PushEvent(e);
@@ -197,11 +197,11 @@ void Application::ShowMainGUIWindow()
                                        ImColor(0.361f, 0.714f, 0.498f) };
   
   ImGui::TextColored(headingClr, "Visualizer");
-  ImGui::PushStyleColor(ImGuiCol_Button, visButtonColors[m_appData.visType == E_Visualize_Node ? 1 : 0]);
+  ImGui::PushStyleColor(ImGuiCol_Button, visButtonColors[m_appState.visType == E_Visualize_Node ? 1 : 0]);
   ImGui::Button("Node", ImVec2(60, 25));
   ImGui::SameLine();
   ImGui::PopStyleColor(1);
-  ImGui::PushStyleColor(ImGuiCol_Button, visButtonColors[m_appData.visType == E_Visualize_Leaves ? 1 : 0]);
+  ImGui::PushStyleColor(ImGuiCol_Button, visButtonColors[m_appState.visType == E_Visualize_Leaves ? 1 : 0]);
   ImGui::Button("Leaves", ImVec2(60, 25));
   ImGui::PopStyleColor(1);
 
@@ -238,8 +238,8 @@ void Application::ShowMainGUIWindow()
   ImGui::TextColored(headingClr, "Query");
 
   ImGui::Button("Clear path");
-  ImGui::SliderFloat("Radius", &m_appData.objectRadius, 0.0f, 100.0f);
+  ImGui::SliderFloat("Radius", &m_appState.objectRadius, 0.0f, 100.0f);
   char const *  objects[] = { "Point", "Circle", "Capsule" };
-  ImGui::ListBox("Object", &m_appData.objectType, objects, 3, 4);
+  ImGui::ListBox("Object", &m_appState.objectType, objects, 3, 4);
   ImGui::End();
 }

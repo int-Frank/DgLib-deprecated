@@ -11,6 +11,7 @@
 #include "Renderer.h"
 #include "EventManager.h"
 #include "game_tools/DgGTBSPTree.h"
+#include "Types.h"
 
 
 class Application
@@ -40,7 +41,11 @@ private:
 private:
 
   //UI only touches this data
-  AppData                   m_appData;
+  AppState                  m_appState;
+
+  int const                 m_windowWidth = 1024;
+  int const                 m_windowHeight = 768;
+  int const                 m_leftMargin = 200;
 
   EventManager              m_eventManager;
 
@@ -56,6 +61,7 @@ private:
 
   BSPTree                   m_bspTree;
   std::map<int, Polygon>    m_polygons;
+  Matrix                    m_T_model_screen;
 
   bool                      m_shouldQuit;
 
@@ -70,10 +76,17 @@ private:
                     , int *);
   void UpdateProjectTitle(std::string const &);
 
+  bool ParseFile(std::string const &,
+                 BSPTree::DataInput &);
+  void SavePolygons(BSPTree::DataInput const &);
+  void SetModelToScreenTransform(BSPTree::DataInput const &);
+
+
   void UI_NewFrame();
   void HandleEvents();
   void DoLogic(double dt);
   void Render();
+  void DrawPolygonEdges(Matrix const &);
 
   std::vector<std::string> GetProjects();
 

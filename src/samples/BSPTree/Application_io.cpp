@@ -10,7 +10,7 @@
 #include "DgStringFunctions.h"
 
 
-static AABB GetAABB(std::vector<Vector> & a_points)
+static AABB GetAABB(std::vector<Vector> const & a_points)
 {
   float minx = std::numeric_limits<float>::max();
   float maxx = -std::numeric_limits<float>::max();
@@ -35,27 +35,6 @@ static AABB GetAABB(std::vector<Vector> & a_points)
 }
 
 
-static void NormalizeData(std::vector<Vector> & a_points)
-{
-  AABB aabb = GetAABB(a_points);
-  Vector offset(-aabb.GetCenter().x(), -aabb.GetCenter().y(), 0.0f);
-  for (auto & p : a_points)
-  {
-    p += offset;
-  }
-
-  float hl[2] = {};
-  aabb.GetHalfLengths(hl);
-  float max_hl = (hl[0] > hl[1]) ? hl[0] : hl[1];
-
-  float scaleFactor = 0.5f / max_hl;
-  for (auto & p : a_points)
-  {
-    p.x() *= scaleFactor;
-    p.y() *= scaleFactor;
-  }
-}
-
 void Application::UpdateProjectTitle(std::string const & a_name)
 {
   char pFile[32];
@@ -71,18 +50,18 @@ void Application::UpdateProjectTitle(std::string const & a_name)
                , 0
   );
 
-  m_appData.projName = std::string(pFile);
+  m_appState.projName = std::string(pFile);
 }
 
-bool Application::LoadProject(std::string const & a_file)
-{
-  ClearProject();
 
+bool Application::ParseFile(std::string const & a_filePath,
+                            BSPTree::DataInput & a_out)
+{
   std::ifstream fs;
-  fs.open(a_file);
+  fs.open(a_filePath);
   if (!fs.good())
   {
-    printf("Failed to open file '%s'!\n", a_file.c_str());
+    printf("Failed to open file '%s'!\n", a_filePath.c_str());
     return false;
   }
 
@@ -98,7 +77,7 @@ bool Application::LoadProject(std::string const & a_file)
       float vx = 0.0f;
       float vy = 0.0f;
       fs >> vx >> vy;
-      data.points.push_back(Vector(vx, vy, 1.f));
+      a_out.points.push_back(Vector(vx, vy, 1.f));
       fs.ignore(2048, '\n');
     }
     else if (word == "p")
@@ -112,30 +91,73 @@ bool Application::LoadProject(std::string const & a_file)
       {
         polygon.push_back(num);
       }
-      data.polygons.insert(std::pair<int, std::vector<uint32_t>>(key, polygon));
+      a_out.polygons.insert(std::pair<int, std::vector<uint32_t>>(key, polygon));
       ++key;
     }
   }
+  return true;
+}
 
-  NormalizeData(data.points);
-  AABB aabb = GetAABB(data.points);
-
-  //Save off polygons
+void Application::SavePolygons(BSPTree::DataInput const & a_data)
+{
   m_polygons.clear();
-  for (auto const & kv : data.polygons)
+  for (auto const & kv : a_data.polygons)
   {
     Polygon poly;
     for (auto i : kv.second)
     {
-      poly.push_back(data.points[i]);
+      poly.push_back(a_data.points[i]);
     }
     m_polygons.insert(std::pair<int, Polygon>(kv.first, poly));
   }
+}
 
+void Application::SetModelToScreenTransform(BSPTree::DataInput const & a_data)
+{
+  AABB modelBounds = GetAABB(a_data.points);
+
+  Vector translation = Vector::Origin() - modelBounds.GetCenter();
+
+  float hl[2] = {};
+  modelBounds.GetHalfLengths(hl);
+
+  float scale = (hl[0] < hl[1]) ? hl[0] * 2.0f : hl[1] * 2.0f;
+
+  Matrix mat_t, mat_s;
+  mat_t.Translation(translation);
+  mat_s.Scaling(scale);
+
+  Matrix T_model_normalised = mat_t * mat_s;
+
+  translation = Vector(float(m_windowWidth / 2 + m_leftMargin),
+                       float(m_windowHeight), 0.0f);
+  float sx = hl[0] / float(m_windowWidth);
+  float sy = hl[1] / float(m_windowHeight);
+
+  scale = (sx < sy) ? float(m_windowWidth) : float(m_windowHeight);
+  
+  mat_t.Translation(translation);
+  mat_s.Scaling(scale);
+
+  Matrix T_normalised_screen = mat_s * mat_t;
+  m_T_model_screen = T_model_normalised * T_normalised_screen;
+}
+
+bool Application::LoadProject(std::string const & a_file)
+{
+  ClearProject();
+
+  BSPTree::DataInput data;
+  if (!ParseFile(a_file, data))
+  {
+    return false;
+  }
+
+  SavePolygons(data);
   m_bspTree.Build(data);
-
-  printf("'%s' loaded!\n", a_file.c_str());
+  SetModelToScreenTransform(data);
   UpdateProjectTitle(a_file);
+  printf("'%s' loaded!\n", a_file.c_str());
 
   return true;
 }
