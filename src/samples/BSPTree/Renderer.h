@@ -7,22 +7,22 @@
 
 #include "Types.h"
 
+struct Color
+{
+  float r, g, b, a;
+};
+
 class Renderer
 {
 public:
   Renderer();
 
-  void SetMatrix(Matrix const &);
-
   void Begin();
   void End();
 
-  void DrawSegment(Segment const &, Vector const & color);
-  void DrawPolygon(Polygon const &, Vector const & color);
+  void DrawSegment(Segment const &, Color const & color);
+  void DrawPolygon(Polygon const &, Color const & color);
 
-private:
-
-  Matrix m_T;
 };
 
 #endif

@@ -149,44 +149,8 @@ void Application::DoLogic(double a_dt)
 {
 }
 
-AABB Application::GetDrawWindowBounds()
-{
-  int winWidth(0), winHeight(0);
-  glfwGetWindowSize(m_window, &winWidth, &winHeight);
 
-  int const leftMargin = 200;
-  int const minWidth = 300;
-  int offset = 0;
-  if (winWidth > leftMargin + minWidth)
-  {
-    winWidth -= leftMargin;
-    offset = leftMargin;
-  }
-
-  float hl[2] = { float(winWidth) / 2.f, float(winHeight) / 2.f };
-  Vector center(float(offset) + hl[0], hl[1], 1.0f);
-  return AABB(center, hl);
-}
-
-Matrix Application::GetNormalisedToScreenTransform()
-{
-  AABB windowBounds = GetDrawWindowBounds();
-
-  Vector translation = windowBounds.GetCenter() - Vector::Origin();
-
-  float hl[2] = {};
-  windowBounds.GetHalfLengths(hl);
-
-  float scale = (hl[0] < hl[1]) ? hl[0] * 2.0f : hl[1] * 2.0f;
-
-  Matrix mat_t, mat_s;
-  mat_t.Translation(translation);
-  mat_s.Scaling(scale);
-
-  return mat_t * mat_s;
-}
-
-void Application::DrawPolygonEdges(Matrix const & a_Tms)
+void Application::DrawPolygonEdges()
 {
   for (auto const & kv : m_polygons)
   {
@@ -203,11 +167,10 @@ void Application::DrawPolygonEdges(Matrix const & a_Tms)
 
 void Application::Render()
 {
-  Matrix T_model_screen = GetModelScreenTransform();
-
   m_renderer.Begin();
 
-  DrawPolygonEdges(T_model_screen);
+  
+  DrawPolygonEdges();
 
   m_renderer.End();
 }
@@ -273,12 +236,15 @@ void Application::UI_NewFrame()
   glfwPollEvents();
   ImGui_ImplGlfwGL3_NewFrame();
 
-  int winWidth(0), winHeight(0);
-  glfwGetWindowSize(m_window, &winWidth, &winHeight);
-
   //Editor
   {
-    ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_MenuBar);
+    ImGui::Begin("Editor", nullptr, 
+        ImGuiWindowFlags_MenuBar
+      | ImGuiWindowFlags_NoResize
+      | ImGuiWindowFlags_NoMove
+      | ImGuiWindowFlags_NoCollapse);
+    ImGui::SetWindowPos(ImVec2(3, 3));
+    ImGui::SetWindowSize(ImVec2(200, m_windowHeight - 10));
     ImGui::End();
   }
 
@@ -296,7 +262,7 @@ void Application::UI_NewFrame()
 
     //ImGuiID id = ImGui::GetID("##Title");
     ImVec2 size = ImGui::GetItemRectSize();
-    ImGui::SetWindowPos(ImVec2(((float)winWidth - size.x) / 2.0f, indent));
+    ImGui::SetWindowPos(ImVec2(((float)m_windowWidth - size.x) / 2.0f, indent));
     ImGui::End();
   }
 

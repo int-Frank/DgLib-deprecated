@@ -43,9 +43,9 @@ private:
   //UI only touches this data
   AppState                  m_appState;
 
-  int const                 m_windowWidth = 1024;
+  int const                 m_windowWidth = 1224;
   int const                 m_windowHeight = 768;
-  int const                 m_leftMargin = 200;
+  int const                 m_leftMargin = 210;
 
   EventManager              m_eventManager;
 
@@ -86,7 +86,7 @@ private:
   void HandleEvents();
   void DoLogic(double dt);
   void Render();
-  void DrawPolygonEdges(Matrix const &);
+  void DrawPolygonEdges();
 
   std::vector<std::string> GetProjects();
 
