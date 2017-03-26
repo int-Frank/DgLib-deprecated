@@ -128,7 +128,7 @@ void Application::DrawPolygonEdges()
     {
       auto it1 = it0;
       it1++;
-      Segment seg(*it0, *it1);
+      Segment seg(*it0 * m_T_model_screen, *it1 * m_T_model_screen);
       DrawSegment(seg, ImColor(0, 255, 0, 255));
     }
   }

@@ -121,7 +121,7 @@ void Application::SetModelToScreenTransform(BSPTree::DataInput const & a_data)
   float hlm[2] = {};
   modelBounds.GetHalfLengths(hlm);
 
-  float scale = (hlm[0] < hlm[1]) ? hlm[0] * 2.0f : hlm[1] * 2.0f;
+  float scale = (hlm[0] > hlm[1]) ? 1.0f / hlm[0] : 1.0f / hlm[1];
 
   Matrix mat_t, mat_s;
   mat_t.Translation(translation);
@@ -137,7 +137,7 @@ void Application::SetModelToScreenTransform(BSPTree::DataInput const & a_data)
   float sx = hlm[0] / hls[0];
   float sy = hlm[1] / hls[1];
 
-  scale = (sx < sy) ? hls[0] : hls[1];
+  scale = (sx > sy) ? hls[0] : hls[1];
   
   mat_t.Translation(translation);
   mat_s.Scaling(scale);
