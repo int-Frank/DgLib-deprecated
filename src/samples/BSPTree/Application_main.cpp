@@ -105,26 +105,19 @@ void Application::ClearProject()
   m_polygons.clear();
 }
 
-void Application::KeyEvent(int a_key, int a_action)
+void Application::DrawSegment(Segment const & a_seg, ImColor const & a_clr)
 {
-  switch (a_key)
-  {
-  case GLFW_KEY_ESCAPE:
-  {
-    m_shouldQuit = true;
-    break;
-  }
-  }
-}
+  ImGui::Begin("CanvasWindow");
 
-void Application::UpdateScroll(double a_val)
-{
-  if (!ImGui::GetIO().WantCaptureMouse)
-  {
-    m_mouseScroll += a_val;
-  }
-}
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
+  ImVec2 p0(a_seg.GetP0().x(), a_seg.GetP0().y());
+  ImVec2 p1(a_seg.GetP1().x(), a_seg.GetP1().y());
+
+  draw_list->AddLine(p0, p1, a_clr, 2);
+
+  ImGui::End();
+}
 
 void Application::DrawPolygonEdges()
 {
@@ -135,28 +128,15 @@ void Application::DrawPolygonEdges()
     {
       auto it1 = it0;
       it1++;
-
-
+      Segment seg(*it0, *it1);
+      DrawSegment(seg, ImColor(0, 255, 0, 255));
     }
   }
 }
 
 void Application::DrawScene()
 {
-  ImGui::Begin("CanvasWindow");
-
-  ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-  Vector center = m_canvasBounds.GetCenter();
-  float hl[2] = {};
-  m_canvasBounds.GetHalfLengths(hl);
-
-  ImVec2 p0(center.x() - hl[0], center.y() - hl[1]);
-  ImVec2 p1(center.x() + hl[0], center.y() + hl[1]);
-
-  draw_list->AddLine(p0, p1, ImColor(255, 0, 0), 10);
-
-  ImGui::End();
+  DrawPolygonEdges();
 }
 
 std::vector<std::string> Application::GetProjects()

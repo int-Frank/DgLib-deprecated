@@ -118,10 +118,10 @@ void Application::SetModelToScreenTransform(BSPTree::DataInput const & a_data)
 
   Vector translation = Vector::Origin() - modelBounds.GetCenter();
 
-  float hl[2] = {};
-  modelBounds.GetHalfLengths(hl);
+  float hlm[2] = {};
+  modelBounds.GetHalfLengths(hlm);
 
-  float scale = (hl[0] < hl[1]) ? hl[0] * 2.0f : hl[1] * 2.0f;
+  float scale = (hlm[0] < hlm[1]) ? hlm[0] * 2.0f : hlm[1] * 2.0f;
 
   Matrix mat_t, mat_s;
   mat_t.Translation(translation);
@@ -129,12 +129,15 @@ void Application::SetModelToScreenTransform(BSPTree::DataInput const & a_data)
 
   Matrix T_model_normalised = mat_t * mat_s;
 
-  translation = Vector(float(m_windowWidth / 2),
-                       float(m_windowHeight), 0.0f);
-  float sx = hl[0] / float(m_windowWidth);
-  float sy = hl[1] / float(m_windowHeight);
+  translation = m_canvasBounds.GetCenter() - Vector::Origin();
 
-  scale = (sx < sy) ? float(m_windowWidth) : float(m_windowHeight);
+  float hls[2] = {};
+  m_canvasBounds.GetHalfLengths(hls);
+
+  float sx = hlm[0] / hls[0];
+  float sy = hlm[1] / hls[1];
+
+  scale = (sx < sy) ? hls[0] : hls[1];
   
   mat_t.Translation(translation);
   mat_s.Scaling(scale);

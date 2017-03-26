@@ -8,6 +8,7 @@
 #include <map>
 #include <stack>
 
+#include "imgui.h"
 #include "game_tools/DgGTBSPTree.h"
 #include "Types.h"
 
@@ -25,8 +26,6 @@ public:
   void Run(Application*);
 
   bool LoadProject(std::string const &);
-  void UpdateScroll(double);
-  void KeyEvent(int key, int action);
   void ClearProject();
 
   static Application * GetInstance() { return s_app; }
@@ -84,6 +83,8 @@ private:
   void GetCanvasBounds();
   void DrawScene();
   void DrawPolygonEdges();
+
+  void DrawSegment(Segment const &, ImColor const &);
 
   std::vector<std::string> GetProjects();
 
