@@ -114,36 +114,28 @@ void Application::SavePolygons(BSPTree::DataInput const & a_data)
 
 void Application::SetModelToScreenTransform(BSPTree::DataInput const & a_data)
 {
-  AABB modelBounds = GetAABB(a_data.points);
+  Matrix T_t_mo; //mo: model to origin translation
+  Matrix T_s;    //s: scaling matrix
+  Matrix T_t_oc; //oc: origin to canvas translation
 
-  Vector translation = Vector::Origin() - modelBounds.GetCenter();
+  AABB modelBounds = GetAABB(a_data.points);
 
   float hlm[2] = {};
   modelBounds.GetHalfLengths(hlm);
 
-  float scale = (hlm[0] > hlm[1]) ? 1.0f / hlm[0] : 1.0f / hlm[1];
+  float hlc[2] = {};
+  m_canvasBounds.GetHalfLengths(hlc);
 
-  Matrix mat_t, mat_s;
-  mat_t.Translation(translation);
-  mat_s.Scaling(scale);
+  float sx = hlc[0] / hlm[0];
+  float sy = hlc[1] / hlm[1];
 
-  Matrix T_model_normalised = mat_t * mat_s;
+  float scale = (sx < sy) ? sx : sy;
 
-  translation = m_canvasBounds.GetCenter() - Vector::Origin();
+  T_s.Scaling(scale);
+  T_t_mo.Translation(Vector::Origin() - modelBounds.GetCenter());
+  T_t_oc.Translation(m_canvasBounds.GetCenter() - Vector::Origin());
 
-  float hls[2] = {};
-  m_canvasBounds.GetHalfLengths(hls);
-
-  float sx = hlm[0] / hls[0];
-  float sy = hlm[1] / hls[1];
-
-  scale = (sx > sy) ? hls[0] : hls[1];
-  
-  mat_t.Translation(translation);
-  mat_s.Scaling(scale);
-
-  Matrix T_normalised_screen = mat_s * mat_t;
-  m_T_model_screen = T_model_normalised * T_normalised_screen;
+  m_T_model_screen = T_t_mo * T_s * T_t_oc;
 }
 
 bool Application::LoadProject(std::string const & a_file)
