@@ -65,8 +65,8 @@ void Application::GetCanvasBounds()
   ImVec2 canvasSize = ImGui::GetContentRegionAvail();
 
   Vector center(canvasPos.x + canvasSize.x / 2.0f,
-    canvasPos.y + canvasSize.y / 2.0f,
-    1.0f);
+                canvasPos.y + canvasSize.y / 2.0f,
+                1.0f);
 
   float hl[2] = { canvasSize.x / 2.0f, canvasSize.y / 2.0f };
 

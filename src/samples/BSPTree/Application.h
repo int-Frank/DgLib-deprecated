@@ -44,7 +44,7 @@ private:
   int const                 m_editorHeight = m_canvasHeight;
   int const                 m_bufferWidth = 3;
   int const                 m_topMenuBuffer = 5;
-  int const                 m_windowWidth = m_editorWidth +m_canvasWidth + m_bufferWidth * 3;
+  int const                 m_windowWidth = m_editorWidth + m_canvasWidth + m_bufferWidth * 3;
   int const                 m_windowHeight = m_canvasHeight + m_topMenuBuffer + m_bufferWidth * 2;
 
   AABB                      m_canvasBounds;
@@ -83,8 +83,11 @@ private:
   void GetCanvasBounds();
   void DrawScene();
   void DrawPolygonEdges();
+  void DrawPolygons();
 
   void DrawSegment(Segment const &, ImColor const &);
+  void DrawFilledPolygon(Polygon const &, ImColor const &);
+  void DrawAABB(AABB const &, ImColor const &);
 
   std::vector<std::string> GetProjects();
 

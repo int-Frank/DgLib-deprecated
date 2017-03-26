@@ -119,8 +119,40 @@ void Application::DrawSegment(Segment const & a_seg, ImColor const & a_clr)
   ImGui::End();
 }
 
-void Application::DrawPolygonEdges()
+void Application::DrawFilledPolygon(Polygon const & a_poly, ImColor const & a_clr)
 {
+  ImGui::Begin("CanvasWindow");
+
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+  int size = int(a_poly.size());
+  ImVec2 * points = new ImVec2[a_poly.size()];
+  auto it = a_poly.chead();
+  for (int i = 0; i < a_poly.size(); i++, it++)
+  {
+    points[i].x = it->x();
+    points[i].y = it->y();
+  }
+
+  draw_list->AddConvexPolyFilled(points, size, a_clr, true);
+
+  ImGui::End();
+}
+
+void Application::DrawPolygons()
+{
+  for (auto const & kv : m_polygons)
+  {
+    auto it = kv.second.chead();
+    Polygon polygon;
+    for (size_t i = 0; i < kv.second.size(); i++, it++)
+    {
+      polygon.push_back(*it * m_T_model_screen);
+    }
+
+    DrawFilledPolygon(polygon, ImColor(82, 82, 112, 255));
+  }
+
   for (auto const & kv : m_polygons)
   {
     auto it0 = kv.second.chead();
@@ -129,14 +161,14 @@ void Application::DrawPolygonEdges()
       auto it1 = it0;
       it1++;
       Segment seg(*it0 * m_T_model_screen, *it1 * m_T_model_screen);
-      DrawSegment(seg, ImColor(0, 255, 0, 255));
+      DrawSegment(seg, ImColor(232, 131, 50, 255));
     }
   }
 }
 
 void Application::DrawScene()
 {
-  DrawPolygonEdges();
+  DrawPolygons();
 }
 
 std::vector<std::string> Application::GetProjects()
