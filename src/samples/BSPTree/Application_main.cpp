@@ -114,7 +114,7 @@ void Application::DrawSegment(Segment const & a_seg, ImColor const & a_clr)
   ImVec2 p0(a_seg.GetP0().x(), a_seg.GetP0().y());
   ImVec2 p1(a_seg.GetP1().x(), a_seg.GetP1().y());
 
-  draw_list->AddLine(p0, p1, a_clr, 2);
+  draw_list->AddLine(p0, p1, a_clr, 1);
 
   ImGui::End();
 }
@@ -124,7 +124,7 @@ void Application::DrawPolygonEdges()
   for (auto const & kv : m_polygons)
   {
     auto it0 = kv.second.chead();
-    for (size_t i = 0; i < kv.second.size(); i++)
+    for (size_t i = 0; i < kv.second.size(); i++, it0++)
     {
       auto it1 = it0;
       it1++;

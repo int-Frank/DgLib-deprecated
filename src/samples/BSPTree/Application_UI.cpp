@@ -80,21 +80,10 @@ void Application::GetCanvasBounds()
 void Application::ShowGUI_Canvas()
 {
   ImGui::Begin("CanvasWindow");
-  ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-  Vector center = m_canvasBounds.GetCenter();
-  float hl[2] = {};
-  m_canvasBounds.GetHalfLengths(hl);
-  
-  ImVec2 a(center.x() - hl[0], center.y() - hl[1]);
-  ImVec2 b(center.x() + hl[0], center.y() + hl[1]);
+  //ImVec2 canvas_size = ImGui::GetContentRegionAvail();
+  //ImGui::InvisibleButton("canvas", canvas_size);
 
-  ImVec2 canvas_pos = ImGui::GetCursorScreenPos();            // ImDrawList API uses screen coordinates!
-  ImVec2 canvas_size = ImGui::GetContentRegionAvail();
-
-  draw_list->AddRectFilledMultiColor(a, b, ImColor(50, 50, 50), ImColor(50, 50, 60), ImColor(60, 60, 70), ImColor(50, 50, 60));
-  
-  ImGui::InvisibleButton("canvas", canvas_size);
   ImGui::End();
 }
 
