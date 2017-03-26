@@ -19,9 +19,6 @@
 #include <GLFW/glfw3native.h>
 #endif
 
-void AppOnMouseScroll(double);
-void AppOnKeyEvent(int a_key, int a_action);
-
 // Data
 static GLFWwindow*  g_Window = NULL;
 static double       g_Time = 0.0f;
@@ -141,20 +138,17 @@ static void ImGui_ImplGlfwGL3_SetClipboardText(const char* text)
 
 void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow*, int button, int action, int /*mods*/)
 {
-    AppOnKeyEvent(button, action);
     if (action == GLFW_PRESS && button >= 0 && button < 3)
         g_MousePressed[button] = true;
 }
 
 void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow*, double /*xoffset*/, double yoffset)
 {
-    AppOnMouseScroll(yoffset);
     g_MouseWheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
 }
 
 void ImGui_ImplGlfwGL3_KeyCallback(GLFWwindow*, int key, int, int action, int mods)
 {
-    AppOnKeyEvent(key, action);
     ImGuiIO& io = ImGui::GetIO();
     if (action == GLFW_PRESS)
         io.KeysDown[key] = true;

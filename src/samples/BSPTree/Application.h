@@ -8,8 +8,6 @@
 #include <map>
 #include <stack>
 
-#include "Renderer.h"
-#include "EventManager.h"
 #include "game_tools/DgGTBSPTree.h"
 #include "Types.h"
 
@@ -26,8 +24,6 @@ public:
 
   void Run(Application*);
 
-  void PushEvent(Event const &);
-
   bool LoadProject(std::string const &);
   void UpdateScroll(double);
   void KeyEvent(int key, int action);
@@ -43,11 +39,16 @@ private:
   //UI only touches this data
   AppState                  m_appState;
 
-  int const                 m_windowWidth = 1224;
-  int const                 m_windowHeight = 768;
-  int const                 m_leftMargin = 210;
+  int const                 m_canvasWidth = 1024;
+  int const                 m_canvasHeight = 768;
+  int const                 m_editorWidth = 200;
+  int const                 m_editorHeight = m_canvasHeight;
+  int const                 m_bufferWidth = 3;
+  int const                 m_topMenuBuffer = 5;
+  int const                 m_windowWidth = m_editorWidth +m_canvasWidth + m_bufferWidth * 3;
+  int const                 m_windowHeight = m_canvasHeight + m_topMenuBuffer + m_bufferWidth * 2;
 
-  EventManager              m_eventManager;
+  AABB                      m_canvasBounds;
 
   std::string const         m_configFileName = "config.ini";
   std::string const         m_projectPath = "./maps/";
@@ -55,7 +56,6 @@ private:
 
   AppInfo		                m_info;
   GLFWwindow*               m_window;
-  Renderer                  m_renderer;
 
   double                    m_mouseScroll;
 
@@ -81,11 +81,8 @@ private:
   void SavePolygons(BSPTree::DataInput const &);
   void SetModelToScreenTransform(BSPTree::DataInput const &);
 
-
-  void UI_NewFrame();
-  void HandleEvents();
-  void DoLogic(double dt);
-  void Render();
+  void GetCanvasBounds();
+  void DrawScene();
   void DrawPolygonEdges();
 
   std::vector<std::string> GetProjects();
@@ -99,8 +96,6 @@ private:
   enum Modal
   {
     SavePrompt,
-    OverwriteWindow,
-    SaveAsWindow,
     OpenWindow,
     NewProjectRequest,
     ViewHelp,
@@ -110,7 +105,10 @@ private:
 
   std::stack<int>          m_windowStack;
 
-  void ShowMainGUIWindow();
+  void InitGUI();
+  void ShowGUI();
+  void ShowGUI_Editor();
+  void ShowGUI_Canvas();
 };
 
 #endif

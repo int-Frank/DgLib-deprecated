@@ -129,7 +129,7 @@ void Application::SetModelToScreenTransform(BSPTree::DataInput const & a_data)
 
   Matrix T_model_normalised = mat_t * mat_s;
 
-  translation = Vector(float(m_windowWidth / 2 + m_leftMargin),
+  translation = Vector(float(m_windowWidth / 2),
                        float(m_windowHeight), 0.0f);
   float sx = hl[0] / float(m_windowWidth);
   float sy = hl[1] / float(m_windowHeight);
@@ -156,20 +156,8 @@ bool Application::LoadProject(std::string const & a_file)
   SavePolygons(data);
   m_bspTree.Build(data);
   SetModelToScreenTransform(data);
-  UpdateProjectTitle(a_file);
+  glfwSetWindowTitle(m_window, a_file.c_str());
   printf("'%s' loaded!\n", a_file.c_str());
 
   return true;
-}
-
-template<typename T>
-static std::string ToString(T const * a_data, int a_size)
-{
-  std::stringstream ss;
-  for (int i = 0; i < a_size; ++i)
-  {
-    ss << a_data[i];
-    if (i != a_size - 1) ss << ',';
-  }
-  return ss.str();
 }

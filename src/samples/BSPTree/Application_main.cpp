@@ -33,6 +33,17 @@ bool Application::Init()
   ImGui_ImplGlfwGL3_Init(m_window, true);
   ClearProject();
 
+  //We need to render the GUI a couple of times before it positions
+  //itself correctly, for some reason.
+  InitGUI();
+  ImGui::Render();
+  glfwSwapBuffers(m_window);
+
+  InitGUI();
+  GetCanvasBounds();
+  ImGui::Render();
+  glfwSwapBuffers(m_window);
+
   //DEBUG
   //LoadProject("./maps/simple_cp.cp");
   LoadProject("./maps/map_01.cp");
@@ -91,11 +102,7 @@ void Application::Shutdown()
 void Application::ClearProject()
 {
   m_appState.projName.clear();
-}
-
-void Application::PushEvent(Event const & a_event)
-{
-  m_eventManager.PushEvent(a_event);
+  m_polygons.clear();
 }
 
 void Application::KeyEvent(int a_key, int a_action)
@@ -118,37 +125,6 @@ void Application::UpdateScroll(double a_val)
   }
 }
 
-void AppOnKeyEvent(int a_key, int a_action)
-{
-  Event_KeyEvent e;
-  e.SetKey(a_key);
-  e.SetAction(a_action);
-  Application::GetInstance()->PushEvent(e);
-}
-
-void AppOnMouseScroll(double yOffset)
-{
-  Event_MouseScroll e;
-  e.SetOffset(yOffset);
-  Application::GetInstance()->PushEvent(e);
-}
-
-void Application::HandleEvents()
-{
-  //Get user input
-  ShowMainGUIWindow();
-
-  eObject e(nullptr);
-  while (m_eventManager.PollEvent(e))
-  {
-    e->DoEvent();
-  }
-}
-
-void Application::DoLogic(double a_dt)
-{
-}
-
 
 void Application::DrawPolygonEdges()
 {
@@ -165,14 +141,22 @@ void Application::DrawPolygonEdges()
   }
 }
 
-void Application::Render()
+void Application::DrawScene()
 {
-  m_renderer.Begin();
+  ImGui::Begin("CanvasWindow");
 
-  
-  DrawPolygonEdges();
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-  m_renderer.End();
+  Vector center = m_canvasBounds.GetCenter();
+  float hl[2] = {};
+  m_canvasBounds.GetHalfLengths(hl);
+
+  ImVec2 p0(center.x() - hl[0], center.y() - hl[1]);
+  ImVec2 p1(center.x() + hl[0], center.y() + hl[1]);
+
+  draw_list->AddLine(p0, p1, ImColor(255, 0, 0), 10);
+
+  ImGui::End();
 }
 
 std::vector<std::string> Application::GetProjects()
@@ -231,40 +215,42 @@ void Application::GetConfiguration()
   }
 }
 
-void Application::UI_NewFrame()
+void Application::InitGUI()
 {
   glfwPollEvents();
   ImGui_ImplGlfwGL3_NewFrame();
 
   //Editor
   {
-    ImGui::Begin("Editor", nullptr, 
-        ImGuiWindowFlags_MenuBar
+    ImGui::Begin("Editor", nullptr,
+      ImGuiWindowFlags_NoTitleBar
+      | ImGuiWindowFlags_MenuBar
       | ImGuiWindowFlags_NoResize
       | ImGuiWindowFlags_NoMove
       | ImGuiWindowFlags_NoCollapse);
-    ImGui::SetWindowPos(ImVec2(3, 3));
-    ImGui::SetWindowSize(ImVec2(200, m_windowHeight - 10));
+    ImGui::SetWindowPos(ImVec2(m_bufferWidth, m_bufferWidth));
+    ImGui::SetWindowSize(ImVec2(m_editorWidth, m_editorHeight));
     ImGui::End();
   }
 
-  //Title window
+  //Canvas
   {
-    float indent = 5.0f;
-    ImGui::Begin("##Title", nullptr
-      , ImGuiWindowFlags_NoTitleBar 
-      | ImGuiWindowFlags_NoResize 
-      | ImGuiWindowFlags_AlwaysAutoResize
+    ImGui::Begin("CanvasWindow", nullptr,
+      ImGuiWindowFlags_NoTitleBar
+      | ImGuiWindowFlags_MenuBar
+      | ImGuiWindowFlags_NoResize
       | ImGuiWindowFlags_NoMove
       | ImGuiWindowFlags_NoCollapse
       | ImGuiWindowFlags_NoSavedSettings);
-    ImGui::Text(((m_appState.projName == "") ? "New Project" : m_appState.projName.c_str()));
-
-    //ImGuiID id = ImGui::GetID("##Title");
-    ImVec2 size = ImGui::GetItemRectSize();
-    ImGui::SetWindowPos(ImVec2(((float)m_windowWidth - size.x) / 2.0f, indent));
+    ImGui::SetWindowPos(ImVec2(m_editorWidth + m_bufferWidth * 2, m_bufferWidth));
+    ImGui::SetWindowSize(ImVec2(m_canvasWidth, m_canvasHeight));
     ImGui::End();
   }
+}
+
+void Application::ShowGUI()
+{
+  InitGUI();
 
   //Example UI window
   if (UI::showExampleWindow)
@@ -272,6 +258,9 @@ void Application::UI_NewFrame()
     ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
     ImGui::ShowTestWindow(&UI::showExampleWindow);
   }
+
+  ShowGUI_Editor();
+  ShowGUI_Canvas();
 }
 
 void Application::Run(Application* the_app)
@@ -284,18 +273,12 @@ void Application::Run(Application* the_app)
     return;
   }
 
-  double lastTick = glfwGetTime();
-
   do
   {
-    double thisTick = glfwGetTime();
-    double dt = static_cast<float>(thisTick - lastTick);
-    lastTick = thisTick;
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    UI_NewFrame();
-    HandleEvents();
-    DoLogic(dt);
-    Render();
+    ShowGUI();
+    DrawScene();
 
 	  ImGui::Render();
     glfwSwapBuffers(m_window);

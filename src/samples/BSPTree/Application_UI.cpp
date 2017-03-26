@@ -35,19 +35,6 @@ void Application::CreateFileList(std::vector<std::string> const & a_items
     }
     ImGui::ListBox(a_name, a_currentItem, (char const **)pItems, (int)a_items.size(), 5);
 
-    if (ImGui::BeginPopupContextItem("item context menu"))
-    {
-      if (ImGui::Selectable("Delete selected"))
-      {
-        if (*a_currentItem >= 0)
-        {
-          Event_DeleteFile e;
-          e.SetFileName(m_projectPath + a_items[*a_currentItem]);
-          PushEvent(e);
-        }
-      }
-      ImGui::EndPopup();
-    }
     for (int i = 0; i < a_items.size(); ++i)
     {
       delete[] pItems[i];
@@ -69,7 +56,49 @@ static bool FileExists(std::string const & a_name)
   }
 }
 
-void Application::ShowMainGUIWindow()
+
+void Application::GetCanvasBounds()
+{
+  ImGui::Begin("CanvasWindow");
+
+  ImVec2 canvasPos = ImGui::GetCursorScreenPos();            // ImDrawList API uses screen coordinates!
+  ImVec2 canvasSize = ImGui::GetContentRegionAvail();
+
+  Vector center(canvasPos.x + canvasSize.x / 2.0f,
+    canvasPos.y + canvasSize.y / 2.0f,
+    1.0f);
+
+  float hl[2] = { canvasSize.x / 2.0f, canvasSize.y / 2.0f };
+
+  m_canvasBounds.SetCenter(center);
+  m_canvasBounds.SetHalfLengths(hl);
+
+  ImGui::End();
+}
+
+
+void Application::ShowGUI_Canvas()
+{
+  ImGui::Begin("CanvasWindow");
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+  Vector center = m_canvasBounds.GetCenter();
+  float hl[2] = {};
+  m_canvasBounds.GetHalfLengths(hl);
+  
+  ImVec2 a(center.x() - hl[0], center.y() - hl[1]);
+  ImVec2 b(center.x() + hl[0], center.y() + hl[1]);
+
+  ImVec2 canvas_pos = ImGui::GetCursorScreenPos();            // ImDrawList API uses screen coordinates!
+  ImVec2 canvas_size = ImGui::GetContentRegionAvail();
+
+  draw_list->AddRectFilledMultiColor(a, b, ImColor(50, 50, 50), ImColor(50, 50, 60), ImColor(60, 60, 70), ImColor(50, 50, 60));
+  
+  ImGui::InvisibleButton("canvas", canvas_size);
+  ImGui::End();
+}
+
+void Application::ShowGUI_Editor()
 {
   //Settings
   ImVec4  const   headingClr(1.0f, 0.0f, 1.0f, 1.0f);
@@ -170,10 +199,7 @@ void Application::ShowMainGUIWindow()
     {
       if (open_currentItem != -1)
       {
-        m_appState.projName = files[open_currentItem];
-        Event_LoadProject e;
-        e.SetFileName(m_projectPath + files[open_currentItem]);
-        m_eventManager.PushEvent(e);
+        LoadProject(m_projectPath + files[open_currentItem]);
       }
       finished = true;
     }

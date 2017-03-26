@@ -539,7 +539,10 @@ namespace Dg
           parentNode.leaf.dataOffset = static_cast<uint32_t>(a_nodeDataOut.size());
           parentNode.leaf.nPolygons = static_cast<uint32_t>(a_parentPolygons.size());
 
-          a_nodeDataOut.insert(a_nodeDataOut.end(), a_parentPolygons.begin(), a_parentPolygons.end());
+          for (uint32_t p : a_parentPolygons)
+          {
+            a_nodeDataOut.push_back(p);
+          }
         }
       }
       
