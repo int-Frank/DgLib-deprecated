@@ -187,12 +187,12 @@
     <ClCompile Include="TEST_DgSharedPtr.cpp" />
     <ClCompile Include="TEST_DgR3_Sphere.cpp" />
     <ClCompile Include="TEST_dg_HashTable.cpp" />
-    <ClCompile Include="TEST_dg_list.cpp" />
+    <ClCompile Include="TEST_dg_DoublyLinkedList.cpp" />
     <ClCompile Include="TEST_dg_map.cpp" />
     <ClCompile Include="TEST_dg_QuadTree.cpp" />
     <ClCompile Include="TEST_dg_set.cpp" />
-    <ClCompile Include="TEST_dg_vector.cpp" />
-    <ClCompile Include="TEST_dg_vector_bool.cpp" />
+    <ClCompile Include="TEST_dg_DynamicArray.cpp" />
+    <ClCompile Include="TEST_dg_DynamicArray_bool.cpp" />
     <ClCompile Include="TEST_math.cpp" />
     <ClCompile Include="TEST_DgR3_Matrix.cpp" />
     <ClCompile Include="TEST_ParticleSystems.cpp" />

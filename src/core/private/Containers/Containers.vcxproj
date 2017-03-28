@@ -19,14 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\public\Dg_HashTable.h" />
+    <ClInclude Include="..\..\public\DgStaticArray.h" />
+    <ClInclude Include="..\..\public\DgOpenHashTable.h" />
     <ClInclude Include="..\..\public\DgDoublyLinkedList.h" />
-    <ClInclude Include="..\..\public\Dg_ListCircular.h" />
+    <ClInclude Include="..\..\public\DgCircularDoublyLinkedList.h" />
     <ClInclude Include="..\..\public\Dg_map.h" />
     <ClInclude Include="..\..\public\Dg_QuadTree.h" />
     <ClInclude Include="..\..\public\Dg_set.h" />
     <ClInclude Include="..\..\public\Dg_shared_ptr.h" />
-    <ClInclude Include="..\..\public\Dg_vector.h" />
+    <ClInclude Include="..\..\public\DgDynamicArray.h" />
     <ClInclude Include="..\..\public\impl\DgContainerBase.h" />
     <ClInclude Include="..\..\public\impl\DgSimplePage.h" />
   </ItemGroup>

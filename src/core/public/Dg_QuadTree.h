@@ -7,7 +7,7 @@
 #include <limits>
 
 #include "DgTypes.h"
-#include "Dg_HashTable.h"
+#include "DgOpenHashTable.h"
 #include "DgR2AABB.h"
 
 namespace Dg
@@ -230,8 +230,8 @@ namespace Dg
 
   private:
 
-    HashTable<Handle, Node>            m_nodes;
-    HashTable<Handle, DataType>        m_data;
+    OpenHashTable<Handle, Node>            m_nodes;
+    OpenHashTable<Handle, DataType>        m_data;
   };
 
   template<typename Real, typename Handle, typename DataType, int MaxDepth>

@@ -3,10 +3,10 @@
 //! @author Frank Hart
 //! @date 22/08/2016
 //!
-//! Class declaration: HashTable
+//! Class declaration: OpenHashTable
 
-#ifndef DGHashTable
-#define DGHashTable
+#ifndef DGOPENHASHTABLE_H
+#define DGOPENHASHTABLE_H
 
 #define DGHASHTABLE_ENABLE_OUTPUT
 
@@ -55,17 +55,17 @@ namespace Dg
   //! the combination of a key value and a mapped value, and which allows for 
   //! fast retrieval of individual elements based on their keys.
   //! 
-  //! In a HashTable, the key value is generally used to uniquely identify 
+  //! In a OpenHashTable, the key value is generally used to uniquely identify 
   //! the element, while the mapped value is an object with the content 
   //! associated to this key. Types of key and mapped value may differ.
   //! 
-  //! Internally, the elements in the HashTable are not sorted in any 
+  //! Internally, the elements in the OpenHashTable are not sorted in any 
   //! particular order with respect to either their key or mapped values, 
   //! but organized into buckets depending on their hash values to allow for 
   //! fast access to individual elements directly by their key 
   //! values (with a constant average time complexity on average).
   //!
-  //! HashTable containers are faster than map containers to access individual 
+  //! OpenHashTable containers are faster than map containers to access individual 
   //! elements by their key, although they are generally less efficient for 
   //! range iteration through a subset of their elements.
   //!
@@ -81,7 +81,7 @@ namespace Dg
     //! Data type
     , typename T
   >
-  class HashTable : public ContainerBase
+  class OpenHashTable : public ContainerBase
   {
     struct Node
     {
@@ -104,16 +104,16 @@ namespace Dg
 
     //! @class const_iterator
     //!
-    //! Constant iterator for the HashTable. Iterating past the last element in the HashTable
-    //! or before the first element will result in returning the HashTable::cend() iterator.
-    //! Incrementing past the HashTable::cend() iterator will do nothing. Decrementing the 
-    //! HashTable::cend() will give the last element in the list.
+    //! Constant iterator for the OpenHashTable. Iterating past the last element in the OpenHashTable
+    //! or before the first element will result in returning the OpenHashTable::cend() iterator.
+    //! Incrementing past the OpenHashTable::cend() iterator will do nothing. Decrementing the 
+    //! OpenHashTable::cend() will give the last element in the list.
     //!
     //! @author Frank Hart
     //! @date 22/08/2016
     class const_iterator
     {
-      friend class HashTable;
+      friend class OpenHashTable;
 
       //! Private constructor.
       const_iterator(Node * a_pNode
@@ -170,8 +170,8 @@ namespace Dg
           || m_pBuckets != it.m_pBuckets;
       }
 
-      //! Post increment. Iterating past the last element in the HashTable will result in 
-      //! returning the HashTable::cend() iterator. Incrementing past the HashTable::cend() 
+      //! Post increment. Iterating past the last element in the OpenHashTable will result in 
+      //! returning the OpenHashTable::cend() iterator. Incrementing past the OpenHashTable::cend() 
       //! iterator will do nothing. 
       const_iterator operator++(int)
       {
@@ -180,8 +180,8 @@ namespace Dg
         return result;
       }
 
-      //! Pre increment. Iterating past the last element in the HashTable will result in 
-      //! returning the HashTable::cend() iterator. Incrementing past the HashTable::cend() 
+      //! Pre increment. Iterating past the last element in the OpenHashTable will result in 
+      //! returning the OpenHashTable::cend() iterator. Incrementing past the OpenHashTable::cend() 
       //! iterator will do nothing. 
       const_iterator & operator++()
       {
@@ -212,8 +212,8 @@ namespace Dg
         return *this;
       }
 
-      //! Post decrement. Decrementing the HashTable::cbegin() iterator will result in returning the 
-      //! HashTable::cend() iterator.
+      //! Post decrement. Decrementing the OpenHashTable::cbegin() iterator will result in returning the 
+      //! OpenHashTable::cend() iterator.
       const_iterator operator--(int)
       {
         const_iterator result(*this);
@@ -221,8 +221,8 @@ namespace Dg
         return result;
       }
 
-      //! Pre decrement. Decrementing the HashTable::cbegin() iterator will result in returning the 
-      //! HashTable::cend() iterator.
+      //! Pre decrement. Decrementing the OpenHashTable::cbegin() iterator will result in returning the 
+      //! OpenHashTable::cend() iterator.
       const_iterator & operator--()
       {
         Node * curNode = m_pBuckets[m_bucketIndex].pBegin;
@@ -277,16 +277,16 @@ namespace Dg
 
     //! @class iterator
     //!
-    //! Iterator for the HashTable. Iterating past the last element in the HashTable
-    //! or before the first element will result in returning the HashTable::end() iterator.
-    //! Incrementing past the HashTable::end() iterator will do nothing. Decrementing the 
-    //! HashTable::end() will give the last element in the list.
+    //! Iterator for the OpenHashTable. Iterating past the last element in the OpenHashTable
+    //! or before the first element will result in returning the OpenHashTable::end() iterator.
+    //! Incrementing past the OpenHashTable::end() iterator will do nothing. Decrementing the 
+    //! OpenHashTable::end() will give the last element in the list.
     //!
     //! @author Frank Hart
     //! @date 22/08/2016
     class iterator
     {
-      friend class HashTable;
+      friend class OpenHashTable;
 
       //! Private constructor.
       iterator(Node * a_pNode
@@ -343,8 +343,8 @@ namespace Dg
           || m_pBuckets != it.m_pBuckets;
       }
 
-      //! Post increment. Iterating past the last element in the HashTable will result in 
-      //! returning the HashTable::end() iterator. Incrementing past the HashTable::end() 
+      //! Post increment. Iterating past the last element in the OpenHashTable will result in 
+      //! returning the OpenHashTable::end() iterator. Incrementing past the OpenHashTable::end() 
       //! iterator will do nothing. 
       iterator operator++(int)
       {
@@ -353,8 +353,8 @@ namespace Dg
         return result;
       }
 
-      //! Pre increment. Iterating past the last element in the HashTable will result in 
-      //! returning the HashTable::end() iterator. Incrementing past the HashTable::end() 
+      //! Pre increment. Iterating past the last element in the OpenHashTable will result in 
+      //! returning the OpenHashTable::end() iterator. Incrementing past the OpenHashTable::end() 
       //! iterator will do nothing. 
       iterator & operator++()
       {
@@ -385,8 +385,8 @@ namespace Dg
         return *this;
       }
 
-      //! Post decrement. Decrementing the HashTable::begin() iterator will result in returning the 
-      //! HashTable::end() iterator.
+      //! Post decrement. Decrementing the OpenHashTable::begin() iterator will result in returning the 
+      //! OpenHashTable::end() iterator.
       iterator operator--(int)
       {
         iterator result(*this);
@@ -394,8 +394,8 @@ namespace Dg
         return result;
       }
 
-      //! Pre decrement. Decrementing the HashTable::begin() iterator will result in returning the 
-      //! HashTable::end() iterator.
+      //! Pre decrement. Decrementing the OpenHashTable::begin() iterator will result in returning the 
+      //! OpenHashTable::end() iterator.
       iterator & operator--()
       {
         Node * curNode = m_pBuckets[m_bucketIndex].pBegin;
@@ -460,7 +460,7 @@ namespace Dg
   public:
 
     //! Default constructor.
-    HashTable()
+    OpenHashTable()
       : ContainerBase()
       , m_pNodes(nullptr)
       , m_pBuckets(nullptr)
@@ -479,7 +479,7 @@ namespace Dg
     //!                       The actual number will be from impl::validBucketCounts,
     //!                       and will be the value closest to but not below a_nBuckets.
     //! @param[in] a_hf       A custom hash function.
-    HashTable(size_t a_nBuckets, fHasher<K> * a_hf = DefaultHasher)
+    OpenHashTable(size_t a_nBuckets, fHasher<K> * a_hf = DefaultHasher)
       : ContainerBase()
       , m_pNodes(nullptr)
       , m_pBuckets(nullptr)
@@ -493,13 +493,13 @@ namespace Dg
     }
 
     //! Destructor.
-    ~HashTable()
+    ~OpenHashTable()
     {
       Wipe();
     }
 
     //! Copy constructor.
-    HashTable(HashTable const & a_other)
+    OpenHashTable(OpenHashTable const & a_other)
       : ContainerBase(a_other)
       , m_pNodes(nullptr)
       , m_pBuckets(nullptr)
@@ -513,7 +513,7 @@ namespace Dg
     }
 
     //! Assignment.
-    HashTable & operator=(HashTable const & a_other)
+    OpenHashTable & operator=(OpenHashTable const & a_other)
     {
       if (this != &a_other)
       {
@@ -525,7 +525,7 @@ namespace Dg
     }
 
     //! Copy move operator.
-    HashTable(HashTable && a_other)
+    OpenHashTable(OpenHashTable && a_other)
       : ContainerBase(a_other)
       , m_pNodes(a_other.m_pNodes)
       , m_pBuckets(a_other.m_pBuckets)
@@ -539,7 +539,7 @@ namespace Dg
     }
 
     //! Assignment move operator.
-    HashTable & operator=(HashTable && a_other)
+    OpenHashTable & operator=(OpenHashTable && a_other)
     {
       if (this != &a_other)
       {
@@ -561,7 +561,7 @@ namespace Dg
     }
 
     //! Accessor. Returns element mapped to the key. Will insert element
-    //! if the key is not present in the HashTable.
+    //! if the key is not present in the OpenHashTable.
     T & operator[](K key)
     {
       bool existed(false);
@@ -580,8 +580,8 @@ namespace Dg
       return pNode->data;
     }
 
-    //! Get iterator to the first element of the HashTable.
-    //! Returns HashTable::end() if the HashTable is empty.
+    //! Get iterator to the first element of the OpenHashTable.
+    //! Returns OpenHashTable::end() if the OpenHashTable is empty.
     iterator begin()
     {
       for (size_t i = 0; i < bucket_count(); i++)
@@ -594,8 +594,8 @@ namespace Dg
       return end();
     }
 
-    //! Get const_iterator to the first element of the HashTable.
-    //! Returns HashTable::cend() if the HashTable is empty.
+    //! Get const_iterator to the first element of the OpenHashTable.
+    //! Returns OpenHashTable::cend() if the OpenHashTable is empty.
     const_iterator cbegin() const
     {
       for (size_t i = 0; i < bucket_count(); i++)
@@ -608,13 +608,13 @@ namespace Dg
       return cend();
     }
 
-    //! Get iterator to one past the last element in the HashTable.
+    //! Get iterator to one past the last element in the OpenHashTable.
     iterator end()
     {
       return iterator(nullptr, bucket_count() - 1, bucket_count(), m_pBuckets);
     }
 
-    //! Get const_iterator to one past the last element in the HashTable.
+    //! Get const_iterator to one past the last element in the OpenHashTable.
     const_iterator cend() const
     {
       return const_iterator(nullptr, bucket_count() - 1, bucket_count(), m_pBuckets);
@@ -654,7 +654,7 @@ namespace Dg
       return nullptr;
     }
 
-    //! Insert a mapped value into the HashTable. This function will overwrite 
+    //! Insert a mapped value into the OpenHashTable. This function will overwrite 
     //! any existing element mapped to this key.
     //!
     //! @return Pointer to the newly inserted element.
@@ -680,7 +680,7 @@ namespace Dg
       return &pNode->data;
     }
 
-    //! Insert a mapped value into the HashTable. This function will NOT overwrite 
+    //! Insert a mapped value into the OpenHashTable. This function will NOT overwrite 
     //! any existing element mapped to this key.
     //!
     //! @return Pointer to eith  the newly inserted element, or existing.
@@ -703,7 +703,7 @@ namespace Dg
     }
 
     //! Clear all elements. For non-pod HashTables, this function will call
-    //! destructors of all current element items in the HashTable. For pod types,
+    //! destructors of all current element items in the OpenHashTable. For pod types,
     //! essentially, the item counts are set to 0.
     void clear()
     {
@@ -724,7 +724,7 @@ namespace Dg
       m_nItems = 0;
     }
 
-    //! Is the HashTable empty?
+    //! Is the OpenHashTable empty?
     bool empty() const
     {
       return m_nItems == 0;
@@ -737,7 +737,7 @@ namespace Dg
     //!
     //!     load_factor = size / bucket_count
     //!
-    //! The load factor influences the probability of collision in the HashTable
+    //! The load factor influences the probability of collision in the OpenHashTable
     //! (i.e., the probability of two elements being located in the same bucket).
     //!
     //! The container automatically increases the number of buckets to keep the 
@@ -750,14 +750,14 @@ namespace Dg
       return static_cast<float>(m_nItems) / m_bucketCountIndex;
     }
 
-    //! Returns the current maximum load factor for the HashTable container.
+    //! Returns the current maximum load factor for the OpenHashTable container.
     //!
     //! The load factor is the ratio between the number of elements in the 
     //! container(its size) and the number of buckets(bucket_count) :
     //!
     //!     load_factor = size / bucket_count
     //!
-    //! The load factor influences the probability of collision in the HashTable
+    //! The load factor influences the probability of collision in the OpenHashTable
     //! (i.e., the probability of two elements being located in the same bucket).
     //!
     //! The container automatically increases the number of buckets to keep the 
@@ -768,15 +768,15 @@ namespace Dg
       return m_maxLoadFactor;
     }
 
-    //! Set the maximum load factor for the HashTable container. There is a minimum 
-    //! load factor: HashTable::s_minSetLF
+    //! Set the maximum load factor for the OpenHashTable container. There is a minimum 
+    //! load factor: OpenHashTable::s_minSetLF
     //!
     //! The load factor is the ratio between the number of elements in the 
     //! container(its size) and the number of buckets(bucket_count) :
     //!
     //!     load_factor = size / bucket_count
     //!
-    //! The load factor influences the probability of collision in the HashTable
+    //! The load factor influences the probability of collision in the OpenHashTable
     //! (i.e., the probability of two elements being located in the same bucket).
     //!
     //! The container automatically increases the number of buckets to keep the 
@@ -858,7 +858,7 @@ namespace Dg
       }
     }
 
-    //! Removes from the HashTable container a single element.
+    //! Removes from the OpenHashTable container a single element.
     //!
     //! This effectively reduces the container size by 1.
     //!
@@ -867,7 +867,7 @@ namespace Dg
     {
     }
 
-    //! Removes from the HashTable container a single element.
+    //! Removes from the OpenHashTable container a single element.
     //!
     //! This effectively reduces the container size by 1.
     //!
@@ -912,13 +912,13 @@ namespace Dg
       }
     }
 
-    //! Returns the number of elements in the HashTable.
+    //! Returns the number of elements in the OpenHashTable.
     size_t size() const 
     {
       return m_nItems;
     }
 
-    //! Returns the number of buckets in the HashTable.
+    //! Returns the number of buckets in the OpenHashTable.
     size_t bucket_count() const
     {
       if (m_bucketCountIndex < 0)
@@ -928,9 +928,9 @@ namespace Dg
       return impl::validBucketCounts[m_bucketCountIndex];
     }
 
-    //! For debugging. The HashTable operates over a fixed memory block.
+    //! For debugging. The OpenHashTable operates over a fixed memory block.
     //! The memory is essentially a linked list, with elements drawn from the
-    //! list when items are inserted into the HashTable. This function returns the
+    //! list when items are inserted into the OpenHashTable. This function returns the
     //! total number of used and unused elements in the linked list compared to the 
     //! size of the memory block. 
     size_t PoolSlotsWasted()
@@ -958,9 +958,9 @@ namespace Dg
     }
 
 #ifdef DGHASHTABLE_ENABLE_OUTPUT
-    //! Output the HashTable for debugging.
+    //! Output the OpenHashTable for debugging.
     friend std::ostream & operator<<(std::ostream & os
-                                   , HashTable<K, T> const & ht) 
+                                   , OpenHashTable<K, T> const & ht) 
     {
       for (size_t i = 0; i < ht.bucket_count(); i++)
       {
@@ -1139,7 +1139,7 @@ namespace Dg
     }
 
     // Zero all members we have moved from.
-    void PostMove(HashTable & a_other)
+    void PostMove(OpenHashTable & a_other)
     {
       a_other.m_pNodes = nullptr;
       a_other.pool_size(0);
@@ -1292,8 +1292,8 @@ namespace Dg
       return pResult;
     }
 
-    // Initialise a zeroed HashTable from other.
-    void init(HashTable const & a_other)
+    // Initialise a zeroed OpenHashTable from other.
+    void init(OpenHashTable const & a_other)
     {
       //Assign values
       m_maxLoadFactor = a_other.m_maxLoadFactor;
@@ -1357,16 +1357,16 @@ namespace Dg
   };
 
   template<typename K, typename T>
-  float  const HashTable<K, T>::s_defaultLF = 1.0f;
+  float  const OpenHashTable<K, T>::s_defaultLF = 1.0f;
 
   template<typename K, typename T>
-  float  const HashTable<K, T>::s_minSetLF = 0.5f;
+  float  const OpenHashTable<K, T>::s_minSetLF = 0.5f;
 
   template<typename K, typename T>
-  size_t const HashTable<K, T>::s_minPoolSize = 1;
+  size_t const OpenHashTable<K, T>::s_minPoolSize = 1;
 
   template<typename K, typename T>
-  int const HashTable<K, T>::s_invalidBucketIndex = -1;
+  int const OpenHashTable<K, T>::s_invalidBucketIndex = -1;
 
 }
 

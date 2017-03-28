@@ -3,10 +3,10 @@
 //! @author Frank Hart
 //! @date 22/07/2016
 //!
-//! Class header: vector<>
+//! Class header: DynamicArray<>
 
-#ifndef DG_VECTOR_P_H
-#define DG_VECTOR_P_H
+#ifndef DGDYNAMICARRAY_H
+#define DGDYNAMICARRAY_H
 
 #include <cstdlib>
 #include <cstring>
@@ -21,11 +21,11 @@ namespace Dg
 {
   //! @ingroup DgContainers
   //!
-  //! @class vector
+  //! @class DynamicArray
   //!
   //! @brief Contiguous array, similar to std::vector.
   //!
-  //! http://www.cplusplus.com/reference/vector/vector/
+  //! http://www.cplusplus.com/reference/DynamicArray/DynamicArray/
   //!
   //! Similar to std::vector. Constructors/destructors are not called, so use for pod types only.
   //!
@@ -33,27 +33,27 @@ namespace Dg
   //! @author Frank Hart
   //! @date 7/01/2014
   template<class T>
-  class vector : public ContainerBase
+  class DynamicArray : public ContainerBase
   {
   public:
     //Constructor / destructor
-    vector();
+    DynamicArray();
 
     //! Construct with a set size
-    vector(size_t);
-    ~vector();
+    DynamicArray(size_t);
+    ~DynamicArray();
 
     //! Copy constructor
-    vector(vector const &);
+    DynamicArray(DynamicArray const &);
 
     //! Assignment
-    vector& operator= (vector const &);
+    DynamicArray& operator= (DynamicArray const &);
 
     //! Move constructor
-    vector(vector &&);
+    DynamicArray(DynamicArray &&);
 
     //! Move assignment
-    vector& operator= (vector &&);
+    DynamicArray& operator= (DynamicArray &&);
 
     //! Access element
     T & operator[](size_t i)				{ return m_pData[i]; }
@@ -64,13 +64,13 @@ namespace Dg
     //! Get last element
     //! Calling this function on an empty container causes undefined behavior.
     //!
-    //! @return Reference to item in the vector
+    //! @return Reference to item in the DynamicArray
     T& back() { return m_pData[m_nItems - 1]; }
 
     //! Get last element
     //! Calling this function on an empty container causes undefined behavior.
     //!
-    //! @return const reference to item in the vector
+    //! @return const reference to item in the DynamicArray
     T const & back() const { return m_pData[m_nItems - 1]; }
 
     //! Current size of the array
@@ -98,14 +98,14 @@ namespace Dg
     void resize(size_t new_size);
 
     //! Erase the element at index by swapping in the last element.
-    //! Calling this on an empty vector will no doubt cause a crash.
+    //! Calling this on an empty DynamicArray will no doubt cause a crash.
     void erase_swap(size_t);
 
   private:
     //! Exteneds the total size of the array (current + reserve) by a factor of 2
     void extend();
 
-    void init(vector const &);
+    void init(DynamicArray const &);
 
   private:
     //Data members
@@ -115,10 +115,10 @@ namespace Dg
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::vector()
+  //	@	DynamicArray<T>::DynamicArray()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector<T>::vector() 
+  DynamicArray<T>::DynamicArray() 
     : ContainerBase()
     , m_pData(nullptr)
     , m_nItems(0)
@@ -126,14 +126,14 @@ namespace Dg
     m_pData = static_cast<T*>(malloc(pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
 
-  }	//End: vector::vector()
+  }	//End: DynamicArray::DynamicArray()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::vector()
+  //	@	DynamicArray<T>::DynamicArray()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector<T>::vector(size_t a_size)
+  DynamicArray<T>::DynamicArray(size_t a_size)
     : ContainerBase(a_size)
     , m_pData(nullptr)
     , m_nItems(0)
@@ -142,14 +142,14 @@ namespace Dg
     m_pData = static_cast<T*>(malloc(pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
 
-  }	//End: vector::vector()
+  }	//End: DynamicArray::DynamicArray()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::~vector()
+  //	@	DynamicArray<T>::~DynamicArray()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector<T>::~vector()
+  DynamicArray<T>::~DynamicArray()
   {
     if (!std::is_trivially_destructible<T>::value)
     {
@@ -161,14 +161,14 @@ namespace Dg
 
     free(m_pData);
 
-  }	//End: vector::~vector()
+  }	//End: DynamicArray::~DynamicArray()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::init()
+  //	@	DynamicArray<T>::init()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector<T>::init(vector const & a_other)
+  void DynamicArray<T>::init(DynamicArray const & a_other)
   {
     pool_size(a_other.pool_size());
     m_nItems = a_other.m_nItems;
@@ -187,40 +187,40 @@ namespace Dg
       memcpy(m_pData, a_other.m_pData, a_other.m_nItems * sizeof(T));
     }
 
-  }	//End: vector<T>::init()
+  }	//End: DynamicArray<T>::init()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::vector()
+  //	@	DynamicArray<T>::DynamicArray()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector<T>::vector(vector<T> const & other)
+  DynamicArray<T>::DynamicArray(DynamicArray<T> const & other)
     : ContainerBase(other)
     , m_pData(nullptr)
   {
     init(other);
 
-  }	//End: vector::vector()
+  }	//End: DynamicArray::DynamicArray()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::vector()
+  //	@	DynamicArray<T>::DynamicArray()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector<T>::vector(vector<T> && other) 
+  DynamicArray<T>::DynamicArray(DynamicArray<T> && other) 
     : ContainerBase(std::move(other))
     , m_pData(other.m_pData)
   {
     other.m_pData = nullptr;
     other.m_nItems = 0;
-  }	//End: vector::vector()
+  }	//End: DynamicArray::DynamicArray()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::vector()
+  //	@	DynamicArray<T>::DynamicArray()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector<T> & vector<T>::operator=(vector<T> && other)
+  DynamicArray<T> & DynamicArray<T>::operator=(DynamicArray<T> && other)
   {
     if (this != &other)
     {
@@ -234,14 +234,14 @@ namespace Dg
       other.m_nItems = 0;
     }
     return *this;
-  }	//End: vector::vector()
+  }	//End: DynamicArray::DynamicArray()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::operator=()
+  //	@	DynamicArray<T>::operator=()
   //--------------------------------------------------------------------------------
   template<class T>
-  vector<T>& vector<T>::operator=(vector const & other)
+  DynamicArray<T>& DynamicArray<T>::operator=(DynamicArray const & other)
   {
     if (this == &other)
       return *this;
@@ -251,14 +251,14 @@ namespace Dg
     init(other);
 
     return *this;
-  }	//End: vector::operator=()
+  }	//End: DynamicArray::operator=()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::push_back()
+  //	@	DynamicArray<T>::push_back()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector<T>::push_back(T const & a_item)
+  void DynamicArray<T>::push_back(T const & a_item)
   {
     //Range check
     if (m_nItems == pool_size())
@@ -277,14 +277,14 @@ namespace Dg
 
     m_nItems++;
 
-  }	//End: vector<T>::push_back()
+  }	//End: DynamicArray<T>::push_back()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::pop_back
+  //	@	DynamicArray<T>::pop_back
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector<T>::pop_back()
+  void DynamicArray<T>::pop_back()
   {
     if (!std::is_trivially_destructible<T>::value)
     {
@@ -292,14 +292,14 @@ namespace Dg
     }
     --m_nItems;
 
-  }	//End: vector<T>::pop_back()
+  }	//End: DynamicArray<T>::pop_back()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::clear()
+  //	@	DynamicArray<T>::clear()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector<T>::clear()
+  void DynamicArray<T>::clear()
   {
     if (!std::is_trivially_destructible<T>::value)
     {
@@ -310,14 +310,14 @@ namespace Dg
     }
     m_nItems = 0;
 
-  }	//End: vector::clear()
+  }	//End: DynamicArray::clear()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::resize()
+  //	@	DynamicArray<T>::resize()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector<T>::resize(size_t a_size)
+  void DynamicArray<T>::resize(size_t a_size)
   {
     pool_size(a_size);
 
@@ -335,14 +335,14 @@ namespace Dg
 
     m_pData = static_cast<T*>(realloc(m_pData, pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
-  }	//End: vector::resize()
+  }	//End: DynamicArray::resize()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::erase_swap()
+  //	@	DynamicArray<T>::erase_swap()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector<T>::erase_swap(size_t a_ind)
+  void DynamicArray<T>::erase_swap(size_t a_ind)
   {
     if (!std::is_trivially_destructible<T>::value)
     {
@@ -350,19 +350,19 @@ namespace Dg
     }
     memmove(&m_pData[ind], &m_pData[m_nItems - 1], sizeof(T));
     --m_nItems;
-  }	//End: vector::erase_swap()
+  }	//End: DynamicArray::erase_swap()
 
 
   //--------------------------------------------------------------------------------
-  //	@	vector<T>::extend()
+  //	@	DynamicArray<T>::extend()
   //--------------------------------------------------------------------------------
   template<class T>
-  void vector<T>::extend()
+  void DynamicArray<T>::extend()
   {
     set_next_pool_size();
     m_pData = static_cast<T*>(realloc(m_pData, pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
-  }	//End: vector::extend()
+  }	//End: DynamicArray::extend()
 
 
 
@@ -377,10 +377,10 @@ namespace Dg
   //!
   //! @return Pointer to object
   //!
-  //! @param container vector to search
+  //! @param container DynamicArray to search
   //! @param val Item to search for
   template<class T>
-  T* find(vector<T>& container, T const & val)
+  T* find(DynamicArray<T>& container, T const & val)
   {
     for (size_t i = 0; i < container.size(); i++)
     {
@@ -395,12 +395,12 @@ namespace Dg
 
   //! @ingroup Containers_functions
   //!
-  //! Fills the vector with a value.
+  //! Fills the DynamicArray with a value.
   //!
   //! @param container Target container
   //! @param val value to fill set each element
   template<class T>
-  void fill(vector<T>& container, T const & val)
+  void fill(DynamicArray<T>& container, T const & val)
   {
     for (size_t i = 0; i < container.size(); i++)
     {
@@ -410,7 +410,7 @@ namespace Dg
   }	//End: fill()
 
   template<>
-  class vector<bool> : public ContainerBase
+  class DynamicArray<bool> : public ContainerBase
   {
     template<int T>
     struct Attr
@@ -453,7 +453,7 @@ namespace Dg
 
     class reference 
     {
-      friend class vector<bool>;
+      friend class DynamicArray<bool>;
       reference(size_t & a_rBucket, int a_bitIndex)
         : m_rBucket(a_rBucket)
         , m_bitIndex(a_bitIndex)
@@ -492,7 +492,7 @@ namespace Dg
 
   public:
 
-    vector()
+    DynamicArray()
       : ContainerBase()
       , m_pBuckets(nullptr)
       , m_nItems(0)
@@ -502,7 +502,7 @@ namespace Dg
     }
 
     //! Construct with a set size
-    vector(size_t a_size)
+    DynamicArray(size_t a_size)
       : ContainerBase(a_size)
       , m_pBuckets(nullptr)
       , m_nItems(0)
@@ -511,13 +511,13 @@ namespace Dg
       DG_ASSERT(m_pBuckets != nullptr);
     }
 
-    ~vector()
+    ~DynamicArray()
     {
       free(m_pBuckets);
     }
 
     //! Copy constructor
-    vector(vector const & a_other)
+    DynamicArray(DynamicArray const & a_other)
       : ContainerBase(a_other)
       , m_pBuckets(nullptr)
     {
@@ -525,7 +525,7 @@ namespace Dg
     }
 
     //! Assignment
-    vector& operator= (vector const & a_other)
+    DynamicArray& operator= (DynamicArray const & a_other)
     {
       if (this == &a_other)
         return *this;
@@ -538,7 +538,7 @@ namespace Dg
     }
 
     //! Move constructor
-    vector(vector && a_other)
+    DynamicArray(DynamicArray && a_other)
       : ContainerBase(std::move(a_other))
       , m_pBuckets(a_other.m_pBuckets)
     {
@@ -547,7 +547,7 @@ namespace Dg
     }
 
     //! Move assignment
-    vector& operator= (vector && a_other)
+    DynamicArray& operator= (DynamicArray && a_other)
     {
       if (this != &a_other)
       {
@@ -593,7 +593,7 @@ namespace Dg
     //! Get last element
     //! Calling this function on an empty container causes undefined behavior.
     //!
-    //! @return Reference to item in the vector
+    //! @return Reference to item in the DynamicArray
     bool back() { return this->operator[](size() - 1); }
 
     //! Current size of the array
@@ -645,7 +645,7 @@ namespace Dg
       DG_ASSERT(m_pBuckets != nullptr);
     }
 
-    void init(vector const & a_other)
+    void init(DynamicArray const & a_other)
     {
       resize(a_other.pool_size() << Attr<sizeof(size_t)>::shift);
       size_t sze = ((a_other.m_nItems + 7) >> 3);

@@ -7,8 +7,8 @@
 
 // old length : 855 lines
 
-#ifndef DG_LIST_H
-#define DG_LIST_H
+#ifndef DGDOUBLYLINKEDLIST_H
+#define DGDOUBLYLINKEDLIST_H
 
 #include <cstring>
 #include <new>

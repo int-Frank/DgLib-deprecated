@@ -1,11 +1,11 @@
 #include "TestHarness.h"
-#include "dg_vector.h"
+#include "DgDynamicArray.h"
 #include <vector>
 
 #include "NonPODTests.h"
 
-typedef std::vector<bool>   vector;
-typedef Dg::vector<bool>    DgVec;
+typedef std::vector<bool>         vector;
+typedef Dg::DynamicArray<bool>    DgVec;
 
 
 

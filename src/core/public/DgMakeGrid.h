@@ -1,7 +1,7 @@
 #ifndef DGMAKEGRID_H
 #define DGMAKEGRID_H
 
-#include "Dg_vector.h"
+#include "DgDynamicArray.h"
 
 namespace Dg
 {
@@ -13,7 +13,7 @@ namespace Dg
   //! @param[in] a_out Output indices
   //! @param[in] a_dimension number of vertices along each edge [w, h]
   template<typename INT, bool CW = true>
-  void MakeGridIndUniqueElem(vector<INT> & a_out
+  void MakeGridIndUniqueElem(DynamicArray<INT> & a_out
                            , INT a_dimension[2])
   {
     a_out.clear();
@@ -57,9 +57,9 @@ namespace Dg
   //! @param[in] a_dimension number of elements on each side of the grid [w, h]
   //! @param[in] a_bounds [tl, tr, bl, br]
   template<typename Real, int VectorSize>
-  void MakePointGridUniqueElem(vector<Real> & a_out, int a_dimension[2], Real const a_bounds[4 * VectorSize])
+  void MakePointGridUniqueElem(DynamicArray<Real> & a_out, int a_dimension[2], Real const a_bounds[4 * VectorSize])
   {
-    vector<Real> temp;
+    DynamicArray<Real> temp;
     int dim[2] = { a_dimension [0] + 1, a_dimension[1] + 1};
     MakePointGrid<Real, VectorSize>(temp, dim, a_bounds);
 
@@ -103,7 +103,7 @@ namespace Dg
   //! @param[in] a_out Output indices
   //! @param[in] a_dimension number of points on each side of the grid [w, h]
   template<typename INT, bool CW = true>
-  void MakeGridInd(vector<INT> & a_out
+  void MakeGridInd(DynamicArray<INT> & a_out
                  , INT a_dimension[2])
   {
     a_out.clear();
@@ -150,7 +150,7 @@ namespace Dg
   //! @param[in] a_dimension number of points on each side of the grid [w, h]
   //! @param[in] a_bounds [tl, tr, bl, br]
   template<typename Real, int VectorSize>
-  void MakePointGrid(vector<Real> & a_out, int a_dimension, Real const a_bounds[4 * VectorSize])
+  void MakePointGrid(DynamicArray<Real> & a_out, int a_dimension, Real const a_bounds[4 * VectorSize])
   {
     int dim[2] = { a_dimension, a_dimension };
     MakePointGrid<Real, VectorSize>(a_out, dim, a_bounds);
@@ -165,9 +165,9 @@ namespace Dg
   //! @param[in] a_dimension number of points on each side of the grid [w, h]
   //! @param[in] a_bounds [tl, tr, bl, br]
   template<typename Real, int VectorSize>
-  void MakePointGrid(vector<Real> & a_out, int a_dimension[2], Real const a_bounds[4 * VectorSize])
+  void MakePointGrid(DynamicArray<Real> & a_out, int a_dimension[2], Real const a_bounds[4 * VectorSize])
   {
-    static_assert(VectorSize == 3 || VectorSize == 4, "Must have a vector size of 3 or 4");
+    static_assert(VectorSize == 3 || VectorSize == 4, "Must have a DynamicArray size of 3 or 4");
 
     Real x_left = a_bounds[0] - a_bounds[VectorSize * 2];
     Real y_left = a_bounds[1] - a_bounds[VectorSize * 2 + 1];
@@ -214,7 +214,7 @@ namespace Dg
   //! @param[in] a_dimension dimension on each side of the grid [w, h]
   //! @param[in] a_bounds [tl, tr, bl, br]
   template<typename Real, int VectorSize>
-  void MakeLineGrid(vector<Real> & a_out, int a_dimension, Real const a_bounds[4 * VectorSize])
+  void MakeLineGrid(DynamicArray<Real> & a_out, int a_dimension, Real const a_bounds[4 * VectorSize])
   {
     int dim[2] = { a_dimension, a_dimension };
     MakeLineGrid<Real, VectorSize>(a_out, dim, a_bounds);
@@ -227,9 +227,9 @@ namespace Dg
   //! @param[in] a_dimension dimension on each side of the grid [w, h]
   //! @param[in] a_bounds [tl, tr, bl, br]
   template<typename Real, int VectorSize>
-  void MakeLineGrid(vector<Real> & a_out, int a_dimension[2], Real const a_bounds[4 * VectorSize])
+  void MakeLineGrid(DynamicArray<Real> & a_out, int a_dimension[2], Real const a_bounds[4 * VectorSize])
   {
-    static_assert(VectorSize == 3 || VectorSize == 4, "Must have a vector size of 3 or 4");
+    static_assert(VectorSize == 3 || VectorSize == 4, "Must have a DynamicArray size of 3 or 4");
     int nDrawsH = (a_dimension[0] + 1);
     int nDrawsV = (a_dimension[1] + 1);
 

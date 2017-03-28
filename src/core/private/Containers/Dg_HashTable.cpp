@@ -1,4 +1,4 @@
-#include "Dg_HashTable.h"
+#include "DgOpenHashTable.h"
 
 namespace Dg
 {

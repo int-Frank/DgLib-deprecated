@@ -8,7 +8,7 @@
 #ifndef DGR2POLYGON_H
 #define DGR2POLYGON_H
 
-#include "Dg_ListCircular.h"
+#include "DgCircularDoublyLinkedList.h"
 #include "DgR2Vector.h"
 #include "dgmath.h"
 
@@ -24,7 +24,7 @@ namespace Dg
     //! @author: Frank Hart
     //! @date 20/06/2016
     template<typename Real>
-    class Polygon : public ListCircular<Vector<Real>>
+    class Polygon : public CircularDoublyLinkedList<Vector<Real>>
     {
     public:
       //! Default constructor.

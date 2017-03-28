@@ -1,12 +1,12 @@
 #include "TestHarness.h"
-#include "dg_vector.h"
+#include "DgDynamicArray.h"
 #include <vector>
 
 #include "NonPODTests.h"
 
 typedef int t;
-typedef std::vector<t>   vector;
-typedef Dg::vector<t>    DgVec;
+typedef std::vector<t>         vector;
+typedef Dg::DynamicArray<t>    DgVec;
 
 
 

@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "TestHarness.h"
-#include "Dg_HashTable.h"
+#include "DgOpenHashTable.h"
 
 typedef unsigned Key;
 
@@ -32,15 +32,15 @@ public:
   int m;
 };
 
-int HaveSameItems(Dg::HashTable<Key, C> ht0, Dg::HashTable<Key, C> ht1)
+int HaveSameItems(Dg::OpenHashTable<Key, C> ht0, Dg::OpenHashTable<Key, C> ht1)
 {
   if (ht0.size() != ht1.size())
   {
     return __LINE__;
   }
 
-  Dg::HashTable<Key, C>::iterator it0 = ht0.begin();
-  Dg::HashTable<Key, C>::iterator it1 = ht1.begin();
+  Dg::OpenHashTable<Key, C>::iterator it0 = ht0.begin();
+  Dg::OpenHashTable<Key, C>::iterator it1 = ht1.begin();
   while (it0 != ht0.end())
   {
     if (*it0 != *it1)
@@ -54,7 +54,7 @@ int HaveSameItems(Dg::HashTable<Key, C> ht0, Dg::HashTable<Key, C> ht1)
 }
 
 
-int Compare(Dg::HashTable<Key, C> a_ht, std::list<C> a_list)
+int Compare(Dg::OpenHashTable<Key, C> a_ht, std::list<C> a_list)
 {
   //Check sizes
   if (a_ht.size() != a_list.size())
@@ -74,7 +74,7 @@ int Compare(Dg::HashTable<Key, C> a_ht, std::list<C> a_list)
 
   //Make sure elments match, use interator++
   std::list<C> newList(a_list);
-  Dg::HashTable<Key, C>::iterator it = a_ht.begin();
+  Dg::OpenHashTable<Key, C>::iterator it = a_ht.begin();
   for(it; it != a_ht.end(); it++)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
@@ -109,7 +109,7 @@ int Compare(Dg::HashTable<Key, C> a_ht, std::list<C> a_list)
 
   //Make sure elments match, use const_interator++
   newList = a_list;
-  Dg::HashTable<Key, C>::const_iterator cit = a_ht.cbegin();
+  Dg::OpenHashTable<Key, C>::const_iterator cit = a_ht.cbegin();
   for (cit; cit != a_ht.cend(); cit++)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *cit);
@@ -142,7 +142,7 @@ int Compare(Dg::HashTable<Key, C> a_ht, std::list<C> a_list)
   }
 
   //Construction
-  Dg::HashTable<Key, C> newHT(a_ht);
+  Dg::OpenHashTable<Key, C> newHT(a_ht);
   if (newHT.PoolSlotsWasted()) return __LINE__;
   int res = HaveSameItems(a_ht, newHT);
   if (res != 0) return res;
@@ -152,7 +152,7 @@ int Compare(Dg::HashTable<Key, C> a_ht, std::list<C> a_list)
   res = HaveSameItems(a_ht, newHT);
   if (res != 0) return res;
 
-  Dg::HashTable<Key, C> moved(std::move(newHT));
+  Dg::OpenHashTable<Key, C> moved(std::move(newHT));
   if (moved.PoolSlotsWasted()) return __LINE__;
   res = HaveSameItems(a_ht, moved);
   if (res != 0) return res;
@@ -171,7 +171,7 @@ int Compare(Dg::HashTable<Key, C> a_ht, std::list<C> a_list)
   return 0;
 }
 
-int AddNewItem(Key k, Dg::HashTable<Key, C> & a_ht, std::list<C> & a_list)
+int AddNewItem(Key k, Dg::OpenHashTable<Key, C> & a_ht, std::list<C> & a_list)
 {
   if (a_ht.at(k))
   {
@@ -212,7 +212,7 @@ int AddNewItem(Key k, Dg::HashTable<Key, C> & a_ht, std::list<C> & a_list)
 
 TEST(Stack_dg_HashTable, creation_dg_HashTable)
 {
-  Dg::HashTable<Key, C> ht;
+  Dg::OpenHashTable<Key, C> ht;
   std::list<C> lst;
   int failLine = 0;
   for (int i = 0; i < 100; ++i)

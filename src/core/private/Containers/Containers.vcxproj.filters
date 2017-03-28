@@ -19,17 +19,11 @@
     <ClInclude Include="..\..\public\Dg_shared_ptr.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dg_HashTable.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\Dg_set.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\impl\DgContainerBase.h">
       <Filter>Private</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\Dg_vector.h">
-      <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\impl\DgSimplePage.h">
       <Filter>Private</Filter>
@@ -37,10 +31,19 @@
     <ClInclude Include="..\..\public\Dg_QuadTree.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dg_ListCircular.h">
+    <ClInclude Include="..\..\public\DgDoublyLinkedList.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgDoublyLinkedList.h">
+    <ClInclude Include="..\..\public\DgDynamicArray.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgStaticArray.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgCircularDoublyLinkedList.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgOpenHashTable.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -49,7 +52,7 @@
       <Filter>Private</Filter>
     </ClCompile>
     <ClCompile Include="Dg_HashTable.cpp">
-      <Filter>Public Headers</Filter>
+      <Filter>Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

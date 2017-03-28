@@ -3,7 +3,7 @@
 
 TEST(Stack_DgMakeGrid_INI, creation_DgMakeGrid_INI)
 {
-  Dg::vector<float> result;
+  Dg::DynamicArray<float> result;
   int dim2[2] = { 4, 4 };
   int dim1 = 8;
   float const bounds3[12] =
@@ -57,7 +57,7 @@ TEST(Stack_DgMakeGrid_INI, creation_DgMakeGrid_INI)
   CHECK(result.size() == ((dim1 * dim1) * 4));
 
   //Mesh indices
-  Dg::vector<int> ind;
+  Dg::DynamicArray<int> ind;
   Dg::MakeGridInd<int>(ind, dim2);
   CHECK(ind.size() == ((dim2[0] - 1) * (dim2[1] - 1)) * 2 * 3);
 

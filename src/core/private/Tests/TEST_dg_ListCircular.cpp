@@ -1,8 +1,8 @@
 #include "TestHarness.h"
-#include "dg_listCircular.h"
+#include "DgCircularDoublyLinkedList.h"
 
 typedef int t;
-typedef Dg::ListCircular<t>        DgList;
+typedef Dg::CircularDoublyLinkedList<t>        DgList;
 
 TEST(Stack_dg_ListCircular, creation_dg_ListCircular)
 {
