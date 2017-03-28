@@ -49,7 +49,7 @@ bool CheckState(list & a_list, DgList & a_dgList)
 //--------------------------------------------------------------------------------
 //	Dg::map_s
 //--------------------------------------------------------------------------------
-TEST(Stack_dg_list_pod, creation_dg_list_pod)
+TEST(Stack_DgDoublyLinkedList, creation_DgDoublyLinkedList)
 {
   DgList    dglst;
   list      lst;

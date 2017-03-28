@@ -108,13 +108,16 @@ namespace Dg
   }
 
   //! Finds log base 2 of a 32-bit integer.
-  uint32_t Log2(uint32_t input);
+  int Log2_32(uint32_t);
+
+  //! Finds log base 2 of a 64-bit integer.
+  int Log2_64(uint64_t);
 
   //! Floors a number to the nearest power of 2.
-  uint32_t FloorPower2(uint32_t input);
+  uint32_t FloorPower2(uint32_t);
 
   //! Returns the next power of 2.
-  uint32_t NextPower2(uint32_t input);
+  uint32_t NextPower2(uint32_t);
 
   //! Inverse error function. Uses Mclaurin series expansion approximation.
   //! The template param nTerms represents the number of terms in the series expansion to use.

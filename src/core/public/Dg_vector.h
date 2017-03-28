@@ -14,6 +14,7 @@
 #include <type_traits>
 
 #include "impl/DgContainerBase.h"
+#include "DgMath.h"
 #include "DgErrorHandler.h"
 
 namespace Dg
@@ -466,20 +467,20 @@ namespace Dg
 
       operator bool() const
       {
-        return ((m_rBucket >> m_bitIndex) & 1) != 0;
+        return ((m_rBucket >> m_bitIndex) & size_t(1)) != 0;
       }
 
       reference & operator= (bool a_val)
       {
         size_t x = (a_val) ? 1 : 0;
-        m_rBucket = m_rBucket & ~(1 << m_bitIndex) | (x << m_bitIndex);
+        m_rBucket = m_rBucket & ~(size_t(1) << m_bitIndex) | (x << m_bitIndex);
         return *this;
       }
 
       reference & operator= (reference const & a_val)
       {
-        size_t x = (a_val.m_rBucket >> a_val.m_bitIndex) & 1;
-        m_rBucket = m_rBucket & ~(1 << m_bitIndex) | (x << m_bitIndex);
+        size_t x = (a_val.m_rBucket >> a_val.m_bitIndex) & size_t(1);
+        m_rBucket = m_rBucket & ~(size_t(1) << m_bitIndex) | (x << m_bitIndex);
         return *this;
       }
 
@@ -568,7 +569,7 @@ namespace Dg
       size_t bucket(i >> Attr<sizeof(size_t)>::shift);
       size_t n = i & Attr<sizeof(size_t)>::mask;
 
-      return ((m_pBuckets[bucket] >> n) & 1) != 0;
+      return ((m_pBuckets[bucket] >> n) & size_t(1)) != 0;
     }
 
     //! Access element
@@ -586,7 +587,7 @@ namespace Dg
       size_t n = i & Attr<sizeof(size_t)>::mask;
       size_t x = (a_val) ? 1 : 0;
 
-      m_pBuckets[bucket] = m_pBuckets[bucket] & ~(1 << n) | (x << n);
+      m_pBuckets[bucket] = (m_pBuckets[bucket] & ~(size_t(1) << n)) | (x << n);
     }
 
     //! Get last element
@@ -644,7 +645,13 @@ namespace Dg
       DG_ASSERT(m_pBuckets != nullptr);
     }
 
-    void init(vector const &);
+    void init(vector const & a_other)
+    {
+      resize(a_other.pool_size() << Attr<sizeof(size_t)>::shift);
+      size_t sze = ((a_other.m_nItems + 7) >> 3);
+      memcpy(m_pBuckets, a_other.m_pBuckets, sze);
+      m_nItems = a_other.m_nItems;
+    }
 
   private:
     //Data members
