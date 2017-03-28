@@ -28,9 +28,6 @@
     <ClInclude Include="..\..\public\impl\DgSimplePage.h">
       <Filter>Private</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dg_QuadTree.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgDoublyLinkedList.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -46,12 +43,15 @@
     <ClInclude Include="..\..\public\DgOpenHashTable.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgQuadTree.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgContainerBase.cpp">
       <Filter>Private</Filter>
     </ClCompile>
-    <ClCompile Include="Dg_HashTable.cpp">
+    <ClCompile Include="DgHashTable.cpp">
       <Filter>Private</Filter>
     </ClCompile>
   </ItemGroup>

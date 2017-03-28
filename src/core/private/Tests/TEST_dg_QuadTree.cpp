@@ -2,7 +2,7 @@
 
 #include "TestHarness.h"
 #include "DgR2Vector.h"
-#include "Dg_QuadTree.h"
+#include "DgQuadTree.h"
 
 typedef Dg::R2::Vector<float>                  vec2;
 typedef Dg::QuadTree<float, uint32_t, int>     QT15;

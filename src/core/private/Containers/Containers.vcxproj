@@ -24,7 +24,7 @@
     <ClInclude Include="..\..\public\DgDoublyLinkedList.h" />
     <ClInclude Include="..\..\public\DgCircularDoublyLinkedList.h" />
     <ClInclude Include="..\..\public\Dg_map.h" />
-    <ClInclude Include="..\..\public\Dg_QuadTree.h" />
+    <ClInclude Include="..\..\public\DgQuadTree.h" />
     <ClInclude Include="..\..\public\Dg_set.h" />
     <ClInclude Include="..\..\public\Dg_shared_ptr.h" />
     <ClInclude Include="..\..\public\DgDynamicArray.h" />
@@ -33,7 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgContainerBase.cpp" />
-    <ClCompile Include="Dg_HashTable.cpp" />
+    <ClCompile Include="DgHashTable.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8DB75AC3-EEC3-4235-BE94-CF62C035601D}</ProjectGuid>
