@@ -22,9 +22,6 @@
     <ClInclude Include="..\..\public\Dg_HashTable.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dg_list.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\Dg_set.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -41,6 +38,9 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\Dg_ListCircular.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgDoublyLinkedList.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>

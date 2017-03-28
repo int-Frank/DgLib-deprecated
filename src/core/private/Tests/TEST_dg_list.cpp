@@ -1,10 +1,10 @@
 #include "TestHarness.h"
-#include "dg_list.h"
+#include "DgDoublyLinkedList.h"
 #include <list>
 
 typedef int t;
-typedef std::list<t>       list;
-typedef Dg::list<t>        DgList;
+typedef std::list<t>                   list;
+typedef Dg::DoublyLinkedList<t>        DgList;
 
 bool CheckState(list & a_list, DgList & a_dgList)
 {

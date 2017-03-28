@@ -8,7 +8,7 @@
 #ifndef DGIDSERVER_H
 #define DGIDSERVER_H
 
-#include "Dg_list.h"
+#include "DgDoublyLinkedList.h"
 
 namespace Dg
 {
@@ -77,8 +77,12 @@ namespace Dg
       T m_upper;
     };
     
-    list<Interval>     m_intervals;
-    Interval               m_bounds;
+    typedef DoublyLinkedList<Interval>                           list;
+    typedef typename DoublyLinkedList<Interval>::iterator        iterator;
+    typedef typename DoublyLinkedList<Interval>::const_iterator  const_iterator;
+
+    list         m_intervals;
+    Interval     m_bounds;
   };
 
 
@@ -175,7 +179,7 @@ namespace Dg
       return static_cast<T>(0);
     }
  
-    list<Interval>::iterator it = m_intervals.begin();
+    iterator it = m_intervals.begin();
     T result = it->m_lower;
     it->m_lower++;
     if (it->m_lower > it->m_upper)
@@ -199,7 +203,7 @@ namespace Dg
       return;
     }
 
-    list<Interval>::iterator it = m_intervals.begin();
+    iterator it = m_intervals.begin();
     bool found = false;
     for (it; it != m_intervals.end(); it++)
     {
@@ -219,7 +223,7 @@ namespace Dg
         }
         else
         {
-          list<Interval>::iterator itp(it); --itp;
+          iterator itp(it); --itp;
           if (a_val == (itp->m_upper + static_cast<T>(1)))
           {
             itp->m_upper++;
@@ -268,7 +272,7 @@ namespace Dg
   template<typename T>
   bool IDManager<T>::MarkAsUsed(T a_val)
   {
-    list<Interval>::iterator it = m_intervals.begin();
+    iterator it = m_intervals.begin();
     bool good = false;
     for (it; it != m_intervals.end(); it++)
     {
@@ -313,7 +317,7 @@ namespace Dg
       return false;
     }
 
-    list<Interval>::const_iterator it = m_intervals.cbegin();
+    const_iterator it = m_intervals.cbegin();
     for (it; it != m_intervals.cend(); it++)
     {
       if (a_val <= it->m_upper)
