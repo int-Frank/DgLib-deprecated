@@ -161,7 +161,7 @@ void Application::DrawPolygons()
       auto it1 = it0;
       it1++;
       Segment seg(*it0 * m_T_model_screen, *it1 * m_T_model_screen);
-      DrawSegment(seg, ImColor(232, 131, 50, 255));
+      DrawSegment(seg, ImColor(180, 180, 200, 255));
     }
   }
 }

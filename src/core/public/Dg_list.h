@@ -13,6 +13,13 @@
 #include <new>
 #include <type_traits>
 
+#ifdef STD_COMPATIBLE
+#include <iterator>
+#define BASE_ITERATOR : public std::iterator<std::bidirectional_iterator_tag, T>
+#else
+#define BASE_ITERATOR
+#endif
+
 #include "impl/DgContainerBase.h"
 #include "DgErrorHandler.h"
 
@@ -134,7 +141,7 @@ namespace Dg
     //!
     //! @author Frank B. Hart
     //! @date 21/05/2016
-    class const_iterator
+    class const_iterator BASE_ITERATOR
 	  {
 	  private:
 		  friend class list;
@@ -190,7 +197,7 @@ namespace Dg
     //!
     //! @author Frank B. Hart
     //! @date 21/05/2016
-    class iterator
+    class iterator BASE_ITERATOR
 	  {
 		  friend class list;
 
@@ -372,7 +379,7 @@ namespace Dg
     void DestructAll();
 
     // Initialize the list and request a size.
-    void init(size_t);
+    void Init(size_t);
 
     // Reset array pointers
     void AssignPointersToEmpty();
@@ -516,10 +523,10 @@ namespace Dg
   }
 
   //--------------------------------------------------------------------------------
-  //	@	list<T>::init()
+  //	@	list<T>::Init()
   //--------------------------------------------------------------------------------
   template<typename T>
-  void list<T>::init(size_t a_size) 
+  void list<T>::Init(size_t a_size) 
   {
     pool_size(a_size + 1);
     m_pData = static_cast<Node *>(realloc(m_pData, (pool_size() + 1) * sizeof(Node)));
@@ -537,7 +544,7 @@ namespace Dg
     , m_pData(nullptr)
     , m_pNextFree(nullptr)
   {
-	  init(1);
+	  Init(1);
   }
 
   //--------------------------------------------------------------------------------
@@ -549,7 +556,7 @@ namespace Dg
     , m_pData(nullptr)
     , m_pNextFree(nullptr)
   {
-    init(pool_size());
+    Init(pool_size());
   }
 
   //--------------------------------------------------------------------------------
@@ -569,7 +576,7 @@ namespace Dg
   list<T>::list(list const & other)
     : ContainerBase(other)
   {
-	  init(other.pool_size());
+	  Init(other.pool_size());
 
 	  //Assign m_pData
 	  list<T>::const_iterator it = other.cbegin();
@@ -620,7 +627,7 @@ namespace Dg
   void list<T>::resize(size_t a_newSize)
   {
     DestructAll();
-	  init(a_newSize);
+	  Init(a_newSize);
   }
 
   //--------------------------------------------------------------------------------

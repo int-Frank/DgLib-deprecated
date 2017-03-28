@@ -332,7 +332,7 @@ namespace Dg
       m_nItems = pool_size();
     }
 
-    m_pData = static_cast<T*>(realloc(m_pData, a_size * sizeof(T)));
+    m_pData = static_cast<T*>(realloc(m_pData, pool_size() * sizeof(T)));
     DG_ASSERT(m_pData != nullptr);
   }	//End: vector::resize()
 
@@ -358,8 +358,9 @@ namespace Dg
   template<class T>
   void vector<T>::extend()
   {
-    resize(set_next_pool_size());
-
+    set_next_pool_size();
+    m_pData = static_cast<T*>(realloc(m_pData, pool_size() * sizeof(T)));
+    DG_ASSERT(m_pData != nullptr);
   }	//End: vector::extend()
 
 
@@ -406,6 +407,250 @@ namespace Dg
     }
 
   }	//End: fill()
+
+  template<>
+  class vector<bool> : public ContainerBase
+  {
+    template<int T>
+    struct Attr
+    {
+    };
+
+    template<>
+    struct Attr<1>
+    {
+      static int const shift = 3;
+      static size_t const mask = 7;
+      static int const nBits = CHAR_BIT;
+    };
+
+    template<>
+    struct Attr<2>
+    {
+      static int const shift = 4;
+      static size_t const mask = 15;
+      static int const nBits = CHAR_BIT * 2;
+    };
+
+    template<>
+    struct Attr<4>
+    {
+      static int const shift = 5;
+      static size_t const mask = 31;
+      static int const nBits = CHAR_BIT * 4;
+    };
+
+    template<>
+    struct Attr<8>
+    {
+      static int const shift = 6;
+      static size_t const mask = 63;
+      static int const nBits = CHAR_BIT * 8;
+    };
+
+  public:
+
+    class reference 
+    {
+      friend class vector<bool>;
+      reference(size_t & a_rBucket, int a_bitIndex)
+        : m_rBucket(a_rBucket)
+        , m_bitIndex(a_bitIndex)
+      {
+
+      }
+
+    public:
+
+      ~reference() {}
+
+      operator bool() const
+      {
+        return ((m_rBucket >> m_bitIndex) & 1) != 0;
+      }
+
+      reference & operator= (bool a_val)
+      {
+        size_t x = (a_val) ? 1 : 0;
+        m_rBucket = m_rBucket & ~(1 << m_bitIndex) | (x << m_bitIndex);
+        return *this;
+      }
+
+      reference & operator= (reference const & a_val)
+      {
+        size_t x = (a_val.m_rBucket >> a_val.m_bitIndex) & 1;
+        m_rBucket = m_rBucket & ~(1 << m_bitIndex) | (x << m_bitIndex);
+        return *this;
+      }
+
+    private:
+
+      size_t &  m_rBucket;
+      int       m_bitIndex;
+    };
+
+  public:
+
+    vector()
+      : ContainerBase()
+      , m_pBuckets(nullptr)
+      , m_nItems(0)
+    {
+      m_pBuckets = static_cast<size_t*>(malloc(pool_size() * sizeof(size_t)));
+      DG_ASSERT(m_pBuckets != nullptr);
+    }
+
+    //! Construct with a set size
+    vector(size_t a_size)
+      : ContainerBase(a_size)
+      , m_pBuckets(nullptr)
+      , m_nItems(0)
+    {
+      m_pBuckets = static_cast<size_t*>(malloc(pool_size() * sizeof(size_t)));
+      DG_ASSERT(m_pBuckets != nullptr);
+    }
+
+    ~vector()
+    {
+      free(m_pBuckets);
+    }
+
+    //! Copy constructor
+    vector(vector const & a_other)
+      : ContainerBase(a_other)
+      , m_pBuckets(nullptr)
+    {
+      init(a_other);
+    }
+
+    //! Assignment
+    vector& operator= (vector const & a_other)
+    {
+      if (this == &a_other)
+        return *this;
+
+      clear();
+      ContainerBase::operator=(a_other);
+      init(a_other);
+
+      return *this;
+    }
+
+    //! Move constructor
+    vector(vector && a_other)
+      : ContainerBase(std::move(a_other))
+      , m_pBuckets(a_other.m_pBuckets)
+    {
+      a_other.m_pBuckets = nullptr;
+      a_other.m_nItems = 0;
+    }
+
+    //! Move assignment
+    vector& operator= (vector && a_other)
+    {
+      if (this != &a_other)
+      {
+        //Assign to this
+        m_nItems = a_other.m_nItems;
+        m_pBuckets = a_other.m_pBuckets;
+        pool_size(a_other.pool_size());
+
+        //Clear other
+        a_other.m_pBuckets = nullptr;
+        a_other.m_nItems = 0;
+      }
+      return *this;
+    }
+
+    //! Access element
+    bool operator[](size_t i) const
+    {
+      size_t bucket(i >> Attr<sizeof(size_t)>::shift);
+      size_t n = i & Attr<sizeof(size_t)>::mask;
+
+      return ((m_pBuckets[bucket] >> n) & 1) != 0;
+    }
+
+    //! Access element
+    reference operator[](size_t i)
+    {
+      size_t bucket(i >> Attr<sizeof(size_t)>::shift);
+      size_t n = i & Attr<sizeof(size_t)>::mask;
+
+      return reference(m_pBuckets[bucket], static_cast<int>(n));
+    }
+
+    void Set(size_t i, bool a_val)
+    {
+      size_t bucket(i >> Attr<sizeof(size_t)>::shift);
+      size_t n = i & Attr<sizeof(size_t)>::mask;
+      size_t x = (a_val) ? 1 : 0;
+
+      m_pBuckets[bucket] = m_pBuckets[bucket] & ~(1 << n) | (x << n);
+    }
+
+    //! Get last element
+    //! Calling this function on an empty container causes undefined behavior.
+    //!
+    //! @return Reference to item in the vector
+    bool back() { return this->operator[](size() - 1); }
+
+    //! Current size of the array
+    size_t size()		const { return m_nItems; }
+
+    //! Is the array empty
+    bool empty()		const { return m_nItems == 0; }
+
+    //! Add element to the back of the array.
+    void push_back(bool a_val)
+    {
+      if (m_nItems == pool_size() * (Attr<sizeof(size_t)>::nBits))
+      {
+        extend();
+      }
+
+      Set(m_nItems, a_val);
+      m_nItems++;
+    }
+
+    //! Remove element from the back of the array.
+    void pop_back()
+    {
+      m_nItems--;
+    }
+
+    //! Current size is set to 0
+    void clear()
+    {
+      m_nItems = 0;
+    }
+
+    //! Set the current size to 0 and the reserve to new_size
+    void resize(size_t newSize)
+    {
+      newSize = newSize >> Attr<sizeof(size_t)>::shift;
+      newSize = pool_size(newSize);
+      m_pBuckets = static_cast<size_t*>(realloc(m_pBuckets, pool_size() * sizeof(size_t)));
+      DG_ASSERT(m_pBuckets != nullptr);
+    }
+
+  private:
+
+    //! Exteneds the total size of the array (current + reserve) by a factor of 2
+    void extend()
+    {
+      set_next_pool_size();
+      m_pBuckets = static_cast<size_t*>(realloc(m_pBuckets, pool_size() * sizeof(size_t)));
+      DG_ASSERT(m_pBuckets != nullptr);
+    }
+
+    void init(vector const &);
+
+  private:
+    //Data members
+    size_t *    m_pBuckets;
+    size_t      m_nItems;
+  };
 
 };
 #endif

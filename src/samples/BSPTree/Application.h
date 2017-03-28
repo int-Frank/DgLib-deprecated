@@ -91,6 +91,11 @@ private:
 
   std::vector<std::string> GetProjects();
 
+  void Path_GoChildLess();
+  void Path_GoChildGreater();
+  void Path_GoParent();
+  void Path_GoRoot();
+
   void Shutdown();
 
 private:
