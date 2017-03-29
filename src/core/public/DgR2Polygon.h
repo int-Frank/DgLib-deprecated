@@ -35,7 +35,7 @@ namespace Dg
 
       //! Copy constructor
       Polygon(Polygon const & a_other)
-        : ListCircular(a_other)
+        : CircularDoublyLinkedList(a_other)
       {}
 
       //! Assignment
