@@ -98,7 +98,7 @@ namespace Dg
 
     QuadTree(AABB const & a_bounds)
     {
-      m_nodes.insert(s_root, Node(a_bounds, impl::QuadTree::IsLeaf));
+      m_nodes.Insert(s_root, Node(a_bounds, impl::QuadTree::IsLeaf));
     }
 
     ErrorCode QueryPoint(Real x, Real y, Handle & a_out) const
@@ -123,17 +123,17 @@ namespace Dg
 
     DataType * Data(Handle a_h)
     {
-      return m_data.at(a_h);
+      return m_data.At(a_h);
     }
 
     DataType const * Data(Handle a_h) const
     {
-      return m_data.at(a_h);
+      return m_data.At(a_h);
     }
 
     bool Subdivide(Handle a_h)
     {
-      Node * pNode(m_nodes.at(a_h));
+      Node * pNode(m_nodes.At(a_h));
       if (!(pNode->flags & impl::QuadTree::IsLeaf) || (a_h >> (MaxDepth * 2)))
       {
         return false;
@@ -158,27 +158,27 @@ namespace Dg
 
       QuadSet qs(GetChildren(a_h));
 
-      m_nodes.insert(qs[0], Node(AABB(c0, hl), impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[1], Node(AABB(c1, hl), impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[2], Node(AABB(c2, hl), impl::QuadTree::IsLeaf));
-      m_nodes.insert(qs[3], Node(AABB(c3, hl), impl::QuadTree::IsLeaf));
+      m_nodes.Insert(qs[0], Node(AABB(c0, hl), impl::QuadTree::IsLeaf));
+      m_nodes.Insert(qs[1], Node(AABB(c1, hl), impl::QuadTree::IsLeaf));
+      m_nodes.Insert(qs[2], Node(AABB(c2, hl), impl::QuadTree::IsLeaf));
+      m_nodes.Insert(qs[3], Node(AABB(c3, hl), impl::QuadTree::IsLeaf));
 
       return true;
     }
 
     AABB GetAABB(Handle a_h) const
     {
-      return m_nodes.at(a_h)->bounds;
+      return m_nodes.At(a_h)->bounds;
     }
 
     bool IsLeaf(Handle a_h) const
     {
-      return m_nodes.at(a_h)->flags & impl::QuadTree::IsLeaf;
+      return m_nodes.At(a_h)->flags & impl::QuadTree::IsLeaf;
     }
 
     bool HasData(Handle a_h) const
     {
-      return m_data.at(a_h) != nullptr;
+      return m_data.At(a_h) != nullptr;
     }
 
     bool IsRoot(Handle a_h) const
@@ -209,7 +209,7 @@ namespace Dg
                                Handle a_handle,
                                Handle & a_out) const
     {
-      Node const * pNode(m_nodes.at(a_handle));
+      Node const * pNode(m_nodes.At(a_handle));
 
       if (pNode->flags & impl::QuadTree::IsLeaf)
       {

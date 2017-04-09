@@ -296,14 +296,14 @@ namespace Dg
         return m_pNode != it.m_pNode;
       }
 
-		  //! Post increment
+		  //! Pre increment
 		  iterator& operator++()
       {
         m_pNode = m_pNode->Next();
         return *this;
       }
 
-      //! Pre increment
+      //! Post increment
 		  iterator operator++(int)
       {
         iterator result(*this);

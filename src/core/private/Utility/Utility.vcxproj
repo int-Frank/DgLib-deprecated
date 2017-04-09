@@ -157,7 +157,6 @@
     <ClInclude Include="..\..\public\DgTypes.h" />
     <ClInclude Include="..\..\public\DgVariadicMacros.h" />
     <ClInclude Include="..\..\public\DgErrorHandler.h" />
-    <ClInclude Include="..\..\public\DgHandleBase.h" />
     <ClInclude Include="..\..\public\DgMapKeyIterator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

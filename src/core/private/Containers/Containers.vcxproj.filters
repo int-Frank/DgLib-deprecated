@@ -46,6 +46,9 @@
     <ClInclude Include="..\..\public\DgQuadTree.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgMap.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgContainerBase.cpp">

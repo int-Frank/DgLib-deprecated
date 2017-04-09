@@ -34,14 +34,14 @@ public:
 
 int HaveSameItems(Dg::OpenHashTable<Key, C> ht0, Dg::OpenHashTable<Key, C> ht1)
 {
-  if (ht0.size() != ht1.size())
+  if (ht0.Size() != ht1.Size())
   {
     return __LINE__;
   }
 
-  Dg::OpenHashTable<Key, C>::iterator it0 = ht0.begin();
-  Dg::OpenHashTable<Key, C>::iterator it1 = ht1.begin();
-  while (it0 != ht0.end())
+  Dg::OpenHashTable<Key, C>::iterator it0 = ht0.Begin();
+  Dg::OpenHashTable<Key, C>::iterator it1 = ht1.Begin();
+  while (it0 != ht0.End())
   {
     if (*it0 != *it1)
     {
@@ -57,7 +57,7 @@ int HaveSameItems(Dg::OpenHashTable<Key, C> ht0, Dg::OpenHashTable<Key, C> ht1)
 int Compare(Dg::OpenHashTable<Key, C> a_ht, std::list<C> a_list)
 {
   //Check sizes
-  if (a_ht.size() != a_list.size())
+  if (a_ht.Size() != a_list.size())
   {
     return __LINE__;
   }
@@ -66,7 +66,7 @@ int Compare(Dg::OpenHashTable<Key, C> a_ht, std::list<C> a_list)
   std::list<C>::iterator l_it = a_list.begin();
   for (l_it; l_it != a_list.end(); ++l_it)
   {
-    if (!a_ht.at(l_it->m))
+    if (!a_ht.At(l_it->m))
     {
       return __LINE__;
     }
@@ -74,8 +74,8 @@ int Compare(Dg::OpenHashTable<Key, C> a_ht, std::list<C> a_list)
 
   //Make sure elments match, use interator++
   std::list<C> newList(a_list);
-  Dg::OpenHashTable<Key, C>::iterator it = a_ht.begin();
-  for(it; it != a_ht.end(); it++)
+  Dg::OpenHashTable<Key, C>::iterator it = a_ht.Begin();
+  for(it; it != a_ht.End(); it++)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
     if (l_it == newList.end())
@@ -91,9 +91,9 @@ int Compare(Dg::OpenHashTable<Key, C> a_ht, std::list<C> a_list)
 
   //Make sure elments match, use iterator--
   newList = a_list;
-  it = a_ht.end();
+  it = a_ht.End();
   it--;
-  for (it; it != a_ht.end(); it--)
+  for (it; it != a_ht.End(); it--)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *it);
     if (l_it == newList.end())
@@ -109,8 +109,8 @@ int Compare(Dg::OpenHashTable<Key, C> a_ht, std::list<C> a_list)
 
   //Make sure elments match, use const_interator++
   newList = a_list;
-  Dg::OpenHashTable<Key, C>::const_iterator cit = a_ht.cbegin();
-  for (cit; cit != a_ht.cend(); cit++)
+  Dg::OpenHashTable<Key, C>::const_iterator cit = a_ht.CBegin();
+  for (cit; cit != a_ht.CEnd(); cit++)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *cit);
     if (l_it == newList.end())
@@ -126,8 +126,8 @@ int Compare(Dg::OpenHashTable<Key, C> a_ht, std::list<C> a_list)
 
   //Make sure elments match, use const_iterator--
   newList = a_list;
-  cit = a_ht.cend();
-  for (cit; --cit != a_ht.cend() ;)
+  cit = a_ht.CEnd();
+  for (cit; --cit != a_ht.CEnd() ;)
   {
     std::list<C>::iterator l_it = std::find(newList.begin(), newList.end(), *cit);
     if (l_it == newList.end())
@@ -173,38 +173,38 @@ int Compare(Dg::OpenHashTable<Key, C> a_ht, std::list<C> a_list)
 
 int AddNewItem(Key k, Dg::OpenHashTable<Key, C> & a_ht, std::list<C> & a_list)
 {
-  if (a_ht.at(k))
+  if (a_ht.At(k))
   {
     return __LINE__;
   }
 
-  float oldLF = a_ht.load_factor();
-  float nItems = float(a_ht.size());
-  float oldBucketCount = float(a_ht.bucket_count());
-  float maxLF = float(a_ht.max_load_factor());
-  size_t oldSize = a_ht.size();
+  float oldLF = a_ht.LoadFactor();
+  float nItems = float(a_ht.Size());
+  float oldBucketCount = float(a_ht.BucketCount());
+  float maxLF = float(a_ht.MaxLoadFactor());
+  size_t oldSize = a_ht.Size();
   bool shouldRehash = ((nItems + 1.0f) / oldBucketCount) > maxLF;
 
   //Insert dummy
-  a_ht.insert(k, C(-1));
+  a_ht.Insert(k, C(-1));
   if (a_ht.PoolSlotsWasted()) return __LINE__;
 
-  if (a_ht.size() != oldSize + 1) return __LINE__;
-  if (!a_ht.at(k)) return __LINE__;
-  if (a_ht.at(k)->m != -1) return __LINE__;
-  if (a_ht.insert_no_overwrite(k, C(k))->m != -1) return __LINE__;
+  if (a_ht.Size() != oldSize + 1) return __LINE__;
+  if (!a_ht.At(k)) return __LINE__;
+  if (a_ht.At(k)->m != -1) return __LINE__;
+  if (a_ht.InsertNoOverwrite(k, C(k))->m != -1) return __LINE__;
   if (a_ht.PoolSlotsWasted()) return __LINE__;
 
-  a_ht.erase(k);
-  if (a_ht.size() != oldSize) return __LINE__;
-  if (a_ht.at(k)) return __LINE__;
+  a_ht.Erase(k);
+  if (a_ht.Size() != oldSize) return __LINE__;
+  if (a_ht.At(k)) return __LINE__;
 
   //Insert real
-  a_ht.insert(k, C(k));
-  if (!a_ht.at(k)) return __LINE__;
-  if (a_ht.at(k)->m != k) return __LINE__;
+  a_ht.Insert(k, C(k));
+  if (!a_ht.At(k)) return __LINE__;
+  if (a_ht.At(k)->m != k) return __LINE__;
   if (a_ht.PoolSlotsWasted()) return __LINE__;
-  if (shouldRehash && a_ht.bucket_count() <= oldBucketCount) return __LINE__;
+  if (shouldRehash && a_ht.BucketCount() <= oldBucketCount) return __LINE__;
 
   a_list.push_back(C(k));
   return 0;
