@@ -8,10 +8,11 @@ import subprocess
 
 #--- Settings -----------------------------------------------------
 
-#You will need to set the path to MSBuild.exe and lib.exe
+#You will need to set the path to these
 MSBuildPath         = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe")
 LibEXEPath64        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.10.25017/bin/HostX64/x64/lib.exe")
 LibEXEPath32        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.10.25017/bin/HostX86/x86/lib.exe")
+DoxygenEXEPath      = os.path.abspath("D:/Programs/doxygen/bin/doxygen.exe")
 
 FailOnBadDocs       = False #Fail the build if there are errors in doc compilation
 CheckSamples        = True  #Check to see if the samples build
@@ -72,12 +73,10 @@ LogDir              = os.path.abspath("./logs/")
 UnitTestResultsDir  = os.path.abspath("./test_results/")
 OutputPath          = os.path.abspath("../output/") #build output
 SrcPath             = os.path.abspath("../src/core/public/")
-DoxygenEXEPath      = os.path.abspath("../3rd_party/doxygen/doxygen.exe")
 DoxygenOutPath      = os.path.abspath("./doxygen/")
 DeployDir           = os.path.abspath("../deploy/")
 DoxygenFilePath     = os.path.abspath(DoxygenOutPath + "/Doxyfile")
 DoxygenErrorLog     = os.path.abspath(DoxygenOutPath + "/doxygen-error-log.txt")
-ThirdPartyDir        = os.path.abspath("../3rd_party/")
 DgLibFilePath       = os.path.abspath("../DgLib.sln")
 SamplesFilePath     = os.path.abspath("../src/samples/Samples.sln")
 
