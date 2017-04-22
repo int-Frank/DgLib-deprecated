@@ -6,13 +6,15 @@ import os
 import shutil
 import subprocess
 
-#--- Options ------------------------------------------------------
+#--- Settings -----------------------------------------------------
 
-#Set this path to where ever you want to deploy the library
-DeployDir           = os.path.abspath("../deploy/")
+#You will need to set the path to MSBuild.exe and lib.exe
+MSBuildPath         = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe")
+LibEXEPath64        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.10.25017/bin/HostX64/x64/lib.exe")
+LibEXEPath32        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.10.25017/bin/HostX86/x86/lib.exe")
 
 FailOnBadDocs       = False #Fail the build if there are errors in doc compilation
-CheckSamples        = True #Check to see if the samples build
+CheckSamples        = True  #Check to see if the samples build
 
 #--- Classes ------------------------------------------------------
 
@@ -68,17 +70,14 @@ def Execute(a_cmd, a_workingDir = None):
 # These paths shouldn't need to change
 LogDir              = os.path.abspath("./logs/")
 UnitTestResultsDir  = os.path.abspath("./test_results/")
-OutputPath          = os.path.abspath("../output/")
+OutputPath          = os.path.abspath("../output/") #build output
 SrcPath             = os.path.abspath("../src/core/public/")
 DoxygenEXEPath      = os.path.abspath("../3rd_party/doxygen/doxygen.exe")
 DoxygenOutPath      = os.path.abspath("./doxygen/")
+DeployDir           = os.path.abspath("../deploy/")
 DoxygenFilePath     = os.path.abspath(DoxygenOutPath + "/Doxyfile")
 DoxygenErrorLog     = os.path.abspath(DoxygenOutPath + "/doxygen-error-log.txt")
-_3rdPartyDir        = os.path.abspath("../3rd_party/")
-MSBuildPath         = os.path.abspath(_3rdPartyDir + "/MSBuild/MSBuild.exe")
-LibEXEPath64        = os.path.abspath(_3rdPartyDir + "/lib.exe/x64/lib.exe")
-LibEXEPath32        = os.path.abspath(_3rdPartyDir + "/lib.exe/x86/lib.exe")
-DoxygenPath         = os.path.abspath(_3rdPartyDir + "/doxygen/doxygen.exe")
+ThirdPartyDir        = os.path.abspath("../3rd_party/")
 DgLibFilePath       = os.path.abspath("../DgLib.sln")
 SamplesFilePath     = os.path.abspath("../src/samples/Samples.sln")
 
@@ -86,6 +85,10 @@ Libs                = ["Engine", "Math", "Utility", "Containers"]
 
 FinalLibName        = "DgLib"
 LogFileName         = "log__" + time.strftime("%Y-%m-%d__%I-%M-%S.txt")
+
+platforms = ["Win32", "x64"]
+LibEXEPaths = [LibEXEPath32, LibEXEPath64]
+configurations = ["Release", "Debug"]
 
 #--- Main ---------------------------------------------------------
 
@@ -99,7 +102,11 @@ logger = Logger(LogDir + "/" + LogFileName)
 
 logger.write("Build Started!\n")
 
-logger.write("\nRemoving old deployment dir...\n")
+if FinalLibName == "":
+    logger.write("No Lib name\n")
+    Exit()
+
+logger.write("\nRemoving old deployment dirs...\n")
 if os.path.isdir(DeployDir):
     shutil.rmtree(DeployDir)
 logger.write("Done!\n")
@@ -110,10 +117,6 @@ os.makedirs(DeployDir + "/" + FinalLibName + "/")
 os.makedirs(DeployDir + "/" + FinalLibName + "/docs")
 os.makedirs(DeployDir + "/" + FinalLibName + "/lib")
 logger.write("Done!\n")
-
-platforms = ["Win32", "x64"]
-configurations = ["Release", "Debug"]
-LibEXEPaths = [LibEXEPath32, LibEXEPath64]
 
 for i in range(0, len(platforms)):
 
@@ -127,7 +130,7 @@ for i in range(0, len(platforms)):
         logger.write("\nBuilding " + platform + "...\n\n")
         args = [MSBuildPath, DgLibFilePath, "/property:Configuration=" + configuration, "/property:Platform=" + platform, "/t:Rebuild"]
         if not Execute(args):
-            logger.write("\nBuild failed! Exiting...\n")
+            logger.write("\nBuilding failed! Exiting...\n")
             Exit()
         logger.write("\nBuild complete!\n")
 
