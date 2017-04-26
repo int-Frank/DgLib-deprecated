@@ -66,9 +66,9 @@ namespace Dg
   {
     static_assert(M > 0 && N > 0, "Matrix cannot have a zero dimension.");
 
-    template<size_t _M, size_t _N, typename Real> friend class Matrix;
-    template<typename Real, int R> friend class impl::Matrix_generic;
-    template<typename Real, int R> friend class impl::Vector_generic;
+    template<size_t _M, size_t _N, typename _Real> friend class Matrix;
+    template<typename _Real, int R> friend class impl::Matrix_generic;
+    template<typename _Real, int R> friend class impl::Vector_generic;
 
   public:
     //! Default constructor. Elements ore not initialised.

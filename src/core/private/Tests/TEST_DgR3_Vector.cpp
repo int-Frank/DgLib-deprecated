@@ -12,6 +12,11 @@ TEST(Stack_Vector4_Construction, creation_Vector4_Construction)
   vec3 v0({ 1.0f, 2.0f, -4.0f, 0.0f });
   vec3 v1(v0);
 
+  CHECK(v0.x() == 1.0f);
+  CHECK(v0.y() == 2.0f);
+  CHECK(v0.z() == -4.0f);
+  CHECK(v0.w() == 0.0f);
+
   CHECK(v1 == v0);
   CHECK(!(v1 != v0));
   CHECK(!v0.IsZero());
