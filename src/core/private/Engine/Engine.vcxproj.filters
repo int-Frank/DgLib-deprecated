@@ -73,9 +73,6 @@
     <ClInclude Include="..\..\public\game_tools\DgGTBSPTreePath.h">
       <Filter>Game Tools</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\game_tools\BSPTreeBuilder.h">
-      <Filter>Game Tools</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\public\impl\DgParticleData_impl.inl">
