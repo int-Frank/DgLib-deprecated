@@ -166,9 +166,8 @@
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_truetype.h" />
     <ClInclude Include="DgApp.h" />
     <ClInclude Include="EventManager.h" />
-    <ClInclude Include="Events.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
-    <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui.cpp" />
@@ -176,8 +175,10 @@
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui_draw.cpp" />
     <ClCompile Include="DgApp.cpp" />
     <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="Events.cpp" />
     <ClCompile Include="imgui_impl_glfw_gl3.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

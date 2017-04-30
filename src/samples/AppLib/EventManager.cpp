@@ -1,5 +1,5 @@
 #include "EventManager.h"
-#include "Events.h"
+#include "Event.h"
 
 EventManager::EventManager(EventManager const & a_other)
 {

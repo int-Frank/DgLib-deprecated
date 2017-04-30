@@ -24,9 +24,6 @@
     <ClInclude Include="EventManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Events.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\3rd_party\imgui\imconfig.h">
       <Filter>ImGui</Filter>
     </ClInclude>
@@ -48,7 +45,7 @@
     <ClInclude Include="imgui_impl_glfw_gl3.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Types.h">
+    <ClInclude Include="Event.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -57,9 +54,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EventManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Events.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui.cpp">
@@ -74,5 +68,10 @@
     <ClCompile Include="imgui_impl_glfw_gl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.ini">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

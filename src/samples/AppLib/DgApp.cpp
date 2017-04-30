@@ -4,127 +4,148 @@
 #include <time.h>
 #pragma comment(lib,"shlwapi.lib")
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include "DgApp.h"
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
+#include "EventManager.h"
+#include "Event.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
 
-DgApp* DgApp::s_app(nullptr);
+class Event_MouseScroll : public Event
+{
+public:
+  Event_MouseScroll()
+    : Event()
+    , m_val(0.0)
+  {}
+
+  ~Event_MouseScroll() {}
+
+  Event_MouseScroll(Event_MouseScroll const & a_other)
+    : Event(a_other)
+    , m_val(a_other.m_val)
+  {}
+
+  Event_MouseScroll & operator=(Event_MouseScroll const & a_other)
+  {
+    Event::operator = (a_other);
+    m_val = a_other.m_val;
+  }
+
+  void DoEvent()
+  {
+    DgApp::GetInstance()->UpdateScroll(m_val);
+  }
+
+  void SetOffset(double a_val) { m_val = a_val; }
+  double GetOffset() const { return m_val; }
+
+  Event_MouseScroll * Clone() const { return new Event_MouseScroll(*this); }
+
+private:
+  double    m_val;
+};
+
+
+class Event_KeyEvent : public Event
+{
+public:
+  Event_KeyEvent()
+    : Event()
+    , m_key(-1)
+    , m_action(-1)
+  {}
+
+  ~Event_KeyEvent() {}
+
+  Event_KeyEvent(Event_KeyEvent const & a_other)
+    : Event(a_other)
+    , m_key(a_other.m_key)
+    , m_action(a_other.m_action)
+  {}
+
+  Event_KeyEvent & operator=(Event_KeyEvent const & a_other)
+  {
+    Event::operator = (a_other);
+    m_key = a_other.m_key;
+    m_action = a_other.m_action;
+  }
+
+  void DoEvent()
+  {
+    DgApp::GetInstance()->KeyEvent(m_key, m_action);
+  }
+
+  void SetKey(int a_key) { m_key = a_key; }
+  void SetAction(int a_action) { m_action = a_action; }
+  int GetKey() const { return m_key; }
+  int GetAction() const { return m_action; }
+
+  Event_KeyEvent * Clone() const { return new Event_KeyEvent(*this); }
+
+private:
+  int       m_key;
+  int       m_action;
+};
+
+class DgApp::PIMPL
+{
+public:
+
+  PIMPL()
+    : title("New Dg Application")
+    , windowWidth(800)
+    , windowHeight(600)
+    , majorVersion(4)
+    , minorVersion(3)
+    , samples(0)
+    , fullscreen(false)
+    , configFileName("config.ini")
+    , window(nullptr)
+    , shouldQuit(false)
+  {}
+
+
+  static DgApp *      s_app;
+
+  char                title[128];
+  int                 windowWidth;
+  int                 windowHeight;
+  int                 majorVersion;
+  int                 minorVersion;
+  int                 samples;
+  bool                fullscreen;
+
+  std::string const   configFileName;
+
+  EventManager        eventManager;
+
+  GLFWwindow *        window;
+  bool                shouldQuit;
+};
+
+DgApp * DgApp::PIMPL::s_app(nullptr);
 
 DgApp::DgApp()
-  : m_window(nullptr)
-  , m_shouldQuit(false)
+  : m_pimpl(new DgApp::PIMPL())
 {
-  s_app = this;
+  m_pimpl->s_app = this;
 }
 
-bool DgApp::Init()
+DgApp::~DgApp()
 {
-  GetConfiguration();
-
-  if (!InitGL())
-  {
-    return false;
-  }
-
-  m_pRenderer->Init();
-  ImGui_ImplGlfwGL3_Init(m_window, true);
-  return _Init();
-}
-
-
-bool DgApp::InitGL()
-{
-  if (!glfwInit())
-  {
-    fprintf(stderr, "Failed to initialize GLFW\n");
-    return false;
-  }
-
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_info.majorVersion);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_info.minorVersion);
-
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  glfwWindowHint(GLFW_SAMPLES, m_info.samples);
-
-  if (m_info.fullscreen)
-  {
-    if (m_info.windowWidth == 0 || m_info.windowHeight == 0)
-    {
-      const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-      m_info.windowWidth = mode->width;
-      m_info.windowHeight = mode->height;
-    }
-    m_window = glfwCreateWindow(m_info.windowWidth,
-                                m_info.windowHeight,
-                                m_info.title,
-                                glfwGetPrimaryMonitor(),
-                                nullptr);
-  }
-  else
-  {
-    m_window = glfwCreateWindow(m_info.windowWidth,
-                                m_info.windowHeight,
-                                m_info.title,
-                                nullptr,
-                                nullptr);
-  }
-
-  if (!m_window)
-  {
-    fprintf(stderr, "Failed to open m_window\n");
-    glfwTerminate();
-    return false;
-  }
-
-  glfwMakeContextCurrent(m_window);
-
-  // start GLEW extension handler
-  glewExperimental = GL_TRUE;
-  glewInit();
-
-  // Display version info
-  const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
-  const GLubyte* version = glGetString(GL_VERSION); // version as a string
-  printf("Renderer: %s\n", renderer);
-  printf("OpenGL version supported %s\n", version);
-  return true;
-}
-
-void DgApp::Shutdown()
-{
-  m_pRenderer->Shutdown();
-  _Shutdown();
+  Shutdown();
+  delete m_pimpl;
 }
 
 void DgApp::PushEvent(Event const & a_event)
 {
-  m_eventManager.PushEvent(a_event);
-}
-
-void DgApp::KeyEvent(int a_key, int a_action)
-{
-  switch (a_key)
-  {
-  case GLFW_KEY_ESCAPE:
-  {
-    m_shouldQuit = true;
-    break;
-  }
-  default:
-  {
-    _KeyEvent(a_key, a_action);
-  }
-  }
-}
-
-void DgApp::UpdateScroll(double a_val)
-{
-  _UpdateScroll(a_val);
+  m_pimpl->eventManager.PushEvent(a_event);
 }
 
 void AppOnKeyEvent(int a_key, int a_action)
@@ -140,28 +161,6 @@ void AppOnMouseScroll(double yOffset)
   Event_MouseScroll e;
   e.SetOffset(yOffset);
   DgApp::GetInstance()->PushEvent(e);
-}
-
-void DgApp::HandleEvents()
-{
-  eObject e(nullptr);
-  while (m_eventManager.PollEvent(e))
-  {
-    e->DoEvent();
-  }
-
-  _HandleEvents();
-}
-
-void DgApp::DoLogic(double a_dt)
-{
-  
-  _DoLogic(a_dt);
-}
-
-void DgApp::Render()
-{
-  _Render();
 }
 
 bool DgApp::FileExists(std::string const & a_name) const
@@ -209,83 +208,146 @@ std::vector<std::string> DgApp::GetFiles(std::string const & a_dirPath,
   return result;
 }
 
-void DgApp::GetConfiguration()
+
+void DgApp::RUN(DgApp* the_app)
 {
-  Dg::Parser_INI parser;
-  Dg::ErrorCode result = parser.Parse(m_configFileName);
+  m_pimpl->s_app = the_app;
 
-  if (result == Dg::ErrorCode::FailedToOpenFile)
+  //Read configuration
   {
-    fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", m_configFileName.c_str());
-    return;
+    Dg::Parser_INI parser;
+    Dg::ErrorCode result = parser.Parse(m_pimpl->configFileName);
+
+    if (result == Dg::ErrorCode::FailedToOpenFile)
+    {
+      fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", m_pimpl->configFileName.c_str());
+      return;
+    }
+    else if (result != Dg::ErrorCode::None)
+    {
+      fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", m_pimpl->configFileName.c_str());
+      return;
+    }
+
+    for (int i = 0; i < parser.GetItems().size(); ++i)
+    {
+      if (parser.GetItems().query_key(i) == "windowWidth")
+      {
+        int val = 0;
+        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        {
+          m_pimpl->windowWidth = val;
+        }
+      }
+      else if (parser.GetItems().query_key(i) == "windowHeight")
+      {
+        int val = 0;
+        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        {
+          m_pimpl->windowHeight = val;
+        }
+      }
+      else if (parser.GetItems().query_key(i) == "glMajorVersion")
+      {
+        int val = 0;
+        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        {
+          m_pimpl->majorVersion = val;
+        }
+      }
+      else if (parser.GetItems().query_key(i) == "glMinorVersion")
+      {
+        int val = 0;
+        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        {
+          m_pimpl->minorVersion = val;
+        }
+      }
+      else if (parser.GetItems().query_key(i) == "glSamples")
+      {
+        int val = 0;
+        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        {
+          m_pimpl->samples = val;
+        }
+      }
+      else if (parser.GetItems().query_key(i) == "fullscreen")
+      {
+        int val = 0;
+        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        {
+          m_pimpl->fullscreen = (val != 0);
+        }
+      }
+    }
   }
-  else if (result != Dg::ErrorCode::None)
+
+  //Set up GL
   {
-    fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", m_configFileName.c_str());
-    return;
+    if (!glfwInit())
+    {
+      fprintf(stderr, "Failed to initialize GLFW\n");
+      return;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_pimpl->majorVersion);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_pimpl->minorVersion);
+
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_SAMPLES, m_pimpl->samples);
+
+    if (m_pimpl->fullscreen)
+    {
+      if (m_pimpl->windowWidth == 0 || m_pimpl->windowHeight == 0)
+      {
+        const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+        m_pimpl->windowWidth = mode->width;
+        m_pimpl->windowHeight = mode->height;
+      }
+      m_pimpl->window = glfwCreateWindow(m_pimpl->windowWidth,
+                                         m_pimpl->windowHeight,
+                                         m_pimpl->title,
+                                         glfwGetPrimaryMonitor(),
+                                         nullptr);
+    }
+    else
+    {
+      m_pimpl->window = glfwCreateWindow(m_pimpl->windowWidth,
+                                         m_pimpl->windowHeight,
+                                         m_pimpl->title,
+                                         nullptr,
+                                         nullptr);
+    }
+
+    if (!m_pimpl->window)
+    {
+      fprintf(stderr, "Failed to open m_window\n");
+      glfwTerminate();
+      return;
+    }
+
+    glfwMakeContextCurrent(m_pimpl->window);
+
+    // start GLEW extension handler
+    glewExperimental = GL_TRUE;
+    glewInit();
+
+    // Display version info
+    const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
+    const GLubyte* version = glGetString(GL_VERSION); // version as a string
+    printf("Renderer: %s\n", renderer);
+    printf("OpenGL version supported %s\n", version);
   }
 
-  for (int i = 0; i < parser.GetItems().size(); ++i)
-  {
-    if (parser.GetItems().query_key(i) == "windowWidth")
-    {
-      int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
-      {
-        m_info.windowWidth = val;
-      }
-    }
-    else if (parser.GetItems().query_key(i) == "windowHeight")
-    {
-      int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
-      {
-        m_info.windowHeight = val;
-      }
-    }
-    else if (parser.GetItems().query_key(i) == "glMajorVersion")
-    {
-      int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
-      {
-        m_info.majorVersion = val;
-      }
-    }
-    else if (parser.GetItems().query_key(i) == "glMinorVersion")
-    {
-      int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
-      {
-        m_info.minorVersion = val;
-      }
-    }
-    else if (parser.GetItems().query_key(i) == "glSamples")
-    {
-      int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
-      {
-        m_info.samples = val;
-      }
-    }
-    else if (parser.GetItems().query_key(i) == "fullscreen")
-    {
-      int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
-      {
-        m_info.fullscreen = (val != 0);
-      }
-    }
-  }
-}
+  //Init ImGui
+  ImGui_ImplGlfwGL3_Init(m_pimpl->window, true);
 
-
-void DgApp::Run(DgApp* the_app)
-{
-  s_app = the_app;
-
+  //User Init method
   if (!Init())
   {
-    fprintf(stderr, "Failed to initialize DgApp\n");
+    printf("Failed to Init()\n");
     return;
   }
 
@@ -299,20 +361,23 @@ void DgApp::Run(DgApp* the_app)
 
     glfwPollEvents();
     ImGui_ImplGlfwGL3_NewFrame();
-    _BuildUI();
 
-    HandleEvents();
-    DoLogic(dt);
-    Render();
+    BuildUI();
+
+    eObject e(nullptr);
+    while (m_pimpl->eventManager.PollEvent(e))
+    {
+      e->DoEvent();
+    }
+
+    DoFrame(dt);
 
     ImGui::Render();
-    glfwSwapBuffers(m_window);
+    glfwSwapBuffers(m_pimpl->window);
 
-  } while (!glfwWindowShouldClose(m_window) && !m_shouldQuit);
-
-  Shutdown();
+  } while (!glfwWindowShouldClose(m_pimpl->window) && !m_pimpl->shouldQuit);
 
   ImGui_ImplGlfwGL3_Shutdown();
-  glfwDestroyWindow(m_window);
+  glfwDestroyWindow(m_pimpl->window);
   glfwTerminate();
 }

@@ -4,7 +4,6 @@
 #include <deque>
 #include <mutex>
 #include "DgObjectWrapper.h"
-#include "Events.h"
 
 class Event;
 
