@@ -122,7 +122,7 @@ public:
 
   void DoEvent()
   {
-    DgApp::GetInstance()->SaveFile(m_filePath);
+    DgApp::GetInstance()->SaveProject(m_filePath);
     DgApp::GetInstance()->SetDirty(false);
   }
 
@@ -160,7 +160,7 @@ public:
 
   void DoEvent()
   {
-    DgApp::GetInstance()->LoadFile(m_filePath);
+    DgApp::GetInstance()->LoadProject(m_filePath);
   }
 
   Event_LoadProject * Clone() const { return new Event_LoadProject(*this); }
@@ -292,6 +292,51 @@ public:
 };
 
 DgApp * DgApp::PIMPL::s_app(nullptr);
+
+bool FileExists(std::string const & a_name)
+{
+  if (FILE *file = fopen(a_name.c_str(), "r"))
+  {
+    fclose(file);
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+std::vector<std::string> GetFiles(std::string const & a_dirPath,
+                                  std::string a_ext)
+{
+  std::vector<std::string> result;
+  WIN32_FIND_DATA ffd;
+  HANDLE hFind = INVALID_HANDLE_VALUE;
+  std::string szDir = a_dirPath + "*";
+
+  hFind = FindFirstFile(szDir.c_str(), &ffd);
+
+  if (INVALID_HANDLE_VALUE == hFind)
+  {
+    return result;
+  }
+
+  do
+  {
+    if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+    {
+      size_t pos = PathFindExtension(ffd.cFileName) - &ffd.cFileName[0];
+      std::string ext = (std::string(ffd.cFileName).substr(pos + 1));
+      if (ext == a_ext || a_ext == "*")
+      {
+        result.push_back(ffd.cFileName);
+      }
+    }
+  } while (FindNextFile(hFind, &ffd) != 0);
+
+  FindClose(hFind);
+  return result;
+}
 
 DgApp::DgApp()
   : m_pimpl(new DgApp::PIMPL())
@@ -633,51 +678,6 @@ void DgApp::AddFileHandlingWindows()
     }
     ImGui::EndPopup();
   }
-}
-
-bool DgApp::FileExists(std::string const & a_name) const
-{
-  if (FILE *file = fopen(a_name.c_str(), "r"))
-  {
-    fclose(file);
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-std::vector<std::string> DgApp::GetFiles(std::string const & a_dirPath,
-                                         std::string a_ext) const
-{
-  std::vector<std::string> result;
-  WIN32_FIND_DATA ffd;
-  HANDLE hFind = INVALID_HANDLE_VALUE;
-  std::string szDir = a_dirPath + "*";
-
-  hFind = FindFirstFile(szDir.c_str(), &ffd);
-
-  if (INVALID_HANDLE_VALUE == hFind)
-  {
-    return result;
-  }
-
-  do
-  {
-    if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-    {
-      size_t pos = PathFindExtension(ffd.cFileName) - &ffd.cFileName[0];
-      std::string ext = (std::string(ffd.cFileName).substr(pos + 1));
-      if (ext == a_ext || a_ext == "*")
-      {
-        result.push_back(ffd.cFileName);
-      }
-    }
-  } while (FindNextFile(hFind, &ffd) != 0);
-
-  FindClose(hFind);
-  return result;
 }
 
 void DgApp::Run(DgApp* the_app)

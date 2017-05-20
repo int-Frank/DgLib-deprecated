@@ -25,8 +25,8 @@ public:
 
   std::string CurrentFile() const;
   virtual void NewProject() {}
-  virtual bool LoadFile(const std::string & a_fileName) { return true; }
-  virtual bool SaveFile(const std::string & a_filePath) { return true; }
+  virtual bool LoadProject(const std::string & a_fileName) { return true; }
+  virtual bool SaveProject(const std::string & a_filePath) { return true; }
 
   virtual void KeyEvent(int, int) {}
   virtual void UpdateScroll(double) {}
@@ -40,13 +40,6 @@ protected:
 
   virtual void BuildUI() {}
   virtual void DoFrame(double dt) {}
-
-protected:
-  //Some handy methods...
-  bool FileExists(std::string const &) const;
-
-  std::vector<std::string> GetFiles(std::string const & a_dirPath,
-                                    std::string a_ext) const;
 
   GLFWwindow * GetWindow();
 
