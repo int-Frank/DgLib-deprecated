@@ -18,16 +18,20 @@ public:
   DgApp(const DgApp&);
   DgApp& operator= (const DgApp&);
 
-  void RUN(DgApp *);
+  void Run(DgApp *);
   static DgApp * GetInstance();
 
-  //Internal...
   void PushEvent(Event const &);
 
-public:
+  std::string CurrentFile() const;
+  virtual void NewProject() {}
+  virtual bool LoadFile(const std::string & a_fileName) { return true; }
+  virtual bool SaveFile(const std::string & a_filePath) { return true; }
 
   virtual void KeyEvent(int, int) {}
   virtual void UpdateScroll(double) {}
+
+  void SetDirty(bool);
 
 protected:
 
@@ -43,9 +47,11 @@ protected:
 
   std::vector<std::string> GetFiles(std::string const & a_dirPath,
                                     std::string a_ext) const;
-protected:
 
   GLFWwindow * GetWindow();
+
+  void AddFileHandlingMenuItems();
+  void AddFileHandlingWindows();
 
 private:
 

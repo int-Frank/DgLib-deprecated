@@ -171,11 +171,8 @@ void Application::Shutdown()
 
 void Application::UpdateScroll(double a_val)
 {
-  if (!ImGui::GetIO().WantCaptureMouse)
-  {
-    m_camZoomTarget -= a_val;
-    Dg::ClampNumber(1.0, m_maxCamZoomOut, m_camZoomTarget);
-  }
+  m_camZoomTarget -= a_val;
+  Dg::ClampNumber(1.0, m_maxCamZoomOut, m_camZoomTarget);
 }
 
 
