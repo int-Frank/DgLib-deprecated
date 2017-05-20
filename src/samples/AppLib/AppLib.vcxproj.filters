@@ -9,26 +9,16 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{c12b3c7c-4106-4e15-ab60-3487d0e0e5ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="public">
+      <UniqueIdentifier>{9ef771a5-1f0a-4a1e-bb5d-0705a8f69bc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DgApp.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="EventManager.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\3rd_party\imgui\imconfig.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\3rd_party\imgui\imgui.h">
-      <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\3rd_party\imgui\imgui_internal.h">
       <Filter>ImGui</Filter>
@@ -45,8 +35,17 @@
     <ClInclude Include="imgui_impl_glfw_gl3.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="DgApp.h">
+      <Filter>public</Filter>
+    </ClInclude>
     <ClInclude Include="Event.h">
-      <Filter>Source Files</Filter>
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rd_party\imgui\imgui.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rd_party\imgui\imconfig.h">
+      <Filter>public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -74,7 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini">
-      <Filter>Resource Files</Filter>
+      <Filter>public</Filter>
     </None>
   </ItemGroup>
 </Project>

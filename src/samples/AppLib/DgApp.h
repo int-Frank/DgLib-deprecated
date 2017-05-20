@@ -2,7 +2,6 @@
 #define DGAPP_H
 
 #include <string>
-#include <vector>
 
 class Event;
 struct GLFWwindow;
@@ -25,8 +24,8 @@ public:
 
   std::string CurrentFile() const;
   virtual void NewProject() {}
-  virtual bool LoadProject(const std::string & a_fileName) { return true; }
-  virtual bool SaveProject(const std::string & a_filePath) { return true; }
+  virtual bool LoadProject(std::string const & a_fileName) { return true; }
+  virtual bool SaveProject(std::string const & a_filePath) { return true; }
 
   virtual void KeyEvent(int, int) {}
   virtual void UpdateScroll(double) {}

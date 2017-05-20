@@ -3,7 +3,7 @@
 
 #include "DgObject.h"
 
-class Event : public Dg::Object<Event>
+class Event
 {
 public:
 
@@ -20,7 +20,7 @@ public:
 
   virtual void DoEvent() {}
 
-  Event * Clone() const { return new Event(*this); }
+  virtual Event * Clone() const { return new Event(*this); }
 };
 
 #endif

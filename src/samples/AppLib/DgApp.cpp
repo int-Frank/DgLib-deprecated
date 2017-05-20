@@ -355,6 +355,11 @@ DgApp * DgApp::GetInstance()
   return PIMPL::s_app;
 }
 
+GLFWwindow * DgApp::GetWindow()
+{
+  return m_pimpl->window;
+}
+
 void DgApp::PushEvent(Event const & a_event)
 {
   m_pimpl->eventManager.PushEvent(a_event);

@@ -72,6 +72,8 @@ LogDir              = os.path.abspath("./logs/")
 UnitTestResultsDir  = os.path.abspath("./test_results/")
 OutputPath          = os.path.abspath("../output/") #build output
 SrcPath             = os.path.abspath("../src/core/public/")
+AppLibSrcPath       = os.path.abspath("../src/samples/AppLib/")
+ImGuiPath           = os.path.abspath("../3rd_party/imgui/")
 DoxygenOutPath      = os.path.abspath("./doxygen/")
 DeployDir           = os.path.abspath("../deploy/")
 DoxygenFilePath     = os.path.abspath(DoxygenOutPath + "/Doxyfile")
@@ -123,7 +125,7 @@ for i in range(0, len(platforms)):
     LibPlatformDir = DeployDir + "/" + FinalLibName + "/lib/" + platform
     os.makedirs(LibPlatformDir)
 
-    AppLibPlatformDir = DeployDir + "/" + FinalLibName + "/AppLib/" + platform
+    AppLibPlatformDir = DeployDir + "/" + FinalLibName + "/" + AppLibName + "/lib/" + platform
     os.makedirs(AppLibPlatformDir)
     
     for configuration in configurations:
@@ -177,8 +179,18 @@ for i in range(0, len(platforms)):
         shutil.copy(AppLibFile, AppLibConfigurationDir)
     
 # Copy public headers
-logger.write("\nCopying source code...\n")
+logger.write("\nCopying header files...\n")
 shutil.copytree(SrcPath, DeployDir + "/DgLib/include/")
+
+# Copy AppLib headers
+AppLibIncludeDir = DeployDir + "/" + FinalLibName + "/" + AppLibName + "/include/"
+os.makedirs(AppLibIncludeDir)
+
+shutil.copy(os.path.abspath(AppLibSrcPath + "/config.ini"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/DgApp.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Event.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(ImGuiPath + "/imconfig.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(ImGuiPath + "/imgui.h"), AppLibIncludeDir)
 logger.write("Done!\n")
 
 # Create docs
