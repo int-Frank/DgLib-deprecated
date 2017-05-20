@@ -15,7 +15,6 @@ LibEXEPath32        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual S
 DoxygenEXEPath      = os.path.abspath("D:/Programs/doxygen/bin/doxygen.exe")
 
 FailOnBadDocs       = False #Fail the build if there are errors in doc compilation
-CheckSamples        = True  #Check to see if the samples build
 
 #--- Classes ------------------------------------------------------
 
@@ -81,6 +80,7 @@ DgLibFilePath       = os.path.abspath("../DgLib.sln")
 SamplesFilePath     = os.path.abspath("../src/samples/Samples.sln")
 
 Libs                = ["Engine", "Math", "Utility", "Containers"]
+AppLibName          = "AppLib"
 
 FinalLibName        = "DgLib"
 LogFileName         = "log__" + time.strftime("%Y-%m-%d__%I-%M-%S.txt")
@@ -122,6 +122,9 @@ for i in range(0, len(platforms)):
     platform = platforms[i]
     LibPlatformDir = DeployDir + "/" + FinalLibName + "/lib/" + platform
     os.makedirs(LibPlatformDir)
+
+    AppLibPlatformDir = DeployDir + "/" + FinalLibName + "/AppLib/" + platform
+    os.makedirs(AppLibPlatformDir)
     
     for configuration in configurations:
     
@@ -160,15 +163,19 @@ for i in range(0, len(platforms)):
         logger.write("Finished combining libs!\n")
 
         #Make sure samples build
-        if CheckSamples and configuration == "Release":
-            logger.write("\nBuilding samples. Platform: " + platform + "\n\n")
-            args = [MSBuildPath, SamplesFilePath, "/property:Configuration=Release", "/property:Platform=" + platform, "/t:Rebuild"]
-            if not Execute(args):
-                logger.write("\nBuild failed! Exiting...\n")
-                Exit()
-            logger.write("\nBuild complete!\n")
-    
+        logger.write("\nBuilding samples. Platform: " + platform + "\n\n")
+        args = [MSBuildPath, SamplesFilePath, "/property:Configuration=" + configuration, "/property:Platform=" + platform, "/t:Rebuild"]
+        if not Execute(args):
+            logger.write("\nBuild failed! Exiting...\n")
+            Exit()
+        logger.write("\nBuild complete!\n")
 
+        #Package the App library
+        AppLibConfigurationDir = AppLibPlatformDir + "/" + configuration
+        os.makedirs(AppLibConfigurationDir)
+        AppLibFile = os.path.abspath(OutputPath + "/" + AppLibName + "/" + platform + "/" + configuration + "/" + AppLibName + ".lib")
+        shutil.copy(AppLibFile, AppLibConfigurationDir)
+    
 # Copy public headers
 logger.write("\nCopying source code...\n")
 shutil.copytree(SrcPath, DeployDir + "/DgLib/include/")
@@ -183,6 +190,9 @@ if not Execute(args, DoxygenOutPath):
 if (FailOnBadDocs and os.stat(DoxygenErrorLog).st_size != 0):
     logger.write("\nDocumentation contains errors. Exiting...\n")
     Exit()
+
+
+
 
 # Done!
 logger.write("\nBuild Succeeded!")
