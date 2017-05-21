@@ -35,6 +35,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppunitlite", "src\core\private\cppunitlite\cppunitlite.vcxproj", "{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "src\core\private\Network\Network.vcxproj", "{1C47BEA8-C870-44F0-9735-D88189B47DFE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{79493342-78B1-4389-A2DD-2BCFACC31571} = {79493342-78B1-4389-A2DD-2BCFACC31571}
+		{8DB75AC3-EEC3-4235-BE94-CF62C035601D} = {8DB75AC3-EEC3-4235-BE94-CF62C035601D}
+		{06AE16D3-4C8F-43C8-A4E0-6E3D1089293F} = {06AE16D3-4C8F-43C8-A4E0-6E3D1089293F}
+		{2E5996FD-C559-4AD1-9541-9F9CC4D485B4} = {2E5996FD-C559-4AD1-9541-9F9CC4D485B4}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

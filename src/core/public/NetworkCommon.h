@@ -5,13 +5,17 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include <windows.h>
+#include <Windows.h.>
 #include <winsock2.h>
-#include <ws2tcpip.h>
+#include <mstcpip.h>
+#include <ws2ipdef.h>
 #include <iphlpapi.h>
-#include <stdio.h>
 
-#pragma comment(lib, "Ws2_32.lib")
+// Need to link with iphlpapi.lib
+#pragma comment(lib, "iphlpapi.lib")
+
+// Need to link with Ws2_32.lib for Winsock functions
+#pragma comment(lib, "ws2_32.lib")
 
 namespace Dg
 {

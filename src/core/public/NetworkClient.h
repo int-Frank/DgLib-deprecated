@@ -26,10 +26,10 @@ namespace Dg
     ~Client();
 
     //Obtain an unused port, and start listening on this port
-    bool Start(Mediator *);
+    bool Start(Mediator * a_mediator = nullptr);
 
     //Send the payload to current connections. Asynchronous.
-    void Send(std::vector<char> const & a_payload);
+    void Send(std::vector<char> const & a_payload) {}
 
     //Will terminate all broadcasting and listening theads.
     void Shutdown();
@@ -38,11 +38,11 @@ namespace Dg
 
     bool ReservePorts();
 
-    void Start_Broadcast_Listener();
-    void Start_Broadcast_Speaker();
-    void Start_Client_Listener();
+    void Start_Broadcast_Listener() {}
+    void Start_Broadcast_Speaker() {}
+    void Start_Client_Listener() {}
 
-    void SendDummyPayloads();
+    void SendDummyPayloads() {}
 
     bool AssignPort(uint16_t &);
 

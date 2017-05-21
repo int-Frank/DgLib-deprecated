@@ -66,12 +66,14 @@ namespace Dg
     Start_Broadcast_Listener();
     Start_Broadcast_Speaker();
     Start_Client_Listener();
+    return true;
   }
 
   bool Client::ReservePorts()
   {
     if (!AssignPort(m_mySendPort)) return false;
     if (!AssignPort(m_myRecievePort)) return false;
+    return true;
   }
 
   bool Client::AssignPort(uint16_t & a_out)
