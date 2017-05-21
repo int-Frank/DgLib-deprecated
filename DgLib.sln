@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{43557EA0-BA56-47C1-BBFF-B59662F61116}"
 EndProject
@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppunitlite", "src\core\private\cppunitlite\cppunitlite.vcxproj", "{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "src\core\private\Network\Network.vcxproj", "{1C47BEA8-C870-44F0-9735-D88189B47DFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +92,14 @@ Global
 		{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}.Release|Win32.Build.0 = Release|Win32
 		{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}.Release|x64.ActiveCfg = Release|x64
 		{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}.Release|x64.Build.0 = Release|x64
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE}.Debug|Win32.Build.0 = Debug|Win32
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE}.Debug|x64.ActiveCfg = Debug|x64
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE}.Debug|x64.Build.0 = Debug|x64
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE}.Release|Win32.ActiveCfg = Release|Win32
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE}.Release|Win32.Build.0 = Release|Win32
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE}.Release|x64.ActiveCfg = Release|x64
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,5 +111,6 @@ Global
 		{79493342-78B1-4389-A2DD-2BCFACC31571} = {251D09D8-2767-459D-9301-5EBDD6DEE8DC}
 		{8DB75AC3-EEC3-4235-BE94-CF62C035601D} = {251D09D8-2767-459D-9301-5EBDD6DEE8DC}
 		{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40} = {43557EA0-BA56-47C1-BBFF-B59662F61116}
+		{1C47BEA8-C870-44F0-9735-D88189B47DFE} = {251D09D8-2767-459D-9301-5EBDD6DEE8DC}
 	EndGlobalSection
 EndGlobal

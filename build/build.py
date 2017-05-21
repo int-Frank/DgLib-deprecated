@@ -203,8 +203,5 @@ if (FailOnBadDocs and os.stat(DoxygenErrorLog).st_size != 0):
     logger.write("\nDocumentation contains errors. Exiting...\n")
     Exit()
 
-
-
-
 # Done!
 logger.write("\nBuild Succeeded!")
