@@ -4,7 +4,7 @@ int main()
 {
   Dg::Client client;
 
-  client.Start();
+  client.Startup();
   client.Shutdown();
 
   return 0;
