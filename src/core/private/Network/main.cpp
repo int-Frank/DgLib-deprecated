@@ -1,11 +1,16 @@
+#include "NetworkCommon.h"
 #include "NetworkClient.h"
 
 int main()
 {
-  Dg::Client client;
+  Dg::InitWinsock();
 
-  client.Startup();
-  client.Shutdown();
+  Dg::PeerNode peer;
+
+  peer.Init();
+  peer.Shutdown();
+
+  Dg::ShutdownWinsock();
 
   return 0;
 }

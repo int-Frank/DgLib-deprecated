@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NetwokCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\public\NetworkClient.h" />

@@ -1,7 +1,6 @@
-#ifndef NETWORKCLIENT_H
-#define NETWORKCLIENT_H
+#ifndef NETWORKPeer_H
+#define NETWORKPeer_H
 
-#include <stdint.h>
 #include <vector>
 
 namespace Dg
@@ -15,23 +14,33 @@ namespace Dg
 
   };
 
-  class Client
+  class PeerNode
   {
   public:
 
   public:
 
-    Client();
-    ~Client();
+    PeerNode();
+    ~PeerNode();
 
-    //Obtain an unused port, and start listening on this port
-    bool Startup(Mediator * a_mediator = nullptr);
+    //Obtain port
+    bool Init();
+
+    //Will terminate all broadcasting and listening theads.
+    //Release ports.
+    void Shutdown();
 
     //Send the payload to current connections. Asynchronous.
     void SendToAll(std::vector<char> const & a_payload) {}
 
-    //Will terminate all broadcasting and listening theads.
-    void Shutdown();
+    //Call order should be:
+    // 1. Start_RecieveConnections
+    // 2. Start_GetPeers
+    // 3. Start_AlertPeers
+
+    void Start_RecieveConnections(Mediator * = nullptr);
+    void Start_GetPeers();
+    void Start_AlertPeers();
 
   private:
 

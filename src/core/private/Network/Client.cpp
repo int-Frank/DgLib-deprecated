@@ -1,3 +1,8 @@
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
+#pragma comment(lib, "Ws2_32.lib")
+
 #include <iostream>
 #include <thread>
 #include <mutex>
@@ -10,51 +15,57 @@
 
 namespace Dg
 {
-  class __ClientInfo
+  class PeerInfo
   {
   public:
 
-    bool operator==(__ClientInfo  const & a_other) { return data == a_other.data; }
+    bool operator==(PeerInfo  const & a_other) { return data == a_other.data; }
 
-    uint64_t data;
+    union
+    {
+      struct SocketAddress
+      {
+        union
+        {
+          uint8_t   ip4_8[4];
+          uint32_t  ip4_32;
+        };
+        uint16_t  port;
+      } socketAddress;
+      uint64_t data;
+    };
+
     int32_t deadTime;
   };
 
-  class Client::PIMPL
+  class PeerHandler
   {
   public:
 
-    PIMPL()
-      : pMediator(nullptr)
-      , shouldClose(false)
-      , portRecieve(0)
-      , portSend(0)
-    {}
-
-    void AddPeer(__ClientInfo const & a_data)
+    void AddPeer(PeerInfo const & a_data)
     {
       std::lock_guard<std::mutex> lock(mutexPeers);
 
       auto it = find(peers.begin(), peers.end(), a_data);
       if (it == peers.end())
       {
-        it->deadTime = 0;
+        peers.push_back(a_data);
       }
       else
       {
-        peers.push_back(a_data);
+        it->deadTime = 0;
       }
     }
 
-    void CleanPeers(int32_t a_dt)
+    void CleanPeerList(int32_t a_dt)
     {
       std::lock_guard<std::mutex> lock(mutexPeers);
 
       for (auto it = peers.end(); it != peers.begin();)
       {
         it--;
-        it->deadTime -= a_dt;
-        if (it->deadTime < 0)
+        it->deadTime += a_dt;
+        if (it->deadTime > 5000)
         {
           it = peers.erase(it);
           it--;
@@ -62,117 +73,162 @@ namespace Dg
       }
     }
 
-    Mediator *                        pMediator;
-    bool                              shouldClose;
+    DoublyLinkedList<PeerInfo> GetPeers()
+    {
+      std::lock_guard<std::mutex> lock(mutexPeers);
+      return peers;
+    }
 
-    uint16_t                          portRecieve;
-    uint16_t                          portSend;
+  private:
 
-    std::thread                       threadRecieve;
-    std::thread                       threadSend;
-    std::thread                       threadBroadcastSpeaker;
-    std::thread                       threadBroadcastListener;
-
-    std::mutex                        mutexPeers;
-    DoublyLinkedList<__ClientInfo>  peers;
+    std::mutex                      mutexPeers;
+    DoublyLinkedList<PeerInfo>  peers;
   };
 
-  static void RunBroadcastSpeaker(Client * a_client)
+  class PeerNode::PIMPL
   {
-    if (a_client == nullptr) return;
+  public:
 
+    PIMPL()
+      : pMediator(nullptr)
+      , shouldClose(false)
+      , portRecieve(0)
+    {}
+
+    Mediator *    pMediator;
+    bool          shouldClose;
+
+    uint16_t      portRecieve;
+
+    std::thread   thread_RecieveConnections;
+    std::thread   threadSend;
+    std::thread   thread_AlertPeers;
+    std::thread   thread_GetPeers;
+
+    PeerHandler   peers;
+  };
+
+  static void Run_AlertPeers(bool const & a_shouldClose,
+                             PeerHandler & a_peerHandler)
+  {
     //Broadcast ClientInfo
 
     //Check if any peers are out of time.
   }
 
-  static void RunBroadcastListener(Client * a_client)
-  {
-    if (a_client == nullptr) return;
-  }
-
-  static void RunSend(std::vector<char> const & a_payload)
+  static void Run_GetPeers(bool const & a_shouldClose,
+                           PeerHandler & a_peerHandler)
   {
 
   }
 
-  static void RunRecieve(Client * a_client)
+  static void Run_SendToAll(std::vector<char> a_payload,
+                            DoublyLinkedList<PeerInfo> a_peers)
   {
-    if (a_client == nullptr) return;
+
   }
 
-  static bool AssignPort(uint16_t & a_out)
+  static void Run_RecieveConnections(bool const & a_shouldClose,
+                                     PeerNode & a_node)
   {
-    ULONG64 resToken = { 0 };
-    for (USHORT i = 5000; i < 65535; i++)
-    {
-      unsigned long status = CreatePersistentTcpPortReservation(i, 1, &resToken);
-      if (status == NO_ERROR)
-      {
-        a_out = i;
-        return true;
-      }
-    }
-    return false;
+
   }
 
-  Client::Client()
+  PeerNode::PeerNode()
     : m_pimpl(new PIMPL())
   {
 
   }
 
-  Client::~Client()
+  PeerNode::~PeerNode()
   {
     Shutdown();
   }
 
-  void Client::Shutdown()
+  void PeerNode::Shutdown()
   {
     m_pimpl->shouldClose = true;
-    //SendDummyPayloads();
+    
+    //AlertPeers thread should close by itself
+
+    //Send dummy packet to broadcast address to wake up the GetPeers thread
+
+    //Send dummy packet to this peers recieving address to wake up the RecieveConnections thread
 
     //Wait to join threads
 
-    //Delete sockets
-    if (m_pimpl->portSend != 0)
+    //Close sockets
+  }
+
+  bool PeerNode::Init()
+  {
+    struct addrinfo *result = NULL, *ptr = NULL, hints;
+
+    ZeroMemory(&hints, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_TCP;
+    hints.ai_flags = AI_PASSIVE;
+
+    // Resolve the local address and port to be used by the server
+    int iResult = getaddrinfo(NULL, "0", &hints, &result);
+    if (iResult != 0) 
     {
-      unsigned long status = DeletePersistentTcpPortReservation((USHORT)m_pimpl->portSend, 1);
-      if (status != NO_ERROR)
-      {
-        std::cout << "myportSend: DeletePersistentTcpPortReservation returned error: %ld\n" << status;
-      }
-      else
-      {
-        m_pimpl->portSend = 0;
-      }
+      std::cout << "getaddrinfo failed: " << iResult;
+      return false;
     }
 
-    if (m_pimpl->portRecieve != 0)
+    SOCKET ListenSocket = INVALID_SOCKET;
+
+    ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+
+    if (ListenSocket == INVALID_SOCKET) 
     {
-      unsigned long status = DeletePersistentTcpPortReservation((USHORT)m_pimpl->portRecieve, 1);
-      if (status != NO_ERROR)
-      {
-        std::cout << "m_myportRecieve: DeletePersistentTcpPortReservation returned error: %ld\n" << status;
-      }
-      else
-      {
-        m_pimpl->portRecieve = 0;
-      }
+      std::cout << "Error at socket(): " << WSAGetLastError();
+      freeaddrinfo(result);
+      return false;
+    }
+
+    iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+    if (iResult == SOCKET_ERROR) 
+    {
+      std::cout << "bind failed with error: " << WSAGetLastError();
+      freeaddrinfo(result);
+      closesocket(ListenSocket);
+      return false;
+    }
+
+    freeaddrinfo(result);
+
+    if (listen(ListenSocket, SOMAXCONN) == SOCKET_ERROR) 
+    {
+      std::cout << "Listen failed with error: " << WSAGetLastError();
+      closesocket(ListenSocket);
+      return false;
+    }
+
+    struct sockaddr_in sin;
+    int addrlen = sizeof(sin);
+    if (getsockname(ListenSocket, (struct sockaddr *)&sin, &addrlen) == 0 &&
+        sin.sin_family == AF_INET &&
+        addrlen == sizeof(sin))
+    {
+      int local_port = ntohs(sin.sin_port);
     }
   }
 
-  bool Client::Startup(Mediator * a_pMediator)
+  void PeerNode::Start_AlertPeers()
   {
-    if (!AssignPort(m_pimpl->portSend)) return false;
-    if (!AssignPort(m_pimpl->portRecieve)) return false;
+    //m_pimpl->thread_AlertPeers = std::thread(Run_AlertPeers, m_pimpl->shouldClose, m_pimpl->peers);
+  }
 
-    m_pimpl->pMediator = a_pMediator;
+  void PeerNode::Start_GetPeers()
+  {
+    //m_pimpl->thread_GetPeers = std::thread(Run_GetPeers, m_pimpl->shouldClose, m_pimpl->peers);
+  }
 
-    m_pimpl->threadBroadcastListener = std::thread(RunBroadcastListener, this);
-    m_pimpl->threadBroadcastSpeaker = std::thread(RunBroadcastSpeaker, this);
-    m_pimpl->threadRecieve = std::thread(RunRecieve, this);
-
-    return true;
+  void PeerNode::Start_RecieveConnections(Mediator *)
+  {
+    //m_pimpl->thread_RecieveConnections = std::thread(Run_RecieveConnections, this);
   }
 }
