@@ -418,52 +418,52 @@ void Application::GetConfiguration()
     return;
   }
 
-  for (int i = 0; i < parser.GetItems().size(); ++i)
+  for (auto kv : parser.GetItems())
   {
-    if (parser.GetItems().query_key(i) == "windowWidth")
+    if (kv.first == "windowWidth")
     {
       int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      if (Dg::StringToNumber(val, kv.second, std::dec))
       {
         m_info.windowWidth = val;
       }
     }
-    else if (parser.GetItems().query_key(i) == "windowHeight")
+    else if (kv.first == "windowHeight")
     {
       int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      if (Dg::StringToNumber(val, kv.second, std::dec))
       {
         m_info.windowHeight = val;
       }
     }
-    else if (parser.GetItems().query_key(i) == "glMajorVersion")
+    else if (kv.first == "glMajorVersion")
     {
       int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      if (Dg::StringToNumber(val, kv.second, std::dec))
       {
         m_info.majorVersion = val;
       }
     }
-    else if (parser.GetItems().query_key(i) == "glMinorVersion")
+    else if (kv.first == "glMinorVersion")
     {
       int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      if (Dg::StringToNumber(val, kv.second, std::dec))
       {
         m_info.minorVersion = val;
       }
     }
-    else if (parser.GetItems().query_key(i) == "glSamples")
+    else if (kv.first == "glSamples")
     {
       int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      if (Dg::StringToNumber(val, kv.second, std::dec))
       {
         m_info.samples = val;
       }
     }
-    else if (parser.GetItems().query_key(i) == "fullscreen")
+    else if (kv.first == "fullscreen")
     {
       int val = 0;
-      if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+      if (Dg::StringToNumber(val, kv.second, std::dec))
       {
         m_info.flags.fullscreen = val;
       }

@@ -1,10 +1,13 @@
 #ifndef DGAPP_H
 #define DGAPP_H
 
+#include <map>
 #include <string>
 
 class Event;
 struct GLFWwindow;
+
+typedef std::map<std::string, std::string> map_str_str;
 
 class DgApp
 {
@@ -41,6 +44,7 @@ protected:
   virtual void DoFrame(double dt) {}
 
   GLFWwindow * GetWindow();
+  map_str_str const & GetConfigItems() const;
 
   void AddFileHandlingMenuItems();
   void AddFileHandlingWindows();

@@ -276,6 +276,7 @@ public:
   int                 save_currentItem;
 
   std::string const   configFileName;
+  map_str_str         configItems;
 
   std::string         projectPath;
   std::string         projectExtension;
@@ -348,6 +349,23 @@ DgApp::~DgApp()
 {
   Shutdown();
   delete m_pimpl;
+  m_pimpl = nullptr;
+}
+
+DgApp::DgApp(DgApp const & a_other)
+  : m_pimpl(new PIMPL(*a_other.m_pimpl))
+{
+
+}
+
+DgApp & DgApp::operator=(DgApp const & a_other)
+{
+  if (this != &a_other)
+  {
+    delete m_pimpl;
+    m_pimpl = new PIMPL(*a_other.m_pimpl);
+  }
+  return *this;
 }
 
 DgApp * DgApp::GetInstance()
@@ -705,52 +723,53 @@ void DgApp::Run(DgApp* the_app)
       return;
     }
 
-    for (int i = 0; i < parser.GetItems().size(); ++i)
+    m_pimpl->configItems = parser.GetItems();
+    for (auto kv : m_pimpl->configItems)
     {
-      if (parser.GetItems().query_key(i) == "windowWidth")
+      if (kv.first == "windowWidth")
       {
         int val = 0;
-        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        if (Dg::StringToNumber(val, kv.second, std::dec))
         {
           m_pimpl->windowWidth = val;
         }
       }
-      else if (parser.GetItems().query_key(i) == "windowHeight")
+      else if (kv.first == "windowHeight")
       {
         int val = 0;
-        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        if (Dg::StringToNumber(val, kv.second, std::dec))
         {
           m_pimpl->windowHeight = val;
         }
       }
-      else if (parser.GetItems().query_key(i) == "glMajorVersion")
+      else if (kv.first == "glMajorVersion")
       {
         int val = 0;
-        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        if (Dg::StringToNumber(val, kv.second, std::dec))
         {
           m_pimpl->majorVersion = val;
         }
       }
-      else if (parser.GetItems().query_key(i) == "glMinorVersion")
+      else if (kv.first == "glMinorVersion")
       {
         int val = 0;
-        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        if (Dg::StringToNumber(val, kv.second, std::dec))
         {
           m_pimpl->minorVersion = val;
         }
       }
-      else if (parser.GetItems().query_key(i) == "glSamples")
+      else if (kv.first == "glSamples")
       {
         int val = 0;
-        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        if (Dg::StringToNumber(val, kv.second, std::dec))
         {
           m_pimpl->samples = val;
         }
       }
-      else if (parser.GetItems().query_key(i) == "fullscreen")
+      else if (kv.first == "fullscreen")
       {
         int val = 0;
-        if (Dg::StringToNumber(val, parser.GetItems()[i], std::dec))
+        if (Dg::StringToNumber(val, kv.second, std::dec))
         {
           m_pimpl->fullscreen = (val != 0);
         }

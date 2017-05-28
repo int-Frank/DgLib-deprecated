@@ -1,25 +1,62 @@
 
+#include <fstream>
+
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
 
+static char const g_commentChars[] = "#;";
+static char const g_delim = '=';
+
 namespace Dg
 {
-  char const Parser_INI::s_comment[] = "#;";
+  class Parser_INI::PIMPL 
+  {
+  public:
 
-  bool Parser_INI::IsComment(std::string const & a_str)
+    std::map<std::string, std::string> items;
+  };
+
+  Parser_INI::Parser_INI()
+    : m_pimpl(new PIMPL())
+  {
+
+  }
+
+  Parser_INI::~Parser_INI()
+  {
+    delete m_pimpl;
+    m_pimpl = nullptr;
+  }
+
+  Parser_INI::Parser_INI(Parser_INI const & a_other)
+    : m_pimpl(new PIMPL(*a_other.m_pimpl))
+  {
+
+  }
+
+  Parser_INI & Parser_INI::operator=(Parser_INI const & a_other)
+  {
+    if (this != &a_other)
+    {
+      delete m_pimpl;
+      m_pimpl = new PIMPL(*a_other.m_pimpl);
+    }
+    return *this;
+  }
+
+  static bool IsComment(std::string const & a_str)
   {
     std::string str(Trim(a_str));
-    std::string CommentDelim = s_comment;
-    size_t strBegin = str.find_first_of(CommentDelim);
+    size_t strBegin = str.find_first_of(g_commentChars);
     return strBegin == 0;
   }
 
-  bool Parser_INI::GetNameValue(std::string const & a_str
-                              , std::string & a_name
-                              , std::string & a_value)
+  static bool GetNameValue(std::string const & a_str,
+                           std::string & a_name,
+                           std::string & a_value)
   {
     std::string str(Trim(a_str));
-    const size_t delimPos = str.find_first_of(s_delim);
+    const size_t delimPos = str.find_first_of(g_delim);
     if (delimPos == std::string::npos)
     {
       a_name = str;
@@ -32,9 +69,14 @@ namespace Dg
     return (a_name != "") && (a_value != "");
   }
 
+  std::map < std::string, std::string > const & Parser_INI::GetItems() const
+  {
+    return m_pimpl->items;
+  }
+
   ErrorCode Parser_INI::Parse(std::string const & a_file)
   {
-    m_items.clear();
+    m_pimpl->items.clear();
 
     std::ifstream file(a_file);
     if (!file.good())
@@ -54,7 +96,7 @@ namespace Dg
       std::string name, value;
       if (GetNameValue(line, name, value))
       {
-        m_items.insert(Trim(name), Trim(value));
+        m_pimpl->items.insert(std::pair<std::string, std::string>(Trim(name), Trim(value)));
       }
     }
     return ErrorCode::None;

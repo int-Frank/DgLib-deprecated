@@ -9,9 +9,8 @@
 #define DGPARSER_INI_H
 
 #include <string>
-#include <fstream>
+#include <map>
 
-#include "Dg_map.h"
 #include "DgTypes.h"
 
 namespace Dg
@@ -22,9 +21,9 @@ namespace Dg
   //!
   //! Basic parser for .ini files. An ini file is in the format 
   //!
-  //!   token=value
+  //!   key=value
   //!
-  //! Comments are preceeded by a either a '#' or ';'
+  //! Comments are preceeded by a one of '#;'
   //!
   //! @author Frank Hart
   //! @date 4/10/2015
@@ -32,33 +31,23 @@ namespace Dg
   {
   public:
 
+    Parser_INI();
+    ~Parser_INI();
+    Parser_INI(Parser_INI const &);
+    Parser_INI & operator=(Parser_INI const &);
+
     //! Loads and parses an ini file.
     //!
     //! @return ErrorCode::None on success.
-    ErrorCode Parse(std::string const & file);
+    ErrorCode Parse(std::string const & fileName);
 
     //! Get the token/value items successfully extracted from the ini file.
-    Dg::map<std::string, std::string> const & GetItems() const { return m_items; }
+    std::map<std::string, std::string> const & GetItems() const;
 
   private:
 
-    Dg::map<std::string, std::string> m_items;
-
-  private:
-
-    static char const s_delim = '=';
-    static char const s_comment[];
-
-  private:
-
-    //! Is this line a comment?
-    bool IsComment(std::string const & a_str);
-
-    //! Break the current line in to a token and value.
-    bool GetNameValue(std::string const & a_str
-                    , std::string & a_name
-                    , std::string & a_value);
-
+    class PIMPL;
+    PIMPL * m_pimpl;
   };
 
 

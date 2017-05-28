@@ -11,19 +11,14 @@
 #include "NetworkCommon.h"
 
 #include "DgDoublyLinkedList.h"
-#include "DgIDManager.h"
 
 namespace Dg
 {
-  class PeerInfo
+  struct SocketAddress
   {
-  public:
-
-    bool operator==(PeerInfo  const & a_other) { return data == a_other.data; }
-
     union
     {
-      struct SocketAddress
+      struct Socket
       {
         union
         {
@@ -31,10 +26,18 @@ namespace Dg
           uint32_t  ip4_32;
         };
         uint16_t  port;
-      } socketAddress;
+      } socket;
       uint64_t data;
     };
+  };
 
+  class PeerInfo
+  {
+  public:
+
+    bool operator==(PeerInfo  const & a_other) { return socketAddress.data == a_other.socketAddress.data; }
+
+    SocketAddress socketAddress;
     int32_t deadTime;
   };
 
@@ -98,7 +101,7 @@ namespace Dg
     Mediator *    pMediator;
     bool          shouldClose;
 
-    uint16_t      portRecieve;
+    USHORT        portRecieve;
 
     std::thread   thread_RecieveConnections;
     std::thread   threadSend;
@@ -108,8 +111,8 @@ namespace Dg
     PeerHandler   peers;
   };
 
-  static void Run_AlertPeers(bool const & a_shouldClose,
-                             PeerHandler & a_peerHandler)
+  static void Run_AlertPeers(bool const * a_shouldClose,
+                             PeerHandler * a_peerHandler)
   {
     //Broadcast ClientInfo
 
@@ -209,17 +212,24 @@ namespace Dg
 
     struct sockaddr_in sin;
     int addrlen = sizeof(sin);
-    if (getsockname(ListenSocket, (struct sockaddr *)&sin, &addrlen) == 0 &&
+    if (!(getsockname(ListenSocket, (struct sockaddr *)&sin, &addrlen) == 0 &&
         sin.sin_family == AF_INET &&
-        addrlen == sizeof(sin))
+        addrlen == sizeof(sin)))
     {
-      int local_port = ntohs(sin.sin_port);
+      std::cout << "getsockname failed with error: " << WSAGetLastError();
+      closesocket(ListenSocket);
+      return false;
     }
+
+    m_pimpl->portRecieve = sin.sin_port;
+
+    //May not need to store ip address. Perhaps when the peer recieves a broadcast message
+    //we can get the ip from the message.
   }
 
   void PeerNode::Start_AlertPeers()
   {
-    //m_pimpl->thread_AlertPeers = std::thread(Run_AlertPeers, m_pimpl->shouldClose, m_pimpl->peers);
+    m_pimpl->thread_AlertPeers = std::thread(Run_AlertPeers, &m_pimpl->shouldClose, &m_pimpl->peers);
   }
 
   void PeerNode::Start_GetPeers()
