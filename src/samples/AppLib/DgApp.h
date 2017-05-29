@@ -17,9 +17,6 @@ public:
 
   virtual ~DgApp();
 
-  DgApp(const DgApp&);
-  DgApp& operator= (const DgApp&);
-
   void Run(DgApp *);
   static DgApp * GetInstance();
 
@@ -53,6 +50,10 @@ private:
 
   class PIMPL;
   PIMPL * m_pimpl;
+
+  //Prevent copy or assignment
+  DgApp(const DgApp&);
+  DgApp& operator= (const DgApp&);
 };
 
 #endif

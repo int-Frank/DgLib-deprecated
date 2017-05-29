@@ -342,7 +342,7 @@ std::vector<std::string> GetFiles(std::string const & a_dirPath,
 DgApp::DgApp()
   : m_pimpl(new DgApp::PIMPL())
 {
-  m_pimpl->s_app = this;
+
 }
 
 DgApp::~DgApp()
@@ -350,22 +350,6 @@ DgApp::~DgApp()
   Shutdown();
   delete m_pimpl;
   m_pimpl = nullptr;
-}
-
-DgApp::DgApp(DgApp const & a_other)
-  : m_pimpl(new PIMPL(*a_other.m_pimpl))
-{
-
-}
-
-DgApp & DgApp::operator=(DgApp const & a_other)
-{
-  if (this != &a_other)
-  {
-    delete m_pimpl;
-    m_pimpl = new PIMPL(*a_other.m_pimpl);
-  }
-  return *this;
 }
 
 DgApp * DgApp::GetInstance()
@@ -376,6 +360,11 @@ DgApp * DgApp::GetInstance()
 GLFWwindow * DgApp::GetWindow()
 {
   return m_pimpl->window;
+}
+
+map_str_str const & DgApp::GetConfigItems() const
+{
+  return m_pimpl->configItems;
 }
 
 void DgApp::PushEvent(Event const & a_event)
