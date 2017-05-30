@@ -17,7 +17,7 @@ public:
 
   virtual ~DgApp();
 
-  void Run(DgApp *);
+  void Run();
   static DgApp * GetInstance();
 
   void PushEvent(Event const &);
@@ -33,9 +33,6 @@ public:
   void SetDirty(bool);
 
 protected:
-
-  virtual bool Init() { return true; }
-  virtual void Shutdown() {}
 
   virtual void BuildUI() {}
   virtual void DoFrame(double dt) {}
