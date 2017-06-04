@@ -3,6 +3,8 @@
 #include <shlwapi.h>
 #include <time.h>
 #include <stack>
+#include <atomic>
+
 #pragma comment(lib,"shlwapi.lib")
 
 #include <GL/glew.h>
@@ -289,7 +291,7 @@ public:
   std::stack<int>     windowStack;
 
   GLFWwindow *        window;
-  bool                shouldQuit;
+  std::atomic<bool>   shouldQuit;
 };
 
 DgApp * DgApp::PIMPL::s_app(nullptr);
@@ -339,13 +341,23 @@ std::vector<std::string> GetFiles(std::string const & a_dirPath,
   return result;
 }
 
+void DgApp::SetQuitFlag(bool a_val)
+{
+  m_pimpl->shouldQuit = a_val;
+}
+
+bool DgApp::ShouldQuit() const
+{
+  return m_pimpl->shouldQuit;
+}
+
 DgApp::DgApp()
   : m_pimpl(new DgApp::PIMPL())
 {
   if (PIMPL::s_app != nullptr)
   {
     fprintf(stderr, "Attempt to create more than one instance of DgApp.");
-    throw;
+    throw AppInitFailed;
   }
 
   PIMPL::s_app = this;
@@ -357,13 +369,13 @@ DgApp::DgApp()
 
     if (result == Dg::ErrorCode::FailedToOpenFile)
     {
-      fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", m_pimpl->configFileName.c_str());
-      throw;
+      fprintf(stderr, "Failed to open config file '%s'\n", m_pimpl->configFileName.c_str());
+      throw AppInitFailed;
     }
     else if (result != Dg::ErrorCode::None)
     {
-      fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", m_pimpl->configFileName.c_str());
-      throw;
+      fprintf(stderr, "Failed trying to parse config file '%s'\n", m_pimpl->configFileName.c_str());
+      throw AppInitFailed;
     }
 
     m_pimpl->configItems = parser.GetItems();
@@ -425,7 +437,7 @@ DgApp::DgApp()
     if (!glfwInit())
     {
       fprintf(stderr, "Failed to initialize GLFW\n");
-      throw;
+      throw AppInitFailed;
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_pimpl->majorVersion);
@@ -463,7 +475,7 @@ DgApp::DgApp()
     {
       fprintf(stderr, "Failed to open m_window\n");
       glfwTerminate();
-      throw;
+      throw AppInitFailed;
     }
 
     glfwMakeContextCurrent(m_pimpl->window);

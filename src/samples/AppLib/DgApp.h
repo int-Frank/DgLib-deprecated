@@ -9,8 +9,17 @@ struct GLFWwindow;
 
 typedef std::map<std::string, std::string> map_str_str;
 
+
+
 class DgApp
 {
+public:
+
+  enum
+  {
+    AppInitFailed
+  };
+
 public:
 
   DgApp();
@@ -31,6 +40,9 @@ public:
   virtual void UpdateScroll(double) {}
 
   void SetDirty(bool);
+
+  void SetQuitFlag(bool);
+  bool ShouldQuit() const;
 
 protected:
 
