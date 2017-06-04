@@ -9,8 +9,6 @@ struct GLFWwindow;
 
 typedef std::map<std::string, std::string> map_str_str;
 
-
-
 class DgApp
 {
 public:
@@ -43,6 +41,10 @@ public:
 
   void SetQuitFlag(bool);
   bool ShouldQuit() const;
+
+  //No nextline character is needed.
+  void WriteToOutput(std::string const &, unsigned long color);
+  void SetUpOutputWindow(int x, int y, int w, int h, int flags);
 
 protected:
 
