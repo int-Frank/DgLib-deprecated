@@ -18,6 +18,14 @@ public:
     AppInitFailed
   };
 
+  enum LogLevel
+  {
+    Log,
+    OK,
+    Warning,
+    Error
+  };
+
 public:
 
   DgApp();
@@ -42,9 +50,10 @@ public:
   void SetQuitFlag(bool);
   bool ShouldQuit() const;
 
-  //No nextline character is needed.
-  void WriteToOutput(std::string const &, unsigned long color);
-  void SetUpOutputWindow(int x, int y, int w, int h, int flags);
+  //Logging
+  //void LogToWindow(std::string const &, LogLevel = Log);
+  void LogToFile(std::string const &, LogLevel = Log);
+  void ToggleOutputWindow(bool);
 
 protected:
 

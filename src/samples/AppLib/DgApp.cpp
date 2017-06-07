@@ -4,6 +4,8 @@
 #include <time.h>
 #include <stack>
 #include <atomic>
+#include <mutex>
+#include <fstream>
 
 #pragma comment(lib,"shlwapi.lib")
 
@@ -19,7 +21,15 @@
 #include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
 
-class Event_MouseScroll : public Event
+static struct OutputTextItem
+{
+  std::string text;
+  int logLevel;
+};
+
+typedef std::vector<OutputTextItem> TextList;
+
+static class Event_MouseScroll : public Event
 {
 public:
   Event_MouseScroll()
@@ -55,7 +65,7 @@ private:
 };
 
 
-class Event_KeyEvent : public Event
+static class Event_KeyEvent : public Event
 {
 public:
   Event_KeyEvent()
@@ -97,7 +107,7 @@ private:
 };
 
 
-class Event_SaveProject : public Event
+static class Event_SaveProject : public Event
 {
 public:
   Event_SaveProject()
@@ -135,7 +145,7 @@ private:
 };
 
 
-class Event_LoadProject : public Event
+static class Event_LoadProject : public Event
 {
 public:
   Event_LoadProject()
@@ -172,7 +182,7 @@ private:
 };
 
 
-class Event_NewProject : public Event
+static class Event_NewProject : public Event
 {
 public:
   Event_NewProject()
@@ -199,7 +209,7 @@ public:
 
 };
 
-class Event_DeleteFile : public Event
+static class Event_DeleteFile : public Event
 {
 public:
   Event_DeleteFile() : Event() {}
@@ -253,6 +263,7 @@ public:
     , samples(0)
     , fullscreen(false)
     , isDirty(false)
+    , showOutputWindow(true)
     , save_lastItem(-2)
     , save_currentItem(-1)
     , save_buf{}
@@ -276,6 +287,13 @@ public:
   bool                isDirty;
   int                 save_lastItem;
   int                 save_currentItem;
+
+  bool                showOutputWindow;
+  TextList            outputText;
+
+  std::ofstream       logFile;
+  std::mutex          mutexLogFile;
+  std::mutex          mutexOutputText;
 
   std::string const   configFileName;
   map_str_str         configItems;
@@ -351,12 +369,47 @@ bool DgApp::ShouldQuit() const
   return m_pimpl->shouldQuit;
 }
 
+void DgApp::ToggleOutputWindow(bool a_val)
+{
+  m_pimpl->showOutputWindow = a_val;
+}
+
+void DgApp::LogToFile(std::string const & a_message, LogLevel a_lvl)
+{
+  std::lock_guard<std::mutex> lock(m_pimpl->mutexLogFile);
+
+  switch (a_lvl)
+  {
+  case Warning:
+  {
+    m_pimpl->logFile << "WARNING: ";
+    break;
+  }
+  case Error:
+  {
+    m_pimpl->logFile << "ERROR: ";
+    break;
+  }
+  }
+
+  m_pimpl->logFile << a_message << std::endl;
+}
+
 DgApp::DgApp()
   : m_pimpl(new DgApp::PIMPL())
 {
+  m_pimpl->logFile.open("log.txt");
+  if (!m_pimpl->logFile.good())
+  {
+    std::cout << "Failed to open log file\n";
+    throw AppInitFailed;
+  }
+
+  //Maybe add session infor in the log file...
+
   if (PIMPL::s_app != nullptr)
   {
-    fprintf(stderr, "Attempt to create more than one instance of DgApp.");
+    LogToFile("Attempt to create more than one instance of DgApp.");
     throw AppInitFailed;
   }
 
@@ -493,6 +546,24 @@ DgApp::DgApp()
 
   //Init ImGui
   ImGui_ImplGlfwGL3_Init(m_pimpl->window, true);
+
+  ImGui_ImplGlfwGL3_NewFrame();
+  
+  OutputTextItem ti;
+  ti.text = std::string("OpenGL, ImGUI initialized. ") 
+    + m_pimpl->configFileName
+    + std::string(" parsed.");
+  ti.logLevel = OK;
+  m_pimpl->outputText.push_back(ti);
+
+  ti.logLevel = Error;
+  m_pimpl->outputText.push_back(ti);
+
+  ti.logLevel = Log;
+  m_pimpl->outputText.push_back(ti);
+
+  ti.logLevel = Warning;
+  m_pimpl->outputText.push_back(ti);
 }
 
 DgApp::~DgApp()
@@ -857,6 +928,42 @@ void DgApp::Run()
 
     glfwPollEvents();
     ImGui_ImplGlfwGL3_NewFrame();
+
+    //Build log window
+    m_pimpl->mutexOutputText.lock();
+    auto outputText = m_pimpl->outputText;
+    m_pimpl->mutexOutputText.unlock();
+
+    ImGui::Begin("Output", nullptr);
+    for (auto const & ti : outputText)
+    {
+      switch (ti.logLevel)
+      {
+      case OK:
+      {
+        ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "OK:     ");
+        break;
+      }
+      case Warning:
+      {
+        ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), "WARNING:");
+        break;
+      }
+      case Error:
+      {
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "ERROR:  ");
+        break;
+      }
+      default:
+      {
+        ImGui::Text("LOG:    ");
+        break;
+      }
+      }
+      ImGui::SameLine();
+      ImGui::TextWrapped(ti.text.c_str());
+    }
+    ImGui::End();
 
     BuildUI();
 
