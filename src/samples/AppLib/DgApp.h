@@ -51,7 +51,7 @@ public:
   bool ShouldQuit() const;
 
   //Logging
-  //void LogToWindow(std::string const &, LogLevel = Log);
+  void LogToOutputWindow(std::string const &, LogLevel = Log);
   void LogToFile(std::string const &, LogLevel = Log);
   void ToggleOutputWindow(bool);
 

@@ -6,6 +6,7 @@
 #include <atomic>
 #include <mutex>
 #include <fstream>
+#include <sstream>
 
 #pragma comment(lib,"shlwapi.lib")
 
@@ -390,6 +391,20 @@ void DgApp::LogToFile(std::string const & a_message, LogLevel a_lvl)
     m_pimpl->logFile << "ERROR: ";
     break;
   }
+  case OK:
+  {
+    m_pimpl->logFile << "OK: ";
+    break;
+  }
+  case Log:
+  {
+    m_pimpl->logFile << "LOG: ";
+    break;
+  }
+  default:
+  {
+    break;
+  }
   }
 
   m_pimpl->logFile << a_message << std::endl;
@@ -422,12 +437,12 @@ DgApp::DgApp()
 
     if (result == Dg::ErrorCode::FailedToOpenFile)
     {
-      fprintf(stderr, "Failed to open config file '%s'\n", m_pimpl->configFileName.c_str());
+      LogToFile(std::string("Failed to open config file: ") + m_pimpl->configFileName, Error);
       throw AppInitFailed;
     }
     else if (result != Dg::ErrorCode::None)
     {
-      fprintf(stderr, "Failed trying to parse config file '%s'\n", m_pimpl->configFileName.c_str());
+      LogToFile(std::string("Failed to parse config file: ") + m_pimpl->configFileName, Error);
       throw AppInitFailed;
     }
 
@@ -489,7 +504,7 @@ DgApp::DgApp()
   {
     if (!glfwInit())
     {
-      fprintf(stderr, "Failed to initialize GLFW\n");
+      LogToFile("Failed to initialize GLFW.", Error);
       throw AppInitFailed;
     }
 
@@ -526,7 +541,7 @@ DgApp::DgApp()
 
     if (!m_pimpl->window)
     {
-      fprintf(stderr, "Failed to open m_window\n");
+      LogToFile("Failed to open glfw window.", Error);
       glfwTerminate();
       throw AppInitFailed;
     }
@@ -535,34 +550,37 @@ DgApp::DgApp()
 
     // start GLEW extension handler
     glewExperimental = GL_TRUE;
-    glewInit();
-
-    // Display version info
-    const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
-    const GLubyte* version = glGetString(GL_VERSION); // version as a string
-    printf("Renderer: %s\n", renderer);
-    printf("OpenGL version supported %s\n", version);
+    
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+      LogToFile(std::string("glewInit() failed: ") + std::string((char*)glewGetErrorString(err)), Error);
+      glfwTerminate();
+      throw AppInitFailed;
+    }
   }
 
   //Init ImGui
-  ImGui_ImplGlfwGL3_Init(m_pimpl->window, true);
+  if (!ImGui_ImplGlfwGL3_Init(m_pimpl->window, true))
+  {
+    LogToFile(std::string("ImGui_ImplGlfwGL3_Init() returned false."), Error);
+    glfwDestroyWindow(m_pimpl->window);
+    m_pimpl->window = nullptr;
+    glfwTerminate();
+    throw AppInitFailed;
+  }
 
-  ImGui_ImplGlfwGL3_NewFrame();
-  
+  LogToOutputWindow(std::string("Renderer: " + std::string((char*)glGetString(GL_RENDERER))), OK);
+  LogToOutputWindow(std::string("OpenGL version supported " + std::string((char*)glGetString(GL_VERSION))), OK);
+}
+
+void DgApp::LogToOutputWindow(std::string const & a_message, LogLevel a_lvl)
+{
   OutputTextItem ti;
-  ti.text = std::string("OpenGL, ImGUI initialized. ") 
-    + m_pimpl->configFileName
-    + std::string(" parsed.");
-  ti.logLevel = OK;
-  m_pimpl->outputText.push_back(ti);
+  ti.text = a_message;
+  ti.logLevel = a_lvl;
 
-  ti.logLevel = Error;
-  m_pimpl->outputText.push_back(ti);
-
-  ti.logLevel = Log;
-  m_pimpl->outputText.push_back(ti);
-
-  ti.logLevel = Warning;
+  std::lock_guard<std::mutex> lock(m_pimpl->mutexOutputText);
   m_pimpl->outputText.push_back(ti);
 }
 
@@ -939,6 +957,11 @@ void DgApp::Run()
     {
       switch (ti.logLevel)
       {
+      case Log:
+      {
+        ImGui::Text("LOG:    ");
+        break;
+      }
       case OK:
       {
         ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "OK:     ");
@@ -956,7 +979,9 @@ void DgApp::Run()
       }
       default:
       {
-        ImGui::Text("LOG:    ");
+        std::stringstream ss;
+        ss << "Unrecognised log level: " << ti.logLevel;
+        LogToOutputWindow(ss.str(), Warning);
         break;
       }
       }
