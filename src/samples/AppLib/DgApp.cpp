@@ -982,6 +982,7 @@ void DgApp::Run()
         std::stringstream ss;
         ss << "Unrecognised log level: " << ti.logLevel;
         LogToOutputWindow(ss.str(), Warning);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), "???:    ");
         break;
       }
       }

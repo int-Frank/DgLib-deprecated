@@ -45,7 +45,7 @@ public:
   virtual void KeyEvent(int, int) {}
   virtual void UpdateScroll(double) {}
 
-  void SetDirty(bool);
+  void SetDirty(bool = true);
 
   void SetQuitFlag(bool);
   bool ShouldQuit() const;
