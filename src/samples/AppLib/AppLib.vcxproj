@@ -94,10 +94,10 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>Engine.lib;Math.lib;Utility.lib;Containers.lib;glfw3.lib;glew32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\3rd_party\glew\lib\Release\$(Platform);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);$(SolutionDir)..\..\3rd_party\glfw\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);D:\dev\projects\DgLib\3rd_party\glfw\lib\$(Platform)\$(Configuration);D:\dev\projects\DgLib\3rd_party\glew\lib\Release\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -113,10 +113,10 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>Engine.lib;Math.lib;Utility.lib;Containers.lib;glfw3.lib;glew32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\3rd_party\glew\lib\Release\$(Platform);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);$(SolutionDir)..\..\3rd_party\glfw\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);D:\dev\projects\DgLib\3rd_party\glfw\lib\$(Platform)\$(Configuration);D:\dev\projects\DgLib\3rd_party\glew\lib\Release\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -140,10 +140,10 @@
       <AdditionalDependencies>Engine.lib;Math.lib;Utility.lib;Containers.lib;glfw3.lib;glew32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>Engine.lib;Math.lib;Utility.lib;Containers.lib;glfw3.lib;glew32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\3rd_party\glew\lib\Release\$(Platform);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);$(SolutionDir)..\..\3rd_party\glfw\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,10 +163,10 @@
       <AdditionalDependencies>Engine.lib;Math.lib;Utility.lib;Containers.lib;glfw3.lib;glew32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>Engine.lib;Math.lib;Utility.lib;Containers.lib;glfw3.lib;glew32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\3rd_party\glew\lib\Release\$(Platform);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);$(SolutionDir)..\..\3rd_party\glfw\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
