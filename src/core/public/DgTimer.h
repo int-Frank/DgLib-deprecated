@@ -47,8 +47,6 @@ namespace Dg
     class PIMPL;
     PIMPL * m_pimpl;
   };
-
-
 }
 
 #endif

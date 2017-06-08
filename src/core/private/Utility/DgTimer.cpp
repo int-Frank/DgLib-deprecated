@@ -100,7 +100,6 @@ namespace Dg
     {
       return new TimerState_Off(*this);
     }
-
   };
 
   static class TimerState_Paused : public TimerState
@@ -109,8 +108,9 @@ namespace Dg
 
     TimerState_Paused(LARGE_INTEGER a_startTicks, LARGE_INTEGER a_totalTicks)
     {
-      QueryPerformanceCounter(&m_pauseTicks);
-      m_totalTicks.QuadPart = a_totalTicks.QuadPart + (m_pauseTicks.QuadPart - a_startTicks.QuadPart);
+      LARGE_INTEGER pauseTicks;
+      QueryPerformanceCounter(&pauseTicks);
+      m_totalTicks.QuadPart = a_totalTicks.QuadPart + (pauseTicks.QuadPart - a_startTicks.QuadPart);
     }
 
     bool IsStarted() const { return false; }
@@ -136,8 +136,6 @@ namespace Dg
     }
 
   private:
-
-    LARGE_INTEGER m_pauseTicks;
     LARGE_INTEGER m_totalTicks;
   };
 
