@@ -15,6 +15,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BSPTree", "BSPTree\BSPTree.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AppLib", "AppLib\AppLib.vcxproj", "{501E62B1-A652-4086-A3F5-245912A86932}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Stopwatch", "Stopwatch\Stopwatch.vcxproj", "{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{501E62B1-A652-4086-A3F5-245912A86932} = {501E62B1-A652-4086-A3F5-245912A86932}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -71,6 +76,14 @@ Global
 		{501E62B1-A652-4086-A3F5-245912A86932}.Release|Win32.Build.0 = Release|Win32
 		{501E62B1-A652-4086-A3F5-245912A86932}.Release|x64.ActiveCfg = Release|x64
 		{501E62B1-A652-4086-A3F5-245912A86932}.Release|x64.Build.0 = Release|x64
+		{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}.Debug|Win32.Build.0 = Debug|Win32
+		{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}.Debug|x64.ActiveCfg = Debug|x64
+		{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}.Debug|x64.Build.0 = Debug|x64
+		{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}.Release|Win32.ActiveCfg = Release|Win32
+		{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}.Release|Win32.Build.0 = Release|Win32
+		{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}.Release|x64.ActiveCfg = Release|x64
+		{8AB1003D-4444-47FA-89AD-B8C3AC7841F4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

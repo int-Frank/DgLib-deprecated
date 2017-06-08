@@ -143,6 +143,7 @@
     <ClCompile Include="DgParser_INI.cpp" />
     <ClCompile Include="DgPriorityMutex.cpp" />
     <ClCompile Include="DgStringFunctions.cpp" />
+    <ClCompile Include="DgTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\public\Dgcirculator.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="..\..\public\DgPriorityMutex.h" />
     <ClInclude Include="..\..\public\DgSingleton.h" />
     <ClInclude Include="..\..\public\DgStringFunctions.h" />
+    <ClInclude Include="..\..\public\DgTimer.h" />
     <ClInclude Include="..\..\public\DgTypes.h" />
     <ClInclude Include="..\..\public\DgVariadicMacros.h" />
     <ClInclude Include="..\..\public\DgErrorHandler.h" />

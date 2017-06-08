@@ -952,44 +952,47 @@ void DgApp::Run()
     auto outputText = m_pimpl->outputText;
     m_pimpl->mutexOutputText.unlock();
 
-    ImGui::Begin("Output", nullptr);
-    for (auto const & ti : outputText)
+    if (m_pimpl->showOutputWindow)
     {
-      switch (ti.logLevel)
+      ImGui::Begin("Output", &m_pimpl->showOutputWindow);
+      for (auto const & ti : outputText)
       {
-      case Log:
-      {
-        ImGui::Text("LOG:    ");
-        break;
+        switch (ti.logLevel)
+        {
+        case Log:
+        {
+          ImGui::Text("LOG:    ");
+          break;
+        }
+        case OK:
+        {
+          ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "OK:     ");
+          break;
+        }
+        case Warning:
+        {
+          ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), "WARNING:");
+          break;
+        }
+        case Error:
+        {
+          ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "ERROR:  ");
+          break;
+        }
+        default:
+        {
+          std::stringstream ss;
+          ss << "Unrecognised log level: " << ti.logLevel;
+          LogToOutputWindow(ss.str(), Warning);
+          ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), "???:    ");
+          break;
+        }
+        }
+        ImGui::SameLine();
+        ImGui::TextWrapped(ti.text.c_str());
       }
-      case OK:
-      {
-        ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "OK:     ");
-        break;
-      }
-      case Warning:
-      {
-        ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), "WARNING:");
-        break;
-      }
-      case Error:
-      {
-        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "ERROR:  ");
-        break;
-      }
-      default:
-      {
-        std::stringstream ss;
-        ss << "Unrecognised log level: " << ti.logLevel;
-        LogToOutputWindow(ss.str(), Warning);
-        ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), "???:    ");
-        break;
-      }
-      }
-      ImGui::SameLine();
-      ImGui::TextWrapped(ti.text.c_str());
+      ImGui::End();
     }
-    ImGui::End();
 
     BuildUI();
 
