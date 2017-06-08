@@ -37,11 +37,10 @@ void StopwatchApp::BuildUI()
                                    | ImGuiWindowFlags_NoCollapse
                                    | ImGuiWindowFlags_NoSavedSettings);
   double time = m_timer.GetTime();
-  int hours = int(time / 3600.0);
+  int hours = int(time / 3600.0) % 100;
   int minutes = int(time / 60.0) % 60;
   int seconds = int(time) % 60;
   int centiseconds = int(time * 100) % 100;
-  hours %= 100;
 
   std::string timeString;
   AmmendTimeString(timeString, hours);
