@@ -50,10 +50,10 @@ void StopwatchApp::BuildUI()
 
   ImGui::Text(timeString.c_str());
 
-  if (ImGui::Button("Start")) m_timer.Start();
-  if (ImGui::Button("Stop")) m_timer.Stop();
-  if (ImGui::Button("Pause")) m_timer.Pause();
-  if (ImGui::Button("Resume")) m_timer.Resume();
+  if (ImGui::Button("Start", ImVec2(55, 20))) m_timer.Start();
+  if (ImGui::Button("Stop", ImVec2(55, 20))) m_timer.Stop();
+  if (ImGui::Button("Pause", ImVec2(55, 20))) m_timer.Pause();
+  if (ImGui::Button("Resume", ImVec2(55, 20))) m_timer.Resume();
 
   ImGui::End();
 }
