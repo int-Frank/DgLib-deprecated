@@ -169,7 +169,7 @@ namespace Dg
         Split(nodes, 0, nodePolygons, nodeData, a_criteria);
         AssignTree(nodeData, nodes);
 
-        return Dg::ErrorCode::None;
+        return Dg::Err_None;
       }
 
       void Clear()

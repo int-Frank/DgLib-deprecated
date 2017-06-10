@@ -1,7 +1,10 @@
 
 #include <Windows.h>
+#include <stdint.h>
 
 #include "DgTimer.h"
+
+typedef  LONGLONG timer_int;
 
 namespace Dg
 {
@@ -30,22 +33,18 @@ namespace Dg
 
   //We need some factory functions to prevent circular dependices...
   static TimerState * GetTimerState_Off();
-  static TimerState * GetTimerState_Paused(LARGE_INTEGER a_startTicks, LARGE_INTEGER a_totalTicks);
+  static TimerState * GetTimerState_Paused(timer_int a_startTicks, timer_int a_totalTicks);
 
   static class TimerState_On : public TimerState
   {
   public:
 
-    TimerState_On()
+    TimerState_On(timer_int a_totalTime = 0)
     {
-      m_totalTicks.QuadPart = 0;
-      QueryPerformanceCounter(&m_startTicks);
-    }
-
-    TimerState_On(LARGE_INTEGER a_totalTicks)
-    {
-      QueryPerformanceCounter(&m_startTicks);
-      m_totalTicks.QuadPart = a_totalTicks.QuadPart;
+      LARGE_INTEGER startTime;
+      QueryPerformanceCounter(&startTime);
+      m_startTime = startTime.QuadPart;
+      m_totalTime = a_totalTime;
     }
 
     bool IsStarted() const { return true; }
@@ -54,17 +53,17 @@ namespace Dg
 
     TimerState * Start() { return new TimerState_On(); }
     TimerState * Stop() { return GetTimerState_Off(); }
-    TimerState * Pause() { return GetTimerState_Paused(m_startTicks, m_totalTicks); }
+    TimerState * Pause() { return GetTimerState_Paused(m_startTime, m_totalTime); }
     TimerState * Resume() { return new TimerState_On(*this); }
 
     double GetTime() const
     {
-      LARGE_INTEGER t, frequency;
+      LARGE_INTEGER currentTime, frequency;
 
-      QueryPerformanceCounter(&t);
+      QueryPerformanceCounter(&currentTime);
       QueryPerformanceFrequency(&frequency);
 
-      return static_cast<double>(m_totalTicks.QuadPart + (t.QuadPart - m_startTicks.QuadPart)) 
+      return static_cast<double>(m_totalTime + (currentTime.QuadPart - m_startTime))
         / static_cast<double>(frequency.QuadPart);
     }
 
@@ -75,8 +74,8 @@ namespace Dg
 
   private:
 
-    LARGE_INTEGER m_startTicks;
-    LARGE_INTEGER m_totalTicks;
+    timer_int m_startTime;
+    timer_int m_totalTime;
   };
 
   static class TimerState_Off : public TimerState
@@ -106,11 +105,11 @@ namespace Dg
   {
   public:
 
-    TimerState_Paused(LARGE_INTEGER a_startTicks, LARGE_INTEGER a_totalTicks)
+    TimerState_Paused(timer_int a_startTime, timer_int a_totalTime)
     {
-      LARGE_INTEGER pauseTicks;
-      QueryPerformanceCounter(&pauseTicks);
-      m_totalTicks.QuadPart = a_totalTicks.QuadPart + (pauseTicks.QuadPart - a_startTicks.QuadPart);
+      LARGE_INTEGER pauseTime;
+      QueryPerformanceCounter(&pauseTime);
+      m_totalTime = a_totalTime + (pauseTime.QuadPart - a_startTime);
     }
 
     bool IsStarted() const { return false; }
@@ -119,15 +118,15 @@ namespace Dg
 
     TimerState * Start() { return new TimerState_On(); }
     TimerState * Stop() { return new TimerState_Off(); }
-    TimerState * Pause() { return new TimerState_On(m_totalTicks); }
-    TimerState * Resume() { return new TimerState_On(m_totalTicks); }
+    TimerState * Pause() { return new TimerState_On(m_totalTime); }
+    TimerState * Resume() { return new TimerState_On(m_totalTime); }
 
     double GetTime() const
     {
       LARGE_INTEGER frequency;
       QueryPerformanceFrequency(&frequency);
 
-      return static_cast<double>(m_totalTicks.QuadPart) / static_cast<double>(frequency.QuadPart);
+      return static_cast<double>(m_totalTime) / static_cast<double>(frequency.QuadPart);
     }
 
     TimerState_Paused * Clone() const
@@ -136,7 +135,7 @@ namespace Dg
     }
 
   private:
-    LARGE_INTEGER m_totalTicks;
+    timer_int m_totalTime;
   };
 
 
@@ -145,9 +144,9 @@ namespace Dg
     return new TimerState_Off();
   }
 
-  static TimerState * GetTimerState_Paused(LARGE_INTEGER a_startTicks, LARGE_INTEGER a_totalTicks)
+  static TimerState * GetTimerState_Paused(timer_int a_startTime, timer_int a_totalTime)
   {
-    return new TimerState_Paused(a_startTicks, a_totalTicks);
+    return new TimerState_Paused(a_startTime, a_totalTime);
   }
 
   class Timer::PIMPL
@@ -167,7 +166,7 @@ namespace Dg
       : pState(a_other.pState->Clone())
     {}
 
-    TimerState *          pState;
+    TimerState * pState;
   };
 
 

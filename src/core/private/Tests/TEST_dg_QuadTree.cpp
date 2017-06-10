@@ -18,6 +18,6 @@ TEST(Stack_DgQuadTree, DgQuadtree)
   QT15::Handle h(0);
   Dg::ErrorCode error = qt15.QueryPoint(0.2f, 0.2f, h);
 
-  CHECK(error == Dg::ErrorCode::None);
+  CHECK(error == Dg::Err_None);
   CHECK(h == 7);
 }

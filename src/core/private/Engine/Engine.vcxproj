@@ -144,7 +144,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\public\DgMeshBase.cpp" />
+    <ClCompile Include="DgMeshBase.cpp" />
     <ClCompile Include="ResourceHandle.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
   </ItemGroup>

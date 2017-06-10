@@ -81,7 +81,7 @@ namespace Dg
     std::ifstream file(a_file);
     if (!file.good())
     {
-      return ErrorCode::FailedToOpenFile;
+      return Err_FailedToOpenFile;
     }
 
     std::string line;
@@ -99,6 +99,6 @@ namespace Dg
         m_pimpl->items.insert(std::pair<std::string, std::string>(Trim(name), Trim(value)));
       }
     }
-    return ErrorCode::None;
+    return Err_None;
   }
 }

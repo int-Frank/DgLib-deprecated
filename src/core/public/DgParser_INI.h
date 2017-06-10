@@ -38,7 +38,7 @@ namespace Dg
 
     //! Loads and parses an ini file.
     //!
-    //! @return ErrorCode::None on success.
+    //! @return Err_None on success.
     ErrorCode Parse(std::string const & fileName);
 
     //! Get the token/value items successfully extracted from the ini file.

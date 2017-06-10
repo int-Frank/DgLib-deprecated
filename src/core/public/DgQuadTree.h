@@ -214,7 +214,7 @@ namespace Dg
       if (pNode->flags & impl::QuadTree::IsLeaf)
       {
         a_out = a_handle;
-        return Dg::ErrorCode::None;
+        return Dg::Err_None;
       }
 
       Handle child(0);

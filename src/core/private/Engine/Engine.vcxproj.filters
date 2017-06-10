@@ -32,7 +32,7 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\public\DgMeshBase.cpp">
+    <ClCompile Include="DgMeshBase.cpp">
       <Filter>3d tools</Filter>
     </ClCompile>
   </ItemGroup>

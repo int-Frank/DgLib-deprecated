@@ -46,7 +46,7 @@ namespace Dg
     //! @param a_lower Lower bound on the normal distribution
     //! @param a_upper Upper bound on the normal distribution
     //! @param a_nValues Number of values in the table to generate.
-    //! @return ErrorCode::None on success.
+    //! @return Err_None on success.
     ErrorCode Init(Real a_mean,
                    Real a_sd, 
                    Real a_lower,
@@ -151,7 +151,7 @@ namespace Dg
       || Dg::IsZero(a_sd)
       || a_nValues == 0)
     {
-      return ErrorCode::OutOfBounds;
+      return Err_OutOfBounds;
     }
 
     Real zLower = 0.5 * (1.0 + std::erf((a_lower - a_mean) / (a_sd * Dg::Constants<Real>::SQRT2)));
@@ -168,7 +168,7 @@ namespace Dg
       m_values[i] = a_sd * Dg::Constants<Real>::SQRT2 * inverfResult + a_mean;
     }
 
-    return ErrorCode::None;
+    return Err_None;
   }
 
   //--------------------------------------------------------------------------------

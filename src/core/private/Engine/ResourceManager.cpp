@@ -89,7 +89,7 @@ namespace Dg
       }// End: ResourceManager::SetOptions()
 
 
-      //--------------------------------------------------------------------------------
+      //-------------------------------------------------------Dg::-------------------------
       //	@	ResourceManager::CheckOption()
       //--------------------------------------------------------------------------------
       bool ResourceManager::CheckOption(uint32_t a_option)
@@ -106,7 +106,7 @@ namespace Dg
         int index(0);
         if (!m_resourceList.find(a_key, index))
         {
-          return ErrorCode::Failure;;
+          return Err_Failure;
         }
 
         if (!m_resourceList[index].m_resource->IsInitialised())
@@ -114,7 +114,7 @@ namespace Dg
           return m_resourceList[index].m_resource->Init();
         }
 
-        return ErrorCode::None;
+        return Err_None;
       }// End: ResourceManager::InitResource()
 
 
@@ -127,13 +127,13 @@ namespace Dg
 
         for (int i = 0; i < m_resourceList.size(); i++)
         {
-          if (m_resourceList[i].m_resource->Init() != ErrorCode::None)
+          if (m_resourceList[i].m_resource->Init() != Err_None)
           {
             isGood = false;
           }
         }
 
-        return isGood ? ErrorCode::None : ErrorCode::Failure;
+        return isGood ? Err_None : Err_Failure;
 
       }// End: ResourceManager::InitAll()
 
@@ -216,7 +216,7 @@ namespace Dg
         if (!m_resourceList[index].m_resource->IsInitialised())
         {
           if ((m_resourceList[index].m_opts & rInitWhenInUse)
-            && m_resourceList[index].m_resource->Init() != ErrorCode::None)
+            && m_resourceList[index].m_resource->Init() != Err_None)
           {
             return nullptr;
           }
@@ -236,7 +236,7 @@ namespace Dg
         pR = RegisterUser(a_key);
         if (pR == nullptr)
         {
-          return ErrorCode::Failure;
+          return Err_Failure;
         }
 
         if (a_out.m_resource != nullptr)
@@ -245,7 +245,7 @@ namespace Dg
         }
 
         a_out.m_resource = pR;
-        return ErrorCode::None;
+        return Err_None;
 
       }// End: ResourceManager::GetResourceHandle()
 
@@ -259,14 +259,14 @@ namespace Dg
       {
         if (a_resource == nullptr)
         {
-          return ErrorCode::Failure;
+          return Err_Failure;
         }
 
         int index(0);
         if (m_resourceList.find(a_resource->GetKey(), index))
         {
           delete a_resource;
-          return ErrorCode::Duplicate;
+          return Err_Duplicate;
         }
 
         ResourceContainer rc;
@@ -276,15 +276,15 @@ namespace Dg
 
         if (a_options & rInitOnReg)
         {
-          if (rc.m_resource->Init() != ErrorCode::None)
+          if (rc.m_resource->Init() != Err_None)
           {
-            return ErrorCode::Failure;
+            return Err_Failure;
           }
         }
 
         m_resourceList.insert(a_resource->GetKey(), rc);
 
-        return ErrorCode::None;
+        return Err_None;
       }// End: ResourceManager::RegisterResource()
     }
   }

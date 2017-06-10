@@ -12,15 +12,23 @@ namespace Dg
 {
   //! @ingroup DgUtility_constants
   //! Error codes
-  enum class ErrorCode
+  enum ErrorCode
   {
-    None = 0,
-    Failure,
-    Undefined,
-    OutOfBounds,
-    Duplicate,
-    FailedToOpenFile,
-    BadInput
+    Err_None = 0,
+    Err_Failure,
+    Err_Undefined,
+    Err_OutOfBounds,
+    Err_Duplicate,
+    Err_FailedToOpenFile,
+    Err_BadInput
+  };
+
+  enum LogLevel
+  {
+    LL_Log,
+    LL_OK,
+    LL_Warning,
+    LL_Error
   };
 }
 
