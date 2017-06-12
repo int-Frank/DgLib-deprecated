@@ -20,10 +20,13 @@ namespace IPC
 
   bool Listener::Init(SocketData const & a_sd)
   {
-    m_rApp.LogToOutputWindow("Preparing server...", Dg::LL_Log);
+    std::stringstream ss;
+    ss << "Setting up server at " << a_sd.Get_IP() << ":" << a_sd.Get_Port().As_string();
+    m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Log);
+
     m_listenSocket = IPC::CreateListenSocket(a_sd.Get_Port().As_string().c_str(),
                                              a_sd.Get_IP().c_str());
-    if (m_listenSocket != SOCKET_ERROR)
+    if (m_listenSocket == SOCKET_ERROR)
     {
       m_rApp.LogToOutputWindow("Unable to create listener!", Dg::LL_Error);
       m_listenSocket = INVALID_SOCKET;
@@ -58,7 +61,7 @@ namespace IPC
       //int res = getpeername(ClientSocket, (struct sockaddr *) &sin, &addr_len);
 
 
-      if (m_rApp.ShouldQuit())
+      if (m_rApp.ShouldStop())
       {
         break;
       }
@@ -67,6 +70,5 @@ namespace IPC
     }
 
     closesocket(m_listenSocket);
-    m_rApp.LogToOutputWindow("Listen thread finished.", Dg::LL_Log);
   }
 }

@@ -20,7 +20,7 @@ namespace IPC
     std::vector<char> messageData;
     do
     {
-      if (Recv(m_clientSocket, messageData) && !m_rApp.ShouldQuit())
+      if (Recv(m_clientSocket, messageData) && !m_rApp.ShouldStop())
       {
         if (messageData.size() < MessageHeader::Size())
         {
@@ -117,7 +117,7 @@ namespace IPC
         ss << "Failed to send to: " << it->Get_IP() << ":" << it->Get_Port().As_string();
         m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Warning);
       }
-      if (m_rApp.ShouldQuit())
+      if (m_rApp.ShouldStop())
       {
         break;
       }

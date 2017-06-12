@@ -33,6 +33,7 @@ namespace IPC
   TCP_Server::TCP_Server()
     : m_currentState(State_Off)
     , m_desiredState(State_Off)
+    , m_shouldStop(true)
   {
     strcpy_s(m_ipBuf, "127.0.0.1");
     strcpy_s(m_portBuf, "5555");
@@ -48,7 +49,10 @@ namespace IPC
 
   TCP_Server::~TCP_Server()
   {
-    Stop();
+    if (m_currentState == State_On)
+    {
+      Stop();
+    }
     ShutdownWinsock();
   }
 
@@ -160,8 +164,15 @@ namespace IPC
     return m_clientHandler.GetCurrentClients();
   }
 
+  bool TCP_Server::ShouldStop() const
+  {
+    return m_shouldStop;
+  }
+
   void TCP_Server::Start()
   {
+    m_shouldStop = false;
+
     std::string portStr(m_portBuf);
     std::string ipAddr(m_ipBuf);
 
@@ -174,10 +185,6 @@ namespace IPC
     m_listenSocketData.Set_Port(port);
     m_listenSocketData.Set_IP(ipAddr);
 
-    std::stringstream ss;
-    ss << "Setting up server at " << ipAddr << ":" << portStr;
-    LogToOutputWindow(ss.str(), Dg::LL_Log);
-
     m_listenThread = std::thread(Run_Listen, this, m_listenSocketData);
   }
 
@@ -185,7 +192,7 @@ namespace IPC
   {
     LogToOutputWindow("Shutting down server...", Dg::LL_Log);
 
-    SetQuitFlag(true);
+    m_shouldStop = true;
 
     //Send message to wake up listener thread
     Message message;

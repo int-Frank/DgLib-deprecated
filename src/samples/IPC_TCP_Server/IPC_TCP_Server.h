@@ -29,6 +29,7 @@ namespace IPC
     void RegisterClient(SocketData const &);
     void DeregisterClient(SocketData const &);
     std::vector<SocketData> GetClientList();
+    bool ShouldStop() const;
 
   private:
 
@@ -48,6 +49,7 @@ namespace IPC
     };
 
     std::atomic<int>  m_activeThreads;
+    std::atomic<bool> m_shouldStop;
     ClientHandler     m_clientHandler;
     std::thread       m_listenThread;
     SocketData        m_listenSocketData;
