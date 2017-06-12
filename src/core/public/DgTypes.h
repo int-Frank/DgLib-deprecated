@@ -28,7 +28,8 @@ namespace Dg
     LL_Debug,
     LL_Info,
     LL_Warning,
-    LL_Error
+    LL_Error,
+    LL_Critical
   };
 }
 
