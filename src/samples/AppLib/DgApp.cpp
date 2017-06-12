@@ -461,6 +461,11 @@ void DgApp::LogToFile(std::string const & a_message, int a_lvl)
     m_pimpl->logFile << "DEBUG: ";
     break;
   }
+  case Dg::LL_Critical:
+  {
+    m_pimpl->logFile << "CRITICAL: ";
+    break;
+  }
   default:
   {
     break;
@@ -1042,6 +1047,11 @@ void DgApp::Run()
         case Dg::LL_Error:
         {
           ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "ERROR:");
+          break;
+        }
+        case Dg::LL_Critical:
+        {
+          ImGui::TextColored(ImVec4(0.0, 1.0, 1.0, 1.0), "CRIT: ");
           break;
         }
         default:

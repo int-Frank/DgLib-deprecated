@@ -12,41 +12,35 @@
 #define DLLAPI
 #endif // BUILD_DLL
 
-namespace Dg
+class ipcDispatcherBase
 {
-  namespace IPC
-  {
-    class DispatcherBase
-    {
-    public:
-      virtual ~DispatcherBase() = default;
+public:
+  virtual ~ipcDispatcherBase() = default;
 
-      virtual bool Init(std::map<std::string, std::string> const & config) = 0;
+  virtual bool Init(std::map<std::string, std::string> const & config) = 0;
 
-      virtual void Shutdown() = 0;
+  virtual void Shutdown() = 0;
 
-      virtual void Dispatch(std::vector<char> const &, std::atomic<bool> const & shouldQuit) = 0;
-    };
+  virtual void Dispatch(std::vector<char> const &) = 0;
+};
 
-    //class ReceiverBase
-    //{
-    //public:
-    //  virtual ~ReceiverBase() = default;
-    //
-    //  virtual bool Init(std::map<std::string, std::string> const & config,
-    //                    void (*NewDataCallback)(std::vector<char> const &)) = 0;
-    //
-    //  virtual void Shutdown() = 0;
-    //};
+class ipcReceiverBase
+{
+public:
+  virtual ~ipcReceiverBase() = default;
 
-    DLLAPI bool Init(void(*a_Log)(std::string const &, int));
+  virtual bool Init(std::map<std::string, std::string> const & config,
+                    void (*NewDataCallback)(std::vector<char> const &)) = 0;
 
-    DLLAPI DispatcherBase * GetDispatcher();
-    //DLLAPI ReceiverBase * GetReceiver();
+  virtual void Shutdown() = 0;
+};
 
-    DLLAPI std::string GetName();
-    DLLAPI std::string GetUsage();
-  }
-}
+DLLAPI bool ipcInit(void(*a_Log)(std::string const &, int));
+
+DLLAPI ipcDispatcherBase * ipcGetDispatcher();
+DLLAPI ipcReceiverBase * GetReceiver();
+
+DLLAPI std::string ipcGetName();
+DLLAPI std::string ipcGetUsage();
 
 #endif

@@ -3,34 +3,31 @@
 
 #include "IPC_TCP_common.h"
 
-namespace IPC
+class ServerState_On;
+
+class Acceptor
 {
-  class ServerState_On;
+public:
 
-  class Acceptor
-  {
-  public:
+  Acceptor(ServerState_On * a_pApp)
+    : m_rApp(*a_pApp)
+  {}
 
-    Acceptor(ServerState_On * a_pApp)
-      : m_rApp(*a_pApp)
-    {}
+  bool Init(SOCKET);
+  void Run();
 
-    bool Init(SOCKET);
-    void Run();
+private:
 
-  private:
+  void Handle_DeregisterClient();
+  void Handle_RegisterClient();
+  void Handle_Dispatch();
+  void Handle_IPAddressRequest();
 
-    void Handle_DeregisterClient();
-    void Handle_RegisterClient();
-    void Handle_Dispatch();
-    void Handle_IPAddressRequest();
+private:
 
-  private:
-
-    SOCKET            m_clientSocket;
-    Message           m_message;
-    ServerState_On &  m_rApp;
-  };
-}
+  SOCKET            m_clientSocket;
+  IPC::Message      m_message;
+  ServerState_On &  m_rApp;
+};
 
 #endif
