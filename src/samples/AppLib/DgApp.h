@@ -44,6 +44,7 @@ public:
 
   //Logging
   //Log levels have the same values as the DgTypes.h -> LogLevel enum
+  void SetLogLevel(int);
   void LogToOutputWindow(std::string const &, int);
   void LogToFile(std::string const &, int);
   void ToggleOutputWindow(bool);

@@ -56,7 +56,7 @@ namespace IPC
     {
       std::stringstream ss;
       ss << "Port::Set() -> could not read port number from string: " << a_str;
-      g_Log(ss.str(), Dg::LL_Error);
+      g_Log(ss.str(), Dg::LL_Warning);
       m_port = 0;
       return false;
     }
@@ -233,7 +233,7 @@ namespace IPC
     {
       std::stringstream ss;
       ss << "GetSocketData() -> getsockname() failed with error: " << WSAGetLastError();
-      g_Log(ss.str(), Dg::LL_Error);
+      g_Log(ss.str(), Dg::LL_Warning);
       return false;
     }
 
@@ -258,7 +258,7 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "Recv() -> recv() failed with error: " << WSAGetLastError();
-        g_Log(ss.str(), Dg::LL_Error);
+        g_Log(ss.str(), Dg::LL_Warning);
         break;
       }
       if (returnValue == 0)
@@ -294,7 +294,7 @@ namespace IPC
       std::stringstream ss;
       ss << "Send() -> getaddrinfo() failed with error: " << WSAGetLastError();
       ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
-      g_Log(ss.str(), Dg::LL_Error);
+      g_Log(ss.str(), Dg::LL_Warning);
       return false;
     }
 
@@ -309,7 +309,7 @@ namespace IPC
         std::stringstream ss;
         ss << "Send() -> socket() failed with error: " << WSAGetLastError();
         ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
-        g_Log(ss.str(), Dg::LL_Error);
+        g_Log(ss.str(), Dg::LL_Warning);
         return false;
       }
 
@@ -331,7 +331,7 @@ namespace IPC
       std::stringstream ss;
       ss << "Send() -> Unable to connect!" << WSAGetLastError();
       ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
-      g_Log(ss.str(), Dg::LL_Error);
+      g_Log(ss.str(), Dg::LL_Warning);
       return false;
     }
 
@@ -348,7 +348,7 @@ namespace IPC
         ss << "Send() -> send() failed with error: " << WSAGetLastError();
         ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
         std::string str = ss.str();
-        g_Log(ss.str(), Dg::LL_Error);
+        g_Log(ss.str(), Dg::LL_Warning);
         returnResult = false;
         break;
       }
@@ -372,7 +372,7 @@ namespace IPC
     {
       std::stringstream ss;
       ss << "ServerAppBase() -> getaddrinfo() failed with error: " << iResult;
-      g_Log(ss.str(), Dg::LL_Error);
+      g_Log(ss.str(), Dg::LL_Warning);
       return SOCKET_ERROR;
     }
 
@@ -382,7 +382,7 @@ namespace IPC
     {
       std::stringstream ss;
       ss << "ServerAppBase() -> socket() failed with error: " << WSAGetLastError();
-      g_Log(ss.str(), Dg::LL_Error);
+      g_Log(ss.str(), Dg::LL_Warning);
       freeaddrinfo(result);
       return SOCKET_ERROR;
     }
@@ -392,7 +392,7 @@ namespace IPC
     {
       std::stringstream ss;
       ss << "ServerAppBase() -> bind() failed with error: " << WSAGetLastError();
-      g_Log(ss.str(), Dg::LL_Error);
+      g_Log(ss.str(), Dg::LL_Warning);
       freeaddrinfo(result);
       closesocket(skt);
       return SOCKET_ERROR;
@@ -404,7 +404,7 @@ namespace IPC
     {
       std::stringstream ss;
       ss << "ServerAppBase() -> listen() failed with error: " << WSAGetLastError();
-      g_Log(ss.str(), Dg::LL_Error);
+      g_Log(ss.str(), Dg::LL_Warning);
       closesocket(skt);
       return SOCKET_ERROR;
     }

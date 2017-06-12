@@ -15,6 +15,7 @@ namespace IPC
 
   void Acceptor::Run()
   {
+    m_rApp.LogToOutputWindow("New client connection...", Dg::LL_Debug);
     m_rApp.RegisterThread();
 
     std::vector<char> messageData;
@@ -27,7 +28,7 @@ namespace IPC
           std::stringstream ss;
           ss << "Run_AcceptClient(): Message too small: " << messageData.size() << " bytes. ";
           ss << "Require at least " << MessageHeader::Size() << " bytes for the header.";
-          m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Error);
+          m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Warning);
           break;
         }
 
@@ -68,6 +69,7 @@ namespace IPC
       }
     } while (false);
 
+    m_rApp.LogToOutputWindow("Closing client connection.", Dg::LL_Debug);
     closesocket(m_clientSocket);
     m_clientSocket = INVALID_SOCKET;
     m_rApp.DeregisterThread();
@@ -114,7 +116,7 @@ namespace IPC
       if (!Send(*it, m_message.payload))
       {
         std::stringstream ss;
-        ss << "Failed to send to: " << it->Get_IP() << ":" << it->Get_Port().As_string();
+        ss << "Handle_Dispatch() -> Failed to send to: " << it->Get_IP() << ":" << it->Get_Port().As_string();
         m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Warning);
       }
       if (m_rApp.ShouldStop())

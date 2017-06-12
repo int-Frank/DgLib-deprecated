@@ -327,6 +327,7 @@ public:
     , projectExtension("dgd")
     , window(nullptr)
     , shouldQuit(false)
+    , logLevel(Dg::LL_Debug)
   {}
 
   static DgApp *      s_app;
@@ -341,6 +342,7 @@ public:
   bool                isDirty;
   int                 save_lastItem;
   int                 save_currentItem;
+  std::atomic<int>    logLevel;
 
   bool                showOutputWindow;
   TextList            outputText;
@@ -430,6 +432,11 @@ void DgApp::ToggleOutputWindow(bool a_val)
 
 void DgApp::LogToFile(std::string const & a_message, int a_lvl)
 {
+  if (a_lvl < m_pimpl->logLevel)
+  {
+    return;
+  }
+
   std::lock_guard<std::mutex> lock(m_pimpl->mutexLogFile);
 
   switch (a_lvl)
@@ -444,14 +451,14 @@ void DgApp::LogToFile(std::string const & a_message, int a_lvl)
     m_pimpl->logFile << "ERROR: ";
     break;
   }
-  case Dg::LL_OK:
+  case Dg::LL_Info:
   {
-    m_pimpl->logFile << "OK: ";
+    m_pimpl->logFile << "INFO: ";
     break;
   }
-  case Dg::LL_Log:
+  case Dg::LL_Debug:
   {
-    m_pimpl->logFile << "LOG: ";
+    m_pimpl->logFile << "DEBUG: ";
     break;
   }
   default:
@@ -623,8 +630,13 @@ DgApp::DgApp()
     throw AppInitFailed;
   }
 
-  LogToOutputWindow(std::string("Renderer: " + std::string((char*)glGetString(GL_RENDERER))), Dg::LL_OK);
-  LogToOutputWindow(std::string("OpenGL version supported " + std::string((char*)glGetString(GL_VERSION))), Dg::LL_OK);
+  LogToOutputWindow(std::string("Renderer: " + std::string((char*)glGetString(GL_RENDERER))), Dg::LL_Info);
+  LogToOutputWindow(std::string("OpenGL version supported " + std::string((char*)glGetString(GL_VERSION))), Dg::LL_Info);
+}
+
+void DgApp::SetLogLevel(int a_lvl)
+{
+  m_pimpl->logLevel = a_lvl;
 }
 
 void DgApp::LogToOutputWindow(std::string const & a_message, int a_lvl)
@@ -1012,24 +1024,24 @@ void DgApp::Run()
       {
         switch (ti.logLevel)
         {
-        case Dg::LL_Log:
+        case Dg::LL_Debug:
         {
-          ImGui::Text("LOG:    ");
+          ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), "DEBUG:");
           break;
         }
-        case Dg::LL_OK:
+        case Dg::LL_Info:
         {
-          ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "OK:     ");
+          ImGui::TextColored(ImVec4(0.5, 0.5, 1.0, 1.0), "INFO: ");
           break;
         }
         case Dg::LL_Warning:
         {
-          ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), "WARNING:");
+          ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), "WARN: ");
           break;
         }
         case Dg::LL_Error:
         {
-          ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "ERROR:  ");
+          ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "ERROR:");
           break;
         }
         default:

@@ -21,8 +21,8 @@ namespace IPC
   bool Listener::Init(SocketData const & a_sd)
   {
     std::stringstream ss;
-    ss << "Setting up server at " << a_sd.Get_IP() << ":" << a_sd.Get_Port().As_string();
-    m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Log);
+    ss << "Setting up server at " << a_sd.Get_IP() << ":" << a_sd.Get_Port().As_string() << "...";
+    m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Info);
 
     m_listenSocket = IPC::CreateListenSocket(a_sd.Get_Port().As_string().c_str(),
                                              a_sd.Get_IP().c_str());
@@ -33,13 +33,13 @@ namespace IPC
       return false;
     }
 
-    m_rApp.LogToOutputWindow("Done!", Dg::LL_OK);
+    m_rApp.LogToOutputWindow("Done!", Dg::LL_Info);
     return true;
   }
 
   void Listener::Run()
   {
-    m_rApp.LogToOutputWindow("Listening for clients", Dg::LL_Log);
+    m_rApp.LogToOutputWindow("Listening for clients...", Dg::LL_Info);
 
     while (true)
     {
@@ -49,8 +49,8 @@ namespace IPC
       if (clientSocket == INVALID_SOCKET)
       {
         std::stringstream ss;
-        ss << "accept() failed with error: " << WSAGetLastError();
-        m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Error);
+        ss << "accept() failed with error: " << WSAGetLastError() << ". Client connection discarded.";
+        m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Warning);
         continue;
       }
 

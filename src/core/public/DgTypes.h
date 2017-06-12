@@ -25,8 +25,8 @@ namespace Dg
 
   enum LogLevel
   {
-    LL_Log,
-    LL_OK,
+    LL_Debug,
+    LL_Info,
     LL_Warning,
     LL_Error
   };

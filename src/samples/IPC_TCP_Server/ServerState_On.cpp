@@ -63,7 +63,7 @@ namespace IPC
 
   ServerState_On::~ServerState_On()
   {
-    m_rApp.LogToOutputWindow("Shutting down server...", Dg::LL_Log);
+    m_rApp.LogToOutputWindow("Shutting down server...", Dg::LL_Info);
 
     m_shouldStop = true;
 
@@ -82,7 +82,7 @@ namespace IPC
       }
       else
       {
-        m_rApp.LogToOutputWindow("Unable to wake listener thread!", Dg::LL_Warning);
+        m_rApp.LogToOutputWindow("Unable to wake listener thread!", Dg::LL_Error);
       }
     }
     else
@@ -99,6 +99,6 @@ namespace IPC
       elapsedTime += sleepTime;
     }
 
-    m_rApp.LogToOutputWindow("Done!", Dg::LL_OK);
+    m_rApp.LogToOutputWindow("Done!", Dg::LL_Info);
   }
 }
