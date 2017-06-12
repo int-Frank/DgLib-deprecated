@@ -28,6 +28,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPC_TCP_Server", "IPC_TCP_S
 		{501E62B1-A652-4086-A3F5-245912A86932} = {501E62B1-A652-4086-A3F5-245912A86932}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPC_TCP_Dispatcher", "IPC_TCP_Dispatcher\IPC_TCP_Dispatcher.vcxproj", "{90883D0A-BC92-4457-B726-07B33D6BD881}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -108,6 +110,14 @@ Global
 		{28782FAB-FC97-46BE-86EA-A1C29806C613}.Release|Win32.Build.0 = Release|Win32
 		{28782FAB-FC97-46BE-86EA-A1C29806C613}.Release|x64.ActiveCfg = Release|x64
 		{28782FAB-FC97-46BE-86EA-A1C29806C613}.Release|x64.Build.0 = Release|x64
+		{90883D0A-BC92-4457-B726-07B33D6BD881}.Debug|Win32.ActiveCfg = Debug|Win32
+		{90883D0A-BC92-4457-B726-07B33D6BD881}.Debug|Win32.Build.0 = Debug|Win32
+		{90883D0A-BC92-4457-B726-07B33D6BD881}.Debug|x64.ActiveCfg = Debug|x64
+		{90883D0A-BC92-4457-B726-07B33D6BD881}.Debug|x64.Build.0 = Debug|x64
+		{90883D0A-BC92-4457-B726-07B33D6BD881}.Release|Win32.ActiveCfg = Release|Win32
+		{90883D0A-BC92-4457-B726-07B33D6BD881}.Release|Win32.Build.0 = Release|Win32
+		{90883D0A-BC92-4457-B726-07B33D6BD881}.Release|x64.ActiveCfg = Release|x64
+		{90883D0A-BC92-4457-B726-07B33D6BD881}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

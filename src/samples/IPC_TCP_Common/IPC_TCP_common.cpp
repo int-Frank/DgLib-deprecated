@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iostream>
 
+#include "DgTypes.h"
 #include "DgStringFunctions.h"
 #include "DgIPC.h"
 #include "IPC_TCP_common.h"

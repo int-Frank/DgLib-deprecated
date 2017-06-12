@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Server states">
+      <UniqueIdentifier>{30648c36-95c4-40c8-b050-25b35e43e9ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -30,8 +33,8 @@
     <ClCompile Include="Acceptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ServerState.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ServerState_On.cpp">
+      <Filter>Server states</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +49,12 @@
     </ClInclude>
     <ClInclude Include="Acceptor.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerStateBase.h">
+      <Filter>Server states</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerState_On.h">
+      <Filter>Server states</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

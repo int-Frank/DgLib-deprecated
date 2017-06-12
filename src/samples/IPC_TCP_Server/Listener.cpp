@@ -2,14 +2,14 @@
 #include <sstream>
 #include <thread>
 
-#include "IPC_TCP_Server.h"
+#include "ServerState_On.h"
 #include "Listener.h"
 #include "DgTypes.h"
 #include "Acceptor.h"
 
 namespace IPC
 {
-  static void Run_AcceptConnection(TCP_Server * a_pApp, SOCKET a_socket)
+  static void Run_AcceptConnection(ServerState_On * a_pApp, SOCKET a_socket)
   {
     Acceptor acceptor(a_pApp);
     if (acceptor.Init(a_socket))

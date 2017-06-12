@@ -147,13 +147,15 @@
     <ClCompile Include="IPC_TCP_Server.cpp" />
     <ClCompile Include="Listener.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ServerState.cpp" />
+    <ClCompile Include="ServerState_On.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Acceptor.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="IPC_TCP_Server.h" />
     <ClInclude Include="Listener.h" />
+    <ClInclude Include="ServerStateBase.h" />
+    <ClInclude Include="ServerState_On.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />

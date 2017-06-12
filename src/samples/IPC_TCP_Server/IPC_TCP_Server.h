@@ -11,6 +11,8 @@
 
 namespace IPC
 {
+  class ServerStateBase;
+
   class TCP_Server : public DgApp
   {
   public:
@@ -20,22 +22,6 @@ namespace IPC
 
     void BuildUI();
     void DoFrame(double);
-
-  public:
-
-    //These are called from other threads...
-    void RegisterThread();
-    void DeregisterThread();
-    void RegisterClient(SocketData const &);
-    void DeregisterClient(SocketData const &);
-    std::vector<SocketData> GetClientList();
-    bool ShouldStop() const;
-    void ListenerRunning(bool);
-
-  private:
-
-    void Start();
-    void Stop();
 
   private:
 
@@ -49,12 +35,7 @@ namespace IPC
       State_Off
     };
 
-    std::atomic<int>  m_activeThreads;
-    std::atomic<bool> m_shouldStop;
-    std::atomic<bool> m_listenerRunning;
-    ClientHandler     m_clientHandler;
-    std::thread       m_listenThread;
-    SocketData        m_listenSocketData;
+    ServerStateBase * m_pServerState;
     char              m_ipBuf[s_textBufLen];
     char              m_portBuf[s_textBufLen];
     int               m_currentState;

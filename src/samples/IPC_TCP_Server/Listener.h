@@ -5,13 +5,13 @@
 
 namespace IPC
 {
-  class TCP_Server;
+  class ServerState_On;
 
   class Listener
   {
   public:
 
-    Listener(TCP_Server * a_pApp)
+    Listener(ServerState_On * a_pApp)
       : m_rApp(*a_pApp)
       , m_listenSocket(INVALID_SOCKET)
     {}
@@ -21,8 +21,8 @@ namespace IPC
 
   private:
 
-    SOCKET        m_listenSocket;
-    TCP_Server &  m_rApp;
+    SOCKET            m_listenSocket;
+    ServerState_On &  m_rApp;
   };
 }
 

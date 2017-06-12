@@ -34,8 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppunitlite", "src\core\private\cppunitlite\cppunitlite.vcxproj", "{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPC_TPC", "src\core\private\IPC_TPC\IPC_TPC.vcxproj", "{A195660C-BFAB-40F5-A4DC-03B651D2B783}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -92,14 +90,6 @@ Global
 		{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}.Release|Win32.Build.0 = Release|x64
 		{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}.Release|x64.ActiveCfg = Release|x64
 		{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40}.Release|x64.Build.0 = Release|x64
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783}.Debug|Win32.ActiveCfg = Release|x64
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783}.Debug|Win32.Build.0 = Release|x64
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783}.Debug|x64.ActiveCfg = Release|x64
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783}.Debug|x64.Build.0 = Release|x64
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783}.Release|Win32.ActiveCfg = Release|x64
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783}.Release|Win32.Build.0 = Release|x64
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783}.Release|x64.ActiveCfg = Release|x64
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +101,5 @@ Global
 		{79493342-78B1-4389-A2DD-2BCFACC31571} = {251D09D8-2767-459D-9301-5EBDD6DEE8DC}
 		{8DB75AC3-EEC3-4235-BE94-CF62C035601D} = {251D09D8-2767-459D-9301-5EBDD6DEE8DC}
 		{AD2C7FC0-2FEB-42EF-BC18-04F13C4D5A40} = {43557EA0-BA56-47C1-BBFF-B59662F61116}
-		{A195660C-BFAB-40F5-A4DC-03B651D2B783} = {251D09D8-2767-459D-9301-5EBDD6DEE8DC}
 	EndGlobalSection
 EndGlobal

@@ -5,13 +5,13 @@
 
 namespace IPC
 {
-  class TCP_Server;
+  class ServerState_On;
 
   class Acceptor
   {
   public:
 
-    Acceptor(TCP_Server * a_pApp)
+    Acceptor(ServerState_On * a_pApp)
       : m_rApp(*a_pApp)
     {}
 
@@ -27,9 +27,9 @@ namespace IPC
 
   private:
 
-    SOCKET        m_clientSocket;
-    Message       m_message;
-    TCP_Server &  m_rApp;
+    SOCKET            m_clientSocket;
+    Message           m_message;
+    ServerState_On &  m_rApp;
   };
 }
 

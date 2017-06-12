@@ -6,8 +6,6 @@
 #include <string>
 #include <atomic>
 
-#include "DgTypes.h"
-
 #ifdef BUILD_DLL
 #define DLLAPI __declspec(dllexport)
 #else
@@ -41,7 +39,7 @@ namespace Dg
     //  virtual void Shutdown() = 0;
     //};
 
-    DLLAPI bool Init(void(*a_Log)(std::string const &, LogLevel));
+    DLLAPI bool Init(void(*a_Log)(std::string const &, int));
 
     DLLAPI DispatcherBase * GetDispatcher();
     //DLLAPI ReceiverBase * GetReceiver();
