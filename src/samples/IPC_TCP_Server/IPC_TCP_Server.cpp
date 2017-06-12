@@ -18,11 +18,13 @@ namespace IPC
 {
   static void Run_Listen(TCP_Server * a_pApp, SocketData a_listenSocket)
   {
+    a_pApp->ListenerRunning(true);
     Listener listener(a_pApp);
     if (listener.Init(a_listenSocket))
     {
       listener.Run();
     }
+    a_pApp->ListenerRunning(false);
   }
 
   void Logger(std::string const & a_message, int a_val)
@@ -169,6 +171,11 @@ namespace IPC
     return m_shouldStop;
   }
 
+  void TCP_Server::ListenerRunning(bool a_val)
+  {
+    m_listenerRunning = a_val;
+  }
+
   void TCP_Server::Start()
   {
     m_shouldStop = false;
@@ -200,14 +207,21 @@ namespace IPC
     message.header.payloadSize = 0;
 
     std::vector<char> data = message.Serialize();
-    if (Send(m_listenSocketData, data))
+    if (m_listenerRunning)
     {
-      //join listener thread
-      m_listenThread.join();
+      if (Send(m_listenSocketData, data))
+      {
+        //join listener thread
+        m_listenThread.join();
+      }
+      else
+      {
+        LogToOutputWindow("Unable to wake listener thread!", Dg::LL_Warning);
+      }
     }
     else
     {
-      LogToOutputWindow("Unable to wake listener thread!", Dg::LL_Warning);
+      m_listenThread.join();
     }
 
     //Ensure all worker threads are done
