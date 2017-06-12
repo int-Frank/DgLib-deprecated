@@ -6,81 +6,95 @@
 #include <vector>
 #include <string>
 #include <stdint.h>
+#include <atomic>
 
-enum PacketID
+#include "DgIPC.h"
+
+namespace Dg
 {
-  E_None = 1,
-  E_IPAddressRequest,
-  E_IPAddressResponse,
-  E_RegisterClient,
-  E_ClientExiting,
-  E_Dispatch
-};
+  namespace IPC
+  {
+    extern void(*g_Log)(std::string const &, LogLevel);
 
-class PayloadHeader
-{
-public:
+    enum PacketID
+    {
+      E_None = 1,
+      E_IPAddressRequest,
+      E_IPAddressResponse,
+      E_RegisterClient,
+      E_ClientExiting,
+      E_Dispatch
+    };
 
-  char const * Build(char const *);
-  std::vector<char> Serialize() const;
-  static size_t Size();
+    class PayloadHeader
+    {
+    public:
 
-public:
+      char const * Build(char const *);
+      std::vector<char> Serialize() const;
+      static size_t Size();
 
-  uint16_t      ID;
-  uint32_t      payloadSize;
-};
+    public:
 
-class Port
-{
-public:
+      uint16_t      ID;
+      uint32_t      payloadSize;
+    };
 
-  typedef uint16_t PortType;
+    class Port
+    {
+    public:
 
-public:
+      typedef uint16_t PortType;
 
-  Port() {}
-  Port(PortType a_val);
+    public:
 
-  char const * Build(char const *);
-  std::vector<char> Serialize() const;
+      Port() {}
+      Port(PortType a_val);
 
-  void Set(PortType);
+      char const * Build(char const *);
+      std::vector<char> Serialize() const;
 
-  PortType As_uint16() const;
-  std::string As_string() const;
+      void Set(PortType);
 
-private:
+      PortType As_uint16() const;
+      std::string As_string() const;
 
-  PortType m_port;
-};
+    private:
 
-class SocketData
-{
-public:
+      PortType m_port;
+    };
 
-  char const * Build(char const *);
-  std::vector<char> Serialize() const;
+    class SocketData
+    {
+    public:
 
-  bool operator==(SocketData const & b) const;
+      char const * Build(char const *);
+      std::vector<char> Serialize() const;
 
-  std::string Get_IP() const;
-  Port Get_Port() const;
+      bool operator==(SocketData const & b) const;
 
-  void Set_IP(std::string const &);
-  void Set_Port(Port);
+      std::string Get_IP() const;
+      Port Get_Port() const;
 
-public:
+      void Set_IP(std::string const &);
+      void Set_Port(Port);
 
-  std::string m_ipAddr;
-  Port        m_port;
-};
+    public:
 
-bool InitWinsock();
-void ShutdownWinsock();
+      std::string m_ipAddr;
+      Port        m_port;
+    };
 
-bool Recv(SOCKET, std::vector<char> &);
-bool Send(SocketData, std::vector<char> const &);
-bool GetSocketData(SOCKET, SocketData &);
+    bool Init(void(*a_Log)(std::string const &, LogLevel));
+
+    bool InitWinsock();
+    void ShutdownWinsock();
+
+    bool Recv(SOCKET, std::vector<char> &, std::atomic<bool> const &);
+    bool Send(SocketData, std::vector<char> const &, std::atomic<bool> const &);
+    bool GetSocketData(SOCKET, SocketData &);
+  }
+}
+
 
 #endif

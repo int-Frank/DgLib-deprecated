@@ -8,6 +8,7 @@ typedef  LONGLONG timer_int;
 
 namespace Dg
 {
+  //Our base class for timer state.
   static class TimerState 
   {
   public:
@@ -31,9 +32,10 @@ namespace Dg
     }
   };
 
-  //We need some factory functions to prevent circular dependices...
+  //Since our state objects construct other state objects, we need
+  //to write some factory functions to avoid circular dependices...
   static TimerState * GetTimerState_Off();
-  static TimerState * GetTimerState_Paused(timer_int a_startTicks, timer_int a_totalTicks);
+  static TimerState * GetTimerState_Paused(timer_int a_totalTime);
 
   static class TimerState_On : public TimerState
   {
@@ -53,7 +55,15 @@ namespace Dg
 
     TimerState * Start() { return new TimerState_On(); }
     TimerState * Stop() { return GetTimerState_Off(); }
-    TimerState * Pause() { return GetTimerState_Paused(m_startTime, m_totalTime); }
+
+    TimerState * Pause() 
+    { 
+      LARGE_INTEGER pauseTime;
+      QueryPerformanceCounter(&pauseTime);
+      timer_int totalTime = m_totalTime + (pauseTime.QuadPart - m_startTime);
+      return GetTimerState_Paused(m_totalTime); 
+    }
+
     TimerState * Resume() { return new TimerState_On(*this); }
 
     double GetTime() const
@@ -105,11 +115,9 @@ namespace Dg
   {
   public:
 
-    TimerState_Paused(timer_int a_startTime, timer_int a_totalTime)
+    TimerState_Paused(timer_int a_totalTime)
+      : m_totalTime(a_totalTime)
     {
-      LARGE_INTEGER pauseTime;
-      QueryPerformanceCounter(&pauseTime);
-      m_totalTime = a_totalTime + (pauseTime.QuadPart - a_startTime);
     }
 
     bool IsStarted() const { return false; }
@@ -138,15 +146,14 @@ namespace Dg
     timer_int m_totalTime;
   };
 
-
   static TimerState * GetTimerState_Off()
   {
     return new TimerState_Off();
   }
 
-  static TimerState * GetTimerState_Paused(timer_int a_startTime, timer_int a_totalTime)
+  static TimerState * GetTimerState_Paused(timer_int a_totalTime)
   {
-    return new TimerState_Paused(a_startTime, a_totalTime);
+    return new TimerState_Paused(a_totalTime);
   }
 
   class Timer::PIMPL

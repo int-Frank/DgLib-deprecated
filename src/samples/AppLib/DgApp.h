@@ -18,14 +18,6 @@ public:
     AppInitFailed
   };
 
-  enum LogLevel
-  {
-    Log,
-    OK,
-    Warning,
-    Error
-  };
-
 public:
 
   DgApp();
@@ -51,8 +43,9 @@ public:
   bool ShouldQuit() const;
 
   //Logging
-  void LogToOutputWindow(std::string const &, LogLevel = Log);
-  void LogToFile(std::string const &, LogLevel = Log);
+  //Log levels have the same values as the DgTypes.h -> LogLevel enum
+  void LogToOutputWindow(std::string const &, int);
+  void LogToFile(std::string const &, int);
   void ToggleOutputWindow(bool);
 
 protected:

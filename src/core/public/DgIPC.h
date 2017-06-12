@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <atomic>
 
 #include "DgTypes.h"
 
@@ -22,12 +23,11 @@ namespace Dg
     public:
       virtual ~DispatcherBase() = default;
 
-      virtual bool Init(std::map<std::string, std::string> const & config,
-                   void(*Log)(std::string const &, LogLevel)) = 0;
+      virtual bool Init(std::map<std::string, std::string> const & config) = 0;
 
       virtual void Shutdown() = 0;
 
-      virtual void Dispatch(std::vector<char> const &) = 0;
+      virtual void Dispatch(std::vector<char> const &, std::atomic<bool> const & shouldQuit) = 0;
     };
 
     //class ReceiverBase
@@ -36,11 +36,12 @@ namespace Dg
     //  virtual ~ReceiverBase() = default;
     //
     //  virtual bool Init(std::map<std::string, std::string> const & config,
-    //                    void(*Log)(std::string const &, LogLevel),
     //                    void (*NewDataCallback)(std::vector<char> const &)) = 0;
     //
     //  virtual void Shutdown() = 0;
     //};
+
+    DLLAPI bool Init(void(*a_Log)(std::string const &, LogLevel));
 
     DLLAPI DispatcherBase * GetDispatcher();
     //DLLAPI ReceiverBase * GetReceiver();

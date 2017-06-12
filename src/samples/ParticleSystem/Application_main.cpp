@@ -407,12 +407,12 @@ void Application::GetConfiguration()
   Dg::Parser_INI parser;
   Dg::ErrorCode result = parser.Parse(m_configFileName);
 
-  if (result == Dg::ErrorCode::FailedToOpenFile)
+  if (result == Dg::Err_FailedToOpenFile)
   {
     fprintf(stderr, "Failed to open config file '%s'. Using defaults...\n", m_configFileName.c_str());
     return;
   }
-  else if (result != Dg::ErrorCode::None)
+  else if (result != Dg::Err_None)
   {
     fprintf(stderr, "Failed trying to parse config file '%s'. Using defaults...\n", m_configFileName.c_str());
     return;

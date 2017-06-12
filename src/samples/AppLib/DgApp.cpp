@@ -7,6 +7,7 @@
 #include <mutex>
 #include <fstream>
 #include <sstream>
+#include <list>
 
 #pragma comment(lib,"shlwapi.lib")
 
@@ -16,21 +17,73 @@
 #include "DgApp.h"
 #include "DgParser_INI.h"
 #include "DgStringFunctions.h"
+#include "DgTypes.h"
 #include "EventManager.h"
 #include "Event.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
 
-static struct OutputTextItem
+struct TextItem
 {
   std::string text;
   int logLevel;
 };
 
-typedef std::vector<OutputTextItem> TextList;
+class TextList
+{
+public:
 
-static class Event_MouseScroll : public Event
+  typedef std::list<TextItem>::const_iterator const_iterator;
+  typedef std::list<TextItem>::iterator iterator;
+
+public:
+
+  TextList()
+    : m_maxSize(2000)
+  {}
+
+  void push_back(TextItem const & a_item) 
+  { 
+    m_items.push_back(a_item); 
+    Trim();
+  }
+
+  iterator begin() { return m_items.begin(); }
+  iterator end() { return m_items.end(); }
+
+  const_iterator cbegin() const { return m_items.cbegin(); }
+  const_iterator cend() const { return m_items.cend(); }
+
+  void SetMaxCharacters(size_t a_size)
+  {
+    m_maxSize = a_size;
+    Trim();
+  }
+
+private:
+
+  void Trim()
+  {
+    size_t totalSize = 0;
+    for (auto it = m_items.end(); it != m_items.begin();)
+    {
+      it--;
+      totalSize += it->text.size();
+      if (totalSize > m_maxSize)
+      {
+        it = m_items.erase(it);
+      }
+    }
+  }
+
+private:
+
+  size_t m_maxSize;
+  std::list<TextItem> m_items;
+};
+
+class Event_MouseScroll : public Event
 {
 public:
   Event_MouseScroll()
@@ -66,7 +119,7 @@ private:
 };
 
 
-static class Event_KeyEvent : public Event
+class Event_KeyEvent : public Event
 {
 public:
   Event_KeyEvent()
@@ -108,7 +161,7 @@ private:
 };
 
 
-static class Event_SaveProject : public Event
+class Event_SaveProject : public Event
 {
 public:
   Event_SaveProject()
@@ -146,7 +199,7 @@ private:
 };
 
 
-static class Event_LoadProject : public Event
+class Event_LoadProject : public Event
 {
 public:
   Event_LoadProject()
@@ -183,7 +236,7 @@ private:
 };
 
 
-static class Event_NewProject : public Event
+class Event_NewProject : public Event
 {
 public:
   Event_NewProject()
@@ -210,7 +263,7 @@ public:
 
 };
 
-static class Event_DeleteFile : public Event
+class Event_DeleteFile : public Event
 {
 public:
   Event_DeleteFile() : Event() {}
@@ -375,28 +428,28 @@ void DgApp::ToggleOutputWindow(bool a_val)
   m_pimpl->showOutputWindow = a_val;
 }
 
-void DgApp::LogToFile(std::string const & a_message, LogLevel a_lvl)
+void DgApp::LogToFile(std::string const & a_message, int a_lvl)
 {
   std::lock_guard<std::mutex> lock(m_pimpl->mutexLogFile);
 
   switch (a_lvl)
   {
-  case Warning:
+  case Dg::LL_Warning:
   {
     m_pimpl->logFile << "WARNING: ";
     break;
   }
-  case Error:
+  case Dg::LL_Error:
   {
     m_pimpl->logFile << "ERROR: ";
     break;
   }
-  case OK:
+  case Dg::LL_OK:
   {
     m_pimpl->logFile << "OK: ";
     break;
   }
-  case Log:
+  case Dg::LL_Log:
   {
     m_pimpl->logFile << "LOG: ";
     break;
@@ -424,7 +477,7 @@ DgApp::DgApp()
 
   if (PIMPL::s_app != nullptr)
   {
-    LogToFile("Attempt to create more than one instance of DgApp.");
+    LogToFile("Attempt to create more than one instance of DgApp.", Dg::LL_Error);
     throw AppInitFailed;
   }
 
@@ -435,14 +488,14 @@ DgApp::DgApp()
     Dg::Parser_INI parser;
     Dg::ErrorCode result = parser.Parse(m_pimpl->configFileName);
 
-    if (result == Dg::ErrorCode::FailedToOpenFile)
+    if (result == Dg::Err_FailedToOpenFile)
     {
-      LogToFile(std::string("Failed to open config file: ") + m_pimpl->configFileName, Error);
+      LogToFile(std::string("Failed to open config file: ") + m_pimpl->configFileName, Dg::LL_Error);
       throw AppInitFailed;
     }
-    else if (result != Dg::ErrorCode::None)
+    else if (result != Dg::Err_None)
     {
-      LogToFile(std::string("Failed to parse config file: ") + m_pimpl->configFileName, Error);
+      LogToFile(std::string("Failed to parse config file: ") + m_pimpl->configFileName, Dg::LL_Error);
       throw AppInitFailed;
     }
 
@@ -504,7 +557,7 @@ DgApp::DgApp()
   {
     if (!glfwInit())
     {
-      LogToFile("Failed to initialize GLFW.", Error);
+      LogToFile("Failed to initialize GLFW.", Dg::LL_Error);
       throw AppInitFailed;
     }
 
@@ -541,7 +594,7 @@ DgApp::DgApp()
 
     if (!m_pimpl->window)
     {
-      LogToFile("Failed to open glfw window.", Error);
+      LogToFile("Failed to open glfw window.", Dg::LL_Error);
       glfwTerminate();
       throw AppInitFailed;
     }
@@ -554,7 +607,7 @@ DgApp::DgApp()
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
-      LogToFile(std::string("glewInit() failed: ") + std::string((char*)glewGetErrorString(err)), Error);
+      LogToFile(std::string("glewInit() failed: ") + std::string((char*)glewGetErrorString(err)), Dg::LL_Error);
       glfwTerminate();
       throw AppInitFailed;
     }
@@ -563,20 +616,20 @@ DgApp::DgApp()
   //Init ImGui
   if (!ImGui_ImplGlfwGL3_Init(m_pimpl->window, true))
   {
-    LogToFile(std::string("ImGui_ImplGlfwGL3_Init() returned false."), Error);
+    LogToFile(std::string("ImGui_ImplGlfwGL3_Init() returned false."), Dg::LL_Error);
     glfwDestroyWindow(m_pimpl->window);
     m_pimpl->window = nullptr;
     glfwTerminate();
     throw AppInitFailed;
   }
 
-  LogToOutputWindow(std::string("Renderer: " + std::string((char*)glGetString(GL_RENDERER))), OK);
-  LogToOutputWindow(std::string("OpenGL version supported " + std::string((char*)glGetString(GL_VERSION))), OK);
+  LogToOutputWindow(std::string("Renderer: " + std::string((char*)glGetString(GL_RENDERER))), Dg::LL_OK);
+  LogToOutputWindow(std::string("OpenGL version supported " + std::string((char*)glGetString(GL_VERSION))), Dg::LL_OK);
 }
 
-void DgApp::LogToOutputWindow(std::string const & a_message, LogLevel a_lvl)
+void DgApp::LogToOutputWindow(std::string const & a_message, int a_lvl)
 {
-  OutputTextItem ti;
+  TextItem ti;
   ti.text = a_message;
   ti.logLevel = a_lvl;
 
@@ -959,22 +1012,22 @@ void DgApp::Run()
       {
         switch (ti.logLevel)
         {
-        case Log:
+        case Dg::LL_Log:
         {
           ImGui::Text("LOG:    ");
           break;
         }
-        case OK:
+        case Dg::LL_OK:
         {
           ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "OK:     ");
           break;
         }
-        case Warning:
+        case Dg::LL_Warning:
         {
           ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), "WARNING:");
           break;
         }
-        case Error:
+        case Dg::LL_Error:
         {
           ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "ERROR:  ");
           break;
@@ -983,7 +1036,7 @@ void DgApp::Run()
         {
           std::stringstream ss;
           ss << "Unrecognised log level: " << ti.logLevel;
-          LogToOutputWindow(ss.str(), Warning);
+          LogToOutputWindow(ss.str(), Dg::LL_Warning);
           ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), "???:    ");
           break;
         }
