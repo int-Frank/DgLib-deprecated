@@ -3,27 +3,25 @@
 
 #include "IPC_TCP_common.h"
 
-namespace IPC
+class ServerState_On;
+
+class Listener
 {
-  class ServerState_On;
+public:
 
-  class Listener
-  {
-  public:
+  Listener(ServerState_On * a_pApp)
+    : m_rApp(*a_pApp)
+    , m_listenSocket(INVALID_SOCKET)
+  {}
 
-    Listener(ServerState_On * a_pApp)
-      : m_rApp(*a_pApp)
-      , m_listenSocket(INVALID_SOCKET)
-    {}
+  bool Init(IPC::SocketData const &);
+  void Run();
 
-    bool Init(SocketData const &);
-    void Run();
+private:
 
-  private:
+  SOCKET            m_listenSocket;
+  ServerState_On &  m_rApp;
+};
 
-    SOCKET            m_listenSocket;
-    ServerState_On &  m_rApp;
-  };
-}
 
 #endif

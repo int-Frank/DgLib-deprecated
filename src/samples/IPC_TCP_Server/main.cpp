@@ -7,10 +7,10 @@
 int main(void)
 {
 
-  IPC::TCP_Server *app(nullptr);
+  TCP_Server *app(nullptr);
   try
   {
-    app = new IPC::TCP_Server();
+    app = new TCP_Server();
   }
   catch (...)
   {

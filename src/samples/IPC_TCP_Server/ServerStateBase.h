@@ -7,26 +7,23 @@
 #include "IPC_TCP_common.h"
 #include "DgTypes.h"
 
-namespace IPC
+class ServerStateBase
 {
-  class ServerStateBase
+public:
+
+  ServerStateBase(TCP_Server * a_pApp)
+    : m_rApp(*a_pApp)
+  {}
+
+  virtual ~ServerStateBase() {}
+  void LogToOutputWindow(std::string const & a_message, Dg::LogLevel a_lvl)
   {
-  public:
+    m_rApp.LogToOutputWindow(a_message, a_lvl);
+  }
 
-    ServerStateBase(TCP_Server * a_pApp)
-      : m_rApp(*a_pApp)
-    {}
+protected:
 
-    virtual ~ServerStateBase() {}
-    void LogToOutputWindow(std::string const & a_message, Dg::LogLevel a_lvl)
-    {
-      m_rApp.LogToOutputWindow(a_message, a_lvl);
-    }
-
-  protected:
-
-    TCP_Server & m_rApp;
-  };
-}
+  TCP_Server & m_rApp;
+};
 
 #endif

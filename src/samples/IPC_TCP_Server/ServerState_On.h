@@ -10,38 +10,34 @@
 #include "ServerStateBase.h"
 #include "DgTypes.h"
 
-namespace IPC
+class ServerState_On : public ServerStateBase
 {
-  class ServerState_On : public ServerStateBase
-  {
-  public:
+public:
 
-    ServerState_On(TCP_Server * a_pApp, SocketData const &);
+  ServerState_On(TCP_Server * a_pApp, IPC::SocketData const &);
 
-    ~ServerState_On();
+  ~ServerState_On();
 
-    void RegisterThread();
-    void DeregisterThread();
-    void RegisterClient(SocketData const &);
-    void DeregisterClient(SocketData const &);
-    std::vector<SocketData> GetClientList();
-    bool ShouldStop() const;
-    void ListenerRunning(bool);
+  void RegisterThread();
+  void DeregisterThread();
+  void RegisterClient(IPC::SocketData const &);
+  void DeregisterClient(IPC::SocketData const &);
+  std::vector<IPC::SocketData> GetClientList();
+  bool ShouldStop() const;
+  void ListenerRunning(bool);
 
-  private:
+private:
 
-    static int const s_textBufLen = 64;
+  static int const s_textBufLen = 64;
 
-  private:
+private:
 
-    std::atomic<int>  m_activeThreads;
-    std::atomic<bool> m_shouldStop;
-    std::atomic<bool> m_listenerRunning;
-    ClientHandler     m_clientHandler;
-    std::thread       m_listenThread;
-    SocketData        m_listenSocketData;
-  };
-
-}
+  std::atomic<int>  m_activeThreads;
+  std::atomic<bool> m_shouldStop;
+  std::atomic<bool> m_listenerRunning;
+  ClientHandler     m_clientHandler;
+  std::thread       m_listenThread;
+  IPC::SocketData        m_listenSocketData;
+};
 
 #endif
