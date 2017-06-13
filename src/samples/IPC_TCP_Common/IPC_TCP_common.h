@@ -9,112 +9,120 @@
 
 namespace IPC
 {
-  enum PacketID
+  namespace TCP
   {
-    E_None = 0xA4C9,
-    E_IPAddressRequest,
-    E_IPAddressResponse,
-    E_RegisterClient,
-    E_ClientExiting,
-    E_ServerStop,
-    E_Dispatch
-  };
+    enum PacketID
+    {
+      E_None = 0xA4C9,
+      E_IPAddressRequest,
+      E_IPAddressResponse,
+      E_RegisterClient,
+      E_ClientExiting,
+      E_ServerStop,
+      E_Dispatch
+    };
 
-  class MessageHeader
-  {
-  public:
+    class MessageHeader
+    {
+    public:
 
-    MessageHeader()
-      : ID(E_None)
-      , payloadSize(0)
-    {}
+      MessageHeader()
+        : ID(E_None)
+        , payloadSize(0)
+      {}
 
-    char const * Build(char const * a_buf);
-    void Serialize(std::vector<char> &) const;
-    static size_t Size();
-    void Clear();
+      char const * Build(char const * a_buf);
+      void Serialize(std::vector<char> &) const;
+      static size_t Size();
+      void Clear();
 
-  public:
+    public:
 
-    typedef uint16_t type_ID;
-    typedef uint32_t type_payloadSize;
+      typedef uint16_t type_ID;
+      typedef uint32_t type_payloadSize;
 
-    type_ID           ID;
-    type_payloadSize  payloadSize;
-  };
+      type_ID           ID;
+      type_payloadSize  payloadSize;
+    };
 
-  class Message
-  {
-  public:
+    class Message
+    {
+    public:
 
-    bool Build(std::vector<char> const &);
-    std::vector<char> Serialize() const;
-    void Set(PacketID, std::vector<char> const & payload);
-    void Clear();
+      bool Build(std::vector<char> const &);
+      std::vector<char> Serialize() const;
+      void Set(PacketID, std::vector<char> const & payload);
+      void Clear();
 
-  public:
+    public:
 
-    MessageHeader     header;
-    std::vector<char> payload;
-  };
+      MessageHeader     header;
+      std::vector<char> payload;
+    };
 
-  class Port
-  {
-  public:
+    class Port
+    {
+    public:
 
-    typedef uint16_t PortType;
+      typedef uint16_t PortType;
 
-  public:
+    public:
 
-    Port(): m_port(0) {}
-    Port(PortType);
+      Port() : m_port(0) {}
+      Port(PortType);
 
-    char const * Build(char const * a_buf);
-    void Serialize(std::vector<char> &) const;
+      char const * Build(char const * a_buf);
+      void Serialize(std::vector<char> &) const;
 
-    void Set(PortType);
-    bool Set(std::string const &);
+      void Set(PortType);
+      bool Set(std::string const &);
 
-    PortType As_uint16() const;
-    std::string As_string() const;
+      PortType As_uint16() const;
+      std::string As_string() const;
 
-  private:
+      bool IsValid() const;
+      void SetToInvalid();
 
-    PortType m_port;
-  };
+    private:
 
-  class SocketData
-  {
-  public:
+      PortType m_port;
+    };
 
-    char const * Build(char const * a_buf);
-    void Serialize(std::vector<char> &) const;
+    //If the pNodeName parameter points to a string equal to "localhost",
+    //all loopback addresses on the local computer are returned.
+    //If the pNodeName parameter contains an empty string, 
+    //all registered addresses on the local computer are returned.
+    class SocketData
+    {
+    public:
 
-    bool operator==(SocketData const & b) const;
+      char const * Build(char const * a_buf);
+      void Serialize(std::vector<char> &) const;
 
-    std::string Get_IP() const;
-    Port Get_Port() const;
+      bool operator==(SocketData const & b) const;
 
-    void Set_IP(std::string const &);
-    void Set_Port(Port);
+      std::string Get_IP() const;
+      Port Get_Port() const;
 
-  public:
+      void Set_IP(std::string const &);
+      void Set_Port(Port);
 
-    std::string m_ipAddr;
-    Port        m_port;
-  };
+    public:
 
-  //Log levels have the same values as the DgTypes.h -> LogLevel enum
-  bool SetLoggingFunction(void(*a_Log)(std::string const &, int));
+      std::string m_ipAddr;
+      Port        m_port;
+    };
 
-  bool InitWinsock();
-  void ShutdownWinsock();
+    bool Init(void(*Log)(std::string const &, int), bool(*ShouldStop)());
+    bool Shutdown();
 
-  SOCKET CreateListenSocket(char const * a_port, char const * a_ipAddr);
-
-  bool Recv(SOCKET, std::vector<char> &);
-  bool Send(SocketData, std::vector<char> const &);
-  bool GetSocketData(SOCKET, SocketData &);
+    bool GetSocketData(SOCKET, SocketData &);
+    bool Recv(SOCKET, std::vector<char> &);
+    bool Send(SocketData const & server, std::vector<char> const & message);
+    bool SendQuery(SocketData const & server,
+                   std::vector<char> const & message,
+                   std::vector<char> & response);
+  }
 }
 
 

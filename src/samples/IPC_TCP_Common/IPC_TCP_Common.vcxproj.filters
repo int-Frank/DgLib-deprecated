@@ -18,9 +18,24 @@
     <ClCompile Include="IPC_TCP_common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IPC_TCP_Listener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IPC_TCP_Mediator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPC_TCP_common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPC_TCP_Listener.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPC_TCP_AcceptorBase.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPC_TCP_Mediator.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
