@@ -9,16 +9,23 @@
 #include "DgStringFunctions.h"
 #include "DgIPC.h"
 
+class ReceiverTCP;
 
-class DispatcherTCP : public ipcDispatcherBase
+static void Run_Listen(ReceiverTCP * a_pReceiver)
+{
+
+}
+
+class ReceiverTCP : public ipcReceiverBase
 {
 public:
-  DispatcherTCP()
+  ReceiverTCP()
   {}
 
-  ~DispatcherTCP() {}
+  ~ReceiverTCP() {}
 
-  bool Init(std::map<std::string, std::string> const & a_config)
+  bool Init(std::map<std::string, std::string> const & a_config,
+            void(*NewDataCallback)(std::vector<char> const &))
   {
     auto it_port = a_config.find("server_port");
     if (it_port == a_config.end())
@@ -51,6 +58,9 @@ public:
       g_Log("winsock failed to initialise.", Dg::LL_Error);
       return false;
     }
+
+    bool AquireIPAddress();
+
     return true;
   }
 
@@ -76,7 +86,7 @@ private:
   IPC::SocketData m_serverSocketData;
 };
 
-ipcDispatcherBase * ipcGetDispatcher()
+ipcReceiverBase * ipcGetReceiver()
 {
-  return new DispatcherTCP();
+  return new ReceiverTCP();
 }

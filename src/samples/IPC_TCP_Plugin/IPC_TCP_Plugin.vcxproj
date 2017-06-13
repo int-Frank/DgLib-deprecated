@@ -143,6 +143,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="IPC_TCP_Dispatcher.cpp" />
+    <ClCompile Include="IPC_TCP_Plugin_common.cpp" />
+    <ClCompile Include="IPC_TCP_Receiver.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IPC_TCP_Plugin_common.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

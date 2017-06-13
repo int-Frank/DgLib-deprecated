@@ -18,7 +18,6 @@ public:
   virtual ~ipcDispatcherBase() = default;
 
   virtual bool Init(std::map<std::string, std::string> const & config) = 0;
-
   virtual void Shutdown() = 0;
 
   virtual void Dispatch(std::vector<char> const &) = 0;
@@ -31,11 +30,11 @@ public:
 
   virtual bool Init(std::map<std::string, std::string> const & config,
                     void (*NewDataCallback)(std::vector<char> const &)) = 0;
-
   virtual void Shutdown() = 0;
 };
 
 DLLAPI bool ipcInit(void(*a_Log)(std::string const &, int));
+DLLAPI bool ipcShutdown();
 
 DLLAPI ipcDispatcherBase * ipcGetDispatcher();
 DLLAPI ipcReceiverBase * GetReceiver();

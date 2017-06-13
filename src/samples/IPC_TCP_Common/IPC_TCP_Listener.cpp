@@ -77,7 +77,7 @@ namespace IPC
       return *this;
     }
 
-    bool Listener::Init(SocketData const & a_server, SocketData & a_result)
+    bool Listener::InitByRequest(SocketData const & a_server, SocketData & a_result)
     {
       if (!PIMPL::RequestIPInfoFromServer(a_server, a_result))
       {
@@ -89,10 +89,25 @@ namespace IPC
       p.SetToInvalid();
       a_result.Set_Port(p);
 
-      return Init(a_result);
+      return InitSoft(a_result);
     }
 
-    bool Listener::Init(SocketData & a_sd)
+    bool Listener::InitStrict(SocketData const & a_listenSocketData)
+    {
+      IPC::TCP::SocketData sd(a_listenSocketData);
+      if (!InitSoft(sd))
+      {
+        return false;
+      }
+      if (sd != a_listenSocketData)
+      {
+        Shutdown();
+        return false;
+      }
+      return true;
+    }
+
+    bool Listener::InitSoft(SocketData & a_sd)
     {
       std::stringstream ss;
       ss << "Setting up listening socket at " << a_sd.Get_IP() << ":" << a_sd.Get_Port().As_string() << "...";

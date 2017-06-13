@@ -4,11 +4,17 @@
 #include "ServerState_On.h"
 #include "DgTypes.h"
 #include "Acceptor.h"
+#include "IPC_TCP_Mediator.h"
 
 bool Acceptor::Init(SOCKET a_socket)
 {
   m_clientSocket = a_socket;
   return true;
+}
+
+Acceptor * Acceptor::Clone() const
+{
+  return new Acceptor(&m_rApp);
 }
 
 void Acceptor::Run()
@@ -19,13 +25,13 @@ void Acceptor::Run()
   std::vector<char> messageData;
   do
   {
-    if (IPC::Recv(m_clientSocket, messageData) && !m_rApp.ShouldStop())
+    if (IPC::TCP::Recv(m_clientSocket, messageData) && !IPC::TCP::Mediator::ShouldStop())
     {
-      if (messageData.size() < IPC::MessageHeader::Size())
+      if (messageData.size() < IPC::TCP::MessageHeader::Size())
       {
         std::stringstream ss;
         ss << "Run_AcceptClient(): Message too small: " << messageData.size() << " bytes. ";
-        ss << "Require at least " << IPC::MessageHeader::Size() << " bytes for the header.";
+        ss << "Require at least " << IPC::TCP::MessageHeader::Size() << " bytes for the header.";
         m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Warning);
         break;
       }
@@ -37,22 +43,22 @@ void Acceptor::Run()
 
       switch (m_message.header.ID)
       {
-      case IPC::E_IPAddressRequest:
+      case IPC::TCP::E_IPAddressRequest:
       {
         Handle_IPAddressRequest();
         break;
       }
-      case IPC::E_RegisterClient:
+      case IPC::TCP::E_RegisterClient:
       {
         Handle_RegisterClient();
         break;
       }
-      case IPC::E_ClientExiting:
+      case IPC::TCP::E_ClientExiting:
       {
         Handle_DeregisterClient();
         break;
       }
-      case IPC::E_Dispatch:
+      case IPC::TCP::E_Dispatch:
       {
         Handle_Dispatch();
         break;
@@ -75,7 +81,7 @@ void Acceptor::Run()
 
 void Acceptor::Handle_RegisterClient()
 {
-  IPC::SocketData sd;
+  IPC::TCP::SocketData sd;
   if (sd.Build(m_message.payload.data()))
   {
     m_rApp.RegisterClient(sd);
@@ -84,7 +90,7 @@ void Acceptor::Handle_RegisterClient()
 
 void Acceptor::Handle_DeregisterClient()
 {
-  IPC::SocketData sd;
+  IPC::TCP::SocketData sd;
   if (sd.Build(m_message.payload.data()))
   {
     m_rApp.DeregisterClient(sd);
@@ -93,16 +99,16 @@ void Acceptor::Handle_DeregisterClient()
 
 void Acceptor::Handle_IPAddressRequest()
 {
-  IPC::SocketData sd;
-  if (GetSocketData(m_clientSocket, sd))
+  IPC::TCP::SocketData sd;
+  if (IPC::TCP::GetSocketData(m_clientSocket, sd))
   {
     std::vector<char> payload;
     sd.Serialize(payload);
 
-    IPC::Message message;
-    message.Set(IPC::E_IPAddressResponse, payload);
+    IPC::TCP::Message message;
+    message.Set(IPC::TCP::E_IPAddressResponse, payload);
 
-    IPC::Send(sd, message.Serialize());
+    IPC::TCP::Send(sd, message.Serialize());
   }
 }
 
@@ -111,13 +117,13 @@ void Acceptor::Handle_Dispatch()
   auto clientList = m_rApp.GetClientList();
   for (auto it = clientList.cbegin(); it != clientList.cend(); it++)
   {
-    if (!IPC::Send(*it, m_message.payload))
+    if (!IPC::TCP::Send(*it, m_message.payload))
     {
       std::stringstream ss;
       ss << "Handle_Dispatch() -> Failed to send to: " << it->Get_IP() << ":" << it->Get_Port().As_string();
       m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Warning);
     }
-    if (m_rApp.ShouldStop())
+    if (IPC::TCP::Mediator::ShouldStop())
     {
       break;
     }

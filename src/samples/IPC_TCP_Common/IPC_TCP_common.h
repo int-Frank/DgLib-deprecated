@@ -65,11 +65,13 @@ namespace IPC
     public:
 
       typedef uint16_t PortType;
+      PortType const INVALID_PORT = 0;
 
     public:
 
-      Port() : m_port(0) {}
+      Port() : m_port(INVALID_PORT) {}
       Port(PortType);
+      Port & operator=(Port const &);
 
       char const * Build(char const * a_buf);
       void Serialize(std::vector<char> &) const;
@@ -100,6 +102,7 @@ namespace IPC
       void Serialize(std::vector<char> &) const;
 
       bool operator==(SocketData const & b) const;
+      bool operator!=(SocketData const & b) const;
 
       std::string Get_IP() const;
       Port Get_Port() const;
@@ -113,7 +116,8 @@ namespace IPC
       Port        m_port;
     };
 
-    bool Init(void(*Log)(std::string const &, int), bool(*ShouldStop)());
+    bool Init(void(*Log)(std::string const &, int));
+    void SetStopFlagCallback(bool(*ShouldStop)());
     bool Shutdown();
 
     bool GetSocketData(SOCKET, SocketData &);

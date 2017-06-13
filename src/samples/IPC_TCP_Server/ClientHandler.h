@@ -14,9 +14,9 @@ public:
 
   ClientHandler();
 
-  void AddClient(IPC::SocketData a_sd);
-  void RemoveClient(IPC::SocketData a_sd);
-  std::vector<IPC::SocketData> GetCurrentClients();
+  void AddClient(IPC::TCP::SocketData a_sd);
+  void RemoveClient(IPC::TCP::SocketData a_sd);
+  std::vector<IPC::TCP::SocketData> GetCurrentClients();
 
 private:
 
@@ -30,7 +30,7 @@ private:
 
   struct TimedClient
   {
-    IPC::SocketData  socketData;
+    IPC::TCP::SocketData  socketData;
     double           lastPing;
   };
 

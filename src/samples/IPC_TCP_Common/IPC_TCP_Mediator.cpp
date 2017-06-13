@@ -6,20 +6,17 @@ namespace IPC
 {
   namespace TCP
   {
-    namespace impl
+    static void LogDefault(std::string const & a_str, int a_logLevel)
     {
-      void LogDefault(std::string const & a_str, int a_logLevel)
-      {
-        std::cout << a_str << ": " << a_logLevel << "\n";
-      }
-
-      bool ShouldStopDefault()
-      {
-        return false;
-      }
+      std::cout << a_str << ": " << a_logLevel << "\n";
     }
 
-    void(*Mediator::Log)(std::string const &, int) = &impl::LogDefault;
-    bool(*Mediator::ShouldStop)() = &impl::ShouldStopDefault;
+    static bool ShouldStopDefault()
+    {
+      return false;
+    }
+
+    void(*Mediator::Log)(std::string const &, int) = &LogDefault;
+    bool(*Mediator::ShouldStop)() = &ShouldStopDefault;
   }
 }

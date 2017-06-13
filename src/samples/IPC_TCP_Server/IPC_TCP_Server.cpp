@@ -13,9 +13,8 @@
 #include "Event.h"
 #include "IPC_TCP_common.h"
 #include "imgui.h"
-#include "Listener.h"
 
-static void Logger(std::string const & a_message, int a_val)
+static void LogCallback(std::string const & a_message, int a_val)
 {
   DgApp::GetInstance()->LogToOutputWindow(a_message, a_val);
 }
@@ -28,20 +27,18 @@ TCP_Server::TCP_Server()
   strcpy_s(m_ipBuf, "127.0.0.1");
   strcpy_s(m_portBuf, "5555");
 
-  if (!IPC::InitWinsock())
+  if (!IPC::TCP::Init(LogCallback))
   {
-    LogToFile("winsock failed to initialise.", Dg::LL_Error);
+    LogToFile("IPC::TCP::Init() failed", Dg::LL_Error);
     throw AppInitFailed;
   }
-
-  IPC::SetLoggingFunction(Logger);
 }
 
 TCP_Server::~TCP_Server()
 {
   delete m_pServerState;
   m_pServerState = nullptr;
-  IPC::ShutdownWinsock();
+  IPC::TCP::Shutdown();
 }
 
 void TCP_Server::DoFrame(double a_dt)
@@ -57,13 +54,19 @@ void TCP_Server::DoFrame(double a_dt)
       std::string portStr(m_portBuf);
       std::string ipAddr(m_ipBuf);
 
-      IPC::Port port;
+      IPC::TCP::Port port;
       if (!port.Set(portStr))
       {
-        return;
+        LogToOutputWindow("Server startup failed.", Dg::LL_Error);
+        break;
+      }
+      if (!port.IsValid())
+      {
+        LogToOutputWindow("Invalid port number. Server startup failed.", Dg::LL_Error);
+        break;
       }
 
-      IPC::SocketData sd;
+      IPC::TCP::SocketData sd;
       sd.Set_Port(port);
       sd.Set_IP(ipAddr);
 

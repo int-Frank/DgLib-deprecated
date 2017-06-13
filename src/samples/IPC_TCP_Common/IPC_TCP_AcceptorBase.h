@@ -13,6 +13,7 @@ namespace IPC
     {
     public:
 
+      AcceptorBase() {}
       virtual ~AcceptorBase() {}
 
       virtual bool Init(SOCKET a_socket) { return true; }

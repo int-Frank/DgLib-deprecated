@@ -18,10 +18,9 @@ namespace IPC
   {
     typedef uint16_t ipAddrStringSizeType;
 
-    bool Init(void(*Log)(std::string const &, int), bool(*ShouldStop)())
+    bool Init(void(*Log)(std::string const &, int))
     {
       Mediator::Log = Log;
-      Mediator::ShouldStop = ShouldStop;
 
       WSADATA wsaData;
       int returnCode = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -34,10 +33,20 @@ namespace IPC
       return returnCode == 0;
     }
 
+    void SetStopFlagCallback(bool(*ShouldStop)())
+    {
+      Mediator::ShouldStop = ShouldStop;
+    }
+
     bool Shutdown()
     {
       WSACleanup();
       return true;
+    }
+
+    void Port::Set(PortType a_val)
+    {
+      m_port = a_val;
     }
 
     Port::Port(PortType a_val)
@@ -46,9 +55,10 @@ namespace IPC
 
     }
 
-    void Port::Set(PortType a_val)
+    Port & Port::operator=(Port const & a_other)
     {
-      m_port = a_val;
+      m_port = a_other.m_port;
+      return *this;
     }
 
     bool Port::Set(std::string const & a_str)
@@ -98,12 +108,12 @@ namespace IPC
 
     bool Port::IsValid() const
     {
-      return m_port == 0;
+      return m_port != INVALID_PORT;
     }
 
     void Port::SetToInvalid()
     {
-      m_port = 0;
+      m_port = INVALID_PORT;
     }
 
     char const * SocketData::Build(char const * a_buf)
@@ -238,7 +248,14 @@ namespace IPC
     bool SocketData::operator==(SocketData const & a_other) const
     {
       return (m_port.As_uint16() == a_other.m_port.As_uint16())
-        && (m_ipAddr == a_other.m_ipAddr);
+          && (m_ipAddr == a_other.m_ipAddr);
+    }
+
+
+    bool SocketData::operator!=(SocketData const & a_other) const
+    {
+      return (m_port.As_uint16() != a_other.m_port.As_uint16())
+          || (m_ipAddr != a_other.m_ipAddr);
     }
 
     static SOCKET _Send(SocketData const & a_socketData, std::vector<char> const & a_message)

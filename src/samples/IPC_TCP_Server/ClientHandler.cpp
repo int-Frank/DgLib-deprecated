@@ -7,7 +7,7 @@ ClientHandler::ClientHandler()
   m_timer.Start();
 }
 
-void ClientHandler::AddClient(IPC::SocketData a_sd)
+void ClientHandler::AddClient(IPC::TCP::SocketData a_sd)
 {
   CleanClients();
   std::lock_guard<std::mutex> lock(m_mutex);
@@ -29,7 +29,7 @@ void ClientHandler::AddClient(IPC::SocketData a_sd)
   m_currentClients.push_back(tc);
 }
 
-void ClientHandler::RemoveClient(IPC::SocketData a_sd)
+void ClientHandler::RemoveClient(IPC::TCP::SocketData a_sd)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -44,9 +44,9 @@ void ClientHandler::RemoveClient(IPC::SocketData a_sd)
   }
 }
 
-std::vector<IPC::SocketData> ClientHandler::GetCurrentClients()
+std::vector<IPC::TCP::SocketData> ClientHandler::GetCurrentClients()
 {
-  std::vector<IPC::SocketData> result;
+  std::vector<IPC::TCP::SocketData> result;
   CleanClients();
   std::lock_guard<std::mutex> lock(m_mutex);
   for (auto it = m_currentClients.cbegin();
