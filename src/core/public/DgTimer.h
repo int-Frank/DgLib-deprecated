@@ -25,10 +25,6 @@ namespace Dg
   public:
 
     Timer();
-    ~Timer();
-
-    Timer(Timer const &);
-    Timer & operator=(Timer const &);
 
     bool IsStarted() const;
     bool IsStopped() const;
@@ -44,8 +40,9 @@ namespace Dg
 
   private:
 
-    class PIMPL;
-    PIMPL * m_pimpl;
+    int64_t m_totalTime;
+    int64_t m_startTime;
+    int     m_state;
   };
 }
 
