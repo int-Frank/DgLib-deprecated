@@ -132,13 +132,14 @@
   <ItemGroup>
     <ClCompile Include="IPC_TCP_common.cpp" />
     <ClCompile Include="IPC_TCP_Listener.cpp" />
-    <ClCompile Include="IPC_TCP_Mediator.cpp" />
+    <ClCompile Include="IPC_TCP_Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPC_TCP_AcceptorBase.h" />
     <ClInclude Include="IPC_TCP_common.h" />
     <ClInclude Include="IPC_TCP_Listener.h" />
-    <ClInclude Include="IPC_TCP_Mediator.h" />
+    <ClInclude Include="IPC_TCP_Logger.h" />
+    <ClInclude Include="IPC_TCP_MediatorBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

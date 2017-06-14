@@ -24,6 +24,7 @@ public:
   void DeregisterClient(IPC::TCP::SocketData const &);
   std::vector<IPC::TCP::SocketData> GetClientList();
   void ListenerRunning(bool);
+  bool ShouldStop() const;
 
 private:
 
@@ -33,6 +34,7 @@ private:
 
   std::atomic<int>      m_activeThreads;
   std::atomic<bool>     m_listenerRunning;
+  std::atomic<bool>     m_shouldStop;
   ClientHandler         m_clientHandler;
   std::thread           m_listenThread;
   IPC::TCP::SocketData  m_listenSocketData;

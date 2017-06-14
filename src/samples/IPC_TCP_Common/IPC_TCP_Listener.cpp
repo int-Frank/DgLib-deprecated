@@ -8,19 +8,23 @@
 
 #include "IPC_TCP_Listener.h"
 #include "DgTypes.h"
-#include "IPC_TCP_Mediator.h"
+#include "IPC_TCP_MediatorBase.h"
 #include "IPC_TCP_AcceptorBase.h"
+#include "IPC_TCP_Logger.h"
 
 namespace IPC
 {
   namespace TCP
   {
-    static void Run_AcceptConnection(SOCKET a_socket, AcceptorBase * a_pAcceptor)
+    static void Run_AcceptConnection(SOCKET a_socket, 
+                                     AcceptorBase * a_pAcceptor,
+                                     MediatorBase * a_pMediator)
     {
       if (a_pAcceptor->Init(a_socket))
       {
-        a_pAcceptor->Run();
+        a_pAcceptor->Run(a_pMediator);
       }
+      delete a_pMediator;
     }
 
     class Listener::PIMPL 
@@ -111,7 +115,7 @@ namespace IPC
     {
       std::stringstream ss;
       ss << "Setting up listening socket at " << a_sd.Get_IP() << ":" << a_sd.Get_Port().As_string() << "...";
-      Mediator::Log(ss.str(), Dg::LL_Info);
+      Logger::Log(ss.str(), Dg::LL_Info);
 
       struct addrinfo *result = NULL, *ptr = NULL, hints;
 
@@ -142,7 +146,7 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "ServerAppBase() -> getaddrinfo() failed with error: " << iResult;
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         return false;
       }
 
@@ -152,7 +156,7 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "ServerAppBase() -> socket() failed with error: " << WSAGetLastError();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         freeaddrinfo(result);
         return false;
       }
@@ -162,7 +166,7 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "ServerAppBase() -> bind() failed with error: " << WSAGetLastError();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         freeaddrinfo(result);
         closesocket(m_pimpl->listenSocket);
         return false;
@@ -174,7 +178,7 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "ServerAppBase() -> listen() failed with error: " << WSAGetLastError();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         closesocket(m_pimpl->listenSocket);
         return false;
       }
@@ -185,18 +189,18 @@ namespace IPC
         SocketData sd;
         if (!GetSocketData(m_pimpl->listenSocket, sd))
         {
-          Mediator::Log("Listener initialized, but unable to retrieve port!", Dg::LL_Warning);
+          Logger::Log("Listener initialized, but unable to retrieve port!", Dg::LL_Warning);
         }
         a_sd.Set_Port(sd.Get_Port());
       }
 
-      Mediator::Log("Done!", Dg::LL_Info);
+      Logger::Log("Done!", Dg::LL_Info);
       return true;
     }
 
-    void Listener::Run()
+    void Listener::Run(MediatorBase * a_pMediator)
     {
-      Mediator::Log("Listening for clients...", Dg::LL_Info);
+      Logger::Log("Listening for clients...", Dg::LL_Info);
 
       while (true)
       {
@@ -207,7 +211,7 @@ namespace IPC
         {
           std::stringstream ss;
           ss << "accept() failed with error: " << WSAGetLastError() << ". Client connection discarded.";
-          Mediator::Log(ss.str(), Dg::LL_Warning);
+          Logger::Log(ss.str(), Dg::LL_Warning);
           continue;
         }
 
@@ -218,12 +222,12 @@ namespace IPC
         //int res = getpeername(ClientSocket, (struct sockaddr *) &sin, &addr_len);
 
 
-        if (Mediator::ShouldStop())
+        if (a_pMediator->ShouldStop())
         {
           break;
         }
 
-        std::thread(Run_AcceptConnection, clientSocket, m_pimpl->pAcceptor);
+        std::thread(Run_AcceptConnection, clientSocket, m_pimpl->pAcceptor, a_pMediator->Clone());
       }
     }
 
@@ -242,14 +246,14 @@ namespace IPC
 
       if (!SendQuery(a_server, message.Serialize(), responseData))
       {
-        Mediator::Log("Request for ip failed.", Dg::LL_Warning);
+        Logger::Log("Request for ip failed.", Dg::LL_Warning);
         return false;
       }
 
       Message response;
       if (!response.Build(responseData))
       {
-        Mediator::Log("Request for ip failed.", Dg::LL_Warning);
+        Logger::Log("Request for ip failed.", Dg::LL_Warning);
         return false;
       }
 
@@ -258,7 +262,7 @@ namespace IPC
         std::stringstream ss;
         ss << "Request for ip failed: incorrect response header ID: " << response.header.ID
           << ". Expected: " << E_IPAddressResponse;
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         return false;
       }
 

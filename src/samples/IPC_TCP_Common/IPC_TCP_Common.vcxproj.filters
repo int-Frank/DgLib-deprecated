@@ -21,7 +21,7 @@
     <ClCompile Include="IPC_TCP_Listener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IPC_TCP_Mediator.cpp">
+    <ClCompile Include="IPC_TCP_Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +35,10 @@
     <ClInclude Include="IPC_TCP_AcceptorBase.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="IPC_TCP_Mediator.h">
+    <ClInclude Include="IPC_TCP_MediatorBase.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPC_TCP_Logger.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

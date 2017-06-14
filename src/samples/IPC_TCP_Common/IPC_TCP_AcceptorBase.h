@@ -3,12 +3,12 @@
 
 #include <windows.h>
 
-class MediatorBase;
-
 namespace IPC
 {
   namespace TCP
   {
+    class MediatorBase;
+
     class AcceptorBase
     {
     public:
@@ -17,7 +17,7 @@ namespace IPC
       virtual ~AcceptorBase() {}
 
       virtual bool Init(SOCKET a_socket) { return true; }
-      virtual void Run() {}
+      virtual void Run(MediatorBase *) {}
       virtual AcceptorBase * Clone() const { return new AcceptorBase(*this); }
 
     };

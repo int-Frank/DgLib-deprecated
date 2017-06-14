@@ -117,7 +117,6 @@ namespace IPC
     };
 
     bool Init(void(*Log)(std::string const &, int));
-    void SetStopFlagCallback(bool(*ShouldStop)());
     bool Shutdown();
 
     bool GetSocketData(SOCKET, SocketData &);

@@ -6,6 +6,14 @@
 
 class ServerState_On;
 
+namespace IPC
+{
+  namespace TCP
+  {
+    class MediatorBase;
+  }
+}
+
 class Acceptor : public IPC::TCP::AcceptorBase
 {
 public:
@@ -15,7 +23,7 @@ public:
   {}
 
   bool Init(SOCKET);
-  void Run();
+  void Run(IPC::TCP::MediatorBase *);
 
   Acceptor * Clone() const;
 
@@ -23,7 +31,7 @@ private:
 
   void Handle_DeregisterClient();
   void Handle_RegisterClient();
-  void Handle_Dispatch();
+  void Handle_Dispatch(IPC::TCP::MediatorBase *);
   void Handle_IPAddressRequest();
 
 private:

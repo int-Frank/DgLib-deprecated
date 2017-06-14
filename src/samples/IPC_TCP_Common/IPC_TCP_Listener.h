@@ -35,8 +35,11 @@ namespace IPC
       //server to query its ip address.
       bool InitByRequest(SocketData const & server, SocketData & result);
 
+      //This method takes ownership of the mediator
+      void Run(MediatorBase *);
+
       void Shutdown();
-      void Run();
+
 
     private:
 

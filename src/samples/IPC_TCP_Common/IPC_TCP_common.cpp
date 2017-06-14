@@ -10,7 +10,8 @@
 #include "DgStringFunctions.h"
 #include "DgIPC.h"
 #include "IPC_TCP_common.h"
-#include "IPC_TCP_Mediator.h"
+#include "IPC_TCP_MediatorBase.h"
+#include "IPC_TCP_Logger.h"
 
 namespace IPC
 {
@@ -20,7 +21,7 @@ namespace IPC
 
     bool Init(void(*Log)(std::string const &, int))
     {
-      Mediator::Log = Log;
+      Logger::Init(Log);
 
       WSADATA wsaData;
       int returnCode = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -28,14 +29,9 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "winsock failed to initialise. WSAStartup() returned: " << returnCode;
-        Mediator::Log(ss.str(), Dg::LL_Error);
+        Logger::Log(ss.str(), Dg::LL_Error);
       }
       return returnCode == 0;
-    }
-
-    void SetStopFlagCallback(bool(*ShouldStop)())
-    {
-      Mediator::ShouldStop = ShouldStop;
     }
 
     bool Shutdown()
@@ -67,7 +63,7 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "Port::Set() -> could not read port number from string: " << a_str;
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         m_port = 0;
         return false;
       }
@@ -197,7 +193,7 @@ namespace IPC
         std::stringstream ss;
         ss << "Message::Build() -> message too small. Min size: "
           << MessageHeader::Size() << ", message size: " << a_message.size();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         return false;
       }
 
@@ -209,7 +205,7 @@ namespace IPC
         std::stringstream ss;
         ss << "Message::Build() -> payload size mismatch. Payload size is "
           << payload.size() << " but flagged as " << header.payloadSize;
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         return false;
       }
       return true;
@@ -236,7 +232,7 @@ namespace IPC
     void Message::Set(PacketID a_id, std::vector<char> const & a_payload)
     {
       header.ID = a_id;
-      header.payloadSize = payload.size();
+      header.payloadSize = uint32_t(payload.size());
       payload = a_payload;
     }
 
@@ -277,7 +273,7 @@ namespace IPC
         std::stringstream ss;
         ss << "Send() -> getaddrinfo() failed with error: " << WSAGetLastError();
         ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         return SOCKET_ERROR;
       }
 
@@ -292,7 +288,7 @@ namespace IPC
           std::stringstream ss;
           ss << "Send() -> socket() failed with error: " << WSAGetLastError();
           ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
-          Mediator::Log(ss.str(), Dg::LL_Warning);
+          Logger::Log(ss.str(), Dg::LL_Warning);
           return SOCKET_ERROR;
         }
 
@@ -314,7 +310,7 @@ namespace IPC
         std::stringstream ss;
         ss << "Send() -> Unable to connect!" << WSAGetLastError();
         ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         return SOCKET_ERROR;
       }
 
@@ -329,7 +325,7 @@ namespace IPC
           std::stringstream ss;
           ss << "Send() -> send() failed with error: " << WSAGetLastError();
           ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
-          Mediator::Log(ss.str(), Dg::LL_Warning);
+          Logger::Log(ss.str(), Dg::LL_Warning);
           return SOCKET_ERROR;
         }
       }
@@ -340,7 +336,7 @@ namespace IPC
         ss << "Send() -> message size inconsistant: Expected to send " << targetBytes
           << ", but sent " << bytesSent;
         std::string str = ss.str();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
       }
 
       // shutdown the connection since no more data will be sent
@@ -349,7 +345,7 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "Send() -> shutdown() failed with error: " << WSAGetLastError();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         return SOCKET_ERROR;
       }
 
@@ -368,7 +364,7 @@ namespace IPC
         {
           std::stringstream ss;
           ss << "Recv() -> recv() failed with error: " << WSAGetLastError();
-          Mediator::Log(ss.str(), Dg::LL_Warning);
+          Logger::Log(ss.str(), Dg::LL_Warning);
           break;
         }
         if (returnValue == 0)
@@ -410,7 +406,7 @@ namespace IPC
       {
         std::stringstream ss;
         ss << "GetSocketData() -> getsockname() failed with error: " << WSAGetLastError();
-        Mediator::Log(ss.str(), Dg::LL_Warning);
+        Logger::Log(ss.str(), Dg::LL_Warning);
         return false;
       }
 

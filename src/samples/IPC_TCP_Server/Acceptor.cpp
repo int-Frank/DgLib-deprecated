@@ -4,7 +4,7 @@
 #include "ServerState_On.h"
 #include "DgTypes.h"
 #include "Acceptor.h"
-#include "IPC_TCP_Mediator.h"
+#include "Mediator.h"
 
 bool Acceptor::Init(SOCKET a_socket)
 {
@@ -17,7 +17,7 @@ Acceptor * Acceptor::Clone() const
   return new Acceptor(&m_rApp);
 }
 
-void Acceptor::Run()
+void Acceptor::Run(IPC::TCP::MediatorBase * a_pMediator)
 {
   m_rApp.LogToOutputWindow("New client connection...", Dg::LL_Debug);
   m_rApp.RegisterThread();
@@ -25,7 +25,7 @@ void Acceptor::Run()
   std::vector<char> messageData;
   do
   {
-    if (IPC::TCP::Recv(m_clientSocket, messageData) && !IPC::TCP::Mediator::ShouldStop())
+    if (IPC::TCP::Recv(m_clientSocket, messageData) && !a_pMediator->ShouldStop())
     {
       if (messageData.size() < IPC::TCP::MessageHeader::Size())
       {
@@ -60,7 +60,7 @@ void Acceptor::Run()
       }
       case IPC::TCP::E_Dispatch:
       {
-        Handle_Dispatch();
+        Handle_Dispatch(a_pMediator);
         break;
       }
       default:
@@ -112,7 +112,7 @@ void Acceptor::Handle_IPAddressRequest()
   }
 }
 
-void Acceptor::Handle_Dispatch()
+void Acceptor::Handle_Dispatch(IPC::TCP::MediatorBase * a_pMediator)
 {
   auto clientList = m_rApp.GetClientList();
   for (auto it = clientList.cbegin(); it != clientList.cend(); it++)
@@ -123,7 +123,7 @@ void Acceptor::Handle_Dispatch()
       ss << "Handle_Dispatch() -> Failed to send to: " << it->Get_IP() << ":" << it->Get_Port().As_string();
       m_rApp.LogToOutputWindow(ss.str(), Dg::LL_Warning);
     }
-    if (IPC::TCP::Mediator::ShouldStop())
+    if (a_pMediator->ShouldStop())
     {
       break;
     }
