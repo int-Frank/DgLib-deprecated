@@ -13,13 +13,17 @@ namespace IPC
     {
     public:
 
-      AcceptorBase() {}
+      AcceptorBase();
+      AcceptorBase(AcceptorBase const & a_other);
       virtual ~AcceptorBase() {}
 
-      virtual bool Init(SOCKET a_socket) { return true; }
+      void SetSocket(SOCKET);
       virtual void Run(MediatorBase *) {}
-      virtual AcceptorBase * Clone() const { return new AcceptorBase(*this); }
+      virtual AcceptorBase * Clone() const;
 
+    protected:
+
+      SOCKET m_socket;
     };
   }
 }

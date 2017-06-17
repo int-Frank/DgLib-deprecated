@@ -5,6 +5,4 @@
 
 #define BUILD_DLL
 
-extern void(*g_Log)(std::string const &, int);
-
 #endif

@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IPC_TCP_AcceptorBase.cpp" />
     <ClCompile Include="IPC_TCP_common.cpp" />
     <ClCompile Include="IPC_TCP_Listener.cpp" />
     <ClCompile Include="IPC_TCP_Logger.cpp" />

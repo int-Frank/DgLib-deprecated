@@ -14,7 +14,7 @@ namespace IPC
     {
     public:
 
-      Listener(AcceptorBase * a_pAcceptor);
+      Listener();
       ~Listener();
       Listener(Listener const &);
       Listener & operator=(Listener const &);
@@ -35,8 +35,8 @@ namespace IPC
       //server to query its ip address.
       bool InitByRequest(SocketData const & server, SocketData & result);
 
-      //This method takes ownership of the mediator
-      void Run(MediatorBase *);
+      //Does not take ownership of arguments.
+      void Run(AcceptorBase *, MediatorBase *);
 
       void Shutdown();
 

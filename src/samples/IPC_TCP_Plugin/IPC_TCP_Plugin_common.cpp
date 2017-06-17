@@ -2,27 +2,21 @@
 #include <sstream>
 #include <iostream>
 
+#define BUILD_DLL
+
 #include "IPC_TCP_common.h"
+#include "IPC_TCP_Logger.h"
 #include "IPC_TCP_Plugin_common.h"
 #include "DgIPC.h"
 
-static void LogDefault(std::string const & a_str, int a_logLevel)
-{
-  std::cout << a_str << ": " << a_logLevel << "\n";
-}
-
-void(*g_Log)(std::string const &, int)(LogDefault);
-
 bool ipcInit(void(*a_Log)(std::string const &, int))
 {
-  g_Log = a_Log;
-  IPC::SetLoggingFunction(a_Log);
-  return IPC::InitWinsock();
+  return IPC::TCP::Init(a_Log);
 }
 
 bool ipcShutdown()
 {
-  IPC::ShutdownWinsock();
+  IPC::TCP::Shutdown();
   return true;
 }
 
@@ -34,13 +28,13 @@ std::string ipcGetUsage()
     << "  ID   : int, 2\n"
     << "  Size : int, 4\n"
     << "Possible values for ID are:\n"
-    << "  " << IPC::E_IPAddressRequest << " : IP address query\n"
-    << "  " << IPC::E_IPAddressResponse << " : IP address query response\n"
-    << "  " << IPC::E_RegisterClient << " : Register a client\n"
-    << "  " << IPC::E_ClientExiting << " : Notification that a client is closing\n"
-    << "  " << IPC::E_Dispatch << " : Dispatch payload to all registered clients\n"
+    << "  " << IPC::TCP::E_IPAddressRequest << " : IP address query\n"
+    << "  " << IPC::TCP::E_IPAddressResponse << " : IP address query response\n"
+    << "  " << IPC::TCP::E_RegisterClient << " : Register a client\n"
+    << "  " << IPC::TCP::E_ClientExiting << " : Notification that a client is closing\n"
+    << "  " << IPC::TCP::E_Dispatch << " : Dispatch payload to all registered clients\n"
     << "Payload formats:\n"
-    << "  ID : " << IPC::E_IPAddressRequest << "\n"
+    << "  ID : " << IPC::TCP::E_IPAddressRequest << "\n"
     << "    int, 2 - port to send response to.\n"
     << "And so on..."
     ;

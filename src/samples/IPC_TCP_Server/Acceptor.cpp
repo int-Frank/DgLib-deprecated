@@ -6,26 +6,19 @@
 #include "Acceptor.h"
 #include "Mediator.h"
 
-bool Acceptor::Init(SOCKET a_socket)
-{
-  m_clientSocket = a_socket;
-  return true;
-}
-
 Acceptor * Acceptor::Clone() const
 {
-  return new Acceptor(&m_rApp);
+  return new Acceptor(*this);
 }
 
 void Acceptor::Run(IPC::TCP::MediatorBase * a_pMediator)
 {
   m_rApp.LogToOutputWindow("New client connection...", Dg::LL_Debug);
-  m_rApp.RegisterThread();
 
   std::vector<char> messageData;
   do
   {
-    if (IPC::TCP::Recv(m_clientSocket, messageData) && !a_pMediator->ShouldStop())
+    if (IPC::TCP::Recv(m_socket, messageData) && !a_pMediator->ShouldStop())
     {
       if (messageData.size() < IPC::TCP::MessageHeader::Size())
       {
@@ -74,9 +67,8 @@ void Acceptor::Run(IPC::TCP::MediatorBase * a_pMediator)
   } while (false);
 
   m_rApp.LogToOutputWindow("Closing client connection.", Dg::LL_Debug);
-  closesocket(m_clientSocket);
-  m_clientSocket = INVALID_SOCKET;
-  m_rApp.DeregisterThread();
+  closesocket(m_socket);
+  m_socket = INVALID_SOCKET;
 }
 
 void Acceptor::Handle_RegisterClient()
@@ -99,8 +91,14 @@ void Acceptor::Handle_DeregisterClient()
 
 void Acceptor::Handle_IPAddressRequest()
 {
+  //DEBUG
+  //sockaddr_in sin;
+  //socklen_t addr_len = sizeof(sin);
+  //int res = getpeername(ClientSocket, (struct sockaddr *) &sin, &addr_len);
+
+
   IPC::TCP::SocketData sd;
-  if (IPC::TCP::GetSocketData(m_clientSocket, sd))
+  if (IPC::TCP::GetSocketData(m_socket, sd))
   {
     std::vector<char> payload;
     sd.Serialize(payload);

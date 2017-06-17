@@ -5,6 +5,7 @@
 
 #include <sstream>
 #include <thread>
+#include <atomic>
 
 #include "IPC_TCP_Listener.h"
 #include "DgTypes.h"
@@ -16,45 +17,40 @@ namespace IPC
 {
   namespace TCP
   {
-    static void Run_AcceptConnection(SOCKET a_socket, 
-                                     AcceptorBase * a_pAcceptor,
-                                     MediatorBase * a_pMediator)
+    static void Run_AcceptConnection(AcceptorBase * a_pAcceptor,
+                                     MediatorBase * a_pMediator,
+                                     std::atomic<int> * a_activeThreads)
     {
-      if (a_pAcceptor->Init(a_socket))
-      {
-        a_pAcceptor->Run(a_pMediator);
-      }
+      a_pAcceptor->Run(a_pMediator);
+      delete a_pAcceptor;
       delete a_pMediator;
+      a_activeThreads--;
     }
 
     class Listener::PIMPL 
     {
     public:
 
-      PIMPL(AcceptorBase * a_pAcceptor)
+      PIMPL()
         : listenSocket(INVALID_SOCKET)
-        , pAcceptor(a_pAcceptor)
       {}
 
       PIMPL(PIMPL const & a_other)
         : listenSocket(a_other.listenSocket)
-        , pAcceptor(a_other.pAcceptor->Clone())
       {}
 
       ~PIMPL()
       {
-        delete pAcceptor;
-        pAcceptor = nullptr;
       }
 
       static bool RequestIPInfoFromServer(SocketData const & server, SocketData & out);
 
-      AcceptorBase * pAcceptor;
-      SOCKET         listenSocket;
+      SOCKET            listenSocket;
+      std::atomic<int>  activeThreads;
     };
 
-    Listener::Listener(AcceptorBase * a_pAcceptor)
-      : m_pimpl(new PIMPL(a_pAcceptor))
+    Listener::Listener()
+      : m_pimpl(new PIMPL())
     {
 
     }
@@ -67,6 +63,7 @@ namespace IPC
 
     Listener::~Listener()
     {
+      Shutdown();
       delete m_pimpl;
       m_pimpl = nullptr;
     }
@@ -198,7 +195,7 @@ namespace IPC
       return true;
     }
 
-    void Listener::Run(MediatorBase * a_pMediator)
+    void Listener::Run(AcceptorBase * a_pAcceptor, MediatorBase * a_pMediator)
     {
       Logger::Log("Listening for clients...", Dg::LL_Info);
 
@@ -215,19 +212,29 @@ namespace IPC
           continue;
         }
 
-
-        //DEBUG
-        //sockaddr_in sin;
-        //socklen_t addr_len = sizeof(sin);
-        //int res = getpeername(ClientSocket, (struct sockaddr *) &sin, &addr_len);
-
-
         if (a_pMediator->ShouldStop())
         {
           break;
         }
 
-        std::thread(Run_AcceptConnection, clientSocket, m_pimpl->pAcceptor, a_pMediator->Clone());
+        MediatorBase * pMediator = a_pMediator->Clone();
+        AcceptorBase * pAcceptor = a_pAcceptor->Clone();
+        pAcceptor->SetSocket(clientSocket);
+        m_pimpl->activeThreads++;
+        try
+        {
+          std::thread(Run_AcceptConnection, 
+                      pAcceptor, 
+                      pMediator, 
+                      &m_pimpl->activeThreads);
+        }
+        catch (...)
+        {
+          Logger::Log("Could not start acceptor thread!" , Dg::LL_Warning);
+          m_pimpl->activeThreads--;
+          delete pMediator;
+          delete pAcceptor;
+        }
       }
     }
 
@@ -235,6 +242,14 @@ namespace IPC
     {
       closesocket(m_pimpl->listenSocket);
       m_pimpl->listenSocket = INVALID_SOCKET;
+
+      int elapsedTime = 0;
+      while (m_pimpl->activeThreads > 0)
+      {
+        int const sleepTime = 200;
+        Sleep(sleepTime);
+        elapsedTime += sleepTime;
+      }
     }
 
     bool Listener::PIMPL::RequestIPInfoFromServer(SocketData const & a_server, SocketData & a_out)

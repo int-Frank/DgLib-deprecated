@@ -8,18 +8,18 @@
 #include "Mediator.h"
 
 static void Run_Listen(ServerState_On * a_pApp, 
-                       IPC::TCP::SocketData a_listenSocket,
-                       IPC::TCP::MediatorBase * a_pMediator)
+                       IPC::TCP::SocketData a_listenSocket)
 {
   a_pApp->ListenerRunning(true);
-  IPC::TCP::Listener listener(new Acceptor(a_pApp));
+  IPC::TCP::Listener listener;
+  Acceptor acceptor(a_pApp);
+  Mediator mediator(a_pApp);
   if (listener.InitStrict(a_listenSocket))
   {
-    listener.Run(a_pMediator);
+    listener.Run(&acceptor, &mediator);
   }
   a_pApp->ListenerRunning(false);
   listener.Shutdown();
-  delete a_pMediator;
 }
 
 ServerState_On::ServerState_On(TCP_Server * a_pApp, IPC::TCP::SocketData const & a_listenSocketData)
@@ -27,7 +27,7 @@ ServerState_On::ServerState_On(TCP_Server * a_pApp, IPC::TCP::SocketData const &
   , m_listenSocketData(a_listenSocketData)
   , m_shouldStop(false)
 {
-  m_listenThread = std::thread(Run_Listen, this, m_listenSocketData, new Mediator(this));
+  m_listenThread = std::thread(Run_Listen, this, m_listenSocketData);
 }
 
 void ServerState_On::RegisterClient(IPC::TCP::SocketData const & a_sd)
@@ -38,16 +38,6 @@ void ServerState_On::RegisterClient(IPC::TCP::SocketData const & a_sd)
 void ServerState_On::DeregisterClient(IPC::TCP::SocketData const & a_sd)
 {
   m_clientHandler.RemoveClient(a_sd);
-}
-
-void ServerState_On::RegisterThread()
-{
-  m_activeThreads++;
-}
-
-void ServerState_On::DeregisterThread()
-{
-  m_activeThreads--;
 }
 
 std::vector<IPC::TCP::SocketData> ServerState_On::GetClientList()
@@ -87,14 +77,5 @@ ServerState_On::~ServerState_On()
   
   m_listenThread.join();
   
-  //Ensure all worker threads are done
-  int elapsedTime = 0;
-  while (m_activeThreads > 0)
-  {
-    int const sleepTime = 200;
-    Sleep(sleepTime);
-    elapsedTime += sleepTime;
-  }
-
   m_rApp.LogToOutputWindow("Done!", Dg::LL_Info);
 }

@@ -142,12 +142,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="IPC_TCP_Dispatcher.cpp" />
+    <ClCompile Include="ICP_TCP_Plugin_Mediator.cpp" />
+    <ClCompile Include="IPC_TCP_Plugin_Acceptor.cpp" />
+    <ClCompile Include="IPC_TCP_Plugin_Dispatcher.cpp" />
     <ClCompile Include="IPC_TCP_Plugin_common.cpp" />
-    <ClCompile Include="IPC_TCP_Receiver.cpp" />
+    <ClCompile Include="IPC_TCP_Plugin_Receiver.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IPC_TCP_Plugin_Acceptor.h" />
     <ClInclude Include="IPC_TCP_Plugin_common.h" />
+    <ClInclude Include="IPC_TCP_Plugin_Mediator.h" />
+    <ClInclude Include="IPC_TCP_Plugin_ReceiverTCP.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,18 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IPC_TCP_Dispatcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IPC_TCP_Plugin_common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IPC_TCP_Receiver.cpp">
+    <ClCompile Include="IPC_TCP_Plugin_Dispatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IPC_TCP_Plugin_Receiver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IPC_TCP_Plugin_Acceptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ICP_TCP_Plugin_Mediator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPC_TCP_Plugin_common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPC_TCP_Plugin_Acceptor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPC_TCP_Plugin_Mediator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPC_TCP_Plugin_ReceiverTCP.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

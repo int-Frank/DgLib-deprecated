@@ -13,6 +13,7 @@ public:
   Mediator(Mediator const &);
   ~Mediator() {}
   bool ShouldStop();
+  void HasStopped() {}
   Mediator * Clone();
 
 private:

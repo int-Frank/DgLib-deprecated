@@ -12,13 +12,16 @@
 #define DLLAPI
 #endif // BUILD_DLL
 
+typedef void(*ipcNewDataCallback)(std::vector<char> const &);
+typedef std::map<std::string, std::string> ipcConfigMap;
+
 class ipcDispatcherBase
 {
 public:
   virtual ~ipcDispatcherBase() = default;
 
   virtual bool Init(std::map<std::string, std::string> const & config) = 0;
-  virtual void Shutdown() = 0;
+  virtual bool Shutdown() = 0;
 
   virtual void Dispatch(std::vector<char> const &) = 0;
 };
@@ -28,9 +31,8 @@ class ipcReceiverBase
 public:
   virtual ~ipcReceiverBase() = default;
 
-  virtual bool Init(std::map<std::string, std::string> const & config,
-                    void (*NewDataCallback)(std::vector<char> const &)) = 0;
-  virtual void Shutdown() = 0;
+  virtual bool Init(ipcConfigMap const &, ipcNewDataCallback) = 0;
+  virtual bool Shutdown() = 0;
 };
 
 DLLAPI bool ipcInit(void(*a_Log)(std::string const &, int));

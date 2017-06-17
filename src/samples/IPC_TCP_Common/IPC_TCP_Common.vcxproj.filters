@@ -24,6 +24,9 @@
     <ClCompile Include="IPC_TCP_Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IPC_TCP_AcceptorBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPC_TCP_common.h">

@@ -22,7 +22,12 @@ public:
     : m_rApp(*a_pApp)
   {}
 
-  bool Init(SOCKET);
+  Acceptor(Acceptor const & a_other)
+    : AcceptorBase(a_other)
+    , m_rApp(a_other.m_rApp)
+    , m_message(a_other.m_message)
+  {}
+
   void Run(IPC::TCP::MediatorBase *);
 
   Acceptor * Clone() const;
@@ -36,7 +41,6 @@ private:
 
 private:
 
-  SOCKET             m_clientSocket;
   IPC::TCP::Message  m_message;
   ServerState_On &   m_rApp;
 };

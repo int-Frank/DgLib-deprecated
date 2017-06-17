@@ -18,8 +18,6 @@ public:
 
   ~ServerState_On();
 
-  void RegisterThread();
-  void DeregisterThread();
   void RegisterClient(IPC::TCP::SocketData const &);
   void DeregisterClient(IPC::TCP::SocketData const &);
   std::vector<IPC::TCP::SocketData> GetClientList();
@@ -32,7 +30,6 @@ private:
 
 private:
 
-  std::atomic<int>      m_activeThreads;
   std::atomic<bool>     m_listenerRunning;
   std::atomic<bool>     m_shouldStop;
   ClientHandler         m_clientHandler;
