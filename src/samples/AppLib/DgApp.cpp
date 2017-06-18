@@ -728,6 +728,7 @@ void DgApp::AddFileHandlingMenuItems()
       m_pimpl->windowStack.push(PIMPL::Modal::SavePrompt);
     }
   }
+  ImGui::Separator();
   if (ImGui::MenuItem("Save"))
   {
     if (m_pimpl->currentProject == "")
