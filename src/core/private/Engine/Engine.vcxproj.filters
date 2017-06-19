@@ -64,14 +64,14 @@
     <ClInclude Include="..\..\public\particle_system\DgParticleSystem.h">
       <Filter>Particle System</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgMeshBase.h">
-      <Filter>3d tools</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\game_tools\DgGTBSPTree.h">
       <Filter>Game Tools</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\game_tools\DgGTBSPTreePath.h">
       <Filter>Game Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgMeshBase.h">
+      <Filter>3d tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

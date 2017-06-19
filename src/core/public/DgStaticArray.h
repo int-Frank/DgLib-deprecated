@@ -4,7 +4,7 @@
 namespace Dg
 {
   template<typename T, int SIZE>
-  class DgArray
+  class StaticArray
   {
   public:
 
