@@ -1,47 +1,59 @@
 #ifndef DGIPC_H
 #define DGIPC_H
 
-#include <vector>
-#include <map>
-#include <string>
-#include <atomic>
-
 #ifdef BUILD_DLL
-#define DLLAPI __declspec(dllexport)
+#define DLLAPI extern "C" __declspec(dllexport)
 #else
 #define DLLAPI
 #endif // BUILD_DLL
 
-typedef void(*ipcNewDataCallback)(std::vector<char> const &);
-typedef std::map<std::string, std::string> ipcConfigMap;
+typedef void(*ipcNewDataCallback)(char const *, int);
+typedef void(*ipcLogCallback)(char const *, int);
 
-class ipcDispatcherBase
+typedef bool(*ProcipcInit)(ipcLogCallback);
+typedef bool(*ProcipcShutdown)();
+typedef char*(*ProcipcGetName)();
+typedef char*(*ProcipcGetUsage)();
+
+class IIPC_Dispatcher
 {
 public:
-  virtual ~ipcDispatcherBase() = default;
+  IIPC_Dispatcher() {}
+  virtual ~IIPC_Dispatcher() {}
 
-  virtual bool Init(std::map<std::string, std::string> const & config) = 0;
+  //ConfigMap should be std::map<std::string, std::string>
+  virtual bool Init(void const * pConfigMap) = 0;
   virtual bool Shutdown() = 0;
-
-  virtual void Dispatch(std::vector<char> const &) = 0;
+  virtual void Dispatch(char const * data, int size) = 0;
 };
 
-class ipcReceiverBase
+class IIPC_Receiver
 {
 public:
-  virtual ~ipcReceiverBase() = default;
 
-  virtual bool Init(ipcConfigMap const &, ipcNewDataCallback) = 0;
+  IIPC_Receiver() {}
+  virtual ~IIPC_Receiver() {}
+
+  //ConfigMap should be std::map<std::string, std::string>
+  virtual bool Init(void const * pConfigMap, ipcNewDataCallback) = 0;
   virtual bool Shutdown() = 0;
 };
 
-DLLAPI bool ipcInit(void(*a_Log)(std::string const &, int));
+typedef IIPC_Dispatcher*(*ProcipcCreateDispatcher)();
+typedef void(*ProcipcReleaseDispatcher)(IIPC_Dispatcher *);
+typedef IIPC_Receiver*(*ProcipcCreateReceiver)();
+typedef void(*ProcipcReleaseReceiver)(IIPC_Receiver *);
+
+DLLAPI bool ipcInit(ipcLogCallback);
 DLLAPI bool ipcShutdown();
 
-DLLAPI ipcDispatcherBase * ipcGetDispatcher();
-DLLAPI ipcReceiverBase * GetReceiver();
+DLLAPI IIPC_Dispatcher * ipcCreateDispatcher();
+DLLAPI void ipcReleaseDispatcher(IIPC_Dispatcher *);
 
-DLLAPI std::string ipcGetName();
-DLLAPI std::string ipcGetUsage();
+DLLAPI IIPC_Receiver * ipcCreateReceiver();
+DLLAPI void ipcReleaseReceiver(IIPC_Receiver *);
+
+DLLAPI char * ipcGetName();
+DLLAPI char * ipcGetUsage();
 
 #endif

@@ -36,6 +36,7 @@ public:
 
   virtual void KeyEvent(int, int) {}
   virtual void UpdateScroll(double) {}
+  virtual void WindowSizeCallback(int h, int w) {}
 
   void SetDirty(bool = true);
 

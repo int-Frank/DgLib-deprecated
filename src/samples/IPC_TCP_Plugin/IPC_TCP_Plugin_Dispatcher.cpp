@@ -3,19 +3,21 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
+#include <map>
+#include <string>
+
 #define BUILD_DLL
 
 #include "DgTypes.h"
 #include "IPC_TCP_common.h"
 #include "IPC_TCP_Logger.h"
-#include "IPC_TCP_Plugin_common.h"
 #include "DgStringFunctions.h"
 #include "DgIPC.h"
 
 using IPC::TCP::Logger::Log;
 using namespace IPC::TCP;
 
-class DispatcherTCP : public ipcDispatcherBase
+class DispatcherTCP : public IIPC_Dispatcher
 {
 public:
   DispatcherTCP()
@@ -23,17 +25,20 @@ public:
 
   ~DispatcherTCP() {}
 
-  bool Init(std::map<std::string, std::string> const & a_config)
+  bool Init(void const * a_pConfigMap)
   {
-    auto it_port = a_config.find("server_port");
-    if (it_port == a_config.end())
+    std::map <std::string, std::string> const * pConfig =
+      reinterpret_cast<std::map<std::string, std::string> const *>(a_pConfigMap);
+
+    auto it_port = pConfig->find("server_port");
+    if (it_port == pConfig->end())
     {
       Log("Listen port not set in config file.", Dg::LL_Error);
       return false;
     }
 
-    auto it_ipAddr = a_config.find("server_ip");
-    if (it_ipAddr == a_config.end())
+    auto it_ipAddr = pConfig->find("server_ip");
+    if (it_ipAddr == pConfig->end())
     {
       Log("IP address not set in config file.", Dg::LL_Error);
       return false;
@@ -59,9 +64,10 @@ public:
     return true;
   }
 
-  void Dispatch(std::vector<char> const & a_payload)
+  void Dispatch(char const * a_data, int a_size)
   {
-    if (Send(m_serverSocketData, a_payload))
+    std::vector<char> payload(a_data, a_data + size_t(a_size));
+    if (Send(m_serverSocketData, payload))
     {
       Log("Dispatch successful.", Dg::LL_Info);
     }
@@ -76,7 +82,12 @@ private:
   SocketData m_serverSocketData;
 };
 
-ipcDispatcherBase * ipcGetDispatcher()
+IIPC_Dispatcher * ipcCreateDispatcher()
 {
   return new DispatcherTCP();
+}
+
+void ipcReleaseDispatcher(IIPC_Dispatcher * a_pDispatcher)
+{
+  delete a_pDispatcher;
 }

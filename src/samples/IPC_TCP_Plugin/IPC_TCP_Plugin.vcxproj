@@ -139,6 +139,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\output\IPC_TCP_Common\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Engine\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Math\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Containers\$(Platform)\$(Configuration);$(SolutionDir)..\..\output\Utility\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;Math.lib;Utility.lib;Containers.lib;IPC_TCP_Common.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -146,11 +147,10 @@
     <ClCompile Include="IPC_TCP_Plugin_Acceptor.cpp" />
     <ClCompile Include="IPC_TCP_Plugin_Dispatcher.cpp" />
     <ClCompile Include="IPC_TCP_Plugin_common.cpp" />
-    <ClCompile Include="IPC_TCP_Plugin_Receiver.cpp" />
+    <ClCompile Include="IPC_TCP_Plugin_ReceiverTPC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IPC_TCP_Plugin_Acceptor.h" />
-    <ClInclude Include="IPC_TCP_Plugin_common.h" />
     <ClInclude Include="IPC_TCP_Plugin_Mediator.h" />
     <ClInclude Include="IPC_TCP_Plugin_ReceiverTCP.h" />
   </ItemGroup>

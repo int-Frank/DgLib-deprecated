@@ -257,6 +257,7 @@ public:
   void DoEvent()
   {
     DgApp::GetInstance()->NewProject();
+    DgApp::GetInstance()->SetDirty(false);
   }
 
   Event_NewProject * Clone() const { return new Event_NewProject(*this); }
@@ -293,6 +294,11 @@ public:
 private:
   std::string       m_fileName;
 };
+
+static void window_size_callback(GLFWwindow* a_window, int a_width, int a_height)
+{
+  DgApp::GetInstance()->WindowSizeCallback(a_width, a_height);
+}
 
 class DgApp::PIMPL
 {
@@ -496,19 +502,20 @@ DgApp::DgApp()
   PIMPL::s_app = this;
 
   //Read configuration
+  do
   {
     Dg::Parser_INI parser;
     Dg::ErrorCode result = parser.Parse(m_pimpl->configFileName);
 
     if (result == Dg::Err_FailedToOpenFile)
     {
-      LogToFile(std::string("Failed to open config file: ") + m_pimpl->configFileName, Dg::LL_Error);
-      throw AppInitFailed;
+      LogToFile(std::string("Failed to open config file: ") + m_pimpl->configFileName, Dg::LL_Warning);
+      break;
     }
     else if (result != Dg::Err_None)
     {
-      LogToFile(std::string("Failed to parse config file: ") + m_pimpl->configFileName, Dg::LL_Error);
-      throw AppInitFailed;
+      LogToFile(std::string("Failed to parse config file: ") + m_pimpl->configFileName, Dg::LL_Warning);
+      break;
     }
 
     m_pimpl->configItems = parser.GetItems();
@@ -563,7 +570,7 @@ DgApp::DgApp()
         }
       }
     }
-  }
+  } while (false);
 
   //Set up GL
   {
@@ -612,6 +619,7 @@ DgApp::DgApp()
     }
 
     glfwMakeContextCurrent(m_pimpl->window);
+    glfwSetWindowSizeCallback(m_pimpl->window, window_size_callback);
 
     // start GLEW extension handler
     glewExperimental = GL_TRUE;

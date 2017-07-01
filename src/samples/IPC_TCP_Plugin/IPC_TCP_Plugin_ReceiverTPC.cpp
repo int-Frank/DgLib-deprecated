@@ -6,6 +6,10 @@
 #include <thread>
 #include <atomic>
 #include <sstream>
+#include <string>
+#include <map>
+
+#define BUILD_DLL
 
 #include "IPC_TCP_Plugin_ReceiverTCP.h"
 #include "IPC_TCP_Plugin_Mediator.h"
@@ -16,7 +20,6 @@
 #include "IPC_TCP_Plugin_Acceptor.h"
 #include "IPC_TCP_Logger.h"
 #include "IPC_TCP_Listener.h"
-#include "IPC_TCP_Plugin_common.h"
 #include "DgIPC.h"
 
 using IPC::TCP::Logger::Log;
@@ -71,7 +74,7 @@ ReceiverTCP::~ReceiverTCP()
   Shutdown();
 }
 
-bool ReceiverTCP::Init(ipcConfigMap const & a_config, ipcNewDataCallback a_clbk)
+bool ReceiverTCP::Init(void const * a_pConfig, ipcNewDataCallback a_clbk)
 {
   if (m_pThreadListener || m_pThreadPing)
   {
@@ -79,15 +82,18 @@ bool ReceiverTCP::Init(ipcConfigMap const & a_config, ipcNewDataCallback a_clbk)
     return false;
   }
 
-  auto it_port = a_config.find("server_port");
-  if (it_port == a_config.end())
+  std::map <std::string, std::string> const * pConfig =
+    reinterpret_cast<std::map <std::string, std::string> const *>(a_pConfig);
+
+  auto it_port = pConfig->find("server_port");
+  if (it_port == pConfig->end())
   {
     Log("Couldn't initialise ReceiverTCP! Listen port not set in config file. Set using server_port=XXXXX", Dg::LL_Error);
     return false;
   }
 
-  auto it_ipAddr = a_config.find("server_ip");
-  if (it_ipAddr == a_config.end())
+  auto it_ipAddr = pConfig->find("server_ip");
+  if (it_ipAddr == pConfig->end())
   {
     Log("Couldn't initialise ReceiverTCP! IP address not set in config file. Set using server_ip=XXX.XXX.XXX.XXX", Dg::LL_Error);
     return false;
@@ -167,7 +173,12 @@ bool ReceiverTCP::Shutdown()
   return success;
 }
 
-ipcReceiverBase * ipcGetReceiver()
+IIPC_Receiver * ipcCreateReceiver()
 {
   return new ReceiverTCP();
+}
+
+void ipcReleaseReceiver(IIPC_Receiver * a_pReceiver)
+{
+  delete a_pReceiver;
 }

@@ -77,5 +77,5 @@ void Acceptor::Run(IPC::TCP::MediatorBase * a_pMediator)
 
 void Acceptor::Handle_Dispatch()
 {
-
+  m_newDataCallback(m_message.payload.data(), (int)m_message.payload.size());
 }

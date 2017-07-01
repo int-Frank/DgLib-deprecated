@@ -7,7 +7,7 @@
 #include "DgIPC.h"
 #include "IPC_TCP_common.h"
 
-class ReceiverTCP : public ipcReceiverBase
+class ReceiverTCP : public IIPC_Receiver
 {
 public:
 
@@ -16,7 +16,7 @@ public:
   ReceiverTCP & operator=(ReceiverTCP const &) = delete;
   ~ReceiverTCP();
 
-  bool Init(ipcConfigMap const & a_config, ipcNewDataCallback a_clbk);
+  bool Init(void const *, ipcNewDataCallback);
   bool ShouldStop();
   bool Shutdown();
 

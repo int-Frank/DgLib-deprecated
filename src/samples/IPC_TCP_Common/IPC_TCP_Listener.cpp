@@ -24,7 +24,7 @@ namespace IPC
       a_pAcceptor->Run(a_pMediator);
       delete a_pAcceptor;
       delete a_pMediator;
-      a_activeThreads--;
+      (*a_activeThreads)--;
     }
 
     class Listener::PIMPL 
@@ -33,10 +33,7 @@ namespace IPC
 
       PIMPL()
         : listenSocket(INVALID_SOCKET)
-      {}
-
-      PIMPL(PIMPL const & a_other)
-        : listenSocket(a_other.listenSocket)
+        , activeThreads(0)
       {}
 
       ~PIMPL()
@@ -47,16 +44,16 @@ namespace IPC
 
       SOCKET            listenSocket;
       std::atomic<int>  activeThreads;
+
+    private:
+
+      PIMPL(PIMPL const & a_other);
+      PIMPL & operator=(PIMPL const & a_other);
+
     };
 
     Listener::Listener()
       : m_pimpl(new PIMPL())
-    {
-
-    }
-
-    Listener::Listener(Listener const & a_other)
-      : m_pimpl(new PIMPL(*a_other.m_pimpl))
     {
 
     }
@@ -66,16 +63,6 @@ namespace IPC
       Shutdown();
       delete m_pimpl;
       m_pimpl = nullptr;
-    }
-
-    Listener & Listener::operator=(Listener const & a_other)
-    {
-      if (this != &a_other)
-      {
-        delete m_pimpl;
-        m_pimpl = new PIMPL(*a_other.m_pimpl);
-      }
-      return *this;
     }
 
     bool Listener::InitByRequest(SocketData const & a_server, SocketData & a_result)
@@ -223,10 +210,11 @@ namespace IPC
         m_pimpl->activeThreads++;
         try
         {
-          std::thread(Run_AcceptConnection, 
-                      pAcceptor, 
-                      pMediator, 
-                      &m_pimpl->activeThreads);
+          std::thread t(Run_AcceptConnection, 
+                        pAcceptor, 
+                        pMediator, 
+                        &m_pimpl->activeThreads);
+          t.detach();
         }
         catch (...)
         {
@@ -244,6 +232,7 @@ namespace IPC
       m_pimpl->listenSocket = INVALID_SOCKET;
 
       int elapsedTime = 0;
+      int t = 0;
       while (m_pimpl->activeThreads > 0)
       {
         int const sleepTime = 200;
