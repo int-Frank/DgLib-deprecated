@@ -67,9 +67,13 @@ public:
   void Dispatch(char const * a_data, int a_size)
   {
     std::vector<char> payload(a_data, a_data + size_t(a_size));
-    if (Send(m_serverSocketData, payload))
+    Message message;
+    message.Set(E_Dispatch, payload);
+    if (Send(m_serverSocketData, message.Serialize()))
     {
-      Log("Dispatch successful.", Dg::LL_Info);
+      std::stringstream ss;
+      ss << "Dispatch successful. " << message.payload.size() << " bytes sent.";
+      Log(ss.str(), Dg::LL_Info);
     }
     else
     {
