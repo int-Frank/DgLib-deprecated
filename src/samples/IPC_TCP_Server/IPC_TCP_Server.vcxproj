@@ -155,6 +155,7 @@
     <ClInclude Include="IPC_TCP_Server.h" />
     <ClInclude Include="Mediator.h" />
     <ClInclude Include="ServerStateBase.h" />
+    <ClInclude Include="ServerState_Off.h" />
     <ClInclude Include="ServerState_On.h" />
   </ItemGroup>
   <ItemGroup>

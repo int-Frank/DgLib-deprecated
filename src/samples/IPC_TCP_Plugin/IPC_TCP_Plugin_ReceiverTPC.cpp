@@ -115,6 +115,7 @@ bool ReceiverTCP::Init(void const * a_pConfig, ipcNewDataCallback a_clbk)
   Listener * plistener(new Listener());
   if (!plistener->InitByRequest(serverSocketData, m_listenSocketData))
   {
+    Log("Failed to initialize by request", Dg::LL_Error);
     return false;
   }
 

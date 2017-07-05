@@ -8,6 +8,7 @@ namespace IPC
   namespace TCP
   {
     class MediatorBase;
+    class SocketData;
 
     class AcceptorBase
     {
@@ -18,6 +19,7 @@ namespace IPC
       virtual ~AcceptorBase() {}
 
       void SetSocket(SOCKET);
+
       virtual void Run(MediatorBase *) {}
       virtual AcceptorBase * Clone() const;
 

@@ -16,6 +16,8 @@ public:
   {}
 
   virtual ~ServerStateBase() {}
+  virtual void BuildUI() {}
+
   void LogToOutputWindow(std::string const & a_message, Dg::LogLevel a_lvl)
   {
     m_rApp.LogToOutputWindow(a_message, a_lvl);

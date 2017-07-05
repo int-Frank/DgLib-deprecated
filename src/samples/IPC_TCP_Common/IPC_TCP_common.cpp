@@ -79,7 +79,7 @@ namespace IPC
 
     void Port::Serialize(std::vector<char> & a_out) const
     {
-      for (size_t i = 0; i < sizeof(PortType); i++)
+      for (size_t i = 0; i < sizeof(m_port); i++)
       {
         a_out.push_back((reinterpret_cast<char const *>(&m_port))[i]);
       }
@@ -122,7 +122,7 @@ namespace IPC
       return a_buf;
     }
 
-    void SocketData::Serialize(std::vector<char>  & a_out) const
+    void SocketData::Serialize(std::vector<char> & a_out) const
     {
       m_port.Serialize(a_out);
       ipAddrStringSizeType strLen = ipAddrStringSizeType(m_ipAddr.size());
@@ -198,7 +198,11 @@ namespace IPC
       }
 
       char const * pData = header.Build(a_message.data());
-      payload.assign(pData, &a_message.back());
+      if (pData <= &a_message.back())
+      {
+        payload.assign(pData, &a_message.back());
+      }
+      payload.push_back(a_message.back());
 
       if (payload.size() < size_t(header.payloadSize))
       {
@@ -232,7 +236,7 @@ namespace IPC
     void Message::Set(PacketID a_id, std::vector<char> const & a_payload)
     {
       header.ID = a_id;
-      header.payloadSize = uint32_t(payload.size());
+      header.payloadSize = uint32_t(a_payload.size());
       payload = a_payload;
     }
 
@@ -252,6 +256,45 @@ namespace IPC
     {
       return (m_port.As_uint16() != a_other.m_port.As_uint16())
           || (m_ipAddr != a_other.m_ipAddr);
+    }
+
+    bool Send(SOCKET a_socket, std::vector<char> const & a_message)
+    {
+      int targetBytes = int(a_message.size());
+      int bytesSent = 0;
+      while (bytesSent < targetBytes)
+      {
+        bytesSent = send(a_socket, &a_message[bytesSent], int(a_message.size()) - bytesSent, 0);
+
+        if (bytesSent == SOCKET_ERROR)
+        {
+          std::stringstream ss;
+          ss << "Send(SOCKET) -> send() failed with error: " << WSAGetLastError();
+          Logger::Log(ss.str(), Dg::LL_Warning);
+          return false;
+        }
+      }
+
+      if (targetBytes != bytesSent)
+      {
+        std::stringstream ss;
+        ss << "Send() -> message size inconsistant: Expected to send " << targetBytes
+          << ", but sent " << bytesSent;
+        std::string str = ss.str();
+        Logger::Log(ss.str(), Dg::LL_Warning);
+      }
+
+      // shutdown the connection since no more data will be sent
+      int iResult = shutdown(a_socket, SD_SEND);
+      if (iResult == SOCKET_ERROR)
+      {
+        std::stringstream ss;
+        ss << "Send() -> shutdown() failed with error: " << WSAGetLastError();
+        Logger::Log(ss.str(), Dg::LL_Warning);
+        return SOCKET_ERROR;
+      }
+
+      return true;
     }
 
     static SOCKET _Send(SocketData const & a_socketData, std::vector<char> const & a_message)
@@ -308,47 +351,13 @@ namespace IPC
       if (connectSocket == INVALID_SOCKET)
       {
         std::stringstream ss;
-        ss << "Send() -> Unable to connect!" << WSAGetLastError();
+        ss << "Send() -> Unable to connect! Error: " << WSAGetLastError();
         ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
         Logger::Log(ss.str(), Dg::LL_Warning);
         return SOCKET_ERROR;
       }
 
-      int targetBytes = int(a_message.size());
-      int bytesSent = 0;
-      while (bytesSent < targetBytes)
-      {
-        bytesSent = send(connectSocket, &a_message[bytesSent], int(a_message.size()) - bytesSent, 0);
-
-        if (bytesSent == SOCKET_ERROR)
-        {
-          std::stringstream ss;
-          ss << "Send() -> send() failed with error: " << WSAGetLastError();
-          ss << ". IP Address of client: " << a_socketData.Get_IP() << ":" << a_socketData.Get_Port().As_string();
-          Logger::Log(ss.str(), Dg::LL_Warning);
-          return SOCKET_ERROR;
-        }
-      }
-
-      if (targetBytes != bytesSent)
-      {
-        std::stringstream ss;
-        ss << "Send() -> message size inconsistant: Expected to send " << targetBytes
-          << ", but sent " << bytesSent;
-        std::string str = ss.str();
-        Logger::Log(ss.str(), Dg::LL_Warning);
-      }
-
-      // shutdown the connection since no more data will be sent
-      iResult = shutdown(connectSocket, SD_SEND);
-      if (iResult == SOCKET_ERROR)
-      {
-        std::stringstream ss;
-        ss << "Send() -> shutdown() failed with error: " << WSAGetLastError();
-        Logger::Log(ss.str(), Dg::LL_Warning);
-        return SOCKET_ERROR;
-      }
-
+      Send(connectSocket, a_message);
       return connectSocket;
     }
 
@@ -378,7 +387,7 @@ namespace IPC
           a_out.push_back(buf[i]);
         }
       }
-      return true;
+      return result;
     }
 
     bool Send(SocketData const & a_server, std::vector<char> const & a_message)
@@ -387,8 +396,8 @@ namespace IPC
     }
 
     bool SendQuery(SocketData const & a_server,
-      std::vector<char> const & a_message,
-      std::vector<char> & a_response)
+                   std::vector<char> const & a_message,
+                   std::vector<char> & a_response)
     {
       SOCKET s = _Send(a_server, a_message);
       if (s == SOCKET_ERROR)
@@ -397,6 +406,29 @@ namespace IPC
       }
       return Recv(s, a_response);
     }
+
+
+    bool GetPeerData(SOCKET a_socket, SocketData & a_out)
+    {
+      struct sockaddr_in sin;
+      socklen_t len = sizeof(sin);
+      if (getpeername(a_socket, (struct sockaddr *)&sin, &len) == SOCKET_ERROR)
+      {
+        std::stringstream ss;
+        ss << "GetSocketData() -> getsockname() failed with error: " << WSAGetLastError();
+        Logger::Log(ss.str(), Dg::LL_Warning);
+        return false;
+      }
+
+      a_out.Set_Port(Port(ntohs(sin.sin_port)));
+
+      int const bufLen = 64;
+      char buf[bufLen] = {};
+      InetNtop(AF_INET, &sin.sin_addr, buf, bufLen);
+      a_out.Set_IP(std::string(buf));
+      return true;
+    }
+
 
     bool GetSocketData(SOCKET a_socket, SocketData & a_out)
     {

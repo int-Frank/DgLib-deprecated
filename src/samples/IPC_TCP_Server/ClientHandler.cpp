@@ -13,12 +13,12 @@ void ClientHandler::AddClient(IPC::TCP::SocketData a_sd)
   std::lock_guard<std::mutex> lock(m_mutex);
 
   for (auto it = m_currentClients.begin();
-    it != m_currentClients.end();
-    it++)
+       it != m_currentClients.end();
+       it++)
   {
     if (it->socketData == a_sd)
     {
-      it->lastPing = 0;
+      it->lastPing = m_timer.GetTime();
       return;
     }
   }
@@ -50,8 +50,8 @@ std::vector<IPC::TCP::SocketData> ClientHandler::GetCurrentClients()
   CleanClients();
   std::lock_guard<std::mutex> lock(m_mutex);
   for (auto it = m_currentClients.cbegin();
-    it != m_currentClients.cend();
-    it++)
+       it != m_currentClients.cend();
+       it++)
   {
     result.push_back(it->socketData);
   }

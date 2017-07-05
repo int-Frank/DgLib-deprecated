@@ -1,11 +1,13 @@
 
 #include <thread>
+#include <sstream>
 
 #include "IPC_TCP_Listener.h"
 #include "ServerState_On.h"
 #include "Acceptor.h"
 #include "IPC_TCP_Listener.h"
 #include "Mediator.h"
+#include "imgui.h"
 
 static void Run_Listen(ServerState_On * a_pApp, 
                        IPC::TCP::SocketData a_listenSocket)
@@ -78,4 +80,25 @@ ServerState_On::~ServerState_On()
   m_listenThread.join();
   
   m_rApp.LogToOutputWindow("Done!", Dg::LL_Info);
+}
+
+void ServerState_On::BuildUI()
+{
+  auto clients = m_clientHandler.GetCurrentClients();
+
+  ImGui::Begin("MainPanel");
+  ImGui::TextColored(ImColor(1.0f, 0.0f, 1.0f, 1.0f), "Current connected clients:");
+  ImGui::Spacing();
+  ImGui::Spacing();
+  ImGui::Spacing();
+  for (auto const & add : clients)
+  {
+    std::stringstream ss;
+    ss << add.Get_IP() << ":" << add.Get_Port().As_uint16() << "\n";
+    ImGui::Text(ss.str().c_str());
+  }
+  ImGui::Spacing();
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::End();
 }

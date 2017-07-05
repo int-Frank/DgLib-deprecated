@@ -120,7 +120,9 @@ namespace IPC
     bool Shutdown();
 
     bool GetSocketData(SOCKET, SocketData &);
+    bool GetPeerData(SOCKET, SocketData &);
     bool Recv(SOCKET, std::vector<char> &);
+    bool Send(SOCKET, std::vector<char> const &);
     bool Send(SocketData const & server, std::vector<char> const & message);
     bool SendQuery(SocketData const & server,
                    std::vector<char> const & message,

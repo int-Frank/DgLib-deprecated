@@ -1,5 +1,6 @@
 
 #include "IPC_TCP_AcceptorBase.h"
+#include "IPC_TCP_common.h"
 
 namespace IPC
 {

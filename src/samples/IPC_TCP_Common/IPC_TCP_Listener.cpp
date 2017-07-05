@@ -71,7 +71,7 @@ namespace IPC
       {
         return false;
       }
-
+      Logger::Log(std::string("ASDSAD") + a_result.Get_IP(), Dg::LL_Debug);
       a_result.Set_IP(a_result.Get_IP());
       Port p;
       p.SetToInvalid();
@@ -250,14 +250,14 @@ namespace IPC
 
       if (!SendQuery(a_server, message.Serialize(), responseData))
       {
-        Logger::Log("Request for ip failed.", Dg::LL_Warning);
+        Logger::Log("Request for ip failed: could not contact server.", Dg::LL_Warning);
         return false;
       }
 
       Message response;
       if (!response.Build(responseData))
       {
-        Logger::Log("Request for ip failed.", Dg::LL_Warning);
+        Logger::Log("Request for ip failed: Server response gibberish.", Dg::LL_Warning);
         return false;
       }
 
@@ -269,6 +269,8 @@ namespace IPC
         Logger::Log(ss.str(), Dg::LL_Warning);
         return false;
       }
+
+      a_out.Build(response.payload.data());
 
       return true;
     }

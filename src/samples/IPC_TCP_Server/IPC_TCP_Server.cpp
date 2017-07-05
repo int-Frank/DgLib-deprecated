@@ -7,6 +7,7 @@
 #include "IPC_TCP_Server.h"
 
 #include "ServerState_On.h"
+#include "ServerState_Off.h"
 #include "DgDoublyLinkedList.h"
 #include "DgTimer.h"
 #include "DgTypes.h"
@@ -22,7 +23,7 @@ static void LogCallback(std::string const & a_message, int a_val)
 TCP_Server::TCP_Server()
   : m_currentState(State_Off)
   , m_desiredState(State_Off)
-  , m_pServerState(nullptr)
+  , m_pServerState(new ServerState_Off(this))
 {
   strcpy_s(m_ipBuf, "127.0.0.1");
   strcpy_s(m_portBuf, "5555");
@@ -77,7 +78,7 @@ void TCP_Server::DoFrame(double a_dt)
     case State_Off:
     {
       delete m_pServerState;
-      m_pServerState = nullptr;
+      m_pServerState = new ServerState_Off(this);
       break;
     }
     }
@@ -87,14 +88,7 @@ void TCP_Server::DoFrame(double a_dt)
 
 void TCP_Server::BuildUI()
 {
-  ImGui::SetNextWindowSize(ImVec2(300, 90));
-  ImGui::Begin("MainPanel", nullptr, ImGuiWindowFlags_NoTitleBar
-                                    | ImGuiWindowFlags_NoResize
-                                    | ImGuiWindowFlags_NoMove
-                                    | ImGuiWindowFlags_NoScrollbar
-                                    | ImGuiWindowFlags_NoScrollWithMouse
-                                    | ImGuiWindowFlags_NoCollapse
-                                    | ImGuiWindowFlags_NoSavedSettings);
+  ImGui::Begin("MainPanel", nullptr, ImGuiWindowFlags_NoCollapse);
 
   ImGui::TextColored(ImVec4(0.0, 1.0, 1.0, 1.0), "IP   :"); ImGui::SameLine();
   ImGui::InputText(" ", m_ipBuf, s_textBufLen, ImGuiInputTextFlags_CharsDecimal);
@@ -104,6 +98,7 @@ void TCP_Server::BuildUI()
   ImGui::Spacing();
   ImGui::Spacing();
 
+  ImGui::Indent(80.f);
   switch (m_currentState)
   {
   case State_On:
@@ -111,11 +106,7 @@ void TCP_Server::BuildUI()
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8, 0.0, 0.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8, 0.0, 0.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8, 0.0, 0.0, 1.0));
-    ImGui::Indent(80.f);
     if (ImGui::Button(" Stop  ")) m_desiredState = State_Off;
-    ImGui::PopStyleColor(3);
-    ImGui::Indent(-80.f);
-    ImGui::End();
     break;
   }
   case State_Off:
@@ -123,11 +114,7 @@ void TCP_Server::BuildUI()
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0, 0.7, 0.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.7, 0.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.7, 0.0, 1.0));
-    ImGui::Indent(80.f);
     if (ImGui::Button(" Start ")) m_desiredState = State_On;
-    ImGui::PopStyleColor(3);
-    ImGui::Indent(-80.f);
-    ImGui::End();
     break;
   }
   default:
@@ -135,4 +122,13 @@ void TCP_Server::BuildUI()
     break;
   }
   }
+
+  ImGui::PopStyleColor(3);
+  ImGui::Unindent(80.0f);
+  ImGui::Spacing();
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::End();
+
+  m_pServerState->BuildUI();
 }

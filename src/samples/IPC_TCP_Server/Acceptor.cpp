@@ -13,8 +13,6 @@ Acceptor * Acceptor::Clone() const
 
 void Acceptor::Run(IPC::TCP::MediatorBase * a_pMediator)
 {
-  m_rApp.LogToOutputWindow("New client connection...", Dg::LL_Debug);
-
   std::vector<char> messageData;
   do
   {
@@ -66,7 +64,6 @@ void Acceptor::Run(IPC::TCP::MediatorBase * a_pMediator)
     }
   } while (false);
 
-  m_rApp.LogToOutputWindow("Closing client connection.", Dg::LL_Debug);
   closesocket(m_socket);
   m_socket = INVALID_SOCKET;
 }
@@ -91,14 +88,8 @@ void Acceptor::Handle_DeregisterClient()
 
 void Acceptor::Handle_IPAddressRequest()
 {
-  //DEBUG
-  //sockaddr_in sin;
-  //socklen_t addr_len = sizeof(sin);
-  //int res = getpeername(ClientSocket, (struct sockaddr *) &sin, &addr_len);
-
-
   IPC::TCP::SocketData sd;
-  if (IPC::TCP::GetSocketData(m_socket, sd))
+  if (IPC::TCP::GetPeerData(m_socket, sd))
   {
     std::vector<char> payload;
     sd.Serialize(payload);
@@ -106,7 +97,11 @@ void Acceptor::Handle_IPAddressRequest()
     IPC::TCP::Message message;
     message.Set(IPC::TCP::E_IPAddressResponse, payload);
 
-    IPC::TCP::Send(sd, message.Serialize());
+    IPC::TCP::Send(m_socket, message.Serialize());
+  }
+  else
+  {
+    m_rApp.LogToOutputWindow("Handle_IPAddressRequest() -> Failed to get peer data from socket during ", Dg::LL_Warning);
   }
 }
 

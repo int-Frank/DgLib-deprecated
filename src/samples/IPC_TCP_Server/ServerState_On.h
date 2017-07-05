@@ -24,6 +24,8 @@ public:
   void ListenerRunning(bool);
   bool ShouldStop() const;
 
+  void BuildUI();
+
 private:
 
   static int const s_textBufLen = 64;
