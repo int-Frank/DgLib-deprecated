@@ -110,7 +110,7 @@ void Acceptor::Handle_Dispatch(IPC::TCP::MediatorBase * a_pMediator)
   auto clientList = m_rApp.GetClientList();
   for (auto it = clientList.cbegin(); it != clientList.cend(); it++)
   {
-    if (!IPC::TCP::Send(*it, m_message.payload))
+    if (!IPC::TCP::Send(*it, m_message.Serialize()))
     {
       std::stringstream ss;
       ss << "Handle_Dispatch() -> Failed to send to: " << it->Get_IP() << ":" << it->Get_Port().As_string();

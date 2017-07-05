@@ -71,7 +71,7 @@ namespace IPC
       {
         return false;
       }
-      Logger::Log(std::string("ASDSAD") + a_result.Get_IP(), Dg::LL_Debug);
+
       a_result.Set_IP(a_result.Get_IP());
       Port p;
       p.SetToInvalid();
