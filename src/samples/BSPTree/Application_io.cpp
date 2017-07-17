@@ -9,32 +9,6 @@
 #include "Application.h"
 #include "DgStringFunctions.h"
 
-
-static AABB GetAABB(std::vector<Vector> const & a_points)
-{
-  float minx = std::numeric_limits<float>::max();
-  float maxx = -std::numeric_limits<float>::max();
-  float miny = std::numeric_limits<float>::max();
-  float maxy = -std::numeric_limits<float>::max();
-
-  for (auto const & p : a_points)
-  {
-    if      (p.x() < minx)  minx = p.x();
-    else if (p.x() > maxx)  maxx = p.x();
-
-    if      (p.y() < miny)  miny = p.y();
-    else if (p.y() > maxy)  maxy = p.y();
-  }
-
-  float hl[2] = { (maxx - minx) / 2.0f,
-                  (maxy - miny) / 2.0f };
-
-  Vector center(minx + hl[0], miny + hl[1], 1.0f);
-
-  return AABB(center, hl);
-}
-
-
 void Application::UpdateProjectTitle(std::string const & a_name)
 {
   char pFile[32];
@@ -118,16 +92,13 @@ void Application::SetModelToScreenTransform(BSPTree::DataInput const & a_data)
   Matrix T_s;    //s: scaling matrix
   Matrix T_t_oc; //oc: origin to canvas translation
 
-  AABB modelBounds = GetAABB(a_data.points);
+  AABB modelBounds(a_data.points.begin(), a_data.points.cend());
 
-  float hlm[2] = {};
-  modelBounds.GetHalfLengths(hlm);
+  Vector diag_m(modelBounds.Diagonal());
+  Vector diag_c(m_canvasBounds.Diagonal());
 
-  float hlc[2] = {};
-  m_canvasBounds.GetHalfLengths(hlc);
-
-  float sx = hlc[0] / hlm[0];
-  float sy = hlc[1] / hlm[1];
+  float sx = diag_c[0] / diag_m[0];
+  float sy = diag_c[1] / diag_m[1];
 
   float scale = (sx < sy) ? sx : sy;
 

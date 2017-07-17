@@ -7,44 +7,9 @@
 
 typedef Dg::R3::AABB<float> AABB;
 
-
-static AABB GetAABB(std::vector<vec4> & a_points)
-{
-  float minx = std::numeric_limits<float>::max();
-  float maxx = -std::numeric_limits<float>::max();
-  float miny = std::numeric_limits<float>::max();
-  float maxy = -std::numeric_limits<float>::max();
-  float minz = std::numeric_limits<float>::max();
-  float maxz = -std::numeric_limits<float>::max();
-
-  for (auto const & p : a_points)
-  {
-    if (p.x() < minx)  minx = p.x();
-    else if (p.x() > maxx)  maxx = p.x();
-
-    if (p.y() < miny)  miny = p.y();
-    else if (p.y() > maxy)  maxy = p.y();
-
-    if (p.z() < minz)  minz = p.z();
-    else if (p.z() > maxz)  maxz = p.z();
-  }
-
-  float hl[3] = { (maxx - minx) / 2.0f,
-                  (maxy - miny) / 2.0f, 
-                  (maxz - minz) / 2.0f };
-
-  vec4 center(minx + hl[0], 
-              miny + hl[1],
-              minz + hl[2], 
-              1.0f);
-
-  return AABB(center, hl);
-}
-
-
 static void NormalizeData(std::vector<vec4> & a_points)
 {
-  AABB aabb = GetAABB(a_points);
+  AABB aabb(a_points.begin(), a_points.end());
   vec4 offset(-aabb.GetCenter().x(), 
               -aabb.GetCenter().y(),
               -aabb.GetCenter().z(), 
@@ -54,12 +19,11 @@ static void NormalizeData(std::vector<vec4> & a_points)
     p += offset;
   }
 
-  float hl[3] = {};
-  aabb.GetHalfLengths(hl);
-  float max_hl = (hl[0] > hl[1]) ? hl[0] : hl[1];
-  if (hl[2] > max_hl) max_hl = hl[2];
+  vec4 diag(aabb.Diagonal());
+  float max_hl = (diag[0] > diag[1]) ? diag[0] : diag[1];
+  if (diag[2] > max_hl) max_hl = diag[2];
 
-  float scaleFactor = 0.5f / max_hl;
+  float scaleFactor = 1.0f / max_hl;
   for (auto & p : a_points)
   {
     p.x() *= scaleFactor;

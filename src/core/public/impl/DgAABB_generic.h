@@ -8,6 +8,8 @@
 #ifndef DGAABB_GENERIC_H
 #define DGAABB_GENERIC_H
 
+#include <stdint.h>
+
 #include "DgVector_generic.h"
 #include "dgmath.h"
 
@@ -28,78 +30,117 @@ namespace Dg
     class AABB_generic
     {
     public:
+
+    public:
       //! Default constructor.
       AABB_generic()
-        : m_center(Vector_generic<Real, R>::Origin())
-        , m_halfLengths{ static_cast<Real>(0.5), static_cast<Real>(0.5) }
-      {}
+      {
+        for (int i = 0; i < R; i++)
+        {
+          m_ptMin[i] = std::numeric_limits<Real>::infinity();
+          m_ptMax[i] = -std::numeric_limits<Real>::infinity();
+        }
+        m_ptMax[R] = static_cast<Real>(1.0);
+        m_ptMin[R] = static_cast<Real>(1.0);
+      }
 
       //! Constructor.
-      AABB_generic(Vector_generic<Real, R> const a_center, Real const * a_hl)
-        : m_center(a_center)
+      AABB_generic(Vector_generic<Real, R> const & a_ptMin,
+                   Vector_generic<Real, R> const & a_ptMax)
+        : m_ptMax(a_ptMax)
+        , m_ptMin(a_ptMin)
       {
-        for (int i = 0; i < R; i++)
-        {
-          m_halfLengths[i] = a_hl[i];
-        }
+        m_ptMax[R] = static_cast<Real>(1.0);
+        m_ptMin[R] = static_cast<Real>(1.0);
       }
 
-      //! Construct AABB_generic from origin and radius
-      ~AABB_generic() {}
-
-      //! Copy constructor
-      AABB_generic(AABB_generic const & a_other)
-        : m_center(a_other.m_center)
+      template<typename Iterator>
+      AABB_generic(Iterator a_first, Iterator a_last)
       {
         for (int i = 0; i < R; i++)
         {
-          m_halfLengths[i] = a_other.m_halfLengths[i];
+          m_ptMin[i] = std::numeric_limits<Real>::infinity();
+          m_ptMax[i] = -std::numeric_limits<Real>::infinity();
         }
-      }
+        m_ptMax[R] = static_cast<Real>(1.0);
+        m_ptMin[R] = static_cast<Real>(1.0);
 
-      //! Assignment
-      AABB_generic& operator= (AABB_generic const & a_other)
-      {
-        m_center = a_other.m_center;
-
-        for (int i = 0; i < R; i++)
+        for (; a_first != a_last; a_first++)
         {
-          m_halfLengths[i] = a_other.m_halfLengths[i];
-        }
-
-        return *this;
-      }
-
-      //! Get the AABB_generic half lengths.
-      void GetHalfLengths(Real * a_out) const
-      {
-        for (int i = 0; i < R; i++)
-        {
-          a_out[i] = m_halfLengths[i];
+          for (int i = 0; i < R; i++)
+          {
+            if      ((*a_first)[i] > m_ptMax[i]) m_ptMax[i] = (*a_first)[i];
+            else if ((*a_first)[i] < m_ptMin[i]) m_ptMin[i] = (*a_first)[i];
+          }
         }
       }
 
       //! Get the AABB_generic center.
-      Vector_generic<Real, R> const & GetCenter() const { return m_center; }
+      Vector_generic<Real, R> GetCenter() const 
+      { 
+        return Vector_generic<Real, R>(m_ptMin + static_cast<Real>(0.5) * (m_ptMax - m_ptMin));
+      }
 
-      //! Set the AABB_generic half lengths.
-      void SetHalfLengths(Real const * a_data)
+      Vector_generic<Real, R> Min() const
+      {
+        return m_ptMin;
+      }
+
+      Vector_generic<Real, R> Max() const
+      {
+        return m_ptMax;
+      }
+
+      Vector_generic<Real, R> Diagonal() const
+      {
+        return Vector_generic<Real, R>(m_ptMax - m_ptMin);
+      }
+
+      AABB_generic operator+(AABB_generic const & a_other)
+      {
+        AABB_generic result;
+        for (int i = 0; i < R; i++)
+        {
+          result.m_ptMax[i] = (a_other.m_ptMax[i] > m_ptMax[i]) ? a_other.m_ptMax[i] : m_ptMax[i];
+          result.m_ptMin[i] = (a_other.m_ptMin[i] < m_ptMin[i]) ? a_other.m_ptMin[i] : m_ptMin[i];
+        }
+        return result;
+      }
+
+      AABB_generic & operator+=(AABB_generic const & a_other)
       {
         for (int i = 0; i < R; i++)
         {
-          m_halfLengths[i] = a_data[i];
+          if (a_other.m_ptMax[i] > m_ptMax[i]) m_ptMax[i] = a_other.m_ptMax[i];
+          if (a_other.m_ptMin[i] < m_ptMin[i]) m_ptMin[i] = a_other.m_ptMin[i];
         }
+        return *this;
       }
 
-      //! Set the AABB_generic center.
-      void SetCenter(Vector_generic<Real, R> const & a_center)
+      AABB_generic operator+(Vector_generic<Real, R> const & a_point)
       {
-        m_center = a_center;
+        AABB_generic result(*this);
+        for (int i = 0; i < R; i++)
+        {
+          if      (a_point[i] > m_ptMax[i]) result.m_ptMax[i] = a_point[i];
+          else if (a_point[i] < m_ptMin[i]) result.m_ptMin[i] = a_point[i];
+        }
+        return result;
+      }
+
+      AABB_generic & operator+=(Vector_generic<Real, R> const & a_point)
+      {
+        for (int i = 0; i < R; i++)
+        {
+          if      (a_point[i] > m_ptMax[i]) m_ptMax[i] = a_point[i];
+          else if (a_point[i] < m_ptMin[i]) m_ptMin[i] = a_point[i];
+        }
+        return *this;
       }
 
     private:
-      Vector_generic<Real, R>     m_center;
-      Real                        m_halfLengths[R]; //[x, y, (z)]
+      Vector_generic<Real, R> m_ptMin;
+      Vector_generic<Real, R> m_ptMax;
     };
   }
 }

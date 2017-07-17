@@ -64,15 +64,8 @@ void Application::GetCanvasBounds()
   ImVec2 canvasPos = ImGui::GetCursorScreenPos();            // ImDrawList API uses screen coordinates!
   ImVec2 canvasSize = ImGui::GetContentRegionAvail();
 
-  Vector center(canvasPos.x + canvasSize.x / 2.0f,
-                canvasPos.y + canvasSize.y / 2.0f,
-                1.0f);
-
-  float hl[2] = { canvasSize.x / 2.0f, canvasSize.y / 2.0f };
-
-  m_canvasBounds.SetCenter(center);
-  m_canvasBounds.SetHalfLengths(hl);
-
+  m_canvasBounds = AABB(Vector(canvasPos.x, canvasPos.y, 1.0f),
+                        Vector(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y, 1.0f));
   ImGui::End();
 }
 
