@@ -15,36 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IPC_TCP_common.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IPC_TCP_Listener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IPC_TCP_Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IPC_TCP_AcceptorBase.cpp">
+    <ClCompile Include="RenderTestApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IPC_TCP_common.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IPC_TCP_Listener.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IPC_TCP_AcceptorBase.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IPC_TCP_MediatorBase.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IPC_TCP_Logger.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IPC_TCP_PluginInterface.h">
+    <ClInclude Include="RenderTestApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

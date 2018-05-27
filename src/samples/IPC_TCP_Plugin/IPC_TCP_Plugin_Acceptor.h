@@ -4,7 +4,7 @@
 #include "IPC_TCP_AcceptorBase.h"
 #include "IPC_TCP_MediatorBase.h"
 #include "IPC_TCP_common.h"
-#include "DgIPC.h"
+#include "IPC_TCP_PluginInterface.h"
 
 class ReceiverTCP;
 

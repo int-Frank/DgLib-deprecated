@@ -8,7 +8,7 @@
 
 #include "DgTypes.h"
 #include "DgStringFunctions.h"
-#include "DgIPC.h"
+#include "IPC_TCP_PluginInterface.h"
 #include "IPC_TCP_common.h"
 #include "IPC_TCP_MediatorBase.h"
 #include "IPC_TCP_Logger.h"

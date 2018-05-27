@@ -38,9 +38,6 @@
     <ClInclude Include="..\..\public\DgSingleton.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgVariadicMacros.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgObject.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -72,9 +69,6 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgTimer.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgIPC.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>

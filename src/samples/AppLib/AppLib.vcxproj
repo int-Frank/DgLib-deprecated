@@ -176,22 +176,37 @@
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_rect_pack.h" />
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_textedit.h" />
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_truetype.h" />
+    <ClInclude Include="Mod_Renderer_Context.h" />
+    <ClInclude Include="Mod_Renderer_ContextLine.h" />
+    <ClInclude Include="Mod_Renderer_ContextTriangle.h" />
     <ClInclude Include="DgApp.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="Mod_Renderer_Logger.h" />
+    <ClInclude Include="Mod_Renderer_LineMesh.h" />
+    <ClInclude Include="Mod_Renderer_Main.h" />
+    <ClInclude Include="Mod_Renderer_TriangleMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui.cpp" />
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Mod_Renderer_Context.cpp" />
+    <ClCompile Include="Mod_Renderer_ContextLine.cpp" />
     <ClCompile Include="DgApp.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="imgui_impl_glfw_gl3.cpp" />
+    <ClCompile Include="Mod_Renderer_Logger.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mod_Renderer_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />
+    <None Include="Mod_Renderer_fs_line.glsl" />
+    <None Include="Mod_Renderer_fs_triangle.glsl" />
+    <None Include="Mod_Renderer_vs_line.glsl" />
+    <None Include="Mod_Renderer_vs_triangle.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

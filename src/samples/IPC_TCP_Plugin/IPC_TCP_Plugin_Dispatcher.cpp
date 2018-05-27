@@ -12,7 +12,7 @@
 #include "IPC_TCP_common.h"
 #include "IPC_TCP_Logger.h"
 #include "DgStringFunctions.h"
-#include "DgIPC.h"
+#include "IPC_TCP_PluginInterface.h"
 
 using IPC::TCP::Logger::Log;
 using namespace IPC::TCP;

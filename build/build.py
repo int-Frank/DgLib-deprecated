@@ -191,6 +191,11 @@ shutil.copy(os.path.abspath(AppLibSrcPath + "/DgApp.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(AppLibSrcPath + "/Event.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(ImGuiPath + "/imconfig.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(ImGuiPath + "/imgui.h"), AppLibIncludeDir)
+
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer_Main.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer_LineMesh.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer_TriangleMesh.h"), AppLibIncludeDir)
+
 logger.write("Done!\n")
 
 # Create docs

@@ -493,6 +493,8 @@ DgApp::DgApp()
 
   //Maybe add session infor in the log file...
 
+  //TODO divert cout and cerr to Logging functions
+
   if (PIMPL::s_app != nullptr)
   {
     LogToFile("Attempt to create more than one instance of DgApp.", Dg::LL_Error);

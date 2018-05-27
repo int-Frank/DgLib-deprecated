@@ -73,6 +73,9 @@
     <ClInclude Include="..\..\public\DgMeshBase.h">
       <Filter>3d tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\particle_system\DgVariadicMacros.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\public\impl\DgParticleData_impl.inl">

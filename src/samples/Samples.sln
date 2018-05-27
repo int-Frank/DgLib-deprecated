@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSystem", "ParticleSystem\ParticleSystem.vcxproj", "{052ABC9D-1140-46DD-A674-BE6D9387311A}"
 EndProject
@@ -31,6 +31,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPC_TCP_Plugin", "IPC_TCP_Plugin\IPC_TCP_Plugin.vcxproj", "{96A65B82-E7FC-4D1F-9D38-11ED85CE4910}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B3A7DC35-F89F-4FE6-ADEA-2BF3A78C557C} = {B3A7DC35-F89F-4FE6-ADEA-2BF3A78C557C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RendererTest", "RendererTest\RendererTest.vcxproj", "{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{501E62B1-A652-4086-A3F5-245912A86932} = {501E62B1-A652-4086-A3F5-245912A86932}
 	EndProjectSection
 EndProject
 Global
@@ -121,6 +126,14 @@ Global
 		{96A65B82-E7FC-4D1F-9D38-11ED85CE4910}.Release|Win32.Build.0 = Release|Win32
 		{96A65B82-E7FC-4D1F-9D38-11ED85CE4910}.Release|x64.ActiveCfg = Release|x64
 		{96A65B82-E7FC-4D1F-9D38-11ED85CE4910}.Release|x64.Build.0 = Release|x64
+		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Debug|Win32.Build.0 = Debug|Win32
+		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Debug|x64.ActiveCfg = Debug|x64
+		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Debug|x64.Build.0 = Debug|x64
+		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Release|Win32.ActiveCfg = Release|Win32
+		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Release|Win32.Build.0 = Release|Win32
+		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Release|x64.ActiveCfg = Release|x64
+		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

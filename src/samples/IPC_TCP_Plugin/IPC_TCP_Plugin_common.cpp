@@ -7,7 +7,7 @@
 
 #include "IPC_TCP_common.h"
 #include "IPC_TCP_Logger.h"
-#include "DgIPC.h"
+#include "IPC_TCP_PluginInterface.h"
 
 static void LogDefault(char const * a_message, int a_logLevel)
 {

@@ -20,7 +20,7 @@
 #include "IPC_TCP_Plugin_Acceptor.h"
 #include "IPC_TCP_Logger.h"
 #include "IPC_TCP_Listener.h"
-#include "DgIPC.h"
+#include "IPC_TCP_PluginInterface.h"
 
 using IPC::TCP::Logger::Log;
 using namespace IPC::TCP;

@@ -4,7 +4,7 @@
 #include <thread>
 #include <atomic>
 
-#include "DgIPC.h"
+#include "IPC_TCP_PluginInterface.h"
 #include "IPC_TCP_common.h"
 
 class ReceiverTCP : public IIPC_Receiver

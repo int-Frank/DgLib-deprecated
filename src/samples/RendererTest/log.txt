@@ -1,0 +1,1 @@
+WARNING: Failed to open config file: config.ini

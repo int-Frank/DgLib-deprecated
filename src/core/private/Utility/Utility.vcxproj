@@ -148,7 +148,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\public\Dgcirculator.h" />
     <ClInclude Include="..\..\public\DgIDManager.h" />
-    <ClInclude Include="..\..\public\DgIPC.h" />
     <ClInclude Include="..\..\public\DgMakeGrid.h" />
     <ClInclude Include="..\..\public\DgObject.h" />
     <ClInclude Include="..\..\public\DgObjectWrapper.h" />
@@ -158,7 +157,6 @@
     <ClInclude Include="..\..\public\DgStringFunctions.h" />
     <ClInclude Include="..\..\public\DgTimer.h" />
     <ClInclude Include="..\..\public\DgTypes.h" />
-    <ClInclude Include="..\..\public\DgVariadicMacros.h" />
     <ClInclude Include="..\..\public\DgErrorHandler.h" />
     <ClInclude Include="..\..\public\DgMapKeyIterator.h" />
   </ItemGroup>

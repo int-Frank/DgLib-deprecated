@@ -1,5 +1,7 @@
-#ifndef DGIPC_H
-#define DGIPC_H
+//DELETE
+
+#ifndef IPC_TCP_PLUGININITERFACE_H
+#define IPC_TCP_PLUGININITERFACE_H
 
 #ifdef BUILD_DLL
 #define DLLAPI extern "C" __declspec(dllexport)
