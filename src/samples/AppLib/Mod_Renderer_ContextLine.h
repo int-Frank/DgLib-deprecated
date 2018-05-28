@@ -16,7 +16,8 @@ namespace Renderer
     void Draw(int);
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
-    void MakeCurrent();
+    virtual void TurnOnContext();
+    virtual void TurnOffContext();
 
   private:
 

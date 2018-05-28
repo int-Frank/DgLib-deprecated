@@ -72,9 +72,9 @@ static Renderer::LineMesh GenerateStar()
   float pi = 3.14159f;
 
   int n_points = 5;
-  float radius = 100.0f;
-  float depth = 50.0f;
-  float spacing = pi / float(n_points);
+  float radius = 0.5f;
+  float depth = 0.2f;
+  float spacing = 2.0f * pi / float(n_points);
   float halfSpacing = spacing / 2.0f;
 
   Renderer::LineMesh result;
@@ -95,11 +95,11 @@ static Renderer::LineMesh GenerateStar()
     result.verts.push_back(dimple);
   }
 
-  for (int i = 0; i < n_points * 2; i++)
+  for (int i = 0; i < n_points; i++)
   {
     Renderer::Line line;
     line.indices[0] = i;
-    line.indices[1] = (i + 1) % (n_points * 2);
+    line.indices[1] = (i + 1) % (n_points);
     result.lines.push_back(line);
   }
 

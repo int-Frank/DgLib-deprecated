@@ -109,7 +109,8 @@ namespace Renderer
     void Draw(int);
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
-    void MakeCurrent();
+    void TurnOnContext();
+    void TurnOffContext();
 
   private:
 
@@ -121,7 +122,7 @@ namespace Renderer
     struct GPU_Data
     {
       std::vector<GPU_LineVertex> vertexData;
-      std::vector<GLushort>       indexData;
+      std::vector<GLuint>         indexData;
     };
 
     struct LineData
@@ -168,9 +169,9 @@ namespace Renderer
     glGenBuffers(1, &m_indexBuffer);
 
     GPU_Data gpuData;
-
+    
     CollateData(a_data, gpuData);
-
+    
     //Vertices
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
@@ -178,12 +179,12 @@ namespace Renderer
     glBufferData(GL_ARRAY_BUFFER, 
       gpuData.vertexData.size() * sizeof(GPU_LineVertex), 
       gpuData.vertexData.data(), GL_STATIC_DRAW);
-
+    
     int stride = sizeof(GPU_LineVertex);
-
+    
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-      gpuData.indexData.size() * sizeof(GLushort),
+      gpuData.indexData.size() * sizeof(GLuint),
       gpuData.indexData.data(), GL_STATIC_DRAW);
     GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
 
@@ -201,7 +202,7 @@ namespace Renderer
   //Also sets m_currentLines;
   void ContextLine::PIMPL::CollateData(std::vector<LineMesh> const & a_lineMeshs, GPU_Data & a_out)
   {
-    GLint vertexOffset = 0;
+    GLuint vertexOffset = 0;
     a_out.indexData.clear();
     a_out.vertexData.clear();
 
@@ -229,7 +230,7 @@ namespace Renderer
       lineData.count = GLsizei(lineMesh.lines.size() * 2);
       m_currentLines.push_back(lineData);
 
-      vertexOffset += GLint(lineMesh.verts.size());
+      vertexOffset += GLuint(lineMesh.verts.size());
     }
   }
 
@@ -264,10 +265,16 @@ namespace Renderer
     glUniformMatrix3fv(mv_matrix, 1, GL_FALSE, a_mat.GetData());
   }
 
-  void ContextLine::PIMPL::MakeCurrent()
+  void ContextLine::PIMPL::TurnOnContext()
   {
     glUseProgram(m_shaderProgram);
     glBindVertexArray(m_vao);
+  }
+
+  void ContextLine::PIMPL::TurnOffContext()
+  {
+    glUseProgram(0);
+    glBindVertexArray(0);
   }
 
   void ContextLine::PIMPL::InitShaderProgram()
@@ -316,15 +323,15 @@ namespace Renderer
     glLinkProgram(m_shaderProgram);
 
     GLint linkStatus = GL_TRUE;
-    glGetProgramiv( m_shaderProgram, GL_LINK_STATUS, &linkStatus );
+    glGetProgramiv( m_shaderProgram, GL_LINK_STATUS, &linkStatus);
     if ( linkStatus == GL_FALSE )
     {
       GLint logLen;
-      glGetProgramiv( m_shaderProgram, GL_INFO_LOG_LENGTH, &logLen );
-      std::vector< char >msgSrc( logLen+1 );
+      glGetProgramiv(m_shaderProgram, GL_INFO_LOG_LENGTH, &logLen);
+      std::vector<char> msgSrc(logLen + 1);
       GLsizei written;
-      glGetProgramInfoLog( m_shaderProgram, logLen, &written, msgSrc.data() );
-      std::string message(msgSrc.begin(),msgSrc.end());
+      glGetProgramInfoLog( m_shaderProgram, logLen, &written, msgSrc.data());
+      std::string message(msgSrc.begin(), msgSrc.end());
       throw ex_LinkFail(message);
     }
 
@@ -367,8 +374,13 @@ namespace Renderer
     m_pimpl->SetMatrix(a_mat);
   }
 
-  void ContextLine::MakeCurrent()
+  void ContextLine::TurnOnContext()
   {
-    m_pimpl->MakeCurrent();
+    m_pimpl->TurnOnContext();
+  }
+
+  void ContextLine::TurnOffContext()
+  {
+    m_pimpl->TurnOffContext();
   }
 }

@@ -126,13 +126,18 @@ namespace Renderer
 
   void Renderer::PIMPL::SetContext(Contexts a_context)
   {
+    if (m_pCurrentContext)
+    {
+      m_pCurrentContext->TurnOffContext();
+    }
+
     switch (a_context)
     {
       case E_Lines:
       case E_Triangles:
       {
         m_pCurrentContext = m_contexts[a_context];
-        m_pCurrentContext->MakeCurrent();
+        m_pCurrentContext->TurnOnContext();
         break;
       }
       default:
