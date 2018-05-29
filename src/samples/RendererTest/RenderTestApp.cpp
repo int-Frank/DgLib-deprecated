@@ -216,12 +216,14 @@ void RenderTestApp::DoFrame(double a_dt)
   m_pRender->SetContext(Renderer::E_Lines);
   for (auto const & obj : m_lineObjects)
   {
+    m_pRender->SetColor(obj.color);
     m_pRender->Draw(obj.handle);
   }
 
   m_pRender->SetContext(Renderer::E_Triangles);
   for (auto const & obj : m_triangleObjects)
   {
+    m_pRender->SetColor(obj.color);
     m_pRender->Draw(obj.handle);
   }
 

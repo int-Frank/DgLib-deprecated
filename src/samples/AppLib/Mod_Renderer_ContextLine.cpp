@@ -109,6 +109,7 @@ namespace Renderer
     void Draw(int);
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
+    void SetColor(Dg::R3::Vector<float> const &);
     void ActivateContext();
     void DeactivateContext();
 
@@ -187,11 +188,11 @@ namespace Renderer
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
       gpuData.indexData.size() * sizeof(GLuint),
       gpuData.indexData.data(), GL_STATIC_DRAW);
-    GLuint vPosition = glGetAttribLocation(m_shaderProgram, "position");
+    GLuint loc_position = glGetAttribLocation(m_shaderProgram, "position");
 
     //TODO Fix 5th argument; stride
-    glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(vPosition);
+    glVertexAttribPointer(loc_position, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(loc_position);
 
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LESS);
@@ -266,6 +267,12 @@ namespace Renderer
       Logger::Log("Failed to find mv_matrix in shader program", Dg::LL_Error);
     }
     glUniformMatrix3fv(mv_matrix, 1, GL_FALSE, a_mat.GetData());
+  }
+
+  void ContextLine::PIMPL::SetColor(Dg::R3::Vector<float> const & a_clr)
+  {
+    GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
+    glUniform4fv(loc_color, 1, a_clr.GetData());
   }
 
   void ContextLine::PIMPL::ActivateContext()
@@ -375,6 +382,11 @@ namespace Renderer
   void ContextLine::SetMatrix(Dg::R3::Matrix<float> const & a_mat)
   {
     m_pimpl->SetMatrix(a_mat);
+  }
+
+  void ContextLine::SetColor(Dg::R3::Vector<float> const & a_clr)
+  {
+    m_pimpl->SetColor(a_clr);
   }
 
   void ContextLine::ActivateContext()

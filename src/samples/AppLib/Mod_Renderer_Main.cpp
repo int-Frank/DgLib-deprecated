@@ -36,6 +36,7 @@ namespace Renderer
     void CommitLoadList();
 
     void SetTransform(Dg::R3::Matrix<float> const &);
+    void SetColor(Dg::R3::Vector<float> const &);
     void SetRenderTarget();
 
     void SetContext(Contexts);
@@ -116,6 +117,14 @@ namespace Renderer
     if (m_pCurrentContext)
     {
       m_pCurrentContext->SetMatrix(a_mat);
+    }
+  }
+
+  void Renderer::PIMPL::SetColor(Dg::R3::Vector<float> const & a_clr)
+  {
+    if (m_pCurrentContext)
+    {
+      m_pCurrentContext->SetColor(a_clr);
     }
   }
 
@@ -259,6 +268,6 @@ namespace Renderer
 
   void Renderer::SetColor(Dg::R3::Vector<float> const & a_clr)
   {
-    glColor4f(a_clr[0], a_clr[1], a_clr[2], a_clr[3]);
+    m_pimpl->SetColor(a_clr);
   }
 }
