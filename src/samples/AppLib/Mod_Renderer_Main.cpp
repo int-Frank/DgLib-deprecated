@@ -52,7 +52,7 @@ namespace Renderer
   private:
 
     Context *                   m_pCurrentContext;
-    Context *                   m_contexts[E_Total]; //Lines, Polygons
+    Context *                   m_contexts[E_NoContext]; //Lines, Polygons
 
     std::vector<LineMesh>       m_loadListLines;
     std::vector<TriangleMesh>   m_loadListTriangles;
@@ -69,7 +69,7 @@ namespace Renderer
   Renderer::PIMPL::~PIMPL()
   {
     m_pCurrentContext = nullptr;
-    for (int i = 0; i < E_Total; i++)
+    for (int i = 0; i < E_NoContext; i++)
     {
       delete m_contexts[i];
       m_contexts[i] = nullptr;
@@ -80,7 +80,7 @@ namespace Renderer
   {
     ClearLoadList();
 
-    for (int i = 0; i < E_Total; i++)
+    for (int i = 0; i < E_NoContext; i++)
     {
       m_contexts[i]->Clear();
     }
@@ -128,7 +128,7 @@ namespace Renderer
   {
     if (m_pCurrentContext)
     {
-      m_pCurrentContext->TurnOffContext();
+      m_pCurrentContext->DeactivateContext();
     }
 
     switch (a_context)
@@ -137,7 +137,12 @@ namespace Renderer
       case E_Triangles:
       {
         m_pCurrentContext = m_contexts[a_context];
-        m_pCurrentContext->TurnOnContext();
+        m_pCurrentContext->ActivateContext();
+        break;
+      }
+      case E_NoContext:
+      {
+        m_pCurrentContext = nullptr;
         break;
       }
       default:

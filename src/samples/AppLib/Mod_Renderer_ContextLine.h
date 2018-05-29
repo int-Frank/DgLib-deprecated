@@ -12,12 +12,13 @@ namespace Renderer
     ContextLine();
     ~ContextLine();
 
+    //Assumes this context is currently active
     void LoadData(std::vector<LineMesh> const &);
     void Draw(int);
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
-    virtual void TurnOnContext();
-    virtual void TurnOffContext();
+    void ActivateContext();
+    void DeactivateContext();
 
   private:
 

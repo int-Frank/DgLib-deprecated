@@ -20,8 +20,8 @@ namespace Renderer
     virtual void Draw(int) {}
     virtual void Clear() {}
     virtual void SetMatrix(Dg::R3::Matrix<float> const &) {}
-    virtual void TurnOnContext() {}
-    virtual void TurnOffContext() {}
+    virtual void ActivateContext() {}
+    virtual void DeactivateContext() {}
 
   };
 }

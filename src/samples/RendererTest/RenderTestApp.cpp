@@ -71,7 +71,7 @@ static Renderer::LineMesh GenerateStar()
 {
   float pi = 3.14159f;
 
-  int n_points = 5;
+  int n_points = 6;
   float radius = 0.5f;
   float depth = 0.2f;
   float spacing = 2.0f * pi / float(n_points);
@@ -95,11 +95,11 @@ static Renderer::LineMesh GenerateStar()
     result.verts.push_back(dimple);
   }
 
-  for (int i = 0; i < n_points; i++)
+  for (int i = 0; i < n_points * 2; i++)
   {
     Renderer::Line line;
     line.indices[0] = i;
-    line.indices[1] = (i + 1) % (n_points);
+    line.indices[1] = (i + 1) % (n_points * 2);
     result.lines.push_back(line);
   }
 
@@ -108,7 +108,46 @@ static Renderer::LineMesh GenerateStar()
 
 static Renderer::LineMesh GenerateBox()
 {
+  Renderer::LineMesh result;
+  Renderer::LineVertex point;
 
+  point.point[2] = 0.0f;
+
+  point.point[0] = -0.5f;
+  point.point[1] = -0.5f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.5f;
+  point.point[1] = -0.5f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.5f;
+  point.point[1] = 0.5f;
+  result.verts.push_back(point);
+
+  point.point[0] = -0.5f;
+  point.point[1] = 0.5f;
+  result.verts.push_back(point);
+
+  Renderer::Line line;
+
+  line.indices[0] = 0;
+  line.indices[1] = 1;
+  result.lines.push_back(line);
+
+  line.indices[0] = 1;
+  line.indices[1] = 2;
+  result.lines.push_back(line);
+
+  line.indices[0] = 2;
+  line.indices[1] = 3;
+  result.lines.push_back(line);
+
+  line.indices[0] = 3;
+  line.indices[1] = 0;
+  result.lines.push_back(line);
+
+  return result;
 }
 
 static Renderer::LineMesh GenerateSnowFlake()
@@ -135,6 +174,7 @@ RenderTestApp::RenderTestApp()
   std::vector<Renderer::LineMesh> lineMeshes;
   std::vector<Renderer::TriangleMesh> triangleMeshes;
 
+  lineMeshes.push_back(GenerateBox());
   lineMeshes.push_back(GenerateStar());
 
   std::vector<vec4> colors;

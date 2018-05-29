@@ -109,8 +109,8 @@ namespace Renderer
     void Draw(int);
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
-    void TurnOnContext();
-    void TurnOffContext();
+    void ActivateContext();
+    void DeactivateContext();
 
   private:
 
@@ -175,6 +175,7 @@ namespace Renderer
     //Vertices
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
+
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, 
       gpuData.vertexData.size() * sizeof(GPU_LineVertex), 
@@ -192,9 +193,6 @@ namespace Renderer
     glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(vPosition);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LESS);
   }
@@ -203,11 +201,17 @@ namespace Renderer
   void ContextLine::PIMPL::CollateData(std::vector<LineMesh> const & a_lineMeshs, GPU_Data & a_out)
   {
     GLuint vertexOffset = 0;
+    GLuint indexOffset = 0;
     a_out.indexData.clear();
     a_out.vertexData.clear();
 
     for (auto const & lineMesh : a_lineMeshs)
     {
+      LineData lineData;
+      lineData.offset = a_out.indexData.size() * sizeof(GLuint);
+      lineData.count = GLsizei(lineMesh.lines.size() * 2);
+      m_currentLines.push_back(lineData);
+
       for (auto vert : lineMesh.verts)
       {
         GPU_LineVertex v;
@@ -225,23 +229,22 @@ namespace Renderer
         a_out.indexData.push_back(line.indices[1] + vertexOffset);
       }
 
-      LineData lineData;
-      lineData.offset = vertexOffset;
-      lineData.count = GLsizei(lineMesh.lines.size() * 2);
-      m_currentLines.push_back(lineData);
-
       vertexOffset += GLuint(lineMesh.verts.size());
     }
   }
 
   void ContextLine::PIMPL::Draw(int a_index)
   {
-    glDrawArrays(GL_LINES, m_currentLines[a_index].offset, m_currentLines[a_index].count);
+    glDrawElements(GL_LINES, 
+                   m_currentLines[a_index].count, 
+                   GL_UNSIGNED_INT,
+                   (const void *)m_currentLines[a_index].offset);
   }
 
   void ContextLine::PIMPL::Clear()
   {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     glDeleteBuffers(1, &m_vertexBuffer);
@@ -265,13 +268,13 @@ namespace Renderer
     glUniformMatrix3fv(mv_matrix, 1, GL_FALSE, a_mat.GetData());
   }
 
-  void ContextLine::PIMPL::TurnOnContext()
+  void ContextLine::PIMPL::ActivateContext()
   {
     glUseProgram(m_shaderProgram);
     glBindVertexArray(m_vao);
   }
 
-  void ContextLine::PIMPL::TurnOffContext()
+  void ContextLine::PIMPL::DeactivateContext()
   {
     glUseProgram(0);
     glBindVertexArray(0);
@@ -374,13 +377,13 @@ namespace Renderer
     m_pimpl->SetMatrix(a_mat);
   }
 
-  void ContextLine::TurnOnContext()
+  void ContextLine::ActivateContext()
   {
-    m_pimpl->TurnOnContext();
+    m_pimpl->ActivateContext();
   }
 
-  void ContextLine::TurnOffContext()
+  void ContextLine::DeactivateContext()
   {
-    m_pimpl->TurnOffContext();
+    m_pimpl->DeactivateContext();
   }
 }
