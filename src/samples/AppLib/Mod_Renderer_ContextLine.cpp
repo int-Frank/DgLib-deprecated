@@ -271,8 +271,8 @@ namespace Renderer
 
   void ContextLine::PIMPL::SetColor(Dg::R3::Vector<float> const & a_clr)
   {
-    GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
-    glUniform4fv(loc_color, 1, a_clr.GetData());
+      GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
+      glUniform4fv(loc_color, 1, a_clr.GetData());
   }
 
   void ContextLine::PIMPL::ActivateContext()
@@ -344,6 +344,16 @@ namespace Renderer
       std::string message(msgSrc.begin(), msgSrc.end());
       throw ex_LinkFail(message);
     }
+
+    //Init defaults
+    glUseProgram(m_shaderProgram);
+    GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
+    GLuint loc_ms_matrix = glGetUniformLocation(m_shaderProgram, "ms_matrix");
+    Dg::R3::Vector<float> clr(1.0f, 1.0f, 1.0f, 1.0f);
+    Dg::R3::Matrix<float> mat;
+    glUniform4fv(loc_color, 1, clr.GetData());
+    glUniformMatrix4fv(loc_ms_matrix, 1, GL_FALSE, mat.GetData());
+    glUseProgram(0);
 
     //Detach and delete shaders afer we have successfully linked the program.
     glDetachShader(m_shaderProgram, vsID);

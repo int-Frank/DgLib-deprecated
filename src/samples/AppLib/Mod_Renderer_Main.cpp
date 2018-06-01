@@ -81,6 +81,8 @@ namespace Renderer
   {
     ClearLoadList();
 
+    SetContext(E_NoContext);
+
     for (int i = 0; i < E_NoContext; i++)
     {
       m_contexts[i]->Clear();

@@ -207,6 +207,37 @@ RenderTestApp::RenderTestApp()
   }
 
   m_pRender->CommitLoadList();
+  SetTransforms();
+}
+
+void RenderTestApp::WindowSizeCallback(int h, int w)
+{
+  SetTransforms();
+}
+
+void RenderTestApp::SetTransforms()
+{
+  int w(0), h(0);
+  GetWindowDimensions(w, h);
+
+  float nCol = ceil(sqrt(float(m_lineObjects.size())));
+  float nRows = round(sqrt(float(m_lineObjects.size())));
+
+  float xl = float(w) / nCol;
+  float yl = float(h) / nRows;
+
+  float cellHeight = (xl < yl) ? xl : yl;
+
+
+
+  Dg::R3::Matrix<float> matScale;
+
+  
+
+  for (auto & obj : m_lineObjects)
+  {
+  
+  }
 }
 
 void RenderTestApp::DoFrame(double a_dt)

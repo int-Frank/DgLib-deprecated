@@ -56,6 +56,7 @@ protected:
   virtual void DoFrame(double dt) {}
 
   GLFWwindow * GetWindow();
+  void GetWindowDimensions(int & w, int & h);
   map_str_str const & GetConfigItems() const;
 
   void AddFileHandlingMenuItems();

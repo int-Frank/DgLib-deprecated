@@ -685,6 +685,11 @@ GLFWwindow * DgApp::GetWindow()
   return m_pimpl->window;
 }
 
+void DgApp::GetWindowDimensions(int & w, int & h)
+{
+  glfwGetWindowSize(m_pimpl->window, &w, &h);
+}
+
 map_str_str const & DgApp::GetConfigItems() const
 {
   return m_pimpl->configItems;
