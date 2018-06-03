@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Mod_Renderer_Main.h"
+#include "Mod_Renderer_Renderer.h"
 #include "Mod_Renderer_ContextLine.h"
 #include "Mod_Renderer_ContextTriangle.h"
 
@@ -139,7 +139,7 @@ namespace Renderer
   {
     if (m_pCurrentContext)
     {
-      m_pCurrentContext->DeactivateContext();
+      m_pCurrentContext->Unbind();
     }
 
     switch (a_context)
@@ -148,7 +148,7 @@ namespace Renderer
       case E_Triangles:
       {
         m_pCurrentContext = m_contexts[a_context];
-        m_pCurrentContext->ActivateContext();
+        m_pCurrentContext->Bind();
         break;
       }
       case E_NoContext:
@@ -241,11 +241,6 @@ namespace Renderer
   void Renderer::SetTransform(Dg::R3::Matrix<float> const & a_matrix)
   {
     m_pimpl->SetTransform(a_matrix);
-  }
-
-  void Renderer::SetRenderTarget()
-  {
-    m_pimpl->SetRenderTarget();
   }
 
   void Renderer::BeginDraw()

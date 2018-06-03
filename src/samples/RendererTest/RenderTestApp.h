@@ -6,7 +6,7 @@
 #include "DgApp.h"
 #include "DgR3Vector.h"
 #include "DgR3Matrix.h"
-#include "Mod_Renderer_main.h"
+#include "Mod_Renderer_Renderer.h"
 
 class RenderTestApp : public DgApp
 {
@@ -34,6 +34,8 @@ private:
     vec4          color;
   };
 
+  static int const          s_nObjects = 9;
+  bool                      m_showObject[s_nObjects];
   Renderer::Renderer *      m_pRender;
   std::vector<ScreenObject> m_lineObjects;
   std::vector<ScreenObject> m_triangleObjects;

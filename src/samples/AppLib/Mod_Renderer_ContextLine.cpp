@@ -110,8 +110,8 @@ namespace Renderer
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
     void SetColor(Dg::R3::Vector<float> const &);
-    void ActivateContext();
-    void DeactivateContext();
+    void Bind();
+    void Unbind();
 
   private:
 
@@ -275,13 +275,13 @@ namespace Renderer
       glUniform4fv(loc_color, 1, a_clr.GetData());
   }
 
-  void ContextLine::PIMPL::ActivateContext()
+  void ContextLine::PIMPL::Bind()
   {
     glUseProgram(m_shaderProgram);
     glBindVertexArray(m_vao);
   }
 
-  void ContextLine::PIMPL::DeactivateContext()
+  void ContextLine::PIMPL::Unbind()
   {
     glUseProgram(0);
     glBindVertexArray(0);
@@ -399,13 +399,13 @@ namespace Renderer
     m_pimpl->SetColor(a_clr);
   }
 
-  void ContextLine::ActivateContext()
+  void ContextLine::Bind()
   {
-    m_pimpl->ActivateContext();
+    m_pimpl->Bind();
   }
 
-  void ContextLine::DeactivateContext()
+  void ContextLine::Unbind()
   {
-    m_pimpl->DeactivateContext();
+    m_pimpl->Unbind();
   }
 }

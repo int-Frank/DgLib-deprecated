@@ -15,7 +15,6 @@ namespace Renderer
   typedef uint32_t ObjectHandle;
   ObjectHandle const InvalidHandle = 0xFFFFFFFF;
 
-  //TODO Add  E_NoContext
   enum Contexts
   {
     E_Lines = 0,
@@ -42,7 +41,6 @@ namespace Renderer
 
     void SetTransform(Dg::R3::Matrix<float> const &);
     void SetColor(Dg::R3::Vector<float> const &);
-    void SetRenderTarget();
 
     void BeginDraw();
     void SetContext(Contexts);

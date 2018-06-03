@@ -185,7 +185,8 @@
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
     <ClInclude Include="Mod_Renderer_Logger.h" />
     <ClInclude Include="Mod_Renderer_LineMesh.h" />
-    <ClInclude Include="Mod_Renderer_Main.h" />
+    <ClInclude Include="Mod_Renderer_Renderer.h" />
+    <ClInclude Include="Mod_Renderer_RenderTarget.h" />
     <ClInclude Include="Mod_Renderer_TriangleMesh.h" />
   </ItemGroup>
   <ItemGroup>
@@ -199,7 +200,8 @@
     <ClCompile Include="imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="Mod_Renderer_Logger.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mod_Renderer_Main.cpp" />
+    <ClCompile Include="Mod_Renderer_Renderer.cpp" />
+    <ClCompile Include="Mod_Renderer_RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />

@@ -53,9 +53,6 @@
     <ClInclude Include="..\..\..\3rd_party\imgui\imconfig.h">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_Main.h">
-      <Filter>public\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Mod_Renderer_LineMesh.h">
       <Filter>public\Renderer</Filter>
     </ClInclude>
@@ -73,6 +70,12 @@
     </ClInclude>
     <ClInclude Include="Mod_Renderer_Logger.h">
       <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Renderer_RenderTarget.h">
+      <Filter>public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Renderer_Renderer.h">
+      <Filter>public\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -106,7 +109,10 @@
     <ClCompile Include="Mod_Renderer_Logger.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Mod_Renderer_Main.cpp">
+    <ClCompile Include="Mod_Renderer_Renderer.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod_Renderer_RenderTarget.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>

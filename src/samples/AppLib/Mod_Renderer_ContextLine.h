@@ -18,8 +18,8 @@ namespace Renderer
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
     void SetColor(Dg::R3::Vector<float> const &);
-    void ActivateContext();
-    void DeactivateContext();
+    void Bind();
+    void Unbind();
 
   private:
 

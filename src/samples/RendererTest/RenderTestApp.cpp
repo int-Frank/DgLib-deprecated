@@ -1,5 +1,7 @@
 
 #include <cmath>
+#include <string>
+#include <sstream>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -167,6 +169,7 @@ RenderTestApp::~RenderTestApp()
 
 RenderTestApp::RenderTestApp()
 {
+  this->ToggleOutputWindow(false);
   Renderer::Init(Log);
 
   m_pRender = new Renderer::Renderer();
@@ -263,30 +266,76 @@ void RenderTestApp::DoFrame(double a_dt)
 
 void RenderTestApp::BuildUI()
 {
-  //ImGui::Begin("Main", nullptr
-  //  , ImGuiWindowFlags_MenuBar
-  //  | ImGuiWindowFlags_NoTitleBar
-  //);
-  //
-  //ImGui::Separator();
-  //
-  //if (ImGui::Checkbox("Show log window", &m_showLogWindow))
-  //{
-  //  this->ToggleOutputWindow(m_showLogWindow);
-  //}
-  //ImGui::Separator();
-  //
-  //int itemCount = 0;
-  //ImGui::Checkbox("SPWH",   &m_showItem[itemCount++]);
-  //ImGui::Checkbox("SPWHCP", &m_showItem[itemCount++]);
-  //ImGui::Checkbox("MA",     &m_showItem[itemCount++]);
-  //ImGui::Checkbox("Mesh",   &m_showItem[itemCount++]);
-  //ImGui::SliderFloat("triSze", &m_meshSize, 0.02f, 0.3f);
-  //ImGui::Separator();
-  //
-  //if (ImGui::Button("Recalculate"))
-  //{
-  //  PushEvent(Event_BuildData(m_data.spwh));
-  //}
-  //ImGui::End();
+  int winWidth(0), winHeight(0);
+  GetWindowDimensions(winWidth, winHeight);
+
+  float indent = 5.0f;
+  float indentBottom = 20.0f;
+  float widthMain = 200.0f;
+  float widthView = winWidth - widthMain - indent * 3.0f;
+  float indentView = widthMain + indent * 2.0f;
+  float height = (float)winHeight - indent - indentBottom;
+  if (height < 100.0f) height = 100.0f;
+
+  ImGui::SetNextWindowSize(ImVec2(widthMain, height));
+  ImGui::SetNextWindowPos(ImVec2(indent, indent));
+  ImGui::Begin("Main", nullptr
+    , ImGuiWindowFlags_NoResize 
+    | ImGuiWindowFlags_NoMove 
+    | ImGuiWindowFlags_NoCollapse 
+    | ImGuiWindowFlags_NoSavedSettings
+    | ImGuiWindowFlags_NoTitleBar
+  );
+  
+  ImGui::Separator();
+  
+  static bool showLogWindow = false;
+  if (ImGui::Checkbox("Show log window", &showLogWindow))
+  {
+    this->ToggleOutputWindow(showLogWindow);
+  }
+  ImGui::Separator();
+
+  if (ImGui::Button("Clear"))
+  {
+
+  }
+
+  if (ImGui::Button("Load"))
+  {
+
+  }
+  ImGui::Separator();
+
+  static bool showDefaultTarget = false;
+  static bool showWindowTarget = true;
+
+  if (ImGui::Checkbox("Default render", &showDefaultTarget))
+  {
+
+  }
+  if (ImGui::Checkbox("Window render", &showWindowTarget))
+  {
+
+  }
+
+  for (int i = 0; i < s_nObjects; i++)
+  {
+    std::stringstream ss;
+    ss << "Object " << (i + 1);
+    ImGui::Checkbox(ss.str().c_str(),   &m_showObject[i]);
+  }
+  
+  ImGui::End();
+
+  ImGui::SetNextWindowSize(ImVec2(widthView, height));
+  ImGui::SetNextWindowPos(ImVec2(indentView, indent));
+  ImGui::Begin("View", nullptr
+    , ImGuiWindowFlags_NoResize 
+    | ImGuiWindowFlags_NoMove 
+    | ImGuiWindowFlags_NoCollapse 
+    | ImGuiWindowFlags_NoSavedSettings
+    | ImGuiWindowFlags_NoTitleBar
+  );
+  ImGui::End();
 }
