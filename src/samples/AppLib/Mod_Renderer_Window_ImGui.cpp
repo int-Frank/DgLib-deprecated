@@ -16,13 +16,13 @@ namespace Renderer
   Window_ImGui::Window_ImGui(InitData const & a_data)
     : Window(a_data)
     , m_name(a_data.name)
+    , m_marginX(17.0f)
+    , m_marginY(36.0f)
   {
-    float marginX = 9.0f;
-    float marginY = 18.0f;
-    float width = float(a_data.width) + 2.0f * marginX;
-    float height = float(a_data.height) + 2.0f * marginY;
+    float windowWidth = float(a_data.width) + m_marginX;
+    float windowHeight = float(a_data.height) + m_marginY;
 
-    ImGui::SetNextWindowSize(ImVec2(width, height));
+    ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
     ImGui::SetNextWindowPos(ImVec2(float(a_data.indentX), float(a_data.indentY)));
     ImGui::Begin(a_data.name.c_str(), nullptr, a_data.ImGuiWindowFlags);
     ImGui::End();
@@ -32,11 +32,16 @@ namespace Renderer
   {
     ImGui::Begin(m_name.c_str());
 
+    ImVec2 dim = ImGui::GetWindowSize();
+
+    float width = dim.x - m_marginX;
+    float height = dim.y - m_marginY;
+
     ImGui::GetWindowDrawList()->AddImage(
       (void *)GetTexture(), 
       ImVec2(ImGui::GetCursorScreenPos()),
-      ImVec2(ImGui::GetCursorScreenPos().x + GetWidth(), 
-        ImGui::GetCursorScreenPos().y + GetHeight()), 
+      ImVec2(ImGui::GetCursorScreenPos().x + width, 
+             ImGui::GetCursorScreenPos().y + height), 
       ImVec2(0, 1), ImVec2(1, 0));
 
     ImGui::End();

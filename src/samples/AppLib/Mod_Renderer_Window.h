@@ -32,7 +32,7 @@ namespace Renderer
         : name("Window")
         , width(600)
         , height(500)
-        , indentX(100)
+        , indentX(300)
         , indentY(100)
         , colorFormat(E_RGBA)
         , useDepthTest(true)
@@ -55,6 +55,8 @@ namespace Renderer
 
     Window(InitData const &);
     virtual ~Window();
+
+    void Resize(unsigned, unsigned);
 
     void BeginDraw();
     void EndDraw();

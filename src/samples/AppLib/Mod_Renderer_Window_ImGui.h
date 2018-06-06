@@ -24,6 +24,9 @@ namespace Renderer
   private:
 
     std::string m_name;
+
+    float const m_marginX;
+    float const m_marginY;
   };
 }
 
