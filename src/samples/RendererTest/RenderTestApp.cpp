@@ -179,7 +179,8 @@ RenderTestApp::RenderTestApp()
   m_pRender = new Renderer::Renderer();
   
   Renderer::Window::InitData windowData;
-  m_pWindow = new Renderer::Window(windowData);
+  Renderer::WindowFactory windowFactory;
+  m_pWindow = windowFactory.GetNewWindow(windowData);
 
   std::vector<Renderer::LineMesh> lineMeshes;
   std::vector<Renderer::TriangleMesh> triangleMeshes;

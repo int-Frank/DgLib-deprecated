@@ -1,7 +1,9 @@
-#ifndef MOD_RENDERER_RENDERERTARGET
-#define MOD_RENDERER_RENDERERTARGET
+#ifndef MOD_RENDERER_WINDOW
+#define MOD_RENDERER_WINDOW
 
 #include <string>
+
+#include <GL/glew.h>
 
 #include "DgR3Vector.h"
 
@@ -27,7 +29,6 @@ namespace Renderer
     public:
 
       InitData()
-        //TODO A name of "" will create a window which draws over the background.
         : name("Window")
         , width(600)
         , height(500)
@@ -52,13 +53,22 @@ namespace Renderer
 
   public:
 
-    Window(InitData &);
-    ~Window();
+    Window(InitData const &);
+    virtual ~Window();
 
     void BeginDraw();
     void EndDraw();
+    virtual void Update()    {}
 
-    void Update();
+  protected:
+
+    void DeleteBuffers();
+    void ClearBuffers();
+    void InitBuffers(InitData const &);
+
+    GLuint GetTexture() const;
+    unsigned GetWidth() const;
+    unsigned GetHeight() const;
 
   private:
 
@@ -66,8 +76,18 @@ namespace Renderer
     Window(Window const &);
     Window & operator=(Window const &);
 
+  private:
+
     class PIMPL;
     PIMPL * m_pimpl;
+  };
+
+  //A name of "" will create a window which draws over the app viewport.
+  class WindowFactory
+  {
+  public:
+
+    Window * GetNewWindow(Window::InitData const &);
   };
 }
 

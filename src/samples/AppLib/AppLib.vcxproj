@@ -188,6 +188,8 @@
     <ClInclude Include="Mod_Renderer_Renderer.h" />
     <ClInclude Include="Mod_Renderer_Window.h" />
     <ClInclude Include="Mod_Renderer_TriangleMesh.h" />
+    <ClInclude Include="Mod_Renderer_Window_ImGui.h" />
+    <ClInclude Include="Mod_Renderer_Window_Viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui.cpp" />
@@ -202,6 +204,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mod_Renderer_Renderer.cpp" />
     <ClCompile Include="Mod_Renderer_Window.cpp" />
+    <ClCompile Include="Mod_Renderer_WindowFactory.cpp" />
+    <ClCompile Include="Mod_Renderer_Window_ImGui.cpp" />
+    <ClCompile Include="Mod_Renderer_Window_Viewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />

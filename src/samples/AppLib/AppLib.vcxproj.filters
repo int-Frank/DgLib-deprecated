@@ -77,6 +77,12 @@
     <ClInclude Include="Mod_Renderer_Window.h">
       <Filter>public\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Mod_Renderer_Window_ImGui.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Renderer_Window_Viewport.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgApp.cpp">
@@ -112,7 +118,16 @@
     <ClCompile Include="Mod_Renderer_Renderer.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Mod_Renderer_Window_Viewport.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod_Renderer_Window_ImGui.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="Mod_Renderer_Window.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod_Renderer_WindowFactory.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>

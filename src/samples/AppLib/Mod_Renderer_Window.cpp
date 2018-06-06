@@ -1,11 +1,9 @@
-
 #include <exception>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "Mod_Renderer_Window.h"
-#include "imgui.h"
 
 namespace Renderer
 {
@@ -59,24 +57,28 @@ namespace Renderer
   {
   public:
 
-    PIMPL(InitData &);
+    PIMPL(InitData const &);
     ~PIMPL();
-    PIMPL(PIMPL const &);
 
     void BeginDraw();
     void EndDraw();
 
-    void Update();
-
+    void DeleteBuffers();
     void ClearBuffers();
+    void InitBuffers(InitData const &);
+
+    GLuint GetTexture() const;
+    unsigned GetWidth() const;
+    unsigned GetHeight() const;
 
   private:
 
-    void Clear();
+    //No copy operations.
+    PIMPL(PIMPL const &);
+    PIMPL & operator=(PIMPL const &);
 
   private:
 
-    std::string m_name;
     unsigned    m_width;
     unsigned    m_height;
     bool        m_useDepthTest;
@@ -87,25 +89,42 @@ namespace Renderer
     GLuint      m_rbo;
   };
 
-  Window::PIMPL::PIMPL(PIMPL const & a_other)
-    : m_name(a_other.m_name)
-    , m_width(a_other.m_width)
-    , m_height(a_other.m_height)
-    , m_useDepthTest(a_other.m_useDepthTest)
-    , m_clearColor(a_other.m_clearColor)
-    , m_frameBuffer(a_other.m_frameBuffer)
-    , m_texture(a_other.m_texture)
-    , m_rbo(a_other.m_rbo)
+  Window::PIMPL::PIMPL(InitData const & a_data)
+    : m_frameBuffer(0)
+    , m_texture(0)
+    , m_rbo(0)
   {
-
+    InitBuffers(a_data);
   }
 
   Window::PIMPL::~PIMPL()
   {
-    Clear();
+    DeleteBuffers();
   }
 
-  void Window::PIMPL::Clear()
+  void Window::PIMPL::BeginDraw()
+  {
+    ClearBuffers();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
+    if (m_useDepthTest)
+    {
+      glEnable(GL_DEPTH_TEST);
+    }
+    else
+    {
+      glDisable(GL_DEPTH_TEST);
+    }
+
+    glViewport(0, 0, m_width, m_height);
+  }
+
+  void Window::PIMPL::EndDraw()
+  {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  }
+
+  void Window::PIMPL::DeleteBuffers()
   {
     glDeleteFramebuffers(1, &m_frameBuffer);
     m_frameBuffer = 0;
@@ -113,21 +132,25 @@ namespace Renderer
     m_rbo = 0;
   }
 
-  Window::PIMPL::PIMPL(InitData & a_data)
-    : m_frameBuffer(0)
-    , m_texture(0)
-    , m_rbo(0)
+  void Window::PIMPL::ClearBuffers()
   {
-    float marginX = 9.0f;
-    float marginY = 18.0f;
-    float width = float(a_data.width) + 2.0f * marginX;
-    float height = float(a_data.height) + 2.0f * marginY;
+    GLuint flag = GL_COLOR_BUFFER_BIT;
+    if (m_useDepthTest)
+    {
+      flag |= GL_DEPTH_BUFFER_BIT;
+    }
 
-    ImGui::SetNextWindowSize(ImVec2(width, height));
-    ImGui::SetNextWindowPos(ImVec2(float(a_data.indentX), float(a_data.indentY)));
-    ImGui::Begin(a_data.name.c_str(), nullptr, a_data.ImGuiWindowFlags);
-    ImGui::End();
+    glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
+    glClearColor(m_clearColor[0]
+      , m_clearColor[1]
+      , m_clearColor[2]
+      , m_clearColor[3]);
+    glClear(flag);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  }
 
+  void Window::PIMPL::InitBuffers(InitData const & a_data)
+  {
     glGenFramebuffers(1, &m_frameBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
 
@@ -166,7 +189,6 @@ namespace Renderer
     }
     else
     {
-      m_name = a_data.name;
       m_width = a_data.width;
       m_height = a_data.height;
       m_useDepthTest = a_data.useDepthTest;
@@ -176,60 +198,22 @@ namespace Renderer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
-  void Window::PIMPL::BeginDraw()
+  GLuint Window::PIMPL::GetTexture() const
   {
-    ClearBuffers();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
-    if (m_useDepthTest)
-    {
-      glEnable(GL_DEPTH_TEST);
-    }
-    else
-    {
-      glDisable(GL_DEPTH_TEST);
-    }
-
-    glViewport(0, 0, m_width, m_height);
+    return m_texture;
   }
 
-  void Window::PIMPL::EndDraw()
+  GLuint Window::PIMPL::GetWidth() const
   {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return m_width;
   }
 
-  void Window::PIMPL::Update()
+  GLuint Window::PIMPL::GetHeight() const
   {
-    ImGui::Begin(m_name.c_str());
-
-    ImGui::GetWindowDrawList()->AddImage(
-      (void *)m_texture, 
-      ImVec2(ImGui::GetCursorScreenPos()),
-      ImVec2(ImGui::GetCursorScreenPos().x + m_width, 
-        ImGui::GetCursorScreenPos().y + m_height), 
-      ImVec2(0, 1), ImVec2(1, 0));
-
-    ImGui::End();
+    return m_height;
   }
 
-  void Window::PIMPL::ClearBuffers()
-  {
-    GLuint flag = GL_COLOR_BUFFER_BIT;
-    if (m_useDepthTest)
-    {
-      flag |= GL_DEPTH_BUFFER_BIT;
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
-    glClearColor(m_clearColor[0]
-               , m_clearColor[1]
-               , m_clearColor[2]
-               , m_clearColor[3]);
-    glClear(flag);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  }
-
-  Window::Window(InitData & a_data)
+  Window::Window(InitData const & a_data)
     : m_pimpl(new PIMPL(a_data))
   {
 
@@ -250,8 +234,33 @@ namespace Renderer
     m_pimpl->EndDraw();
   }
 
-  void Window::Update()
+  void Window::DeleteBuffers()
   {
-    m_pimpl->Update();
+    m_pimpl->DeleteBuffers();
+  }
+
+  void Window::ClearBuffers()
+  {
+    m_pimpl->ClearBuffers();
+  }
+
+  void Window::InitBuffers(InitData const & a_data)
+  {
+    m_pimpl->InitBuffers(a_data);
+  }
+
+  GLuint Window::GetTexture() const
+  {
+    return m_pimpl->GetTexture();
+  }
+
+  GLuint Window::GetWidth() const
+  {
+    return m_pimpl->GetWidth();
+  }
+
+  GLuint Window::GetHeight() const
+  {
+    return m_pimpl->GetHeight();
   }
 }
