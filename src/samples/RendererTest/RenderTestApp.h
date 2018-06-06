@@ -7,7 +7,7 @@
 #include "DgR3Vector.h"
 #include "DgR3Matrix.h"
 #include "Mod_Renderer_Renderer.h"
-#include "Mod_Renderer_Window.h"
+#include "Mod_Window_Window.h"
 
 class RenderTestApp : public DgApp
 {
@@ -38,7 +38,7 @@ private:
   static int const          s_nObjects = 9;
   bool                      m_showObject[s_nObjects];
   Renderer::Renderer *      m_pRender;
-  Renderer::Window *        m_pWindow;
+  Window::Window *          m_pWindow;
   std::vector<ScreenObject> m_lineObjects;
   std::vector<ScreenObject> m_triangleObjects;
 };

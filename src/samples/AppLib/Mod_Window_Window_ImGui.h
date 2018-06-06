@@ -1,14 +1,14 @@
-#ifndef MOD_RENDERER_WINDOW_IMGUI
-#define MOD_RENDERER_WINDOW_IMGUI
+#ifndef MOD_WINDOW_WINDOW_IMGUI
+#define MOD_WINDOW_WINDOW_IMGUI
 
 #include <string>
 
 #include <GL/glew.h>
 
 #include "DgR3Vector.h"
-#include "Mod_Renderer_Window.h"
+#include "Mod_Window_Window.h"
 
-namespace Renderer
+namespace Window
 {
   class Window_ImGui : public Window
   {

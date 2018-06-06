@@ -2,10 +2,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Mod_Renderer_Window_ImGui.h"
+#include "Mod_Window_Window_ImGui.h"
 #include "imgui.h"
 
-namespace Renderer
+namespace Window
 {
 
   Window_ImGui::~Window_ImGui()
@@ -34,14 +34,22 @@ namespace Renderer
 
     ImVec2 dim = ImGui::GetWindowSize();
 
-    float width = dim.x - m_marginX;
-    float height = dim.y - m_marginY;
+    if (dim.x != (GetWidth() + m_marginX) || dim.y != (GetHeight() + m_marginY))
+    {
+      float width = dim.x - m_marginX;
+      float height = dim.y - m_marginY;
+
+      if (width < 1.0f) width = 1.0f;
+      if (height < 1.0f) height = 1.0f;
+
+      impl::ResizeCallback(this, width, height);
+    }
 
     ImGui::GetWindowDrawList()->AddImage(
       (void *)GetTexture(), 
       ImVec2(ImGui::GetCursorScreenPos()),
-      ImVec2(ImGui::GetCursorScreenPos().x + width, 
-             ImGui::GetCursorScreenPos().y + height), 
+      ImVec2(ImGui::GetCursorScreenPos().x + GetWidth(), 
+             ImGui::GetCursorScreenPos().y + GetHeight()), 
       ImVec2(0, 1), ImVec2(1, 0));
 
     ImGui::End();

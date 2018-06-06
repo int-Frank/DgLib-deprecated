@@ -74,13 +74,13 @@
     <ClInclude Include="Mod_Renderer_Renderer.h">
       <Filter>public\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_Window.h">
+    <ClInclude Include="Mod_Window_Window.h">
       <Filter>public\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_Window_ImGui.h">
+    <ClInclude Include="Mod_Window_Window_ImGui.h">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_Window_Viewport.h">
+    <ClInclude Include="Mod_Window_Window_Viewport.h">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
@@ -118,16 +118,16 @@
     <ClCompile Include="Mod_Renderer_Renderer.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Mod_Renderer_Window_Viewport.cpp">
+    <ClCompile Include="Mod_Window_Window_ImGui.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Mod_Renderer_Window_ImGui.cpp">
+    <ClCompile Include="Mod_Window_Window_Viewport.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Mod_Renderer_Window.cpp">
+    <ClCompile Include="Mod_Window_Window.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Mod_Renderer_WindowFactory.cpp">
+    <ClCompile Include="Mod_Window_WindowFactory.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>

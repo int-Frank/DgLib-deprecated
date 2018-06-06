@@ -178,8 +178,8 @@ RenderTestApp::RenderTestApp()
 
   m_pRender = new Renderer::Renderer();
   
-  Renderer::Window::InitData windowData;
-  Renderer::WindowFactory windowFactory;
+  Window::InitData windowData;
+  Window::WindowFactory windowFactory;
   m_pWindow = windowFactory.GetNewWindow(windowData);
 
   std::vector<Renderer::LineMesh> lineMeshes;
