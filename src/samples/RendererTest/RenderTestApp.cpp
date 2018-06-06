@@ -165,14 +165,21 @@ static Renderer::LineMesh GenerateFace()
 RenderTestApp::~RenderTestApp()
 {
   delete m_pRender;
+  delete m_pWindow;
 }
 
 RenderTestApp::RenderTestApp()
+  : m_pRender(nullptr)
+  , m_pWindow(nullptr)
+  , m_showObject{0}
 {
   this->ToggleOutputWindow(false);
   Renderer::Init(Log);
 
   m_pRender = new Renderer::Renderer();
+  
+  Renderer::Window::InitData windowData;
+  m_pWindow = new Renderer::Window(windowData);
 
   std::vector<Renderer::LineMesh> lineMeshes;
   std::vector<Renderer::TriangleMesh> triangleMeshes;
@@ -245,47 +252,35 @@ void RenderTestApp::SetTransforms()
 
 void RenderTestApp::DoFrame(double a_dt)
 {
+  m_pWindow->BeginDraw();
   m_pRender->BeginDraw();
-
+  
   m_pRender->SetContext(Renderer::E_Lines);
   for (auto const & obj : m_lineObjects)
   {
     m_pRender->SetColor(obj.color);
     m_pRender->Draw(obj.handle);
   }
-
+  
   m_pRender->SetContext(Renderer::E_Triangles);
   for (auto const & obj : m_triangleObjects)
   {
     m_pRender->SetColor(obj.color);
     m_pRender->Draw(obj.handle);
   }
-
+  
   m_pRender->EndDraw();
+  m_pWindow->EndDraw();
 }
 
 void RenderTestApp::BuildUI()
 {
+  m_pWindow->Update();
+
   int winWidth(0), winHeight(0);
   GetWindowDimensions(winWidth, winHeight);
 
-  float indent = 5.0f;
-  float indentBottom = 20.0f;
-  float widthMain = 200.0f;
-  float widthView = winWidth - widthMain - indent * 3.0f;
-  float indentView = widthMain + indent * 2.0f;
-  float height = (float)winHeight - indent - indentBottom;
-  if (height < 100.0f) height = 100.0f;
-
-  ImGui::SetNextWindowSize(ImVec2(widthMain, height));
-  ImGui::SetNextWindowPos(ImVec2(indent, indent));
-  ImGui::Begin("Main", nullptr
-    , ImGuiWindowFlags_NoResize 
-    | ImGuiWindowFlags_NoMove 
-    | ImGuiWindowFlags_NoCollapse 
-    | ImGuiWindowFlags_NoSavedSettings
-    | ImGuiWindowFlags_NoTitleBar
-  );
+  ImGui::Begin("Main", nullptr, 0);
   
   ImGui::Separator();
   
@@ -326,16 +321,5 @@ void RenderTestApp::BuildUI()
     ImGui::Checkbox(ss.str().c_str(),   &m_showObject[i]);
   }
   
-  ImGui::End();
-
-  ImGui::SetNextWindowSize(ImVec2(widthView, height));
-  ImGui::SetNextWindowPos(ImVec2(indentView, indent));
-  ImGui::Begin("View", nullptr
-    , ImGuiWindowFlags_NoResize 
-    | ImGuiWindowFlags_NoMove 
-    | ImGuiWindowFlags_NoCollapse 
-    | ImGuiWindowFlags_NoSavedSettings
-    | ImGuiWindowFlags_NoTitleBar
-  );
   ImGui::End();
 }

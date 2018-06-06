@@ -159,7 +159,8 @@ namespace Renderer
 
   ContextLine::PIMPL::~PIMPL()
   {
-
+    Clear();
+    glDeleteProgram(m_shaderProgram);
   }
 
   void ContextLine::PIMPL::LoadData(std::vector<LineMesh> const & a_data)
@@ -345,6 +346,12 @@ namespace Renderer
       throw ex_LinkFail(message);
     }
 
+    //Detach and delete shaders afer we have successfully linked the program.
+    glDetachShader(m_shaderProgram, vsID);
+    glDetachShader(m_shaderProgram, fsID);
+    glDeleteShader(vsID);
+    glDeleteShader(fsID);
+
     //Init defaults
     glUseProgram(m_shaderProgram);
     GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
@@ -354,12 +361,6 @@ namespace Renderer
     glUniform4fv(loc_color, 1, clr.GetData());
     glUniformMatrix4fv(loc_ms_matrix, 1, GL_FALSE, mat.GetData());
     glUseProgram(0);
-
-    //Detach and delete shaders afer we have successfully linked the program.
-    glDetachShader(m_shaderProgram, vsID);
-    glDetachShader(m_shaderProgram, fsID);
-    glDeleteShader(vsID);
-    glDeleteShader(fsID);
   }
 
   ContextLine::ContextLine()

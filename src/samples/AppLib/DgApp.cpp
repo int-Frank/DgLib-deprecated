@@ -645,6 +645,9 @@ DgApp::DgApp()
     throw AppInitFailed;
   }
 
+  //We need this for any constructors which use ImGui
+  ImGui_ImplGlfwGL3_NewFrame();
+
   LogToOutputWindow(std::string("Renderer: " + std::string((char*)glGetString(GL_RENDERER))), Dg::LL_Info);
   LogToOutputWindow(std::string("OpenGL version supported " + std::string((char*)glGetString(GL_VERSION))), Dg::LL_Info);
 }

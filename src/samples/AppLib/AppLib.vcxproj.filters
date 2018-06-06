@@ -71,10 +71,10 @@
     <ClInclude Include="Mod_Renderer_Logger.h">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_RenderTarget.h">
+    <ClInclude Include="Mod_Renderer_Renderer.h">
       <Filter>public\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_Renderer.h">
+    <ClInclude Include="Mod_Renderer_Window.h">
       <Filter>public\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
@@ -112,7 +112,7 @@
     <ClCompile Include="Mod_Renderer_Renderer.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Mod_Renderer_RenderTarget.cpp">
+    <ClCompile Include="Mod_Renderer_Window.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
