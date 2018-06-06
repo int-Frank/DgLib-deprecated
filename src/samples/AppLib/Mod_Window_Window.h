@@ -11,6 +11,8 @@ namespace Window
 {
   class Window;
 
+  //We init with a Resize callback in case you want to resize
+  //the window at a different time.
   void Init(void(*ResizeCallback)(Window *, int, int));
 
   enum Flag

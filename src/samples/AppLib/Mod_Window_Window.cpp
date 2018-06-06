@@ -172,6 +172,11 @@ namespace Window
   void Window::PIMPL::DeleteBuffers()
   {
     glDeleteFramebuffers(1, &m_frameBuffer);
+    glDeleteTextures(1, &m_texture);
+    if (m_useDepthTest)
+    {
+      glDeleteRenderbuffers(1, &m_rbo);
+    }
     m_frameBuffer = 0;
     m_texture = 0;
     m_rbo = 0;
