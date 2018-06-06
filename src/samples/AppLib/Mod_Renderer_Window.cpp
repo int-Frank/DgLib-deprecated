@@ -118,7 +118,12 @@ namespace Renderer
     , m_texture(0)
     , m_rbo(0)
   {
-    ImGui::SetNextWindowSize(ImVec2(float(a_data.width), float(a_data.width)));
+    float marginX = 9.0f;
+    float marginY = 18.0f;
+    float width = float(a_data.width) + 2.0f * marginX;
+    float height = float(a_data.height) + 2.0f * marginY;
+
+    ImGui::SetNextWindowSize(ImVec2(width, height));
     ImGui::SetNextWindowPos(ImVec2(float(a_data.indentX), float(a_data.indentY)));
     ImGui::Begin(a_data.name.c_str(), nullptr, a_data.ImGuiWindowFlags);
     ImGui::End();
@@ -184,20 +189,13 @@ namespace Renderer
     {
       glDisable(GL_DEPTH_TEST);
     }
+
+    glViewport(0, 0, m_width, m_height);
   }
 
   void Window::PIMPL::EndDraw()
   {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    ImGui::Begin(m_name.c_str());
-
-    ImGui::GetWindowDrawList()->AddImage(
-      (void *)m_texture, 
-      ImVec2(ImGui::GetCursorScreenPos()),
-      ImVec2(ImGui::GetCursorScreenPos().x + m_width/2, 
-        ImGui::GetCursorScreenPos().y + m_height/2), ImVec2(0, 1), ImVec2(1, 0));
-    ImGui::End();
   }
 
   void Window::PIMPL::Update()
@@ -207,8 +205,10 @@ namespace Renderer
     ImGui::GetWindowDrawList()->AddImage(
       (void *)m_texture, 
       ImVec2(ImGui::GetCursorScreenPos()),
-      ImVec2(ImGui::GetCursorScreenPos().x + m_width/2, 
-        ImGui::GetCursorScreenPos().y + m_height/2), ImVec2(0, 1), ImVec2(1, 0));
+      ImVec2(ImGui::GetCursorScreenPos().x + m_width, 
+        ImGui::GetCursorScreenPos().y + m_height), 
+      ImVec2(0, 1), ImVec2(1, 0));
+
     ImGui::End();
   }
 

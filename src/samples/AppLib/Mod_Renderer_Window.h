@@ -27,14 +27,15 @@ namespace Renderer
     public:
 
       InitData()
+        //TODO A name of "" will create a window which draws over the background.
         : name("Window")
-        , width(400)
-        , height(400)
+        , width(600)
+        , height(500)
         , indentX(100)
         , indentY(100)
         , colorFormat(E_RGBA)
         , useDepthTest(true)
-        , clearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f))
+        , clearColor(vec4(0.0f, 0.2f, 0.2f, 1.0f))
         , ImGuiWindowFlags(0)
       {}
 

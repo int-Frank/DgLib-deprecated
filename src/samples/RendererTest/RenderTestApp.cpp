@@ -252,8 +252,8 @@ void RenderTestApp::SetTransforms()
 
 void RenderTestApp::DoFrame(double a_dt)
 {
-  m_pWindow->BeginDraw();
   m_pRender->BeginDraw();
+  m_pWindow->BeginDraw();
   
   m_pRender->SetContext(Renderer::E_Lines);
   for (auto const & obj : m_lineObjects)
@@ -268,9 +268,9 @@ void RenderTestApp::DoFrame(double a_dt)
     m_pRender->SetColor(obj.color);
     m_pRender->Draw(obj.handle);
   }
-  
-  m_pRender->EndDraw();
+
   m_pWindow->EndDraw();
+  m_pRender->EndDraw();
 }
 
 void RenderTestApp::BuildUI()
