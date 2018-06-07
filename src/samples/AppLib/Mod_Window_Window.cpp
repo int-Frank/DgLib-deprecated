@@ -82,7 +82,7 @@ namespace Window
     PIMPL(InitData const &);
     ~PIMPL();
 
-    void Resize(unsigned a_w, unsigned a_h);
+    void Resize(int a_w, int a_h);
 
     void BeginDraw();
     void EndDraw();
@@ -141,10 +141,14 @@ namespace Window
     DeleteBuffers();
   }
 
-  void Window::PIMPL::Resize(unsigned a_w, unsigned a_h)
+  void Window::PIMPL::Resize(int a_w, int a_h)
   {
     DeleteBuffers();
-    InitBuffers(a_w, a_h, m_useDepthTest, m_colorFormat, m_clearColor);
+
+    if (a_w < 1) a_w = 1;
+    if (a_h < 1) a_h = 1;
+
+    InitBuffers((unsigned)a_w, (unsigned)a_h, m_useDepthTest, m_colorFormat, m_clearColor);
   }
 
   void Window::PIMPL::BeginDraw()
@@ -275,7 +279,7 @@ namespace Window
     m_pimpl->BeginDraw();
   }
 
-  void Window::Resize(unsigned a_w, unsigned a_h)
+  void Window::Resize(int a_w, int a_h)
   {
     m_pimpl->Resize(a_w, a_h);
   }

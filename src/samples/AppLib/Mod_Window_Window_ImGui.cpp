@@ -39,10 +39,7 @@ namespace Window
       float width = dim.x - m_marginX;
       float height = dim.y - m_marginY;
 
-      if (width < 1.0f) width = 1.0f;
-      if (height < 1.0f) height = 1.0f;
-
-      impl::ResizeCallback(this, width, height);
+      impl::ResizeCallback(this, (int)width, (int)height);
     }
 
     ImGui::GetWindowDrawList()->AddImage(

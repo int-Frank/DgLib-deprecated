@@ -66,7 +66,7 @@ namespace Window
     Window(InitData const &);
     virtual ~Window();
 
-    void Resize(unsigned w, unsigned h);
+    void Resize(int w, int h);
 
     void BeginDraw();
     void EndDraw();
