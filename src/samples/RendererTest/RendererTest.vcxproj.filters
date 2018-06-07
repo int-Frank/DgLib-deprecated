@@ -21,9 +21,15 @@
     <ClCompile Include="RenderTestApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShapeFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderTestApp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeFunctions.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

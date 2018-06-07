@@ -1,0 +1,221 @@
+
+#include <cmath>
+
+#include "Mod_Renderer_LineMesh.h"
+
+Renderer::LineMesh GenerateStar()
+{
+  float pi = 3.14159f;
+
+  int n_points = 6;
+  float radius = 0.5f;
+  float depth = 0.2f;
+  float spacing = 2.0f * pi / float(n_points);
+  float halfSpacing = spacing / 2.0f;
+
+  Renderer::LineMesh result;
+
+  for (int i = 0; i < n_points; i++)
+  {
+    Renderer::LineVertex point, dimple;
+
+    point.point[0] = radius * cos(spacing * float(i));
+    point.point[1] = radius * sin(spacing * float(i));
+    point.point[2] = 0.0f;
+
+    dimple.point[0] = depth * cos(spacing * float(i) + halfSpacing);
+    dimple.point[1] = depth * sin(spacing * float(i) + halfSpacing);
+    dimple.point[2] = 0.0f;
+
+    result.verts.push_back(point);
+    result.verts.push_back(dimple);
+  }
+
+  for (int i = 0; i < n_points * 2; i++)
+  {
+    Renderer::Line line;
+    line.indices[0] = i;
+    line.indices[1] = (i + 1) % (n_points * 2);
+    result.lines.push_back(line);
+  }
+
+  return result;
+}
+
+Renderer::LineMesh GenerateBox()
+{
+  Renderer::LineMesh result;
+  Renderer::LineVertex point;
+
+  point.point[2] = 0.0f;
+
+  point.point[0] = -0.5f;
+  point.point[1] = -0.5f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.5f;
+  point.point[1] = -0.5f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.5f;
+  point.point[1] = 0.5f;
+  result.verts.push_back(point);
+
+  point.point[0] = -0.5f;
+  point.point[1] = 0.5f;
+  result.verts.push_back(point);
+
+  Renderer::Line line;
+
+  line.indices[0] = 0;
+  line.indices[1] = 1;
+  result.lines.push_back(line);
+
+  line.indices[0] = 1;
+  line.indices[1] = 2;
+  result.lines.push_back(line);
+
+  line.indices[0] = 2;
+  line.indices[1] = 3;
+  result.lines.push_back(line);
+
+  line.indices[0] = 3;
+  line.indices[1] = 0;
+  result.lines.push_back(line);
+
+  return result;
+}
+
+Renderer::LineMesh GenerateDebugPattern()
+{
+  Renderer::LineMesh result;
+  Renderer::LineVertex point;
+
+  point.point[2] = 0.0f;
+
+  //Square
+  point.point[0] = -0.1f;
+  point.point[1] = 0.6f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.1f;
+  point.point[1] = 0.6f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.1f;
+  point.point[1] = 0.8f;
+  result.verts.push_back(point);
+
+  point.point[0] = -0.1f;
+  point.point[1] = 0.8f;
+  result.verts.push_back(point);
+
+  //Triangle
+  point.point[0] = -0.8f;
+  point.point[1] = -0.1f;
+  result.verts.push_back(point);
+
+  point.point[0] = -0.6f;
+  point.point[1] = -0.1f;
+  result.verts.push_back(point);
+
+  point.point[0] = -0.7f;
+  point.point[1] = 0.1f;
+  result.verts.push_back(point);
+
+  //Cross
+  point.point[0] = -0.1f;
+  point.point[1] = -0.8f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.1f;
+  point.point[1] = -0.6f;
+  result.verts.push_back(point);
+
+  point.point[0] = -0.1f;
+  point.point[1] = -0.6f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.1f;
+  point.point[1] = -0.8f;
+  result.verts.push_back(point);
+
+  //Plus
+  point.point[0] = 0.7f;
+  point.point[1] = -0.1f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.8f;
+  point.point[1] = 0.0f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.7f;
+  point.point[1] = 0.1f;
+  result.verts.push_back(point);
+
+  point.point[0] = 0.6f;
+  point.point[1] = 0.0f;
+  result.verts.push_back(point);
+
+  Renderer::Line line;
+
+  //Square
+  line.indices[0] = 0;
+  line.indices[1] = 1;
+  result.lines.push_back(line);
+
+  line.indices[0] = 1;
+  line.indices[1] = 2;
+  result.lines.push_back(line);
+
+  line.indices[0] = 2;
+  line.indices[1] = 3;
+  result.lines.push_back(line);
+
+  line.indices[0] = 3;
+  line.indices[1] = 0;
+  result.lines.push_back(line);
+
+  //Triangle
+  line.indices[0] = 4;
+  line.indices[1] = 5;
+  result.lines.push_back(line);
+
+  line.indices[0] = 5;
+  line.indices[1] = 6;
+  result.lines.push_back(line);
+
+  line.indices[0] = 6;
+  line.indices[1] = 4;
+  result.lines.push_back(line);
+
+  //Cross
+  line.indices[0] = 7;
+  line.indices[1] = 8;
+  result.lines.push_back(line);
+
+  line.indices[0] = 9;
+  line.indices[1] = 10;
+  result.lines.push_back(line);
+
+  //Plus
+  line.indices[0] = 11;
+  line.indices[1] = 13;
+  result.lines.push_back(line);
+
+  line.indices[0] = 14;
+  line.indices[1] = 12;
+  result.lines.push_back(line);
+
+  return result;
+}
+
+//Renderer::LineMesh GenerateSnowFlake()
+//{
+//
+//}
+//
+//Renderer::LineMesh GenerateFace()
+//{
+//
+//}

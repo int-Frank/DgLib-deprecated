@@ -36,6 +36,7 @@ namespace Window
       , indentY(100)
       , colorFormat(E_RGBA)
       , useDepthTest(true)
+      , isImGuiWindow(true)
       , clearColor(Dg::R3::Vector<float>(0.0f, 0.2f, 0.2f, 1.0f))
       , ImGuiWindowFlags(0)
     {}
@@ -47,6 +48,7 @@ namespace Window
     unsigned indentY;
     int colorFormat; //E_RGB, E_RGBA
     bool useDepthTest;
+    bool isImGuiWindow;
     Dg::R3::Vector<float> clearColor;
     unsigned ImGuiWindowFlags;
   };
@@ -56,6 +58,7 @@ namespace Window
     void ResizeCallback(Window *, int, int);
   }
 
+  //Use WindowFactory below to create windows. This is just the base class.
   class Window
   {
   public:
@@ -94,7 +97,6 @@ namespace Window
     PIMPL * m_pimpl;
   };
 
-  //A name of "" will create a window which draws over the app viewport.
   class WindowFactory
   {
   public:

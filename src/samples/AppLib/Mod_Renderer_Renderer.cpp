@@ -40,9 +40,7 @@ namespace Renderer
     void SetRenderTarget();
 
     void SetContext(Contexts);
-    void BeginDraw();
     void Draw(ObjectHandle);
-    void EndDraw();
 
   private:
 
@@ -164,11 +162,6 @@ namespace Renderer
     }
   }
 
-  void Renderer::PIMPL::BeginDraw()
-  {
-    glClear(GL_COLOR_BUFFER_BIT);
-  }
-
   void Renderer::PIMPL::Draw(ObjectHandle a_h)
   {
     if (m_pCurrentContext)
@@ -195,11 +188,6 @@ namespace Renderer
     int halfSize = sizeof(ObjectHandle) * 4;
     ObjectHandle mask = (ObjectHandle(1) << halfSize) - 1;
     return a_handle & mask;
-  }
-
-  void Renderer::PIMPL::EndDraw()
-  {
-
   }
 
   Renderer::Renderer()
@@ -243,11 +231,6 @@ namespace Renderer
     m_pimpl->SetTransform(a_matrix);
   }
 
-  void Renderer::BeginDraw()
-  {
-    m_pimpl->BeginDraw();
-  }
-
   void Renderer::SetContext(Contexts a_context)
   {
     m_pimpl->SetContext(a_context);
@@ -258,13 +241,17 @@ namespace Renderer
     m_pimpl->Draw(a_handle);
   }
 
-  void Renderer::EndDraw()
-  {
-    m_pimpl->EndDraw();
-  }
-
   void Renderer::SetColor(Dg::R3::Vector<float> const & a_clr)
   {
     m_pimpl->SetColor(a_clr);
+  }
+
+  void Renderer::ClearAppColorBuffer(Dg::R3::Vector<float> a_color)
+  {
+    glClearColor(a_color[0]
+               , a_color[1]
+               , a_color[2]
+               , a_color[3]);
+    glClear(GL_COLOR_BUFFER_BIT);
   }
 }

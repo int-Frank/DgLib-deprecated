@@ -42,10 +42,9 @@ namespace Renderer
     void SetTransform(Dg::R3::Matrix<float> const &);
     void SetColor(Dg::R3::Vector<float> const &);
 
-    void BeginDraw();
     void SetContext(Contexts);
     void Draw(ObjectHandle);
-    void EndDraw();
+    void ClearAppColorBuffer(Dg::R3::Vector<float> color = Dg::R3::Vector<float>(0.0f, 0.0f, 0.0f, 1.0f));
 
   private:
 

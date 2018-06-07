@@ -9,95 +9,10 @@
 #include "Mod_Renderer_Logger.h"
 #include "DgTypes.h"
 #include "Mod_Renderer_ContextLine.h"
+#include "Mod_Renderer_Common.h"
 
 namespace Renderer
 {
-  class excptBase: public std::exception
-  {
-  public:
-
-    excptBase(std::string const & a_meta)
-    {
-      m_meta = m_meta; 
-    }
-
-    virtual const char* what() const throw()
-    {
-      return m_meta.c_str();
-    }
-
-  protected:
-
-    std::string GetMeta() const
-    {
-      return m_meta;
-    }
-
-  private:
-
-    std::string m_meta;
-  };
-
-  class ex_vsCompile: public excptBase
-  {
-  public:
-
-    ex_vsCompile(std::string a_meta = "")
-      : excptBase(a_meta)
-    {}
-
-    virtual const char* what() const throw()
-    {
-      std::string meta = GetMeta();
-      std::string msg = "Vertex shader failed to compile for ContextLine";
-      if (!meta.empty())
-      {
-        msg = msg + ": " + meta;
-      }
-      return msg.c_str();
-    }
-  };
-
-  class ex_fsCompile: public excptBase
-  {
-  public:
-
-    ex_fsCompile(std::string a_meta = "")
-      : excptBase(a_meta)
-    {}
-
-    virtual const char* what() const throw()
-    {
-      std::string meta = GetMeta();
-      std::string msg = "Fragment shader failed to compile for ContextLine";
-      if (!meta.empty())
-      {
-        msg = msg + ": " + meta;
-      }
-      return msg.c_str();
-    }
-  };
-
-  class ex_LinkFail: public excptBase
-  {
-  public:
-
-    ex_LinkFail(std::string a_meta = "")
-      : excptBase(a_meta)
-    {}
-
-    virtual const char* what() const throw()
-    {
-      std::string meta = GetMeta();
-      std::string msg = "Shader program failed to link";
-      if (!meta.empty())
-      {
-        msg = msg + ": " + meta;
-      }
-      return msg.c_str();
-    }
-  };
-
   class ContextLine::PIMPL
   {
   public:
@@ -189,14 +104,11 @@ namespace Renderer
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
       gpuData.indexData.size() * sizeof(GLuint),
       gpuData.indexData.data(), GL_STATIC_DRAW);
-    GLuint loc_position = glGetAttribLocation(m_shaderProgram, "position");
+    GLuint loc_position = glGetAttribLocation(m_shaderProgram, "in_position");
 
     //TODO Fix 5th argument; stride
     glVertexAttribPointer(loc_position, 4, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(loc_position);
-
-    //glEnable(GL_DEPTH_TEST);
-    //glDepthFunc(GL_LESS);
   }
 
   //Also sets m_currentLines;
@@ -262,7 +174,7 @@ namespace Renderer
 
   void ContextLine::PIMPL::SetMatrix(Dg::R3::Matrix<float> const & a_mat)
   {
-    GLuint mv_matrix = glGetAttribLocation(m_shaderProgram, "mv_matrix");
+    GLuint mv_matrix = glGetAttribLocation(m_shaderProgram, "u_mvp");
     if (mv_matrix == 0)
     {
       Logger::Log("Failed to find mv_matrix in shader program", Dg::LL_Error);
@@ -290,10 +202,6 @@ namespace Renderer
 
   void ContextLine::PIMPL::InitShaderProgram()
   {
-    //Create shader ID
-    GLuint vsID = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fsID = glCreateShader(GL_FRAGMENT_SHADER);
-
     std::string vs_str = std::string(
 #include "Mod_Renderer_vs_line.glsl"
     );
@@ -302,64 +210,16 @@ namespace Renderer
 #include "Mod_Renderer_fs_line.glsl"
     );
 
-    //Set shader source
-    const GLchar* pvs_str = vs_str.c_str();
-    glShaderSource(vsID, 1, (const GLchar **)&pvs_str, nullptr);
-
-    const GLchar* pfs_str = fs_str.c_str();
-    glShaderSource(fsID, 1, (const GLchar **)&pfs_str, nullptr);
-
-    //Compile shader source
-    glCompileShader(vsID);
-    glCompileShader(fsID);
-
-    //Check shader for errors
-    GLint vsCompiled = GL_FALSE;
-    GLint fsCompiled = GL_FALSE;
-    glGetShaderiv(vsID, GL_COMPILE_STATUS, &vsCompiled);
-    glGetShaderiv(fsID, GL_COMPILE_STATUS, &fsCompiled);
-    if (vsCompiled != GL_TRUE)
-    {
-      throw ex_vsCompile();
-    }
-    if (fsCompiled != GL_TRUE)
-    {
-      throw ex_fsCompile();
-    }
-
-    //Create program, attach shaders to it and link it.
-    m_shaderProgram = glCreateProgram();
-    glAttachShader(m_shaderProgram, vsID);
-    glAttachShader(m_shaderProgram, fsID);
-    glLinkProgram(m_shaderProgram);
-
-    GLint linkStatus = GL_TRUE;
-    glGetProgramiv( m_shaderProgram, GL_LINK_STATUS, &linkStatus);
-    if ( linkStatus == GL_FALSE )
-    {
-      GLint logLen;
-      glGetProgramiv(m_shaderProgram, GL_INFO_LOG_LENGTH, &logLen);
-      std::vector<char> msgSrc(logLen + 1);
-      GLsizei written;
-      glGetProgramInfoLog( m_shaderProgram, logLen, &written, msgSrc.data());
-      std::string message(msgSrc.begin(), msgSrc.end());
-      throw ex_LinkFail(message);
-    }
-
-    //Detach and delete shaders afer we have successfully linked the program.
-    glDetachShader(m_shaderProgram, vsID);
-    glDetachShader(m_shaderProgram, fsID);
-    glDeleteShader(vsID);
-    glDeleteShader(fsID);
+    m_shaderProgram = GetShaderProgram(vs_str, fs_str);
 
     //Init defaults
     glUseProgram(m_shaderProgram);
     GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
-    GLuint loc_ms_matrix = glGetUniformLocation(m_shaderProgram, "ms_matrix");
+    GLuint loc_mvp = glGetUniformLocation(m_shaderProgram, "u_mvp");
     Dg::R3::Vector<float> clr(1.0f, 1.0f, 1.0f, 1.0f);
     Dg::R3::Matrix<float> mat;
     glUniform4fv(loc_color, 1, clr.GetData());
-    glUniformMatrix4fv(loc_ms_matrix, 1, GL_FALSE, mat.GetData());
+    glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, mat.GetData());
     glUseProgram(0);
   }
 

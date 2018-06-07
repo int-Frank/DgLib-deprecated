@@ -144,9 +144,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RenderTestApp.cpp" />
+    <ClCompile Include="ShapeFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderTestApp.h" />
+    <ClInclude Include="ShapeFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="log.txt" />

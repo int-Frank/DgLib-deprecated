@@ -39,6 +39,7 @@ private:
   bool                      m_showObject[s_nObjects];
   Renderer::Renderer *      m_pRender;
   Window::Window *          m_pWindow;
+  Window::Window *          m_pViewport;
   std::vector<ScreenObject> m_lineObjects;
   std::vector<ScreenObject> m_triangleObjects;
 };

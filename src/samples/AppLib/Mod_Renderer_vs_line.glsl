@@ -1,12 +1,12 @@
 R"(
 #version 330 core
 
-in vec4 position;
+in vec4 in_position;
 
-uniform mat4 ms_matrix;
+uniform mat4 u_mvp;
 
 void main(void)
 {
-	gl_Position = ms_matrix * position;
+	gl_Position = u_mvp * in_position;
 }
 )"

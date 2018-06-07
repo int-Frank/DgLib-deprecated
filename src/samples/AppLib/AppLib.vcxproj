@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_rect_pack.h" />
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_textedit.h" />
     <ClInclude Include="..\..\..\3rd_party\imgui\stb_truetype.h" />
+    <ClInclude Include="Mod_Renderer_Common.h" />
     <ClInclude Include="Mod_Renderer_Context.h" />
     <ClInclude Include="Mod_Renderer_ContextLine.h" />
     <ClInclude Include="Mod_Renderer_ContextTriangle.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui.cpp" />
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\3rd_party\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Mod_Renderer_Common.cpp" />
     <ClCompile Include="Mod_Renderer_Context.cpp" />
     <ClCompile Include="Mod_Renderer_ContextLine.cpp" />
     <ClCompile Include="DgApp.cpp" />
@@ -214,6 +216,8 @@
     <None Include="Mod_Renderer_fs_triangle.glsl" />
     <None Include="Mod_Renderer_vs_line.glsl" />
     <None Include="Mod_Renderer_vs_triangle.glsl" />
+    <None Include="Mod_Window_fs.glsl" />
+    <None Include="Mod_Window_vs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
