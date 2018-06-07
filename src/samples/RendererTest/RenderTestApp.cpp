@@ -93,9 +93,9 @@ RenderTestApp::RenderTestApp()
   SetTransforms();
 }
 
-void RenderTestApp::WindowSizeCallback(int h, int w)
+void RenderTestApp::WindowSizeCallback(int w, int h)
 {
-  SetTransforms();
+  m_pViewport->Resize(w, h);
 }
 
 void RenderTestApp::SetTransforms()
