@@ -174,12 +174,12 @@ namespace Renderer
 
   void ContextLine::PIMPL::SetMatrix(Dg::R3::Matrix<float> const & a_mat)
   {
-    GLuint mv_matrix = glGetAttribLocation(m_shaderProgram, "u_mvp");
-    if (mv_matrix == 0)
+    GLuint mvp = glGetUniformLocation(m_shaderProgram, "u_mvp");
+    if (mvp == -1)
     {
       Logger::Log("Failed to find mv_matrix in shader program", Dg::LL_Error);
     }
-    glUniformMatrix3fv(mv_matrix, 1, GL_FALSE, a_mat.GetData());
+    glUniformMatrix4fv(mvp, 1, GL_FALSE, a_mat.GetData());
   }
 
   void ContextLine::PIMPL::SetColor(Dg::R3::Vector<float> const & a_clr)

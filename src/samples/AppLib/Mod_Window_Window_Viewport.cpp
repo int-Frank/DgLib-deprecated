@@ -46,7 +46,6 @@ namespace Window
        1.0f,  0.0f,
     };
 
-
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
 

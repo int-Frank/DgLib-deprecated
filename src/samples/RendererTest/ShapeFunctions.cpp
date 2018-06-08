@@ -9,7 +9,7 @@ Renderer::LineMesh GenerateStar()
 
   int n_points = 6;
   float radius = 0.5f;
-  float depth = 0.2f;
+  float depth = 0.25f;
   float spacing = 2.0f * pi / float(n_points);
   float halfSpacing = spacing / 2.0f;
 
@@ -210,12 +210,75 @@ Renderer::LineMesh GenerateDebugPattern()
   return result;
 }
 
-//Renderer::LineMesh GenerateSnowFlake()
-//{
-//
-//}
-//
-//Renderer::LineMesh GenerateFace()
-//{
-//
-//}
+Renderer::LineMesh GenerateWheel()
+{
+  float pi = 3.14159f;
+
+  int n_sides = 5;
+  int depth = 5;
+  float startRadius = 0.5;
+  float endRadius = 0.1f;
+
+  Renderer::LineMesh result;
+  Renderer::Line line;
+  Renderer::LineVertex point;
+  point.point[2] = 0.0f;
+  int indexOffset = 0;
+
+  for (int i = 0; i < depth; i++)
+  {
+    float radius = startRadius + (endRadius - startRadius) * float((depth - 1) - i) / float(depth - 1);
+
+    for (int j = 0; j < n_sides; j++)
+    {
+      point.point[0] = radius * cos(2.0f * pi * float(j) / float(n_sides));
+      point.point[1] = radius * sin(2.0f * pi * float(j) / float(n_sides));
+
+      result.verts.push_back(point);
+
+      line.indices[0] = j + indexOffset;
+      line.indices[1] = (j + 1) % n_sides + indexOffset;
+      result.lines.push_back(line);
+    }
+
+    indexOffset += n_sides;
+    n_sides++;
+  }
+
+  return result;
+}
+
+Renderer::LineMesh GenerateSpiral()
+{
+  float pi = 3.14159f;
+
+  int n_segments = 128;
+  float startRadius = 0.1;
+  float endRadius = 0.5f;
+  int n_rotations = 3;
+
+  Renderer::LineMesh result;
+  Renderer::LineVertex point;
+  Renderer::Line line;
+  point.point[2] = 0.0f;
+
+  for (int i = 0; i < n_segments; i++)
+  {
+    float radius = startRadius + (endRadius - startRadius) * float((n_segments - 1) - i) / float(n_segments - 1);
+    float angle = 2.0f * pi * n_rotations / n_segments * i;
+
+    point.point[0] = radius * cos(angle);
+    point.point[1] = radius * sin(angle);
+
+    result.verts.push_back(point);
+  }
+
+  for (int i = 0; i < n_segments - 1; i++)
+  {
+    line.indices[0] = i;
+    line.indices[1] = (i + 1) % n_segments;
+    result.lines.push_back(line);
+  }
+
+  return result;
+}

@@ -24,7 +24,6 @@ protected:
   void BuildUI();
   void DoFrame(double dt);
   void WindowSizeCallback(int w, int h);
-  void SetTransforms();
 
 private:
 

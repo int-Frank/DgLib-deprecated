@@ -56,9 +56,10 @@ RenderTestApp::RenderTestApp()
   std::vector<Renderer::LineMesh> lineMeshes;
   std::vector<Renderer::TriangleMesh> triangleMeshes;
 
-  lineMeshes.push_back(GenerateDebugPattern());
+  lineMeshes.push_back(GenerateSpiral());
   lineMeshes.push_back(GenerateBox());
   lineMeshes.push_back(GenerateStar());
+  lineMeshes.push_back(GenerateWheel());
 
   std::vector<vec4> colors;
 
@@ -71,13 +72,32 @@ RenderTestApp::RenderTestApp()
   colors.push_back(vec4(1.0f, 1.0f, 1.0f, 1.0f));
   size_t colorIndex = 0;
 
+  float marginX = 0.7f;
+  float marginY = 0.3f;
+  float spacing = (2.0f - marginX) / 3.0f;
+  Dg::R3::Vector<float> tvec(-spacing, spacing, 0.0, 0.0);
+  Dg::R3::Matrix<float> scale;
+  scale.Scaling(0.3);
+
+  int itemNo = 0;
+
   for (auto const & lineMesh : lineMeshes)
   {
     ScreenObject so;
+
+    tvec[0] = -1.0f + marginX + spacing / 2.0f + spacing * (itemNo % 3);
+    tvec[1] = 1.0f - marginY - spacing / 2.0f - spacing * (itemNo / 3);
+    Dg::R3::Matrix<float> translation;
+    translation.Translation(tvec);
+
+    so.transform = scale * translation;
+
     so.color = colors[colorIndex];
     so.handle = m_pRender->AddObject(lineMesh);
     m_lineObjects.push_back(so);
     colorIndex = (colorIndex + 1) % colors.size();
+
+    itemNo++;
   }
 
   for (auto const & triangleMesh : triangleMeshes)
@@ -90,7 +110,6 @@ RenderTestApp::RenderTestApp()
   }
 
   m_pRender->CommitLoadList();
-  SetTransforms();
 }
 
 void RenderTestApp::WindowSizeCallback(int w, int h)
@@ -98,49 +117,25 @@ void RenderTestApp::WindowSizeCallback(int w, int h)
   m_pViewport->Resize(w, h);
 }
 
-void RenderTestApp::SetTransforms()
-{
-  int w(0), h(0);
-  GetWindowDimensions(w, h);
-
-  float nCol = ceil(sqrt(float(m_lineObjects.size())));
-  float nRows = round(sqrt(float(m_lineObjects.size())));
-
-  float xl = float(w) / nCol;
-  float yl = float(h) / nRows;
-
-  float cellHeight = (xl < yl) ? xl : yl;
-
-
-
-  Dg::R3::Matrix<float> matScale;
-
-  
-
-  for (auto & obj : m_lineObjects)
-  {
-  
-  }
-}
-
 void RenderTestApp::DoFrame(double a_dt)
 {
   m_pRender->ClearAppColorBuffer();
 
   m_pWindow->BeginDraw();
-  m_pRender->SetContext(Renderer::E_Lines);
-  for (auto const & obj : m_lineObjects)
-  {
-    m_pRender->SetColor(obj.color);
-    m_pRender->Draw(obj.handle);
-  }
-  
-  m_pRender->SetContext(Renderer::E_Triangles);
-  for (auto const & obj : m_triangleObjects)
-  {
-    m_pRender->SetColor(obj.color);
-    m_pRender->Draw(obj.handle);
-  }
+  //m_pRender->SetContext(Renderer::E_Lines);
+  //for (auto const & obj : m_lineObjects)
+  //{
+  //  m_pRender->SetColor(obj.color);
+  //  m_pRender->SetTransform(obj.transform);
+  //  m_pRender->Draw(obj.handle);
+  //}
+  //
+  //m_pRender->SetContext(Renderer::E_Triangles);
+  //for (auto const & obj : m_triangleObjects)
+  //{
+  //  m_pRender->SetColor(obj.color);
+  //  m_pRender->Draw(obj.handle);
+  //}
   m_pWindow->EndDraw();
 
   ////////////////////////////////////////////////////////////
@@ -150,6 +145,7 @@ void RenderTestApp::DoFrame(double a_dt)
   for (auto const & obj : m_lineObjects)
   {
     m_pRender->SetColor(obj.color);
+    m_pRender->SetTransform(obj.transform);
     m_pRender->Draw(obj.handle);
   }
 
