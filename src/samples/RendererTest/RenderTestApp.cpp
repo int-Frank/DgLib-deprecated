@@ -35,9 +35,9 @@ RenderTestApp::RenderTestApp()
   
   Window::InitData windowData;
   windowData.clearColor = (vec4(0.0f, 0.0f, 0.0f, 0.0f));
-  windowData.width = 100;
-  windowData.height = 100;
-  windowData.indentX = 800;
+  windowData.width = 200;
+  windowData.height = 200;
+  windowData.indentX = 700;
   windowData.indentY = 100;
 
   Window::WindowFactory windowFactory;
@@ -77,12 +77,12 @@ RenderTestApp::RenderTestApp()
   colors.push_back(vec4(1.0f, 1.0f, 1.0f, 1.0f));
   size_t colorIndex = 0;
 
-  float marginX = 0.7f;
-  float marginY = 0.3f;
+  float marginX = 0.0f;
+  float marginY = 0.0f;
   float spacing = (2.0f - marginX) / 3.0f;
   Dg::R3::Vector<float> tvec(-spacing, spacing, 0.0, 0.0);
   Dg::R3::Matrix<float> scale;
-  scale.Scaling(0.3f);
+  scale.Scaling(0.4f);
 
   int itemNo = 0;
 
@@ -139,20 +139,23 @@ void RenderTestApp::DoFrame(double a_dt)
   m_pRender->ClearAppColorBuffer();
 
   m_pWindow->BeginDraw();
-  //m_pRender->SetContext(Renderer::E_Lines);
-  //for (auto const & obj : m_lineObjects)
-  //{
-  //  m_pRender->SetColor(obj.color);
-  //  m_pRender->SetTransform(obj.transform);
-  //  m_pRender->Draw(obj.handle);
-  //}
-  //
-  //m_pRender->SetContext(Renderer::E_Triangles);
-  //for (auto const & obj : m_triangleObjects)
-  //{
-  //  m_pRender->SetColor(obj.color);
-  //  m_pRender->Draw(obj.handle);
-  //}
+  m_pRender->SetContext(Renderer::E_Lines);
+  for (auto const & obj : m_lineObjects)
+  {
+    if (!obj.show) continue;
+    m_pRender->SetColor(obj.color);
+    m_pRender->SetTransform(obj.transform);
+    m_pRender->Draw(obj.handle);
+  }
+
+  m_pRender->SetContext(Renderer::E_Triangles);
+  for (auto const & obj : m_triangleObjects)
+  {
+    if (!obj.show) continue;
+    m_pRender->SetColor(obj.color);
+    m_pRender->SetTransform(obj.transform);
+    m_pRender->Draw(obj.handle);
+  }
   m_pWindow->EndDraw();
 
   ////////////////////////////////////////////////////////////
