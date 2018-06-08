@@ -13,7 +13,7 @@ namespace Renderer
   {
     vec3 point;
     vec3 normal;
-    vec2 UV;
+    vec2 uv;
   };
 
   struct Triangle

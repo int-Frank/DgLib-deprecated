@@ -136,6 +136,9 @@
     <ClCompile Include="Mod_Renderer_Common.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Mod_Renderer_ContextTriangle.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini">

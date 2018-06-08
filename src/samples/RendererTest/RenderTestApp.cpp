@@ -27,7 +27,6 @@ RenderTestApp::RenderTestApp()
   : m_pRender(nullptr)
   , m_pWindow(nullptr)
   , m_pViewport(nullptr)
-  , m_showObject{0}
 {
   this->ToggleOutputWindow(false);
   Renderer::Init(Log);
@@ -56,10 +55,16 @@ RenderTestApp::RenderTestApp()
   std::vector<Renderer::LineMesh> lineMeshes;
   std::vector<Renderer::TriangleMesh> triangleMeshes;
 
-  lineMeshes.push_back(GenerateSpiral());
-  lineMeshes.push_back(GenerateBox());
-  lineMeshes.push_back(GenerateStar());
-  lineMeshes.push_back(GenerateWheel());
+  lineMeshes.push_back(GenerateLineSpiral());
+  lineMeshes.push_back(GenerateLineBox());
+  lineMeshes.push_back(GenerateLineStar());
+  lineMeshes.push_back(GenerateLineWheel());
+
+  triangleMeshes.push_back(GenerateFilledShape(3));
+  triangleMeshes.push_back(GenerateFilledShape(4));
+  triangleMeshes.push_back(GenerateFilledShape(5));
+  triangleMeshes.push_back(GenerateFilledShape(9));
+  triangleMeshes.push_back(GenerateFilledShape(32));
 
   std::vector<vec4> colors;
 
@@ -77,7 +82,7 @@ RenderTestApp::RenderTestApp()
   float spacing = (2.0f - marginX) / 3.0f;
   Dg::R3::Vector<float> tvec(-spacing, spacing, 0.0, 0.0);
   Dg::R3::Matrix<float> scale;
-  scale.Scaling(0.3);
+  scale.Scaling(0.3f);
 
   int itemNo = 0;
 
@@ -92,6 +97,7 @@ RenderTestApp::RenderTestApp()
 
     so.transform = scale * translation;
 
+    so.show = true;
     so.color = colors[colorIndex];
     so.handle = m_pRender->AddObject(lineMesh);
     m_lineObjects.push_back(so);
@@ -103,10 +109,21 @@ RenderTestApp::RenderTestApp()
   for (auto const & triangleMesh : triangleMeshes)
   {
     ScreenObject so;
+
+    tvec[0] = -1.0f + marginX + spacing / 2.0f + spacing * (itemNo % 3);
+    tvec[1] = 1.0f - marginY - spacing / 2.0f - spacing * (itemNo / 3);
+    Dg::R3::Matrix<float> translation;
+    translation.Translation(tvec);
+
+    so.transform = scale * translation;
+
+    so.show = true;
     so.color = colors[colorIndex];
-    m_pRender->AddObject(triangleMesh);
+    so.handle = m_pRender->AddObject(triangleMesh);
     m_triangleObjects.push_back(so);
     colorIndex = (colorIndex + 1) % colors.size();
+
+    itemNo++;
   }
 
   m_pRender->CommitLoadList();
@@ -144,6 +161,7 @@ void RenderTestApp::DoFrame(double a_dt)
   m_pRender->SetContext(Renderer::E_Lines);
   for (auto const & obj : m_lineObjects)
   {
+    if (!obj.show) continue;
     m_pRender->SetColor(obj.color);
     m_pRender->SetTransform(obj.transform);
     m_pRender->Draw(obj.handle);
@@ -152,7 +170,9 @@ void RenderTestApp::DoFrame(double a_dt)
   m_pRender->SetContext(Renderer::E_Triangles);
   for (auto const & obj : m_triangleObjects)
   {
+    if (!obj.show) continue;
     m_pRender->SetColor(obj.color);
+    m_pRender->SetTransform(obj.transform);
     m_pRender->Draw(obj.handle);
   }
   m_pViewport->EndDraw();
@@ -188,23 +208,18 @@ void RenderTestApp::BuildUI()
   }
   ImGui::Separator();
 
-  static bool showDefaultTarget = false;
-  static bool showWindowTarget = true;
-
-  if (ImGui::Checkbox("Default render", &showDefaultTarget))
-  {
-
-  }
-  if (ImGui::Checkbox("Window render", &showWindowTarget))
-  {
-
-  }
-
-  for (int i = 0; i < s_nObjects; i++)
+  int objCount = 1;
+  for (auto & obj : m_lineObjects)
   {
     std::stringstream ss;
-    ss << "Object " << (i + 1);
-    ImGui::Checkbox(ss.str().c_str(),   &m_showObject[i]);
+    ss << "Object " << objCount++;
+    ImGui::Checkbox(ss.str().c_str(), &obj.show);
+  }
+  for (auto & obj : m_triangleObjects)
+  {
+    std::stringstream ss;
+    ss << "Object " << objCount++;
+    ImGui::Checkbox(ss.str().c_str(), &obj.show);
   }
   
   ImGui::End();

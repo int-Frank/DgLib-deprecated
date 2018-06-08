@@ -30,12 +30,11 @@ private:
   struct ScreenObject
   {
     Renderer::ObjectHandle  handle;
-    mat4          transform;
-    vec4          color;
+    mat4                    transform;
+    vec4                    color;
+    bool                    show;
   };
 
-  static int const          s_nObjects = 9;
-  bool                      m_showObject[s_nObjects];
   Renderer::Renderer *      m_pRender;
   Window::Window *          m_pWindow;
   Window::Window *          m_pViewport;

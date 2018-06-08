@@ -8,19 +8,19 @@
 
 #include "Mod_Renderer_Logger.h"
 #include "DgTypes.h"
-#include "Mod_Renderer_ContextLine.h"
+#include "Mod_Renderer_ContextTriangle.h"
 #include "Mod_Renderer_Common.h"
 
 namespace Renderer
 {
-  class ContextLine::PIMPL
+  class ContextTriangle::PIMPL
   {
   public:
 
     PIMPL();
     ~PIMPL();
 
-    void LoadData(std::vector<LineMesh> const &);
+    void LoadData(std::vector<TriangleMesh> const &);
     void Draw(int);
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
@@ -30,18 +30,20 @@ namespace Renderer
 
   private:
 
-    struct GPU_LineVertex
+    struct GPU_MeshVertex
     {
-      float vec4[4];
+      float point[4];
+      float normal[4];
+      float uv[2];
     };
 
     struct GPU_Data
     {
-      std::vector<GPU_LineVertex> vertexData;
+      std::vector<GPU_MeshVertex> vertexData;
       std::vector<GLuint>         indexData;
     };
 
-    struct LineData
+    struct MeshData
     {
       GLint   offset;
       GLsizei count;
@@ -49,13 +51,13 @@ namespace Renderer
 
   private:
 
-    //Also sets m_currentLines;
-    void CollateData(std::vector<LineMesh> const &, GPU_Data & out);
+    //Also sets m_currentObjects;
+    void CollateData(std::vector<TriangleMesh> const &, GPU_Data & out);
     void InitShaderProgram();
 
   private:
 
-    std::vector<LineData>     m_currentLines;
+    std::vector<MeshData>     m_currentObjects;
 
     GLuint m_shaderProgram;
     GLuint m_vao;
@@ -63,7 +65,7 @@ namespace Renderer
     GLuint m_indexBuffer;
   };
 
-  ContextLine::PIMPL::PIMPL()
+  ContextTriangle::PIMPL::PIMPL()
     : m_shaderProgram(0)
     , m_vao(0)
     , m_vertexBuffer(0)
@@ -72,13 +74,13 @@ namespace Renderer
     InitShaderProgram();
   }
 
-  ContextLine::PIMPL::~PIMPL()
+  ContextTriangle::PIMPL::~PIMPL()
   {
     Clear();
     glDeleteProgram(m_shaderProgram);
   }
 
-  void ContextLine::PIMPL::LoadData(std::vector<LineMesh> const & a_data)
+  void ContextTriangle::PIMPL::LoadData(std::vector<TriangleMesh> const & a_data)
   {
     Clear();
 
@@ -91,80 +93,98 @@ namespace Renderer
     glGenBuffers(1, &m_indexBuffer);
 
     GPU_Data gpuData;
-    
+
     CollateData(a_data, gpuData);
-    
+
     //Vertices
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, 
-      gpuData.vertexData.size() * sizeof(GPU_LineVertex), 
+      gpuData.vertexData.size() * sizeof(GPU_MeshVertex), 
       gpuData.vertexData.data(), GL_STATIC_DRAW);
-    
-    int stride = sizeof(GPU_LineVertex);
-    
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
       gpuData.indexData.size() * sizeof(GLuint),
       gpuData.indexData.data(), GL_STATIC_DRAW);
-    GLuint loc_position = glGetAttribLocation(m_shaderProgram, "in_position");
 
-    //TODO Fix 5th argument; stride
-    glVertexAttribPointer(loc_position, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    GLuint loc_position = glGetAttribLocation(m_shaderProgram, "in_position");
+    GLuint loc_normal   = glGetAttribLocation(m_shaderProgram, "in_normal");
+    GLuint loc_uv       = glGetAttribLocation(m_shaderProgram, "in_uv");
+
+    int stride = sizeof(GPU_MeshVertex);
+
+    glVertexAttribPointer(loc_position, 4, GL_FLOAT, GL_FALSE, stride, 0);
+    glVertexAttribPointer(loc_normal, 4, GL_FLOAT, GL_FALSE, stride
+      , (void*)sizeof(GPU_MeshVertex::point));
+    glVertexAttribPointer(loc_uv, 4, GL_FLOAT, GL_FALSE, stride
+      , (void*)(sizeof(GPU_MeshVertex::point) + sizeof(GPU_MeshVertex::normal)));
+
     glEnableVertexAttribArray(loc_position);
+    glEnableVertexAttribArray(loc_normal);
+    glEnableVertexAttribArray(loc_uv);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
   }
 
-  //Also sets m_currentLines;
-  void ContextLine::PIMPL::CollateData(std::vector<LineMesh> const & a_lineMeshs, GPU_Data & a_out)
+  //Also sets m_currentObjects;
+  void ContextTriangle::PIMPL::CollateData(std::vector<TriangleMesh> const & a_meshList, GPU_Data & a_out)
   {
     GLuint vertexOffset = 0;
     GLuint indexOffset = 0;
     a_out.indexData.clear();
     a_out.vertexData.clear();
 
-    for (auto const & lineMesh : a_lineMeshs)
+    for (auto const & mesh : a_meshList)
     {
-      LineData lineData;
-      lineData.offset = a_out.indexData.size() * sizeof(GLuint);
-      lineData.count = GLsizei(lineMesh.lines.size() * 2);
-      m_currentLines.push_back(lineData);
+      MeshData meshData;
+      meshData.offset = a_out.indexData.size() * sizeof(GLuint);
+      meshData.count = GLsizei(mesh.triangles.size() * 3);
+      m_currentObjects.push_back(meshData);
 
-      for (auto vert : lineMesh.verts)
+      for (auto vert : mesh.verts)
       {
-        GPU_LineVertex v;
-        v.vec4[0] = vert.point[0];
-        v.vec4[1] = vert.point[1];
-        v.vec4[2] = vert.point[2];
-        v.vec4[3] = 1.0f;
+        GPU_MeshVertex v;
+        v.point[0] = vert.point[0];
+        v.point[1] = vert.point[1];
+        v.point[2] = vert.point[2];
+        v.point[3] = 1.0f;
+
+        v.normal[0] = vert.normal[0];
+        v.normal[1] = vert.normal[1];
+        v.normal[2] = vert.normal[2];
+        v.normal[3] = 0.0f;
+
+        v.uv[0] = vert.uv[0];
+        v.uv[1] = vert.uv[1];
 
         a_out.vertexData.push_back(v);
       }
 
-      for (auto line : lineMesh.lines)
+      for (auto tri : mesh.triangles)
       {
-        a_out.indexData.push_back(line.indices[0] + vertexOffset);
-        a_out.indexData.push_back(line.indices[1] + vertexOffset);
+        a_out.indexData.push_back(tri.indices[0] + vertexOffset);
+        a_out.indexData.push_back(tri.indices[1] + vertexOffset);
+        a_out.indexData.push_back(tri.indices[2] + vertexOffset);
       }
 
-      vertexOffset += GLuint(lineMesh.verts.size());
+      vertexOffset += GLuint(mesh.verts.size());
     }
   }
 
-  void ContextLine::PIMPL::Draw(int a_index)
+  void ContextTriangle::PIMPL::Draw(int a_index)
   {
-    glDrawElements(GL_LINES, 
-                   m_currentLines[a_index].count, 
+    glDrawElements(GL_TRIANGLES, 
+                   m_currentObjects[a_index].count, 
                    GL_UNSIGNED_INT,
-                   (const void *)m_currentLines[a_index].offset);
+                   (const void *)m_currentObjects[a_index].offset);
   }
 
-  void ContextLine::PIMPL::Clear()
+  void ContextTriangle::PIMPL::Clear()
   {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -178,10 +198,10 @@ namespace Renderer
     glDeleteVertexArrays(1, &m_vao);
     m_vao = 0;
 
-    m_currentLines.clear();
+    m_currentObjects.clear();
   }
 
-  void ContextLine::PIMPL::SetMatrix(Dg::R3::Matrix<float> const & a_mat)
+  void ContextTriangle::PIMPL::SetMatrix(Dg::R3::Matrix<float> const & a_mat)
   {
     GLuint mvp = glGetUniformLocation(m_shaderProgram, "u_mvp");
     if (mvp == -1)
@@ -191,13 +211,13 @@ namespace Renderer
     glUniformMatrix4fv(mvp, 1, GL_FALSE, a_mat.GetData());
   }
 
-  void ContextLine::PIMPL::SetColor(Dg::R3::Vector<float> const & a_clr)
+  void ContextTriangle::PIMPL::SetColor(Dg::R3::Vector<float> const & a_clr)
   {
-      GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
-      glUniform4fv(loc_color, 1, a_clr.GetData());
+    GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
+    glUniform4fv(loc_color, 1, a_clr.GetData());
   }
 
-  void ContextLine::PIMPL::Bind()
+  void ContextTriangle::PIMPL::Bind()
   {
     glUseProgram(m_shaderProgram);
     glBindVertexArray(m_vao);
@@ -205,7 +225,7 @@ namespace Renderer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
   }
 
-  void ContextLine::PIMPL::Unbind()
+  void ContextTriangle::PIMPL::Unbind()
   {
     glUseProgram(0);
     glBindVertexArray(0);
@@ -213,14 +233,14 @@ namespace Renderer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   }
 
-  void ContextLine::PIMPL::InitShaderProgram()
+  void ContextTriangle::PIMPL::InitShaderProgram()
   {
     std::string vs_str = std::string(
-#include "Mod_Renderer_vs_line.glsl"
+#include "Mod_Renderer_vs_triangle.glsl"
     );
 
     std::string fs_str = std::string(
-#include "Mod_Renderer_fs_line.glsl"
+#include "Mod_Renderer_fs_triangle.glsl"
     );
 
     m_shaderProgram = GetShaderProgram(vs_str, fs_str);
@@ -236,49 +256,49 @@ namespace Renderer
     glUseProgram(0);
   }
 
-  ContextLine::ContextLine()
+  ContextTriangle::ContextTriangle()
     : m_pimpl(new PIMPL())
   {
 
   }
 
-  ContextLine::~ContextLine()
+  ContextTriangle::~ContextTriangle()
   {
     delete m_pimpl;
     m_pimpl = nullptr;
   }
 
-  void ContextLine::LoadData(std::vector<LineMesh> const & a_data)
+  void ContextTriangle::LoadData(std::vector<TriangleMesh> const & a_data)
   {
     m_pimpl->LoadData(a_data);
   }
 
-  void ContextLine::Draw(int a_ref)
+  void ContextTriangle::Draw(int a_ref)
   {
     m_pimpl->Draw(a_ref);
   }
 
-  void ContextLine::Clear()
+  void ContextTriangle::Clear()
   {
     m_pimpl->Clear();
   }
 
-  void ContextLine::SetMatrix(Dg::R3::Matrix<float> const & a_mat)
+  void ContextTriangle::SetMatrix(Dg::R3::Matrix<float> const & a_mat)
   {
     m_pimpl->SetMatrix(a_mat);
   }
 
-  void ContextLine::SetColor(Dg::R3::Vector<float> const & a_clr)
+  void ContextTriangle::SetColor(Dg::R3::Vector<float> const & a_clr)
   {
     m_pimpl->SetColor(a_clr);
   }
 
-  void ContextLine::Bind()
+  void ContextTriangle::Bind()
   {
     m_pimpl->Bind();
   }
 
-  void ContextLine::Unbind()
+  void ContextTriangle::Unbind()
   {
     m_pimpl->Unbind();
   }

@@ -1,11 +1,14 @@
 R"(
 #version 330
 
-out vec4 color;
-uniform vec4 lineColor;
+in vec4 in_position;
+in vec4 in_normal;
+in vec2 in_uv;
+
+uniform mat4 u_mvp;
 
 void main(void)
 {
-  color = lineColor;
+	gl_Position = u_mvp * in_position;
 }
 )"

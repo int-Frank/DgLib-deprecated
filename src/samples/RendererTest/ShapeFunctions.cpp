@@ -1,9 +1,9 @@
 
 #include <cmath>
 
-#include "Mod_Renderer_LineMesh.h"
+#include "ShapeFunctions.h"
 
-Renderer::LineMesh GenerateStar()
+Renderer::LineMesh GenerateLineStar()
 {
   float pi = 3.14159f;
 
@@ -42,7 +42,7 @@ Renderer::LineMesh GenerateStar()
   return result;
 }
 
-Renderer::LineMesh GenerateBox()
+Renderer::LineMesh GenerateLineBox()
 {
   Renderer::LineMesh result;
   Renderer::LineVertex point;
@@ -86,7 +86,7 @@ Renderer::LineMesh GenerateBox()
   return result;
 }
 
-Renderer::LineMesh GenerateDebugPattern()
+Renderer::LineMesh GenerateLineDebugPattern()
 {
   Renderer::LineMesh result;
   Renderer::LineVertex point;
@@ -210,7 +210,7 @@ Renderer::LineMesh GenerateDebugPattern()
   return result;
 }
 
-Renderer::LineMesh GenerateWheel()
+Renderer::LineMesh GenerateLineWheel()
 {
   float pi = 3.14159f;
 
@@ -248,12 +248,12 @@ Renderer::LineMesh GenerateWheel()
   return result;
 }
 
-Renderer::LineMesh GenerateSpiral()
+Renderer::LineMesh GenerateLineSpiral()
 {
   float pi = 3.14159f;
 
   int n_segments = 128;
-  float startRadius = 0.1;
+  float startRadius = 0.1f;
   float endRadius = 0.5f;
   int n_rotations = 3;
 
@@ -279,6 +279,96 @@ Renderer::LineMesh GenerateSpiral()
     line.indices[1] = (i + 1) % n_segments;
     result.lines.push_back(line);
   }
+
+  return result;
+}
+
+Renderer::TriangleMesh GenerateFilledShape(int a_nSides)
+{
+  float pi = 3.14159f;
+  float radius = 0.5;
+
+  Renderer::TriangleMesh   result;
+  Renderer::TriangleVertex vertex;
+  Renderer::Triangle       tri;
+  vertex.point[2] = 0.0f;
+  vertex.normal[0] = 0.0f;
+  vertex.normal[1] = 0.0f;
+  vertex.normal[2] = 1.0f;
+  vertex.uv[0] = 0.0f;
+  vertex.uv[1] = 0.0f;
+  tri.indices[0] = 0;
+
+  vertex.point[0] = 0.0f;
+  vertex.point[1] = 0.0f;
+  result.verts.push_back(vertex);
+
+  for (int i = 0; i < a_nSides; i++)
+  {
+    float angle = (2.0f * pi) * float(i) / float(a_nSides);
+
+    vertex.point[0] = radius * cos(angle);
+    vertex.point[1] = radius * sin(angle);
+    result.verts.push_back(vertex);
+  }
+
+  for (size_t i = 0; i < a_nSides; i++)
+  {
+    tri.indices[1] = i + 1;
+    tri.indices[2] = (i + 1) % a_nSides + 1;
+    result.triangles.push_back(tri);
+  }
+
+  return result;
+}
+
+Renderer::TriangleMesh GenerateTriangleBox()
+{
+  Renderer::TriangleMesh   result;
+  Renderer::TriangleVertex vertex;
+
+  vertex.point[2] = 0.0f;
+  vertex.normal[0] = 0.0f;
+  vertex.normal[1] = 0.0f;
+  vertex.normal[2] = 1.0f;
+
+  ///
+
+  vertex.point[0] = -0.5f;
+  vertex.point[1] = -0.5f;
+  vertex.uv[0] = 0.0f;
+  vertex.uv[1] = 1.0f;
+  result.verts.push_back(vertex);
+
+  vertex.point[0] = 0.5f;
+  vertex.point[1] = -0.5f;
+  vertex.uv[0] = 1.0f;
+  vertex.uv[1] = 1.0f;
+  result.verts.push_back(vertex);
+
+  vertex.point[0] = 0.5f;
+  vertex.point[1] = 0.5f;
+  vertex.uv[0] = 1.0f;
+  vertex.uv[1] = 0.0f;
+  result.verts.push_back(vertex);
+
+  vertex.point[0] = -0.5f;
+  vertex.point[1] = 0.5f;
+  vertex.uv[0] = 0.0f;
+  vertex.uv[1] = 0.0f;
+  result.verts.push_back(vertex);
+
+  Renderer::Triangle tri;
+
+  tri.indices[0] = 3;
+  tri.indices[1] = 1;
+  tri.indices[2] = 0;
+  result.triangles.push_back(tri);
+
+  tri.indices[0] = 3;
+  tri.indices[1] = 1;
+  tri.indices[2] = 2;
+  result.triangles.push_back(tri);
 
   return result;
 }

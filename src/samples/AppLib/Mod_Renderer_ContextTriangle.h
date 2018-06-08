@@ -12,19 +12,22 @@ namespace Renderer
   {
   public:
 
-    //ContextTriangle();
-    //~ContextTriangle();
-    //
-    //void LoadData(std::vector<TriangleMesh> const &);
-    //
-    //void Draw(int);
-    //void Clear();
-    //void SetMatrix(Dg::R3::Matrix<float> const &);
+    ContextTriangle();
+    ~ContextTriangle();
+
+    //Assumes this context is currently active
+    void LoadData(std::vector<TriangleMesh> const &);
+    void Draw(int);
+    void Clear();
+    void SetMatrix(Dg::R3::Matrix<float> const &);
+    void SetColor(Dg::R3::Vector<float> const &);
+    void Bind();
+    void Unbind();
 
   private:
 
-    //class PIMPL;
-    //PIMPL * m_pimpl;
+    class PIMPL;
+    PIMPL * m_pimpl;
   };
 }
 
