@@ -186,8 +186,8 @@
     <ClInclude Include="imgui_impl_glfw_gl3.h" />
     <ClInclude Include="Mod_Renderer_Logger.h" />
     <ClInclude Include="Mod_Renderer_LineMesh.h" />
-    <ClInclude Include="Mod_Renderer_Renderer.h" />
-    <ClInclude Include="Mod_Window_Window.h" />
+    <ClInclude Include="Mod_Renderer.h" />
+    <ClInclude Include="Mod_Window.h" />
     <ClInclude Include="Mod_Renderer_TriangleMesh.h" />
     <ClInclude Include="Mod_Window_Window_ImGui.h" />
     <ClInclude Include="Mod_Window_Window_Viewport.h" />

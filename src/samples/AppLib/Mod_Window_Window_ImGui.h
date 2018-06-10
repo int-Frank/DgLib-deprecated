@@ -6,7 +6,7 @@
 #include <GL/glew.h>
 
 #include "DgR3Vector.h"
-#include "Mod_Window_Window.h"
+#include "Mod_Window.h"
 
 namespace Window
 {

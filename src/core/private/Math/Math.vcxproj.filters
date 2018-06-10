@@ -314,5 +314,8 @@
     <ClInclude Include="..\..\public\DgR3AABB.h">
       <Filter>Public Headers\R3</Filter>
     </ClInclude>
+    <ClInclude Include="DgCommonTypes.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

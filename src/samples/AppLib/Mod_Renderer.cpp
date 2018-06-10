@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Mod_Renderer_Renderer.h"
+#include "Mod_Renderer.h"
 #include "Mod_Renderer_ContextLine.h"
 #include "Mod_Renderer_ContextTriangle.h"
 

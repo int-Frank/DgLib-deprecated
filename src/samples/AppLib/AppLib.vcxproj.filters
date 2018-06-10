@@ -71,12 +71,6 @@
     <ClInclude Include="Mod_Renderer_Logger.h">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_Renderer.h">
-      <Filter>public\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Mod_Window_Window.h">
-      <Filter>public\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Mod_Window_Window_ImGui.h">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
@@ -85,6 +79,12 @@
     </ClInclude>
     <ClInclude Include="Mod_Renderer_Common.h">
       <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Renderer.h">
+      <Filter>public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Window.h">
+      <Filter>public\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

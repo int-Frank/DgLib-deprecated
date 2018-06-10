@@ -6,8 +6,8 @@
 #include "DgApp.h"
 #include "DgR3Vector.h"
 #include "DgR3Matrix.h"
-#include "Mod_Renderer_Renderer.h"
-#include "Mod_Window_Window.h"
+#include "Mod_Renderer.h"
+#include "Mod_Window.h"
 
 class RenderTestApp : public DgApp
 {

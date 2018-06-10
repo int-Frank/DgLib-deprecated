@@ -32,12 +32,12 @@ namespace Window
       : name("Window")
       , width(600)
       , height(500)
-      , indentX(300)
-      , indentY(100)
+      , indentX(0)
+      , indentY(0)
       , colorFormat(E_RGBA)
       , useDepthTest(true)
       , isImGuiWindow(true)
-      , clearColor(Dg::R3::Vector<float>(0.0f, 0.2f, 0.2f, 1.0f))
+      , clearColor(Dg::R3::Vector<float>(0.0f, 0.0f, 0.0f, 1.0f))
       , ImGuiWindowFlags(0)
     {}
 

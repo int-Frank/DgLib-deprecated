@@ -72,7 +72,9 @@ LogDir              = os.path.abspath("./logs/")
 UnitTestResultsDir  = os.path.abspath("./test_results/")
 OutputPath          = os.path.abspath("../output/") #build output
 SrcPath             = os.path.abspath("../src/core/public/")
-AppLibSrcPath       = os.path.abspath("../src/samples/AppLib/")
+SamplesPath         = os.path.abspath("../src/samples/")
+IPCSrcPath          = os.path.abspath(SamplesPath + "/IPC_TCP_Common/")
+AppLibSrcPath       = os.path.abspath(SamplesPath + "/AppLib/")
 ImGuiPath           = os.path.abspath("../3rd_party/imgui/")
 DoxygenOutPath      = os.path.abspath("./doxygen/")
 DeployDir           = os.path.abspath("../deploy/")
@@ -117,6 +119,9 @@ os.makedirs(DeployDir)
 os.makedirs(DeployDir + "/" + FinalLibName + "/")
 os.makedirs(DeployDir + "/" + FinalLibName + "/docs")
 os.makedirs(DeployDir + "/" + FinalLibName + "/lib")
+os.makedirs(DeployDir + "/" + FinalLibName + "/IPC")
+os.makedirs(DeployDir + "/" + FinalLibName + "/IPC/lib")
+os.makedirs(DeployDir + "/" + FinalLibName + "/IPC/include")
 logger.write("Done!\n")
 
 for i in range(0, len(platforms)):
@@ -177,7 +182,16 @@ for i in range(0, len(platforms)):
         os.makedirs(AppLibConfigurationDir)
         AppLibFile = os.path.abspath(OutputPath + "/" + AppLibName + "/" + platform + "/" + configuration + "/" + AppLibName + ".lib")
         shutil.copy(AppLibFile, AppLibConfigurationDir)
-    
+
+        #Copy IPC_TCP plugin and headers
+        IPCLibFile = OutputPath + "/IPC_TCP_Plugin/"+ platform + "/" + configuration + "/" + "IPC_TCP_Plugin.dll"
+        IPCLibOutDir = DeployDir + "/" + FinalLibName + "/IPC/lib/" + platform + "/" + configuration
+        os.makedirs(IPCLibOutDir)
+        shutil.copy(IPCLibFile, IPCLibOutDir)
+        old_file = IPCLibOutDir + "/IPC_TCP_Plugin.dll"
+        new_file = IPCLibOutDir + "/ipc.dll"
+        os.rename(old_file, new_file)
+        
 # Copy public headers
 logger.write("\nCopying header files...\n")
 shutil.copytree(SrcPath, DeployDir + "/DgLib/include/")
@@ -192,9 +206,13 @@ shutil.copy(os.path.abspath(AppLibSrcPath + "/Event.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(ImGuiPath + "/imconfig.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(ImGuiPath + "/imgui.h"), AppLibIncludeDir)
 
-shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer_Main.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer_LineMesh.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer_TriangleMesh.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Window.h"), AppLibIncludeDir)
+
+IPCLibIncludeDir = DeployDir + "/" + FinalLibName + "/IPC/include"
+shutil.copy(os.path.abspath(IPCSrcPath + "/IPC_TCP_PluginInterface.h"), IPCLibIncludeDir)
 
 logger.write("Done!\n")
 
