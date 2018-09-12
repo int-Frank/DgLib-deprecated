@@ -264,8 +264,8 @@ namespace Dg
     template<typename Real>
     Real Vector_generic<Real, 2>::SquaredDistance(Vector_generic<Real, 2> const & a_v) const
     {
-      Real x = m_V[0] = a_v.m_V[0];
-      Real y = m_V[1] = a_v.m_V[1];
+      Real x = m_V[0] - a_v.m_V[0];
+      Real y = m_V[1] - a_v.m_V[1];
       return (x*x + y*y);
     }
 

@@ -718,6 +718,11 @@ void AppOnMouseScroll(double yOffset)
   DgApp::GetInstance()->PushEvent(e);
 }
 
+void DgApp::GetMousePosition(double & a_x, double & a_y)
+{
+  glfwGetCursorPos(m_pimpl->window, &a_x, &a_y);
+}
+
 std::string DgApp::CurrentFile() const
 {
   return m_pimpl->currentProject;

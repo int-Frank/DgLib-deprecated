@@ -39,6 +39,7 @@ namespace Renderer
     ObjectHandle  AddObject(LineMesh const &);
     void CommitLoadList();
 
+    //Set the transform in the current context.
     void SetTransform(Dg::R3::Matrix<float> const &);
     void SetColor(Dg::R3::Vector<float> const &);
 

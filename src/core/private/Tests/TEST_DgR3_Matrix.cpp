@@ -97,6 +97,21 @@ TEST(Stack_Matrix44_Inverse, creation_Matrix44_Inverse)
   m1 = m0.GetAffineInverse();
   m2 = m1.GetAffineInverse();
   CHECK(m2 == m0);
+
+  m0 = mt * mr;
+  m1 = m0.GetAffineInverse();
+  m2 = m1.GetAffineInverse();
+  CHECK(m2 == m0);
+
+  m0 = mr * ms;
+  m1 = m0.GetAffineInverse();
+  m2 = m1.GetAffineInverse();
+  CHECK(m2 == m0);
+
+  m0 = mt * ms;
+  m1 = m0.GetAffineInverse();
+  m2 = m1.GetAffineInverse();
+  CHECK(m2 == m0);
 }
 
 //--------------------------------------------------------------------------------

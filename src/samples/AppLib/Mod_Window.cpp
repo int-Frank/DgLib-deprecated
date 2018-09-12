@@ -109,6 +109,9 @@ namespace Window
     unsigned    m_width;
     unsigned    m_height;
     bool        m_useDepthTest;
+    bool        m_useAlphaTest;
+    int         m_alphaBlendSrc;
+    int         m_alphaBlendDest;
     GLuint      m_colorFormat;
     vec4        m_clearColor;
 
@@ -121,6 +124,9 @@ namespace Window
     : m_frameBuffer(0)
     , m_texture(0)
     , m_rbo(0)
+    , m_useAlphaTest(a_data.useAlphaTest)
+    , m_alphaBlendSrc(a_data.alphaBlendSrc)
+    , m_alphaBlendDest(a_data.alphaBlendDest)
   {
     GLuint clrFormat = 0;
     switch (a_data.colorFormat)
@@ -156,14 +162,15 @@ namespace Window
     ClearBuffers();
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
-    if (m_useDepthTest)
+    if (m_useDepthTest) glEnable(GL_DEPTH_TEST);
+    else                glDisable(GL_DEPTH_TEST);
+
+    if (m_useAlphaTest) 
     {
-      glEnable(GL_DEPTH_TEST);
+      glEnable(GL_BLEND);
+      glBlendFunc(m_alphaBlendSrc, m_alphaBlendDest);
     }
-    else
-    {
-      glDisable(GL_DEPTH_TEST);
-    }
+    else                glDisable(GL_ALPHA_TEST);
 
     glViewport(0, 0, m_width, m_height);
   }

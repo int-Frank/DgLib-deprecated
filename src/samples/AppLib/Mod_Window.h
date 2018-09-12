@@ -28,6 +28,7 @@ namespace Window
   {
   public:
 
+    //TODO fix transparency
     InitData()
       : name("Window")
       , width(600)
@@ -36,8 +37,11 @@ namespace Window
       , indentY(0)
       , colorFormat(E_RGBA)
       , useDepthTest(true)
+      , useAlphaTest(true)
+      , alphaBlendSrc(GL_SRC_ALPHA)
+      , alphaBlendDest(GL_ONE_MINUS_SRC_ALPHA)
       , isImGuiWindow(true)
-      , clearColor(Dg::R3::Vector<float>(0.0f, 0.0f, 0.0f, 1.0f))
+      , clearColor(Dg::R3::Vector<float>(0.0f, 0.0f, 0.0f, 0.0f))
       , ImGuiWindowFlags(0)
     {}
 
@@ -48,6 +52,9 @@ namespace Window
     unsigned indentY;
     int colorFormat; //E_RGB, E_RGBA
     bool useDepthTest;
+    bool useAlphaTest;
+    int alphaBlendSrc;
+    int alphaBlendDest;
     bool isImGuiWindow;
     Dg::R3::Vector<float> clearColor;
     unsigned ImGuiWindowFlags;

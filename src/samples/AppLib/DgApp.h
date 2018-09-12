@@ -34,7 +34,8 @@ public:
   virtual bool LoadProject(std::string const & a_fileName) { return true; }
   virtual bool SaveProject(std::string const & a_filePath) { return true; }
 
-  virtual void KeyEvent(int, int) {}
+  virtual void KeyEvent(int key, int action) {}
+  void GetMousePosition(double &x, double &y);
   virtual void UpdateScroll(double) {}
   virtual void WindowSizeCallback(int w, int h) {}
 

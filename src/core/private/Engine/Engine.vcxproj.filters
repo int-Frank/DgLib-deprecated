@@ -21,9 +21,6 @@
     <Filter Include="3d tools">
       <UniqueIdentifier>{f255fd7f-df69-4516-b436-173ae10fbddd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Tools">
-      <UniqueIdentifier>{fb8e835e-db29-4d9c-8b61-5238fd272f91}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceHandle.cpp">
@@ -63,12 +60,6 @@
     </ClInclude>
     <ClInclude Include="..\..\public\particle_system\DgParticleSystem.h">
       <Filter>Particle System</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\game_tools\DgGTBSPTree.h">
-      <Filter>Game Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\game_tools\DgGTBSPTreePath.h">
-      <Filter>Game Tools</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgMeshBase.h">
       <Filter>3d tools</Filter>

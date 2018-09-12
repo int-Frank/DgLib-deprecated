@@ -64,7 +64,6 @@ RenderTestApp::RenderTestApp()
   triangleMeshes.push_back(GenerateFilledShape(4));
   triangleMeshes.push_back(GenerateFilledShape(5));
   triangleMeshes.push_back(GenerateFilledShape(9));
-  triangleMeshes.push_back(GenerateFilledShape(32));
 
   std::vector<vec4> colors;
 
@@ -82,7 +81,7 @@ RenderTestApp::RenderTestApp()
   float spacing = (2.0f - marginX) / 3.0f;
   Dg::R3::Vector<float> tvec(-spacing, spacing, 0.0, 0.0);
   Dg::R3::Matrix<float> scale;
-  scale.Scaling(0.4f);
+  scale.Scaling(Dg::R3::Vector<float>(0.4f, 0.4, 1.0, 0.0));
 
   int itemNo = 0;
 
@@ -106,12 +105,14 @@ RenderTestApp::RenderTestApp()
     itemNo++;
   }
 
+  itemNo++;
   for (auto const & triangleMesh : triangleMeshes)
   {
     ScreenObject so;
 
     tvec[0] = -1.0f + marginX + spacing / 2.0f + spacing * (itemNo % 3);
     tvec[1] = 1.0f - marginY - spacing / 2.0f - spacing * (itemNo / 3);
+
     Dg::R3::Matrix<float> translation;
     translation.Translation(tvec);
 
@@ -124,6 +125,33 @@ RenderTestApp::RenderTestApp()
     colorIndex = (colorIndex + 1) % colors.size();
 
     itemNo++;
+  }
+
+  triangleMeshes.push_back(GenerateFilledShape(32));
+  triangleMeshes.push_back(GenerateFilledShape(32));
+
+  for (size_t i = triangleMeshes.size() - 2; i < triangleMeshes.size(); i++)
+  {
+    ScreenObject so;
+
+    float delta = -0.1f;
+    if (i == triangleMeshes.size() - 2) delta = -delta;
+
+    tvec[0] = -1.0f + marginX + spacing / 2.0f + spacing + delta;
+    tvec[1] = 1.0f - marginY - spacing / 2.0f - spacing;
+    tvec[2] = delta;
+
+    Dg::R3::Matrix<float> translation;
+    translation.Translation(tvec);
+
+    so.transform = scale * translation;
+
+    so.show = true;
+    so.color = colors[colorIndex];
+    so.color[3] = 0.5f;
+    so.handle = m_pRender->AddObject(triangleMeshes[i]);
+    m_triangleObjects.push_back(so);
+    colorIndex = (colorIndex + 1) % colors.size();
   }
 
   m_pRender->CommitLoadList();
