@@ -29,7 +29,7 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DgMeshBase.cpp">
+    <ClCompile Include="DgMesh.cpp">
       <Filter>3d tools</Filter>
     </ClCompile>
   </ItemGroup>
@@ -61,11 +61,11 @@
     <ClInclude Include="..\..\public\particle_system\DgParticleSystem.h">
       <Filter>Particle System</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgMeshBase.h">
-      <Filter>3d tools</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\particle_system\DgVariadicMacros.h">
       <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgMesh.h">
+      <Filter>3d tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
