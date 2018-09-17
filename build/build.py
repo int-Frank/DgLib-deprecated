@@ -89,9 +89,11 @@ AppLibName          = "AppLib"
 FinalLibName        = "DgLib"
 LogFileName         = "log__" + time.strftime("%Y-%m-%d__%I-%M-%S.txt")
 
-platforms = ["Win32", "x64"]
-LibEXEPaths = [LibEXEPath32, LibEXEPath64]
-configurations = ["Release", "Debug"]
+#platforms = ["Win32", "x64"]
+#LibEXEPaths = [LibEXEPath32, LibEXEPath64]
+platforms = ["x64"]
+LibEXEPaths = [LibEXEPath64]
+configurations = ["Debug", "Release"]
 
 #--- Main ---------------------------------------------------------
 
@@ -138,6 +140,7 @@ for i in range(0, len(platforms)):
         #Build the main libs
         logger.write("\nBuilding " + platform + "...\n\n")
         args = [MSBuildPath, DgLibFilePath, "/property:Configuration=" + configuration, "/property:Platform=" + platform, "/t:Rebuild"]
+
         if not Execute(args):
             logger.write("\nBuilding failed! Exiting...\n")
             Exit()

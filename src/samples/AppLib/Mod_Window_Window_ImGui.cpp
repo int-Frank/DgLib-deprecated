@@ -16,6 +16,7 @@ namespace Window
   Window_ImGui::Window_ImGui(InitData const & a_data)
     : Window(a_data)
     , m_name(a_data.name)
+    , m_flags(a_data.ImGuiWindowFlags)
     , m_marginX(17.0f)
     , m_marginY(36.0f)
   {
@@ -30,7 +31,7 @@ namespace Window
 
   void Window_ImGui::Update()
   {
-    ImGui::Begin(m_name.c_str());
+    ImGui::Begin(m_name.c_str(), 0, m_flags);
 
     ImVec2 dim = ImGui::GetWindowSize();
 

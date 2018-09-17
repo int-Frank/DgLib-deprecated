@@ -25,6 +25,8 @@ namespace Window
 
     std::string m_name;
 
+    int         m_flags;
+
     float const m_marginX;
     float const m_marginY;
   };

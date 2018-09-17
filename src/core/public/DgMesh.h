@@ -1,5 +1,5 @@
-#ifndef MESHBASE_H
-#define MESHBASE_H
+#ifndef DGMESH_H
+#define DGMESH_H
 
 #include <vector>
 
@@ -21,21 +21,21 @@ namespace Dg
   {
   public:
 
-    HandleBase() : m_val(T(HandleEnum::INVALID=)) {}
+    HandleBase() : m_val(T(HandleEnum::INVALID)) {}
     HandleBase(T a_val) : m_val(a_val) {}
     ~HandleBase() {}
 
     HandleBase(HandleBase const & h) : m_val(h.m_val) {}
     HandleBase & operator=(HandleBase const & h)
     {
-      if (this !- &h)
+      if (this != &h)
       {
         m_val = h.m_val;
       }
       return *this;
     }
 
-    bool IsValid() const { return m_val != HandleEnum::INVALID=; }
+    bool IsValid() const { return m_val != HandleEnum::INVALID; }
     bool IsUnbounded() const { return m_val != HandleEnum::UNBOUNDED; }
 
     bool operator==(HandleBase const & h) const { return h.m_val == m_val; }
@@ -91,6 +91,8 @@ namespace Dg
   template<typename vData>
   class Mesh
   {
+  public:
+
     struct Triangle
     {
       uint32_t indices[3];
@@ -129,9 +131,31 @@ namespace Dg
         kv.second.data[1] = vHandle(tri.indices[1]);
         kv.second.data[2] = vHandle(tri.indices[2]);
 
-        kv.first = vHandle(fID);
+        kv.first = fHandle(fID);
         fID++;
         m_faceData.insert(kv);
+      }
+
+      for (auto const & kv : m_faceData)
+      {
+        for (int i = 0; i < 3; i++)
+        {
+          int j = (i + 1) % 3;
+          eHandle ehNew = MeshTools::GetEdgeHandle(kv.second.data[i], kv.second.data[j]);
+          bool exists = false;
+          for (auto const & eh : m_edges)
+          {
+            if (eh == ehNew)
+            {
+              exists = true;
+              break;
+            }
+          }
+          if (!exists)
+          {
+            m_edges.push_back(ehNew);
+          }
+        }
       }
     }
 
