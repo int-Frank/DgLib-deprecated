@@ -79,6 +79,10 @@ namespace Window
     void EndDraw();
     virtual void Update()    {}
 
+    //This is the texture we draw to. We make it accessable so we can
+    //draw our own custom stuff to it.
+    GLuint GetTexture() const;
+
   protected:
 
     void DeleteBuffers();
@@ -88,7 +92,6 @@ namespace Window
                      unsigned colorFormat,
                      Dg::R3::Vector<float> clearColor);
 
-    GLuint GetTexture() const;
     unsigned GetWidth() const;
     unsigned GetHeight() const;
 
