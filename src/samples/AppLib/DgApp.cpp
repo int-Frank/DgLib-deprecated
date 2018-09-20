@@ -104,9 +104,9 @@ public:
     m_val = a_other.m_val;
   }
 
-  void DoEvent()
+  void DoEvent(DgApp * a_pOwningApp)
   {
-    DgApp::GetInstance()->UpdateScroll(m_val);
+    a_pOwningApp->UpdateScroll(m_val);
   }
 
   void SetOffset(double a_val) { m_val = a_val; }
@@ -116,6 +116,47 @@ public:
 
 private:
   double    m_val;
+};
+
+class Event_MouseMove : public Event
+{
+public:
+  Event_MouseMove()
+    : Event()
+    , m_x(0.0)
+    , m_y(0.0)
+  {}
+
+  ~Event_MouseMove() {}
+
+  Event_MouseMove(Event_MouseMove const & a_other)
+    : Event(a_other)
+    , m_x(a_other.m_x)
+    , m_y(a_other.m_y)
+  {}
+
+  Event_MouseMove & operator=(Event_MouseMove const & a_other)
+  {
+    Event::operator = (a_other);
+    m_x = a_other.m_x;
+    m_y = a_other.m_y;
+  }
+
+  void DoEvent(DgApp * a_pOwningApp)
+  {
+    a_pOwningApp->MouseMoveCallback(m_x, m_y);
+  }
+
+  void SetPosition(double a_x, double a_y) 
+  { 
+    m_x = a_x;
+    m_y = a_y;
+  }
+
+  Event_MouseMove * Clone() const { return new Event_MouseMove(*this); }
+
+private:
+  double    m_x, m_y;
 };
 
 
@@ -143,9 +184,9 @@ public:
     m_action = a_other.m_action;
   }
 
-  void DoEvent()
+  void DoEvent(DgApp * a_pOwningApp)
   {
-    DgApp::GetInstance()->KeyEvent(m_key, m_action);
+    a_pOwningApp->KeyEvent(m_key, m_action);
   }
 
   void SetKey(int a_key) { m_key = a_key; }
@@ -186,10 +227,10 @@ public:
     m_filePath = a_filePath;
   }
 
-  void DoEvent()
+  void DoEvent(DgApp * a_pOwningApp)
   {
-    DgApp::GetInstance()->SaveProject(m_filePath);
-    DgApp::GetInstance()->SetDirty(false);
+    a_pOwningApp->SaveProject(m_filePath);
+    a_pOwningApp->SetDirty(false);
   }
 
   Event_SaveProject * Clone() const { return new Event_SaveProject(*this); }
@@ -224,9 +265,9 @@ public:
     m_filePath = a_filePath;
   }
 
-  void DoEvent()
+  void DoEvent(DgApp * a_pOwningApp)
   {
-    DgApp::GetInstance()->LoadProject(m_filePath);
+    a_pOwningApp->LoadProject(m_filePath);
   }
 
   Event_LoadProject * Clone() const { return new Event_LoadProject(*this); }
@@ -254,10 +295,10 @@ public:
     Event::operator = (a_other);
   }
 
-  void DoEvent()
+  void DoEvent(DgApp * a_pOwningApp)
   {
-    DgApp::GetInstance()->NewProject();
-    DgApp::GetInstance()->SetDirty(false);
+    a_pOwningApp->NewProject();
+    a_pOwningApp->SetDirty(false);
   }
 
   Event_NewProject * Clone() const { return new Event_NewProject(*this); }
@@ -281,7 +322,7 @@ public:
     m_fileName = a_other.m_fileName;
   }
 
-  void DoEvent()
+  void DoEvent(DgApp * a_pOwningApp)
   {
     std::remove(m_fileName.c_str());
   }
@@ -718,6 +759,13 @@ void AppOnMouseScroll(double yOffset)
   DgApp::GetInstance()->PushEvent(e);
 }
 
+void AppOnMouseMove(double x, double y)
+{
+  Event_MouseMove e;
+  e.SetPosition(x, y);
+  DgApp::GetInstance()->PushEvent(e);
+}
+
 void DgApp::GetMousePosition(double & a_x, double & a_y)
 {
   glfwGetCursorPos(m_pimpl->window, &a_x, &a_y);
@@ -1098,7 +1146,7 @@ void DgApp::Run()
     eObject e(nullptr);
     while (m_pimpl->eventManager.PollEvent(e))
     {
-      e->DoEvent();
+      e->DoEvent(this);
     }
 
     DoFrame(dt);

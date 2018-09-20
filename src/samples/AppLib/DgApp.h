@@ -38,6 +38,7 @@ public:
   void GetMousePosition(double &x, double &y);
   virtual void UpdateScroll(double) {}
   virtual void WindowSizeCallback(int w, int h) {}
+  virtual void MouseMoveCallback(double x, double y) {}
 
   void SetDirty(bool = true);
 

@@ -2,6 +2,7 @@
 #define EVENT_H
 
 #include "DgObject.h"
+#include "DgApp.h"
 
 class Event
 {
@@ -18,7 +19,7 @@ public:
     return *this;
   }
 
-  virtual void DoEvent() {}
+  virtual void DoEvent(DgApp * ) {}
 
   virtual Event * Clone() const { return new Event(*this); }
 };

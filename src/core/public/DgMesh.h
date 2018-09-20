@@ -320,13 +320,13 @@ namespace Dg
     //Face methods
     vHandle_3 Vertices(fHandle a_fh) const
     {
-      return m_faceData.at(a_fh).first;
+      return m_faceData.at(a_fh);
     }
 
     eHandle_3 Edges(fHandle a_fh) const
     {
       eHandle_3 result;
-      vHandle_3 const & vh3 = m_faceData.at(a_fh).first;
+      vHandle_3 const & vh3 = m_faceData.at(a_fh);
       result[0] = MeshTools::GetEdgeHandle(vh3[0], vh3[1]);
       result[1] = MeshTools::GetEdgeHandle(vh3[0], vh3[2]);
       result[2] = MeshTools::GetEdgeHandle(vh3[1], vh3[2]);
@@ -415,7 +415,7 @@ namespace Dg
 
     Face_iterator FacesEnd() const
     {
-      return Face_iterator(m_faceData.begin());
+      return Face_iterator(m_faceData.end());
     }
 
   protected:

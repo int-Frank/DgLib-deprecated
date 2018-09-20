@@ -21,6 +21,7 @@
 
 void AppOnMouseScroll(double);
 void AppOnKeyEvent(int a_key, int a_action);
+void AppOnMouseMove(double x, double y);
 
 // Data
 static GLFWwindow*  g_Window = NULL;
@@ -141,9 +142,14 @@ static void ImGui_ImplGlfwGL3_SetClipboardText(const char* text)
 
 void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow*, int button, int action, int /*mods*/)
 {
-    AppOnKeyEvent(button, action);
-    if (action == GLFW_PRESS && button >= 0 && button < 3)
-        g_MousePressed[button] = true;
+  AppOnKeyEvent(button, action);
+  if (action == GLFW_PRESS && button >= 0 && button < 3)
+    g_MousePressed[button] = true;
+}
+
+void ImGui_ImplGlfwGL3_MouseMove(GLFWwindow*, double x, double y)
+{
+  AppOnMouseMove(x, y);
 }
 
 void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow*, double /*xoffset*/, double yoffset)
@@ -348,6 +354,7 @@ bool    ImGui_ImplGlfwGL3_Init(GLFWwindow* window, bool install_callbacks)
         glfwSetScrollCallback(window, ImGui_ImplGlfwGL3_ScrollCallback);
         glfwSetKeyCallback(window, ImGui_ImplGlfwGL3_KeyCallback);
         glfwSetCharCallback(window, ImGui_ImplGlfwGL3_CharCallback);
+        glfwSetCursorPosCallback(window, ImGui_ImplGlfwGL3_MouseMove);
     }
 
     //Set default styling
