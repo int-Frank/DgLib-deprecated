@@ -3,7 +3,7 @@
 
 #include "ShapeFunctions.h"
 
-Renderer::LineMesh GenerateLineStar()
+Context::LineMesh GenerateLineStar()
 {
   float pi = 3.14159f;
 
@@ -13,11 +13,11 @@ Renderer::LineMesh GenerateLineStar()
   float spacing = 2.0f * pi / float(n_points);
   float halfSpacing = spacing / 2.0f;
 
-  Renderer::LineMesh result;
+  Context::LineMesh result;
 
   for (int i = 0; i < n_points; i++)
   {
-    Renderer::LineVertex point, dimple;
+    Context::LineVertex point, dimple;
 
     point.point[0] = radius * cos(spacing * float(i));
     point.point[1] = radius * sin(spacing * float(i));
@@ -33,7 +33,7 @@ Renderer::LineMesh GenerateLineStar()
 
   for (int i = 0; i < n_points * 2; i++)
   {
-    Renderer::Line line;
+    Context::Line line;
     line.indices[0] = i;
     line.indices[1] = (i + 1) % (n_points * 2);
     result.lines.push_back(line);
@@ -42,10 +42,10 @@ Renderer::LineMesh GenerateLineStar()
   return result;
 }
 
-Renderer::LineMesh GenerateLineBox()
+Context::LineMesh GenerateLineBox()
 {
-  Renderer::LineMesh result;
-  Renderer::LineVertex point;
+  Context::LineMesh result;
+  Context::LineVertex point;
 
   point.point[2] = 0.0f;
 
@@ -65,7 +65,7 @@ Renderer::LineMesh GenerateLineBox()
   point.point[1] = 0.5f;
   result.verts.push_back(point);
 
-  Renderer::Line line;
+  Context::Line line;
 
   line.indices[0] = 0;
   line.indices[1] = 1;
@@ -86,10 +86,10 @@ Renderer::LineMesh GenerateLineBox()
   return result;
 }
 
-Renderer::LineMesh GenerateLineDebugPattern()
+Context::LineMesh GenerateLineDebugPattern()
 {
-  Renderer::LineMesh result;
-  Renderer::LineVertex point;
+  Context::LineMesh result;
+  Context::LineVertex point;
 
   point.point[2] = 0.0f;
 
@@ -157,7 +157,7 @@ Renderer::LineMesh GenerateLineDebugPattern()
   point.point[1] = 0.0f;
   result.verts.push_back(point);
 
-  Renderer::Line line;
+  Context::Line line;
 
   //Square
   line.indices[0] = 0;
@@ -210,7 +210,7 @@ Renderer::LineMesh GenerateLineDebugPattern()
   return result;
 }
 
-Renderer::LineMesh GenerateLineWheel()
+Context::LineMesh GenerateLineWheel()
 {
   float pi = 3.14159f;
 
@@ -219,9 +219,9 @@ Renderer::LineMesh GenerateLineWheel()
   float startRadius = 0.5;
   float endRadius = 0.1f;
 
-  Renderer::LineMesh result;
-  Renderer::Line line;
-  Renderer::LineVertex point;
+  Context::LineMesh result;
+  Context::Line line;
+  Context::LineVertex point;
   point.point[2] = 0.0f;
   int indexOffset = 0;
 
@@ -248,7 +248,7 @@ Renderer::LineMesh GenerateLineWheel()
   return result;
 }
 
-Renderer::LineMesh GenerateLineSpiral()
+Context::LineMesh GenerateLineSpiral()
 {
   float pi = 3.14159f;
 
@@ -257,9 +257,9 @@ Renderer::LineMesh GenerateLineSpiral()
   float endRadius = 0.5f;
   int n_rotations = 3;
 
-  Renderer::LineMesh result;
-  Renderer::LineVertex point;
-  Renderer::Line line;
+  Context::LineMesh result;
+  Context::LineVertex point;
+  Context::Line line;
   point.point[2] = 0.0f;
 
   for (int i = 0; i < n_segments; i++)
@@ -283,20 +283,15 @@ Renderer::LineMesh GenerateLineSpiral()
   return result;
 }
 
-Renderer::TriangleMesh GenerateFilledShape(int a_nSides)
+Context::TriangleMesh GenerateFilledShape(int a_nSides)
 {
   float pi = 3.14159f;
   float radius = 0.5;
 
-  Renderer::TriangleMesh   result;
-  Renderer::TriangleVertex vertex;
-  Renderer::Triangle       tri;
+  Context::TriangleMesh   result;
+  Context::TriangleVertex vertex;
+  Context::Triangle       tri;
   vertex.point[2] = 0.0f;
-  vertex.normal[0] = 0.0f;
-  vertex.normal[1] = 0.0f;
-  vertex.normal[2] = 1.0f;
-  vertex.uv[0] = 0.0f;
-  vertex.uv[1] = 0.0f;
   tri.indices[0] = 0;
 
   vertex.point[0] = 0.0f;
@@ -322,43 +317,32 @@ Renderer::TriangleMesh GenerateFilledShape(int a_nSides)
   return result;
 }
 
-Renderer::TriangleMesh GenerateTriangleBox()
+Context::TriangleMesh GenerateTriangleBox()
 {
-  Renderer::TriangleMesh   result;
-  Renderer::TriangleVertex vertex;
+  Context::TriangleMesh   result;
+  Context::TriangleVertex vertex;
 
   vertex.point[2] = 0.0f;
-  vertex.normal[0] = 0.0f;
-  vertex.normal[1] = 0.0f;
-  vertex.normal[2] = 1.0f;
 
   ///
 
   vertex.point[0] = -0.5f;
   vertex.point[1] = -0.5f;
-  vertex.uv[0] = 0.0f;
-  vertex.uv[1] = 1.0f;
   result.verts.push_back(vertex);
 
   vertex.point[0] = 0.5f;
   vertex.point[1] = -0.5f;
-  vertex.uv[0] = 1.0f;
-  vertex.uv[1] = 1.0f;
   result.verts.push_back(vertex);
 
   vertex.point[0] = 0.5f;
   vertex.point[1] = 0.5f;
-  vertex.uv[0] = 1.0f;
-  vertex.uv[1] = 0.0f;
   result.verts.push_back(vertex);
 
   vertex.point[0] = -0.5f;
   vertex.point[1] = 0.5f;
-  vertex.uv[0] = 0.0f;
-  vertex.uv[1] = 0.0f;
   result.verts.push_back(vertex);
 
-  Renderer::Triangle tri;
+  Context::Triangle tri;
 
   tri.indices[0] = 3;
   tri.indices[1] = 1;

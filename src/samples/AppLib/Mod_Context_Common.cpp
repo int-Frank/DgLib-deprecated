@@ -2,9 +2,9 @@
 #include <vector>
 #include <exception>
 
-#include "Mod_Renderer_Common.h"
+#include "Mod_Context_Common.h"
 
-namespace Renderer
+namespace Context
 {
   class excptBase: public std::exception
   {
@@ -116,11 +116,23 @@ namespace Renderer
     glGetShaderiv(fsID, GL_COMPILE_STATUS, &fsCompiled);
     if (vsCompiled != GL_TRUE)
     {
-      throw ex_vsCompile();
+      GLint maxLength = 0;
+      glGetShaderiv(vsID, GL_INFO_LOG_LENGTH, &maxLength);
+      std::vector<GLchar> errorLog(maxLength);
+      glGetShaderInfoLog(vsID, maxLength, &maxLength, &errorLog[0]);
+
+      std::string reason(errorLog.begin(), errorLog.end());
+      throw ex_vsCompile(reason);
     }
     if (fsCompiled != GL_TRUE)
     {
-      throw ex_fsCompile();
+      GLint maxLength = 0;
+      glGetShaderiv(fsID, GL_INFO_LOG_LENGTH, &maxLength);
+      std::vector<GLchar> errorLog(maxLength);
+      glGetShaderInfoLog(fsID, maxLength, &maxLength, &errorLog[0]);
+
+      std::string reason(errorLog.begin(), errorLog.end());
+      throw ex_fsCompile(reason);
     }
 
     //Create program, attach shaders to it and link it.
@@ -149,5 +161,60 @@ namespace Renderer
     glDeleteShader(fsID);
 
     return shaderProgram;
+  }
+
+  uint32_t ObjectType(ObjectHandle a_handle)
+  {
+    return a_handle & 0xFF;
+  }
+
+  uint32_t ObjectID(ObjectHandle a_handle)
+  {
+    return a_handle >> 8;
+  }
+
+  ObjectHandle GetObjectHandle(uint32_t type, uint32_t id)
+  {
+    return (id << 8) | (type & 0xFF);
+  }
+
+  GL_State GetGLState()
+  {
+    GL_State data;
+
+    glGetIntegerv(GL_CURRENT_PROGRAM, &data.program);
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &data.texture);
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &data.active_texture);
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &data.array_buffer);
+    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &data.element_array_buffer);
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &data.vertex_array);
+    glGetIntegerv(GL_BLEND_SRC, &data.blend_src);
+    glGetIntegerv(GL_BLEND_DST, &data.blend_dst);
+    glGetIntegerv(GL_BLEND_EQUATION_RGB, &data.blend_equation_rgb);
+    glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &data.blend_equation_alpha);
+    glGetIntegerv(GL_VIEWPORT, data.viewport);
+    data.enable_blend = glIsEnabled(GL_BLEND);
+    data.enable_cull_face = glIsEnabled(GL_CULL_FACE);
+    data.enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+    data.enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
+
+    return data;
+  }
+
+  void SetGLState(GL_State const & a_data)
+  {
+    glUseProgram(a_data.program);
+    glActiveTexture(a_data.active_texture);
+    glBindTexture(GL_TEXTURE_2D, a_data.texture);
+    glBindVertexArray(a_data.vertex_array);
+    glBindBuffer(GL_ARRAY_BUFFER, a_data.array_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, a_data.element_array_buffer);
+    glBlendEquationSeparate(a_data.blend_equation_rgb, a_data.blend_equation_alpha);
+    glBlendFunc(a_data.blend_src, a_data.blend_dst);
+    if (a_data.enable_blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+    if (a_data.enable_cull_face) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+    if (a_data.enable_depth_test) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+    if (a_data.enable_scissor_test) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
+    glViewport(a_data.viewport[0], a_data.viewport[1], (GLsizei)a_data.viewport[2], (GLsizei)a_data.viewport[3]);
   }
 }

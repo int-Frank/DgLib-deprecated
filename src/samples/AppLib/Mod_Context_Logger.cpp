@@ -1,8 +1,14 @@
 #include <iostream>
-#include "Mod_Renderer_Logger.h"
+#include "Mod_Context_Logger.h"
+#include "Mod_Context.h"
 
-namespace Renderer
+namespace Context
 {
+  void Init(void(*Log)(std::string const &, int))
+  {
+    Logger::Init(Log);
+  }
+
   namespace Logger
   {
     static void LogDefault(std::string const & a_str, int a_logLevel)

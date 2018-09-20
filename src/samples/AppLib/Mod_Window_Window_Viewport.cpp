@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Mod_Window_Window_Viewport.h"
-#include "Mod_Renderer_Common.h"
+#include "Mod_Context_Common.h"
 
 namespace Window
 {
@@ -23,7 +23,7 @@ namespace Window
 #include "Mod_Window_fs.glsl"
     );
 
-    m_shaderProgram = Renderer::GetShaderProgram(vs, fs);
+    m_shaderProgram = Context::GetShaderProgram(vs, fs);
 
     float vertData[24] = 
     {

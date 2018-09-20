@@ -6,13 +6,23 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Mod_Renderer_Logger.h"
+#include "Mod_Context_Logger.h"
 #include "DgTypes.h"
-#include "Mod_Renderer_ContextLine.h"
-#include "Mod_Renderer_Common.h"
+#include "Mod_Context_Line.h"
+#include "Mod_Context_Common.h"
 
-namespace Renderer
+namespace Context
 {
+  class excptTypeError: public std::exception
+  {
+  public:
+
+    virtual const char* what() const throw()
+    {
+      return "Object handle is the wrong type for this context";
+    }
+  };
+
   class ContextLine::PIMPL
   {
   public:
@@ -20,13 +30,18 @@ namespace Renderer
     PIMPL();
     ~PIMPL();
 
-    void LoadData(std::vector<LineMesh> const &);
-    void Draw(int);
+    void ClearLoadList();
+    ObjectHandle AddObject(LineMesh const &);
+    void CommitLoadList();
+
+    void Bind();
+    void Draw(ObjectHandle);
+    void Unbind();
+
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
-    void SetColor(Dg::R3::Vector<float> const &);
-    void Bind();
-    void Unbind();
+    void SetColor(ObjectHandle, Dg::R3::Vector<float> const &);
+    void SetThickness(ObjectHandle, float);
 
   private:
 
@@ -43,19 +58,26 @@ namespace Renderer
 
     struct LineData
     {
-      GLint   offset;
-      GLsizei count;
+      GLint                 offset;
+      GLsizei               count;
+      Dg::R3::Vector<float> color;
+      float                 thickness;
+      bool                  depthEnabled;
     };
 
   private:
 
     //Also sets m_currentLines;
-    void CollateData(std::vector<LineMesh> const &, GPU_Data & out);
+    GPU_Data CollateData();
     void InitShaderProgram();
+    void LoadData();
 
   private:
 
+    GL_State m_savedState;
+
     std::vector<LineData>     m_currentLines;
+    std::vector<LineMesh>     m_loadList;
 
     GLuint m_shaderProgram;
     GLuint m_vao;
@@ -78,11 +100,30 @@ namespace Renderer
     glDeleteProgram(m_shaderProgram);
   }
 
-  void ContextLine::PIMPL::LoadData(std::vector<LineMesh> const & a_data)
+  void ContextLine::PIMPL::ClearLoadList()
+  {
+    m_loadList.clear();
+  }
+
+  void ContextLine::PIMPL::CommitLoadList()
+  {
+    Clear();
+    LoadData();
+    ClearLoadList();
+  }
+
+  ObjectHandle ContextLine::PIMPL::AddObject(LineMesh const & a_obj)
+  {
+    ObjectHandle handle = GetObjectHandle(gContextLineID, (uint32_t)m_loadList.size());
+    m_loadList.push_back(a_obj);
+    return handle;
+  }
+
+  void ContextLine::PIMPL::LoadData()
   {
     Clear();
 
-    if (a_data.empty())
+    if (m_loadList.empty())
     {
       return;
     }
@@ -90,9 +131,7 @@ namespace Renderer
     glGenBuffers(1, &m_vertexBuffer);
     glGenBuffers(1, &m_indexBuffer);
 
-    GPU_Data gpuData;
-    
-    CollateData(a_data, gpuData);
+    GPU_Data gpuData = CollateData();
     
     //Vertices
     glGenVertexArrays(1, &m_vao);
@@ -121,18 +160,24 @@ namespace Renderer
   }
 
   //Also sets m_currentLines;
-  void ContextLine::PIMPL::CollateData(std::vector<LineMesh> const & a_lineMeshs, GPU_Data & a_out)
+  ContextLine::PIMPL::GPU_Data ContextLine::PIMPL::CollateData()
   {
+    GPU_Data out;
+
     GLuint vertexOffset = 0;
     GLuint indexOffset = 0;
-    a_out.indexData.clear();
-    a_out.vertexData.clear();
+    out.indexData.clear();
+    out.vertexData.clear();
 
-    for (auto const & lineMesh : a_lineMeshs)
+    for (auto const & lineMesh : m_loadList)
     {
       LineData lineData;
-      lineData.offset = a_out.indexData.size() * sizeof(GLuint);
+      lineData.offset = (GLuint)out.indexData.size() * sizeof(GLuint);
       lineData.count = GLsizei(lineMesh.lines.size() * 2);
+      lineData.depthEnabled = lineMesh.depthEnabled;
+      lineData.color = lineMesh.color;
+      lineData.thickness = lineMesh.thickness;
+
       m_currentLines.push_back(lineData);
 
       for (auto vert : lineMesh.verts)
@@ -143,25 +188,48 @@ namespace Renderer
         v.vec4[2] = vert.point[2];
         v.vec4[3] = 1.0f;
 
-        a_out.vertexData.push_back(v);
+        out.vertexData.push_back(v);
       }
 
       for (auto line : lineMesh.lines)
       {
-        a_out.indexData.push_back(line.indices[0] + vertexOffset);
-        a_out.indexData.push_back(line.indices[1] + vertexOffset);
+        out.indexData.push_back(line.indices[0] + vertexOffset);
+        out.indexData.push_back(line.indices[1] + vertexOffset);
       }
 
       vertexOffset += GLuint(lineMesh.verts.size());
     }
+    return out;
   }
 
-  void ContextLine::PIMPL::Draw(int a_index)
+  void ContextLine::PIMPL::Draw(ObjectHandle a_handle)
   {
+    uint32_t type = ObjectType(a_handle);
+    if (type != gContextLineID)
+    {
+      throw excptTypeError();
+    }
+
+    uint32_t id = ObjectID(a_handle);
+
+    GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
+    glUniform4fv(loc_color, 1, m_currentLines[id].color.GetData());
+
+    glLineWidth(m_currentLines[id].thickness);
+
+    if (m_currentLines[id].depthEnabled)
+    {
+      glEnable(GL_DEPTH_TEST);
+    }
+    else
+    {
+      glDisable(GL_DEPTH_TEST);
+    }
+
     glDrawElements(GL_LINES, 
-                   m_currentLines[a_index].count, 
+                   m_currentLines[id].count, 
                    GL_UNSIGNED_INT,
-                   (const void *)m_currentLines[a_index].offset);
+                   (const void *)m_currentLines[id].offset);
   }
 
   void ContextLine::PIMPL::Clear()
@@ -191,14 +259,34 @@ namespace Renderer
     glUniformMatrix4fv(mvp, 1, GL_FALSE, a_mat.GetData());
   }
 
-  void ContextLine::PIMPL::SetColor(Dg::R3::Vector<float> const & a_clr)
+  void ContextLine::PIMPL::SetColor(ObjectHandle a_handle, Dg::R3::Vector<float> const & a_clr)
   {
-      GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
-      glUniform4fv(loc_color, 1, a_clr.GetData());
+    uint32_t type = ObjectType(a_handle);
+    if (type != gContextLineID)
+    {
+      throw excptTypeError();
+    }
+
+    uint32_t id = ObjectID(a_handle);
+    m_currentLines[id].color = a_clr;
+  }
+
+  void ContextLine::PIMPL::SetThickness(ObjectHandle a_handle, float a_val)
+  {
+    uint32_t type = ObjectType(a_handle);
+    if (type != gContextLineID)
+    {
+      throw excptTypeError();
+    }
+
+    uint32_t id = ObjectID(a_handle);
+    m_currentLines[id].thickness = a_val;
   }
 
   void ContextLine::PIMPL::Bind()
   {
+    m_savedState = GetGLState();
+
     glUseProgram(m_shaderProgram);
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
@@ -211,16 +299,18 @@ namespace Renderer
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    SetGLState(m_savedState);
   }
 
   void ContextLine::PIMPL::InitShaderProgram()
   {
     std::string vs_str = std::string(
-#include "Mod_Renderer_vs_line.glsl"
+#include "Mod_Context_vs_Line.glsl"
     );
 
     std::string fs_str = std::string(
-#include "Mod_Renderer_fs_line.glsl"
+#include "Mod_Context_fs_Line.glsl"
     );
 
     m_shaderProgram = GetShaderProgram(vs_str, fs_str);
@@ -248,12 +338,22 @@ namespace Renderer
     m_pimpl = nullptr;
   }
 
-  void ContextLine::LoadData(std::vector<LineMesh> const & a_data)
+  void ContextLine::ClearLoadList()
   {
-    m_pimpl->LoadData(a_data);
+    m_pimpl->ClearLoadList();
   }
 
-  void ContextLine::Draw(int a_ref)
+  void ContextLine::CommitLoadList()
+  {
+    m_pimpl->CommitLoadList();
+  }
+
+  ObjectHandle ContextLine::AddObject(LineMesh const & a_obj)
+  {
+    return m_pimpl->AddObject(a_obj);
+  }
+
+  void ContextLine::Draw(ObjectHandle a_ref)
   {
     m_pimpl->Draw(a_ref);
   }
@@ -268,9 +368,14 @@ namespace Renderer
     m_pimpl->SetMatrix(a_mat);
   }
 
-  void ContextLine::SetColor(Dg::R3::Vector<float> const & a_clr)
+  void ContextLine::SetColor(ObjectHandle a_handle, Dg::R3::Vector<float> const & a_clr)
   {
-    m_pimpl->SetColor(a_clr);
+    m_pimpl->SetColor(a_handle, a_clr);
+  }
+
+  void ContextLine::SetThickness(ObjectHandle a_handle, float a_val)
+  {
+    m_pimpl->SetThickness(a_handle, a_val);
   }
 
   void ContextLine::Bind()

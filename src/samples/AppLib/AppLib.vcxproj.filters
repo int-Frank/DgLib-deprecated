@@ -21,6 +21,9 @@
     <Filter Include="Source Files\Renderer">
       <UniqueIdentifier>{d1ffff25-f902-4b30-8efb-721341963a8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="public\Deprecate">
+      <UniqueIdentifier>{21f11bac-3082-45d8-bfbe-074ba703fdd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
@@ -53,37 +56,28 @@
     <ClInclude Include="..\..\..\3rd_party\imgui\imconfig.h">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_LineMesh.h">
-      <Filter>public\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Mod_Renderer_TriangleMesh.h">
-      <Filter>public\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Mod_Renderer_Context.h">
-      <Filter>Source Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Mod_Renderer_ContextLine.h">
-      <Filter>Source Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Mod_Renderer_ContextTriangle.h">
-      <Filter>Source Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Mod_Renderer_Logger.h">
-      <Filter>Source Files\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Mod_Window_Window_ImGui.h">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Mod_Window_Window_Viewport.h">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Renderer_Common.h">
-      <Filter>Source Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Mod_Renderer.h">
+    <ClInclude Include="Mod_Window.h">
       <Filter>public\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Mod_Window.h">
+    <ClInclude Include="Mod_Context.h">
+      <Filter>public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Context_Line.h">
+      <Filter>public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Context_Logger.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Context_Common.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod_Context_Triangle.h">
       <Filter>public\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
@@ -109,15 +103,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mod_Renderer_Context.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Mod_Renderer_ContextLine.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Mod_Renderer_Logger.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Mod_Window_Window_ImGui.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
@@ -127,16 +112,22 @@
     <ClCompile Include="Mod_Window_WindowFactory.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Mod_Renderer_Common.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Mod_Renderer_ContextTriangle.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Mod_Renderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Mod_Window.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod_Context.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod_Context_Logger.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod_Context_Common.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod_Context_Line.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod_Context_Triangle.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
@@ -144,22 +135,22 @@
     <None Include="config.ini">
       <Filter>public</Filter>
     </None>
-    <None Include="Mod_Renderer_fs_line.glsl">
-      <Filter>Source Files\Renderer</Filter>
-    </None>
-    <None Include="Mod_Renderer_fs_triangle.glsl">
-      <Filter>Source Files\Renderer</Filter>
-    </None>
-    <None Include="Mod_Renderer_vs_line.glsl">
-      <Filter>Source Files\Renderer</Filter>
-    </None>
-    <None Include="Mod_Renderer_vs_triangle.glsl">
-      <Filter>Source Files\Renderer</Filter>
-    </None>
     <None Include="Mod_Window_vs.glsl">
       <Filter>Source Files\Renderer</Filter>
     </None>
     <None Include="Mod_Window_fs.glsl">
+      <Filter>Source Files\Renderer</Filter>
+    </None>
+    <None Include="Mod_Context_fs_Line.glsl">
+      <Filter>Source Files\Renderer</Filter>
+    </None>
+    <None Include="Mod_Context_fs_Triangle.glsl">
+      <Filter>Source Files\Renderer</Filter>
+    </None>
+    <None Include="Mod_Context_vs_Line.glsl">
+      <Filter>Source Files\Renderer</Filter>
+    </None>
+    <None Include="Mod_Context_vs_Triangle.glsl">
       <Filter>Source Files\Renderer</Filter>
     </None>
   </ItemGroup>

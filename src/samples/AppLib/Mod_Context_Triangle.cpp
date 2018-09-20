@@ -6,13 +6,23 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Mod_Renderer_Logger.h"
+#include "Mod_Context_Logger.h"
 #include "DgTypes.h"
-#include "Mod_Renderer_ContextTriangle.h"
-#include "Mod_Renderer_Common.h"
+#include "Mod_Context_Triangle.h"
+#include "Mod_Context_Common.h"
 
-namespace Renderer
+namespace Context
 {
+  class excptTypeError: public std::exception
+  {
+  public:
+
+    virtual const char* what() const throw()
+    {
+      return "Object handle is the wrong type for this context";
+    }
+  };
+
   class ContextTriangle::PIMPL
   {
   public:
@@ -20,21 +30,23 @@ namespace Renderer
     PIMPL();
     ~PIMPL();
 
-    void LoadData(std::vector<TriangleMesh> const &);
-    void Draw(int);
+    void ClearLoadList();
+    ObjectHandle AddObject(TriangleMesh const &);
+    void CommitLoadList();
+
+    void Bind();
+    void Draw(ObjectHandle);
+    void Unbind();
+
     void Clear();
     void SetMatrix(Dg::R3::Matrix<float> const &);
-    void SetColor(Dg::R3::Vector<float> const &);
-    void Bind();
-    void Unbind();
+    void SetColor(ObjectHandle, Dg::R3::Vector<float> const &);
 
   private:
 
     struct GPU_MeshVertex
     {
       float point[4];
-      float normal[4];
-      float uv[2];
     };
 
     struct GPU_Data
@@ -45,19 +57,25 @@ namespace Renderer
 
     struct MeshData
     {
-      GLint   offset;
-      GLsizei count;
+      GLint                 offset;
+      GLsizei               count;
+      Dg::R3::Vector<float> color;
+      bool                  depthEnabled;
     };
 
   private:
 
     //Also sets m_currentObjects;
-    void CollateData(std::vector<TriangleMesh> const &, GPU_Data & out);
+    GPU_Data CollateData();
     void InitShaderProgram();
+    void LoadData();
 
   private:
 
+    GL_State m_savedState;
+
     std::vector<MeshData>     m_currentObjects;
+    std::vector<TriangleMesh> m_loadList;
 
     GLuint m_shaderProgram;
     GLuint m_vao;
@@ -80,11 +98,30 @@ namespace Renderer
     glDeleteProgram(m_shaderProgram);
   }
 
-  void ContextTriangle::PIMPL::LoadData(std::vector<TriangleMesh> const & a_data)
+  void ContextTriangle::PIMPL::ClearLoadList()
+  {
+    m_loadList.clear();
+  }
+
+  void ContextTriangle::PIMPL::CommitLoadList()
+  {
+    Clear();
+    LoadData();
+    ClearLoadList();
+  }
+
+  ObjectHandle ContextTriangle::PIMPL::AddObject(TriangleMesh const & a_obj)
+  {
+    ObjectHandle handle = GetObjectHandle(gContextTriangleID, (uint32_t)m_loadList.size());
+    m_loadList.push_back(a_obj);
+    return handle;
+  }
+
+  void ContextTriangle::PIMPL::LoadData()
   {
     Clear();
 
-    if (a_data.empty())
+    if (m_loadList.empty())
     {
       return;
     }
@@ -92,9 +129,7 @@ namespace Renderer
     glGenBuffers(1, &m_vertexBuffer);
     glGenBuffers(1, &m_indexBuffer);
 
-    GPU_Data gpuData;
-
-    CollateData(a_data, gpuData);
+    GPU_Data gpuData = CollateData();
 
     //Vertices
     glGenVertexArrays(1, &m_vao);
@@ -111,20 +146,10 @@ namespace Renderer
       gpuData.indexData.data(), GL_STATIC_DRAW);
 
     GLuint loc_position = glGetAttribLocation(m_shaderProgram, "in_position");
-    GLuint loc_normal   = glGetAttribLocation(m_shaderProgram, "in_normal");
-    GLuint loc_uv       = glGetAttribLocation(m_shaderProgram, "in_uv");
 
-    int stride = sizeof(GPU_MeshVertex);
-
-    glVertexAttribPointer(loc_position, 4, GL_FLOAT, GL_FALSE, stride, 0);
-    glVertexAttribPointer(loc_normal, 4, GL_FLOAT, GL_FALSE, stride
-      , (void*)sizeof(GPU_MeshVertex::point));
-    glVertexAttribPointer(loc_uv, 4, GL_FLOAT, GL_FALSE, stride
-      , (void*)(sizeof(GPU_MeshVertex::point) + sizeof(GPU_MeshVertex::normal)));
+    glVertexAttribPointer(loc_position, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
     glEnableVertexAttribArray(loc_position);
-    glEnableVertexAttribArray(loc_normal);
-    glEnableVertexAttribArray(loc_uv);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -132,18 +157,22 @@ namespace Renderer
   }
 
   //Also sets m_currentObjects;
-  void ContextTriangle::PIMPL::CollateData(std::vector<TriangleMesh> const & a_meshList, GPU_Data & a_out)
+  ContextTriangle::PIMPL::GPU_Data  ContextTriangle::PIMPL::CollateData()
   {
+    GPU_Data out;
+
     GLuint vertexOffset = 0;
     GLuint indexOffset = 0;
-    a_out.indexData.clear();
-    a_out.vertexData.clear();
+    out.indexData.clear();
+    out.vertexData.clear();
 
-    for (auto const & mesh : a_meshList)
+    for (auto const & mesh : m_loadList)
     {
       MeshData meshData;
-      meshData.offset = a_out.indexData.size() * sizeof(GLuint);
+      meshData.offset = (GLuint)out.indexData.size() * sizeof(GLuint);
       meshData.count = GLsizei(mesh.triangles.size() * 3);
+      meshData.color = mesh.color;
+      meshData.depthEnabled = mesh.depthEnabled;
       m_currentObjects.push_back(meshData);
 
       for (auto vert : mesh.verts)
@@ -154,34 +183,47 @@ namespace Renderer
         v.point[2] = vert.point[2];
         v.point[3] = 1.0f;
 
-        v.normal[0] = vert.normal[0];
-        v.normal[1] = vert.normal[1];
-        v.normal[2] = vert.normal[2];
-        v.normal[3] = 0.0f;
-
-        v.uv[0] = vert.uv[0];
-        v.uv[1] = vert.uv[1];
-
-        a_out.vertexData.push_back(v);
+        out.vertexData.push_back(v);
       }
 
       for (auto tri : mesh.triangles)
       {
-        a_out.indexData.push_back(tri.indices[0] + vertexOffset);
-        a_out.indexData.push_back(tri.indices[1] + vertexOffset);
-        a_out.indexData.push_back(tri.indices[2] + vertexOffset);
+        out.indexData.push_back(tri.indices[0] + vertexOffset);
+        out.indexData.push_back(tri.indices[1] + vertexOffset);
+        out.indexData.push_back(tri.indices[2] + vertexOffset);
       }
 
       vertexOffset += GLuint(mesh.verts.size());
     }
+    return out;
   }
 
-  void ContextTriangle::PIMPL::Draw(int a_index)
+  void ContextTriangle::PIMPL::Draw(ObjectHandle a_handle)
   {
+    uint32_t type = ObjectType(a_handle);
+    if (type != gContextTriangleID)
+    {
+      throw excptTypeError();
+    }
+
+    uint32_t id = ObjectID(a_handle);
+
+    GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
+    glUniform4fv(loc_color, 1, m_currentObjects[id].color.GetData());
+
+    if (m_currentObjects[id].depthEnabled)
+    {
+      glEnable(GL_DEPTH_TEST);
+    }
+    else
+    {
+      glDisable(GL_DEPTH_TEST);
+    }
+
     glDrawElements(GL_TRIANGLES, 
-                   m_currentObjects[a_index].count, 
+                   m_currentObjects[id].count, 
                    GL_UNSIGNED_INT,
-                   (const void *)m_currentObjects[a_index].offset);
+                   (const void *)m_currentObjects[id].offset);
   }
 
   void ContextTriangle::PIMPL::Clear()
@@ -211,14 +253,22 @@ namespace Renderer
     glUniformMatrix4fv(mvp, 1, GL_FALSE, a_mat.GetData());
   }
 
-  void ContextTriangle::PIMPL::SetColor(Dg::R3::Vector<float> const & a_clr)
+  void ContextTriangle::PIMPL::SetColor(ObjectHandle a_handle, Dg::R3::Vector<float> const & a_clr)
   {
-    GLuint loc_color = glGetUniformLocation(m_shaderProgram, "u_color");
-    glUniform4fv(loc_color, 1, a_clr.GetData());
+    uint32_t type = ObjectType(a_handle);
+    if (type != gContextTriangleID)
+    {
+      throw excptTypeError();
+    }
+
+    uint32_t id = ObjectID(a_handle);
+    m_currentObjects[id].color = a_clr;
   }
 
   void ContextTriangle::PIMPL::Bind()
   {
+    m_savedState = GetGLState();
+
     glUseProgram(m_shaderProgram);
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
@@ -231,16 +281,18 @@ namespace Renderer
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    SetGLState(m_savedState);
   }
 
   void ContextTriangle::PIMPL::InitShaderProgram()
   {
     std::string vs_str = std::string(
-#include "Mod_Renderer_vs_triangle.glsl"
+#include "Mod_Context_vs_Triangle.glsl"
     );
 
     std::string fs_str = std::string(
-#include "Mod_Renderer_fs_triangle.glsl"
+#include "Mod_Context_fs_Triangle.glsl"
     );
 
     m_shaderProgram = GetShaderProgram(vs_str, fs_str);
@@ -268,12 +320,22 @@ namespace Renderer
     m_pimpl = nullptr;
   }
 
-  void ContextTriangle::LoadData(std::vector<TriangleMesh> const & a_data)
+  void ContextTriangle::ClearLoadList()
   {
-    m_pimpl->LoadData(a_data);
+    m_pimpl->ClearLoadList();
   }
 
-  void ContextTriangle::Draw(int a_ref)
+  void ContextTriangle::CommitLoadList()
+  {
+    m_pimpl->CommitLoadList();
+  }
+
+  ObjectHandle ContextTriangle::AddObject(TriangleMesh const & a_obj)
+  {
+    return m_pimpl->AddObject(a_obj);
+  }
+
+  void ContextTriangle::Draw(ObjectHandle a_ref)
   {
     m_pimpl->Draw(a_ref);
   }
@@ -288,9 +350,9 @@ namespace Renderer
     m_pimpl->SetMatrix(a_mat);
   }
 
-  void ContextTriangle::SetColor(Dg::R3::Vector<float> const & a_clr)
+  void ContextTriangle::SetColor(ObjectHandle a_handle, Dg::R3::Vector<float> const & a_clr)
   {
-    m_pimpl->SetColor(a_clr);
+    m_pimpl->SetColor(a_handle, a_clr);
   }
 
   void ContextTriangle::Bind()

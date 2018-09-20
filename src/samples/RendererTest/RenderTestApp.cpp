@@ -6,8 +6,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "DgRNG.h"
 #include "ShapeFunctions.h"
-#include "Mod_Renderer_LineMesh.h"
 #include "RenderTestApp.h"
 #include "imgui.h"
 
@@ -18,21 +18,17 @@ void Log(std::string const & a_message, int a_logLevel)
 
 RenderTestApp::~RenderTestApp()
 {
-  delete m_pRender;
   delete m_pWindow;
   delete m_pViewport;
 }
 
 RenderTestApp::RenderTestApp()
-  : m_pRender(nullptr)
-  , m_pWindow(nullptr)
+  : m_pWindow(nullptr)
   , m_pViewport(nullptr)
 {
   this->ToggleOutputWindow(false);
-  Renderer::Init(Log);
+  Context::Init(Log);
 
-  m_pRender = new Renderer::Renderer();
-  
   Window::InitData windowData;
   windowData.clearColor = (vec4(0.0f, 0.0f, 0.0f, 0.0f));
   windowData.width = 200;
@@ -52,8 +48,8 @@ RenderTestApp::RenderTestApp()
 
   m_pViewport = windowFactory.GetNewWindow(windowData);
 
-  std::vector<Renderer::LineMesh> lineMeshes;
-  std::vector<Renderer::TriangleMesh> triangleMeshes;
+  std::vector<Context::LineMesh> lineMeshes;
+  std::vector<Context::TriangleMesh> triangleMeshes;
 
   lineMeshes.push_back(GenerateLineSpiral());
   lineMeshes.push_back(GenerateLineBox());
@@ -65,27 +61,16 @@ RenderTestApp::RenderTestApp()
   triangleMeshes.push_back(GenerateFilledShape(5));
   triangleMeshes.push_back(GenerateFilledShape(9));
 
-  std::vector<vec4> colors;
-
-  colors.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
-  colors.push_back(vec4(0.0f, 1.0f, 0.0f, 1.0f));
-  colors.push_back(vec4(0.0f, 0.0f, 1.0f, 1.0f));
-  colors.push_back(vec4(1.0f, 1.0f, 0.0f, 1.0f));
-  colors.push_back(vec4(1.0f, 0.0f, 1.0f, 1.0f));
-  colors.push_back(vec4(0.0f, 1.0f, 1.0f, 1.0f));
-  colors.push_back(vec4(1.0f, 1.0f, 1.0f, 1.0f));
-  size_t colorIndex = 0;
-
   float marginX = 0.0f;
   float marginY = 0.0f;
   float spacing = (2.0f - marginX) / 3.0f;
-  Dg::R3::Vector<float> tvec(-spacing, spacing, 0.0, 0.0);
+  Dg::R3::Vector<float> tvec(-spacing, spacing, 0.0f, 0.0f);
   Dg::R3::Matrix<float> scale;
-  scale.Scaling(Dg::R3::Vector<float>(0.4f, 0.4, 1.0, 0.0));
+  scale.Scaling(Dg::R3::Vector<float>(0.4f, 0.4f, 1.0f, 0.0f));
 
   int itemNo = 0;
 
-  for (auto const & lineMesh : lineMeshes)
+  for (auto lineMesh : lineMeshes)
   {
     ScreenObject so;
 
@@ -96,17 +81,23 @@ RenderTestApp::RenderTestApp()
 
     so.transform = scale * translation;
 
+    Dg::RNG rng;
+    float r = rng.GetUniform(0.0f, 1.0f);
+    float g = rng.GetUniform(0.0f, 1.0f);
+    float b = rng.GetUniform(0.0f, 1.0f);
+    lineMesh.color = vec4(r, g, b, 1.0f);
+
+    lineMesh.thickness = rng.GetUniform(1.0f, 10.0f);
+
     so.show = true;
-    so.color = colors[colorIndex];
-    so.handle = m_pRender->AddObject(lineMesh);
+    so.handle = m_contextLine.AddObject(lineMesh);
     m_lineObjects.push_back(so);
-    colorIndex = (colorIndex + 1) % colors.size();
 
     itemNo++;
   }
 
   itemNo++;
-  for (auto const & triangleMesh : triangleMeshes)
+  for (auto triangleMesh : triangleMeshes)
   {
     ScreenObject so;
 
@@ -118,11 +109,15 @@ RenderTestApp::RenderTestApp()
 
     so.transform = scale * translation;
 
+    Dg::RNG rng;
+    float r = rng.GetUniform(0.0f, 1.0f);
+    float g = rng.GetUniform(0.0f, 1.0f);
+    float b = rng.GetUniform(0.0f, 1.0f);
+    triangleMesh.color = vec4(r, g, b, 1.0f);
+
     so.show = true;
-    so.color = colors[colorIndex];
-    so.handle = m_pRender->AddObject(triangleMesh);
+    so.handle = m_contextTriangle.AddObject(triangleMesh);
     m_triangleObjects.push_back(so);
-    colorIndex = (colorIndex + 1) % colors.size();
 
     itemNo++;
   }
@@ -146,15 +141,19 @@ RenderTestApp::RenderTestApp()
 
     so.transform = scale * translation;
 
+    Dg::RNG rng;
+    float r = rng.GetUniform(0.0f, 1.0f);
+    float g = rng.GetUniform(0.0f, 1.0f);
+    float b = rng.GetUniform(0.0f, 1.0f);
+    triangleMeshes[i].color = vec4(r, g, b, 0.5f);
+
     so.show = true;
-    so.color = colors[colorIndex];
-    so.color[3] = 0.5f;
-    so.handle = m_pRender->AddObject(triangleMeshes[i]);
+    so.handle = m_contextTriangle.AddObject(triangleMeshes[i]);
     m_triangleObjects.push_back(so);
-    colorIndex = (colorIndex + 1) % colors.size();
   }
 
-  m_pRender->CommitLoadList();
+  m_contextLine.CommitLoadList();
+  m_contextTriangle.CommitLoadList();
 }
 
 void RenderTestApp::WindowSizeCallback(int w, int h)
@@ -164,48 +163,46 @@ void RenderTestApp::WindowSizeCallback(int w, int h)
 
 void RenderTestApp::DoFrame(double a_dt)
 {
-  m_pRender->ClearAppColorBuffer();
-
   m_pWindow->BeginDraw();
-  m_pRender->SetContext(Renderer::E_Lines);
+  m_contextLine.Bind();
   for (auto const & obj : m_lineObjects)
   {
     if (!obj.show) continue;
-    m_pRender->SetColor(obj.color);
-    m_pRender->SetTransform(obj.transform);
-    m_pRender->Draw(obj.handle);
+    m_contextLine.SetMatrix(obj.transform);
+    m_contextLine.Draw(obj.handle);
   }
+  m_contextLine.Unbind();
 
-  m_pRender->SetContext(Renderer::E_Triangles);
+  m_contextTriangle.Bind();
   for (auto const & obj : m_triangleObjects)
   {
     if (!obj.show) continue;
-    m_pRender->SetColor(obj.color);
-    m_pRender->SetTransform(obj.transform);
-    m_pRender->Draw(obj.handle);
+    m_contextTriangle.SetMatrix(obj.transform);
+    m_contextTriangle.Draw(obj.handle);
   }
+  m_contextTriangle.Unbind();
   m_pWindow->EndDraw();
 
   ////////////////////////////////////////////////////////////
 
   m_pViewport->BeginDraw();
-  m_pRender->SetContext(Renderer::E_Lines);
+  m_contextLine.Bind();
   for (auto const & obj : m_lineObjects)
   {
     if (!obj.show) continue;
-    m_pRender->SetColor(obj.color);
-    m_pRender->SetTransform(obj.transform);
-    m_pRender->Draw(obj.handle);
+    m_contextLine.SetMatrix(obj.transform);
+    m_contextLine.Draw(obj.handle);
   }
+  m_contextLine.Unbind();
 
-  m_pRender->SetContext(Renderer::E_Triangles);
+  m_contextTriangle.Bind();
   for (auto const & obj : m_triangleObjects)
   {
     if (!obj.show) continue;
-    m_pRender->SetColor(obj.color);
-    m_pRender->SetTransform(obj.transform);
-    m_pRender->Draw(obj.handle);
+    m_contextTriangle.SetMatrix(obj.transform);
+    m_contextTriangle.Draw(obj.handle);
   }
+  m_contextTriangle.Unbind();
   m_pViewport->EndDraw();
   m_pViewport->Update();
 }
