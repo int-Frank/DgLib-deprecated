@@ -245,12 +245,16 @@ namespace Context
 
   void ContextTriangle::PIMPL::SetMatrix(Dg::R3::Matrix<float> const & a_mat)
   {
+    GLint prog;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+    glUseProgram(m_shaderProgram);
     GLuint mvp = glGetUniformLocation(m_shaderProgram, "u_mvp");
     if (mvp == -1)
     {
       Logger::Log("Failed to find mv_matrix in shader program", Dg::LL_Error);
     }
     glUniformMatrix4fv(mvp, 1, GL_FALSE, a_mat.GetData());
+    glUseProgram(prog);
   }
 
   void ContextTriangle::PIMPL::SetColor(ObjectHandle a_handle, Dg::R3::Vector<float> const & a_clr)
