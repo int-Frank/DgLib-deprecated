@@ -209,9 +209,9 @@ shutil.copy(os.path.abspath(AppLibSrcPath + "/Event.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(ImGuiPath + "/imconfig.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(ImGuiPath + "/imgui.h"), AppLibIncludeDir)
 
-shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer.h"), AppLibIncludeDir)
-shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer_LineMesh.h"), AppLibIncludeDir)
-shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Renderer_TriangleMesh.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Context.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Context_Line.h"), AppLibIncludeDir)
+shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Context_Triangle.h"), AppLibIncludeDir)
 shutil.copy(os.path.abspath(AppLibSrcPath + "/Mod_Window.h"), AppLibIncludeDir)
 
 IPCLibIncludeDir = DeployDir + "/" + FinalLibName + "/IPC/include"
