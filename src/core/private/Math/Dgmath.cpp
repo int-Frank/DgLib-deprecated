@@ -69,37 +69,4 @@ namespace Dg
     value |= value >> 32;
     return impl::TAB64[((uint64_t)((value - (value >> 1)) * 0x07EDD5E59A4E28C2)) >> 58];
   }
-
-
-	//--------------------------------------------------------------------------------
-	//	@	FloorPower2()
-	//--------------------------------------------------------------------------------
-	uint32_t FloorPower2(uint32_t input)
-	{
-		input |= (input >> 1);
-		input |= (input >> 2);
-		input |= (input >> 4);
-		input |= (input >> 8);
-		input |= (input >> 16);
-		input ^= (input >> 1);
-		return input;
-
-	}	//End: FloorPower2()
-
-
-	//--------------------------------------------------------------------------------
-	//	@	NextPower2()
-	//--------------------------------------------------------------------------------
-	uint32_t NextPower2(uint32_t input)
-	{
-		--input;
-		input |= (input >> 1);
-		input |= (input >> 2);
-		input |= (input >> 4);
-		input |= (input >> 8);
-		input |= (input >> 16);
-		input++;
-		return input;
-
-	}	//End: NextPower2()
 }

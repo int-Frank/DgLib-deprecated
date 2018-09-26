@@ -101,10 +101,61 @@ namespace Dg
   int Log2_64(uint64_t);
 
   //! Floors a number to the nearest power of 2.
-  uint32_t FloorPower2(uint32_t);
+  template<typename UINT>
+  UINT FloorPower2(UINT val)
+  {
+    for (size_t i = 0; i <= sizeof(UINT); i++)
+    {
+      val |= (val >> (1 << i));
+    }
+    val ^= (val >> 1);
+    return val;
+  }
 
   //! Returns the next power of 2.
-  uint32_t NextPower2(uint32_t);
+  template<typename UINT>
+  UINT NextPower2(UINT val)
+  {
+    val--;
+    for (size_t i = 0; i <= sizeof(UINT); i++)
+    {
+      val |= (val >> (1 << i));
+    }
+    val++;
+    return val;
+  }
+
+  //! Finds the highest bit
+  template<typename UINT>
+  UINT HighestBit(UINT val)
+  {
+    if (!val)
+      return 0;
+
+    UINT ret = 1;
+
+    while (val >>= 1)
+      ret++;
+
+    return ret;
+  }
+
+  //! Computes 2 numbers which are closest to sprt(val) but when
+  //! multiplied together are => val
+  template<typename UINT>
+  void ClosestSquare(UINT val, UINT & lower,  UINT & upper)
+  {
+    lower = static_cast<UINT>(round(sqrt(static_cast<double>(val))));
+
+    if (lower * lower >= val)
+    {
+      upper = lower;
+    }
+    else
+    {
+      upper = lower + 1;
+    }
+  }
 
   //! Inverse error function. Uses Mclaurin series expansion approximation.
   //! The template param nTerms represents the number of terms in the series expansion to use.
