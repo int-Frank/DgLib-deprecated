@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\public\Dgcirculator.h" />
     <ClInclude Include="..\..\public\DgIDManager.h" />
     <ClInclude Include="..\..\public\DgMakeGrid.h" />
+    <ClInclude Include="..\..\public\DgMask.h" />
     <ClInclude Include="..\..\public\DgObject.h" />
     <ClInclude Include="..\..\public\DgObjectWrapper.h" />
     <ClInclude Include="..\..\public\DgParser_INI.h" />

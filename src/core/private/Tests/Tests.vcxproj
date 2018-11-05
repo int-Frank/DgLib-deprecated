@@ -167,6 +167,7 @@
     <ClCompile Include="NonPODTests.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
     <ClCompile Include="TEST_DGFixedPoint.cpp" />
+    <ClCompile Include="TEST_DgMask.cpp" />
     <ClCompile Include="TEST_DgMesh.cpp" />
     <ClCompile Include="TEST_DgR2Regression.cpp" />
     <ClCompile Include="TEST_DgR2_AABB.cpp" />
