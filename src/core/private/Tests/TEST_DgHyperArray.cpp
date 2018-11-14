@@ -1,14 +1,13 @@
 #include "TestHarness.h"
 #include "DgHyperArray.h"
 
-
 TEST(Stack_DgHyperArray, creation_DgHyperArray)
 {
   size_t x = 2;
   size_t y = 3;
   size_t z = 4;
 
-  Dg::HyperArray<int, 3> ary(Dg::Dims<3>{x, y, z});
+  Dg::HyperArray<int, 3> ary({{x, y, z}});
 
   //Dynamic length checks
   CHECK(ary.length(0) == x);

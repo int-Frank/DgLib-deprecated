@@ -88,19 +88,6 @@ namespace Dg
     }
   }
 
-  template <size_t Size>
-  struct Dims
-  {
-    template <typename... Items>
-    Dims(Items&&... a_values)
-      : data{{static_cast<size_t>(a_values)...}}
-    {
-
-    }
-
-    std::array<size_t, Size> data;
-  };
-
   template<typename T, size_t Dimensions>
   class HyperArray
   {
@@ -113,8 +100,8 @@ namespace Dg
     /// It doesn't make sense to create an array without specifying the dimension lengths
     HyperArray() = delete;
 
-    HyperArray(Dims<Dimensions> const & a_dimensions)
-      : m_dimensionLengths(a_dimensions.data)
+    HyperArray(std::array<size_t, Dimensions> const & a_dimensions)
+      : m_dimensionLengths(a_dimensions)
       , m_dataLength{impl::ct_accumulate(m_dimensionLengths,
                                          0,
                                          Dimensions,
