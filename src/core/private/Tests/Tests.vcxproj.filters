@@ -141,6 +141,9 @@
     <ClCompile Include="TEST_DgMask.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="TEST_DgHyperArray.cpp">
+      <Filter>Tests\Containers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="testini.ini">
