@@ -291,10 +291,10 @@ namespace Dg
   private:
     static constexpr SizeType s_dimensions = Dimensions;
 
-    std::array<SizeType, Dimensions> const m_dimensionLengths;
-    T *                                    m_pData;
-    SizeType const                         m_dataLength;
-    std::array<SizeType, Dimensions> const m_indexCoeffs; 
+    std::array<SizeType, Dimensions> m_dimensionLengths;
+    T *                              m_pData;
+    SizeType                         m_dataLength;
+    std::array<SizeType, Dimensions> m_indexCoeffs; 
   };
 }
 
