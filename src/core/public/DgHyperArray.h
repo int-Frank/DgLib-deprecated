@@ -101,30 +101,20 @@ namespace Dg
     HyperArray() = delete;
 
     HyperArray(std::array<size_t, Dimensions> const & a_dimensions)
-      : m_dimensionLengths(a_dimensions)
-      , m_dataLength{impl::ct_accumulate(m_dimensionLengths,
-                                         0,
-                                         Dimensions,
-                                         static_cast<SizeType>(1),
-                                         impl::ct_prod<SizeType>)}
-      , m_indexCoeffs([this] {
-                               std::array<SizeType, Dimensions> coeffs;
-                               coeffs[Dimensions - 1] = 1;
-                               for (SizeType i = 0; i < (Dimensions - 1); ++i)
-                               {
-                                 coeffs[i] = impl::ct_accumulate(m_dimensionLengths,
-                                                                 i + 1,
-                                                                 Dimensions - i - 1,
-                                                                 static_cast<SizeType>(1),
-                                                                 impl::ct_prod<SizeType>);
-                               }
-                               return coeffs;
-                             }())
+      : m_dataLength(0)
       , m_pData(nullptr)
     {
-      m_pData = new T[m_dataLength];
+      Set(a_dimensions);
     }
-    
+
+    //This breaks for some reason
+    //HyperArray(HyperArray&& a_other)
+    //: m_dimensionLengths(std::move(a_other.m_dimensionLengths))
+    //, m_dataLength(a_other.m_dataLength)
+    //, m_indexCoeffs(std::move(a_other.m_indexCoeffs))
+    //, m_pData(a_other.m_pData)
+    //{}
+
     HyperArray(HyperArray const & a_other)
       : m_dimensionLengths(a_other.m_dimensionLengths)
       , m_dataLength(a_other.m_dataLength)
@@ -154,6 +144,36 @@ namespace Dg
       }
     
       return *this;
+    }
+
+    void Set(std::array<size_t, Dimensions> const & a_dimensions)
+    {
+      m_dimensionLengths = a_dimensions;
+      m_dataLength = impl::ct_accumulate(m_dimensionLengths,
+                                         0,
+                                         Dimensions,
+                                         static_cast<SizeType>(1),
+                                         impl::ct_prod<SizeType>);
+
+      m_indexCoeffs[Dimensions - 1] = 1;
+      for (SizeType i = 0; i < (Dimensions - 1); ++i)
+      {
+        m_indexCoeffs[i] = impl::ct_accumulate(m_dimensionLengths,
+                                               i + 1,
+                                               Dimensions - i - 1,
+                                               static_cast<SizeType>(1),
+                                               impl::ct_prod<SizeType>);
+      }
+
+      m_pData = new T[m_dataLength];
+    }
+
+    void fill(T const & a_val)
+    {
+      for (size_t i = 0; i < m_dataLength; i++)
+      {
+        m_pData[i] = a_val;
+      }
     }
 
     ~HyperArray()
@@ -244,19 +264,35 @@ namespace Dg
     IndexType rawIndex_noChecks(Indices... a_indices) const
     {
       std::array<IndexType, Dimensions> indexArray = {{static_cast<IndexType>(a_indices)...}};
+      return rawIndex_noChecks(indexArray);
+    }
 
-      // I_{actual} = \sum_{i=0}^{N-1} {C_i \cdot I_i}
-      //
-      // where I_{actual} : actual index of the data in the data array
-      //       N          : Dimensions
-      //       C_i        : indexCoeffs[i]
-      //       I_i        : indexArray[i]
-      return impl::ct_inner_product(m_indexCoeffs, 0,
-                                    indexArray, 0,
-                                    Dimensions,
-                                    static_cast<IndexType>(0),
-                                    impl::ct_plus<IndexType>,
-                                    impl::ct_prod<IndexType>);
+    //Compares two dimensions
+    template <IndexType Depth, typename = std::enable_if_t<Depth <= Dimensions>>
+    bool compare(std::array<IndexType, Depth> const & a_index1, std::array<IndexType, Depth> const & a_index2) const
+    {
+      for (IndexType i = 0; i < m_dimensionLengths[Depth]; i++)
+      {
+        std::array<IndexType, Depth + 1> index1, index2;
+
+        for (size_t j = 0; j < Depth; j++)
+        {
+          index1[j] = a_index1[j];
+          index2[j] = a_index2[j];
+        }
+
+        index1[Depth] = i;
+        index2[Depth] = i;
+
+        if (!compare<Depth + 1>(index1, index2)) return false;
+      }
+      return true;
+    }
+
+    template<>
+    bool compare<Dimensions>(std::array<IndexType, Dimensions> const & a_index1, std::array<IndexType, Dimensions> const & a_index2) const
+    {
+      return _at(a_index1) == _at(a_index2);
     }
 
   private:
@@ -268,15 +304,19 @@ namespace Dg
     {
       // runtime input validation
       std::array<IndexType, Dimensions> indexArray = {{static_cast<IndexType>(indices)...}};
+      rangeCheck(indexArray);
+    }
 
+    void rangeCheck(std::array<IndexType, Dimensions> const & a_indexArray) const
+    {
       // check all indices and prepare an exhaustive report (in oss)
       // if some of them are out of bounds
       std::ostringstream oss;
       for (size_t i = 0; i < Dimensions; ++i)
       {
-        if ((indexArray[i] >= m_dimensionLengths[i]) || (indexArray[i] < 0))
+        if ((a_indexArray[i] >= m_dimensionLengths[i]) || (a_indexArray[i] < 0))
         {
-          oss << "Index #" << i << " [== " << indexArray[i] << "]"
+          oss << "Index #" << i << " [== " << a_indexArray[i] << "]"
             << " is out of the [0, " << (m_dimensionLengths[i]-1) << "] range. ";
         }
       }
@@ -286,6 +326,28 @@ namespace Dg
       {
         throw std::out_of_range(oss.str());
       }
+    }
+
+    IndexType rawIndex_noChecks(std::array<IndexType, Dimensions> const & a_indexArray) const
+    {
+      // I_{actual} = \sum_{i=0}^{N-1} {C_i \cdot I_i}
+      //
+      // where I_{actual} : actual index of the data in the data array
+      //       N          : Dimensions
+      //       C_i        : indexCoeffs[i]
+      //       I_i        : indexArray[i]
+      return impl::ct_inner_product(m_indexCoeffs, 0,
+                                    a_indexArray, 0,
+                                    Dimensions,
+                                    static_cast<IndexType>(0),
+                                    impl::ct_plus<IndexType>,
+                                    impl::ct_prod<IndexType>);
+    }
+
+    T const & _at(std::array<IndexType, Dimensions> const & a_indexArray) const
+    {
+      rangeCheck(a_indexArray);
+      return m_pData[rawIndex_noChecks(a_indexArray)];
     }
 
   private:
