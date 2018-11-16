@@ -107,13 +107,29 @@ namespace Dg
       Set(a_dimensions);
     }
 
-    //This breaks for some reason
-    //HyperArray(HyperArray&& a_other)
-    //: m_dimensionLengths(std::move(a_other.m_dimensionLengths))
-    //, m_dataLength(a_other.m_dataLength)
-    //, m_indexCoeffs(std::move(a_other.m_indexCoeffs))
-    //, m_pData(a_other.m_pData)
-    //{}
+    HyperArray(HyperArray&& a_other)
+      : m_dimensionLengths(std::move(a_other.m_dimensionLengths))
+      , m_dataLength(a_other.m_dataLength)
+      , m_indexCoeffs(std::move(a_other.m_indexCoeffs))
+      , m_pData(a_other.m_pData)
+    {
+      a_other.m_pData = nullptr;
+    }
+
+    HyperArray & operator=(HyperArray&& a_other)
+    {
+      if (this != &a_other)
+      {
+        m_dimensionLengths = std::move(a_other.m_dimensionLengths);
+        m_indexCoeffs = std::move(a_other.m_indexCoeffs);
+        m_dataLength = a_other.m_dataLength;
+        
+        delete[] m_pData;
+        m_pData = a_other.m_pData;
+        a_other.m_pData = nullptr;
+      }
+      return *this;
+    }
 
     HyperArray(HyperArray const & a_other)
       : m_dimensionLengths(a_other.m_dimensionLengths)
