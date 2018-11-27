@@ -7,7 +7,7 @@ TEST(Stack_DgHyperArray, creation_DgHyperArray)
   size_t y = 3;
   size_t z = 4;
 
-  Dg::HyperArray<int, 3> ary({{x, y, z}});
+  Dg::HyperArray<int, 3> ary({x, y, z});
 
   //Dynamic length checks
   CHECK(ary.length(0) == x);
@@ -97,7 +97,7 @@ TEST(Stack_DgHyperArray, creation_DgHyperArray)
 
 TEST(Stack_DgHyperArrayCompare, creation_DgHyperArrayCompare)
 {
-  Dg::HyperArray<int, 3> ary({{3, 3, 3}});
+  Dg::HyperArray<int, 3> ary({3, 3, 3});
 
   ary(0, 0, 0) = 1; ary(0, 0, 1) = 2; ary(0, 0, 2) = 3;
   ary(0, 1, 0) = 4; ary(0, 1, 1) = 5; ary(0, 1, 2) = 6;

@@ -10,6 +10,7 @@
 
 #include <cstring>
 #include <stdint.h>
+#include <limits.h>
 
 namespace Dg
 {

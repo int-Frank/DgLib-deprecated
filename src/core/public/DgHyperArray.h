@@ -283,7 +283,7 @@ namespace Dg
       return rawIndex_noChecks(indexArray);
     }
 
-    //Compares two dimensions
+    //Compares two dimensions 
     template <IndexType Depth, typename = std::enable_if_t<Depth <= Dimensions>>
     bool compare(std::array<IndexType, Depth> const & a_index1, std::array<IndexType, Depth> const & a_index2) const
     {

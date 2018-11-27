@@ -11,15 +11,12 @@
     <Filter Include="Private">
       <UniqueIdentifier>{079ad136-b0e6-44f3-bbcc-34b01fe1fe93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public Headers\deprecated">
+      <UniqueIdentifier>{c14294e9-bcb6-4509-b327-aba8011e08a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\public\Dg_map.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\Dg_shared_ptr.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\Dg_set.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\impl\DgContainerBase.h">
@@ -34,23 +31,32 @@
     <ClInclude Include="..\..\public\DgDynamicArray.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgStaticArray.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgCircularDoublyLinkedList.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgOpenHashTable.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgQuadTree.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgMap.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgHyperArray.h">
       <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgVariableArray2D.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\Dg_map.h">
+      <Filter>Public Headers\deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\Dg_set.h">
+      <Filter>Public Headers\deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgMap.h">
+      <Filter>Public Headers\deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgQuadTree.h">
+      <Filter>Public Headers\deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgStaticArray.h">
+      <Filter>Public Headers\deprecated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

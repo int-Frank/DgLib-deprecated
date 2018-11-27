@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgDynamicArray.h"
+#include <vector>
 #include "DgR3VQS.h"
 #include "DgR3Matrix.h"
 #include "./json/json.h"
@@ -18,6 +18,8 @@ struct T_Bone
   Quat    qBegin;
   Quat    qEnd;
 };
+
+class Bone;
 
 class Bone
 {
@@ -39,8 +41,8 @@ public:
 
 private:
   
-  T_Bone *          m_pTBone;
-  Dg::DynamicArray<Bone>  m_children;
+  T_Bone *           m_pTBone;
+  std::vector<Bone>  m_children;
 };
 
 class ArmSkeleton
