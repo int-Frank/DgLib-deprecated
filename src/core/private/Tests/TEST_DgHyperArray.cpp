@@ -95,6 +95,8 @@ TEST(Stack_DgHyperArray, creation_DgHyperArray)
   }
 }
 
+
+
 TEST(Stack_DgHyperArrayCompare, creation_DgHyperArrayCompare)
 {
   Dg::HyperArray<int, 3> ary({3, 3, 3});
@@ -128,4 +130,35 @@ TEST(Stack_DgHyperArrayCompare, creation_DgHyperArrayCompare)
   CHECK(ary.compare<3>({1, 0, 1}, {1, 0, 2}) == false);
   CHECK(ary.compare<3>({2, 2, 2}, {1, 2, 1}) == false);
   CHECK(ary.compare<3>({2, 1, 2}, {2, 1, 1}) == false);
+
+  //Fill
+  ary.fill(0);
+  for (size_t i = 0; i < 3; i++)
+  {
+    for (size_t j = 0; j < 3; j++)
+    {
+      for (size_t k = 0; k < 3; k++)
+      {
+        CHECK(ary(i, j, k) == 0);
+      }
+    }
+  }
+
+  ary.fill<1>(1, {1});
+  for (size_t j = 0; j < 3; j++)
+  {
+    for (size_t k = 0; k < 3; k++)
+    {
+      CHECK(ary(1, j, k) == 1);
+    }
+  }
+
+  ary.fill<2>(2, {2, 1});
+  for (size_t k = 0; k < 3; k++)
+  {
+    CHECK(ary(2, 1, k) == 2);
+  }
+
+  ary.fill<3>(3, {2, 2, 2});
+  CHECK(ary(2, 2, 2) == 3);
 }

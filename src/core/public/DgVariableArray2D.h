@@ -154,7 +154,7 @@ namespace Dg
   template<class T>
   VariableArray2D<T>::VariableArray2D(VariableArray2D<T> const & a_other)
     : m_data(a_other.m_data)
-    , m_indices(a_other.indices)
+    , m_indices(a_other.m_indices)
   {
 
   }	//End: VariableArray2D::VariableArray2D()
@@ -178,7 +178,7 @@ namespace Dg
   template<class T>
   VariableArray2D<T> & VariableArray2D<T>::operator=(VariableArray2D<T> && a_other)
   {
-    if (this != &other)
+    if (this != &a_other)
     {
       m_data = std::move(a_other.m_data);
       m_indices = std::move(a_other.m_indices);

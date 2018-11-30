@@ -32,4 +32,39 @@ TEST(Stack_DgVariableArray2D, creation_DgVariableArray2D)
   CHECK(arr(4, 2) == 12);
   CHECK(arr(4, 3) == 13);
   CHECK(arr(4, 4) == 14);
+
+  Dg::VariableArray2D<int> arr1(arr);
+  Dg::VariableArray2D<int> arr2 = arr;
+
+  CHECK(arr1(0, 0) == 0);
+  CHECK(arr1(0, 1) == 1);
+  CHECK(arr1(0, 2) == 2);
+  CHECK(arr1(1, 0) == 3);
+  CHECK(arr1(1, 1) == 4);
+  CHECK(arr1(2, 0) == 5);
+  CHECK(arr1(2, 1) == 6);
+  CHECK(arr1(2, 2) == 7);
+  CHECK(arr1(2, 3) == 8);
+  CHECK(arr1(3, 0) == 9);
+  CHECK(arr1(4, 0) == 10);
+  CHECK(arr1(4, 1) == 11);
+  CHECK(arr1(4, 2) == 12);
+  CHECK(arr1(4, 3) == 13);
+  CHECK(arr1(4, 4) == 14);
+
+  CHECK(arr2(0, 0) == 0);
+  CHECK(arr2(0, 1) == 1);
+  CHECK(arr2(0, 2) == 2);
+  CHECK(arr2(1, 0) == 3);
+  CHECK(arr2(1, 1) == 4);
+  CHECK(arr2(2, 0) == 5);
+  CHECK(arr2(2, 1) == 6);
+  CHECK(arr2(2, 2) == 7);
+  CHECK(arr2(2, 3) == 8);
+  CHECK(arr2(3, 0) == 9);
+  CHECK(arr2(4, 0) == 10);
+  CHECK(arr2(4, 1) == 11);
+  CHECK(arr2(4, 2) == 12);
+  CHECK(arr2(4, 3) == 13);
+  CHECK(arr2(4, 4) == 14);
 }

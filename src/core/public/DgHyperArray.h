@@ -186,10 +186,33 @@ namespace Dg
 
     void fill(T const & a_val)
     {
-      for (size_t i = 0; i < m_dataLength; i++)
+      fill<0>(a_val, {});
+    }
+
+    template <IndexType Depth, typename = std::enable_if_t<Depth <= Dimensions>>
+    void fill(T const & a_val, std::array<IndexType, Depth> const & a_index)
+    {
+      for (IndexType i = 0; i < m_dimensionLengths[Depth]; i++)
       {
-        m_pData[i] = a_val;
+        std::array<IndexType, Depth + 1> index;
+
+        for (size_t j = 0; j < Depth; j++)
+        {
+          index[j] = a_index[j];
+        }
+
+        index[Depth] = i;
+
+        fill<Depth + 1>(a_val, index);
       }
+    }
+
+    template<>
+    void fill<Dimensions>(T const & a_val, std::array<IndexType, Dimensions> const & a_index)
+    {
+      rangeCheck(a_index);
+      IndexType ind = rawIndex_noChecks(a_index);
+      m_pData[ind] = a_val;
     }
 
     ~HyperArray()
