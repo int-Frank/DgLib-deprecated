@@ -80,23 +80,13 @@ namespace Dg
       //! Copy the data in this node
       inline void InitData(T const & a_item)
       {
-        if (std::is_trivially_copy_constructible<T>::value)
-        {
-          memcpy(&data, &a_item, sizeof(T));
-        }
-        else
-        {
-          new (&data) T(a_item);
-        }
+        new (&data) T(a_item);
       }
 
       //! Destruct the data is a destructor exists for the type.
       inline void DestructData()
       {
-        if (!std::is_trivially_destructible<T>::value)
-        {
-          data.~T();
-        }
+        data.~T();
       }
 
       //! Breaks a node out its chain.

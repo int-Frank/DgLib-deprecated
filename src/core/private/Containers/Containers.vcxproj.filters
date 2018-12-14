@@ -22,9 +22,6 @@
     <ClInclude Include="..\..\public\impl\DgContainerBase.h">
       <Filter>Private</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgSimplePage.h">
-      <Filter>Private</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgDoublyLinkedList.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -43,20 +40,20 @@
     <ClInclude Include="..\..\public\DgVariableArray2D.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dg_map.h">
-      <Filter>Public Headers\deprecated</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\Dg_set.h">
-      <Filter>Public Headers\deprecated</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgMap.h">
       <Filter>Public Headers\deprecated</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgQuadTree.h">
       <Filter>Public Headers\deprecated</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\Dg_set.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\public\DgStaticArray.h">
-      <Filter>Public Headers\deprecated</Filter>
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\Dg_map.h">
+      <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -16,7 +16,7 @@ namespace Context
 
   struct Triangle
   {
-    int indices[3];
+    unsigned indices[3];
   };
 
   class TriangleMesh

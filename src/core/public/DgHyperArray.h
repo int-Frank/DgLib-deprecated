@@ -95,6 +95,17 @@ namespace Dg
     using SizeType  = size_t;  ///< used for measuring sizes and lengths
     using IndexType = size_t;  ///< used for indices
 
+    class CompareBase
+    {
+    public:
+
+      virtual ~CompareBase(){}
+      virtual bool operator()(T const & a_0, T const & a_1)
+      {
+        return a_1 == a_0;
+      }
+    };
+
   public:
 
     /// It doesn't make sense to create an array without specifying the dimension lengths
@@ -306,9 +317,19 @@ namespace Dg
       return rawIndex_noChecks(indexArray);
     }
 
+    template <IndexType Depth, typename = std::enable_if_t<Depth <= Dimensions>>
+    bool compare(std::array<IndexType, Depth> const & a_index1, 
+                 std::array<IndexType, Depth> const & a_index2) const
+    {
+      CompareBase cmp;
+      return compare(a_index1, a_index2, cmp);
+    }
+
     //Compares two dimensions 
     template <IndexType Depth, typename = std::enable_if_t<Depth <= Dimensions>>
-    bool compare(std::array<IndexType, Depth> const & a_index1, std::array<IndexType, Depth> const & a_index2) const
+    bool compare(std::array<IndexType, Depth> const & a_index1, 
+                 std::array<IndexType, Depth> const & a_index2,
+                 CompareBase & a_cmp) const
     {
       for (IndexType i = 0; i < m_dimensionLengths[Depth]; i++)
       {
@@ -323,15 +344,17 @@ namespace Dg
         index1[Depth] = i;
         index2[Depth] = i;
 
-        if (!compare<Depth + 1>(index1, index2)) return false;
+        if (!compare<Depth + 1>(index1, index2, a_cmp)) return false;
       }
       return true;
     }
 
     template<>
-    bool compare<Dimensions>(std::array<IndexType, Dimensions> const & a_index1, std::array<IndexType, Dimensions> const & a_index2) const
+    bool compare<Dimensions>(std::array<IndexType, Dimensions> const & a_index1, 
+                             std::array<IndexType, Dimensions> const & a_index2,
+                             CompareBase & a_cmp) const
     {
-      return _at(a_index1) == _at(a_index2);
+      return a_cmp(_at(a_index1), _at(a_index2));
     }
 
   private:

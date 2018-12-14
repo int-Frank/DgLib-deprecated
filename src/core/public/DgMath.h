@@ -76,7 +76,7 @@ namespace Dg
   //! @{
 
   //! Test to see if a number is prime
-  template<typename T>
+  template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
   bool IsPrime(T a_val)
   {
     if (a_val <= 1) return false;
@@ -95,16 +95,16 @@ namespace Dg
   }
 
   //! Finds log base 2 of a 32-bit integer.
-  int Log2_32(uint32_t);
+  uint32_t Log2_32(uint32_t);
 
   //! Finds log base 2 of a 64-bit integer.
-  int Log2_64(uint64_t);
+  uint64_t Log2_64(uint64_t);
 
   //! Floors a number to the nearest power of 2.
-  template<typename UINT>
-  UINT FloorPower2(UINT val)
+  template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
+  T FloorPower2(T val)
   {
-    for (size_t i = 0; i <= sizeof(UINT); i++)
+    for (size_t i = 0; i <= sizeof(T); i++)
     {
       val |= (val >> (1 << i));
     }
@@ -113,11 +113,11 @@ namespace Dg
   }
 
   //! Returns the next power of 2.
-  template<typename UINT>
-  UINT NextPower2(UINT val)
+  template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
+  T NextPower2(T val)
   {
     val--;
-    for (size_t i = 0; i <= sizeof(UINT); i++)
+    for (size_t i = 0; i <= sizeof(T); i++)
     {
       val |= (val >> (1 << i));
     }
@@ -126,13 +126,13 @@ namespace Dg
   }
 
   //! Finds the highest bit
-  template<typename UINT>
-  UINT HighestBit(UINT val)
+  template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
+  T HighestBit(T val)
   {
     if (!val)
       return 0;
 
-    UINT ret = 1;
+    T ret = 1;
 
     while (val >>= 1)
       ret++;
@@ -142,10 +142,10 @@ namespace Dg
 
   //! Computes 2 numbers which are closest to sprt(val) but when
   //! multiplied together are => val
-  template<typename UINT>
-  void ClosestSquare(UINT val, UINT & lower,  UINT & upper)
+  template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
+  void ClosestSquare(T val, T & lower,  T & upper)
   {
-    lower = static_cast<UINT>(round(sqrt(static_cast<double>(val))));
+    lower = static_cast<T>(round(sqrt(static_cast<double>(val))));
 
     if (lower * lower >= val)
     {
@@ -187,10 +187,10 @@ namespace Dg
   }
 
   //! Set bits within an integer type.
-  template<typename IntType, unsigned Position, unsigned Length>
-  IntType SetBitSet(IntType a_input, IntType a_value)
+  template<typename T, unsigned Position, unsigned Length, typename = std::enable_if<std::is_integral<T>::value>>
+  T SetBitSet(T a_input, T a_value)
   {
-    IntType mask = (IntType(1) << (Length + 1)) - 1;
+    T mask = (T(1) << (Length + 1)) - 1;
     a_value &= mask;
     mask <<= Position;
     mask = ~mask;

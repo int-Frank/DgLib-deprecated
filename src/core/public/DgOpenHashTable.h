@@ -568,14 +568,7 @@ namespace Dg
       Node * pNode(GetItem(key, existed));
       if (!existed)
       {
-        if (std::is_trivially_constructible<T>::value)
-        {
-          memset(&pNode->data, 0, sizeof(T));
-        }
-        else
-        {
-          new (&pNode->data) T();
-        }
+        new (&pNode->data) T();
       }
       return pNode->data;
     }
@@ -663,19 +656,8 @@ namespace Dg
       bool existed(false);
       Node * pNode(GetItem(key, existed));
 
-      if (!std::is_trivially_destructible<T>::value && existed)
-      {
-        pNode->data.~T();
-      }
-
-      if (std::is_trivially_copy_constructible<T>::value)
-      {
-        memcpy(&pNode->data, &val, sizeof(T));
-      }
-      else
-      {
-        new (&pNode->data) T(val);
-      }
+      pNode->data.~T();
+      new (&pNode->data) T(val);
 
       return &pNode->data;
     }
@@ -690,14 +672,7 @@ namespace Dg
       Node * pNode(GetItem(key, existed));
       if (!existed)
       {
-        if (std::is_trivially_copy_constructible<T>::value)
-        {
-          memcpy(&pNode->data, &val, sizeof(T));
-        }
-        else
-        {
-          new (&pNode->data) T(val);
-        }
+        new (&pNode->data) T(val);
       }
       return &pNode->data;
     }
@@ -707,14 +682,12 @@ namespace Dg
     //! essentially, the item counts are set to 0.
     void Clear()
     {
-      if (!std::is_trivially_destructible<T>::value)
+      iterator it = begin();
+      for (it; it != End(); ++it)
       {
-        iterator it = begin();
-        for (it; it != End(); ++it)
-        {
-          *it.~T();
-        }
+        *it.~T();
       }
+
       for (size_t i = 0; i < pool_size() - 1; i++)
       {
         m_pNodes[i].pNext = &m_pNodes[i + 1];
@@ -884,14 +857,8 @@ namespace Dg
       {
         if (pItem->key == a_key)
         {
-          if (!std::is_trivially_destructible<T>::value)
-          {
-            pItem->data.~T();
-          }
-          if (!std::is_trivially_destructible<K>::value)
-          {
-            pItem->key.~K();
-          }
+          pItem->data.~T();
+          pItem->key.~K();
 
           if (pPrev)
           {
@@ -1183,14 +1150,8 @@ namespace Dg
       iterator it = Begin();
       for (it; it != End(); it++)
       {
-        if (!std::is_trivially_destructible<T>::value)
-        {
-          it.m_pNode->data.~T();
-        }
-        if (!std::is_trivially_destructible<K>::value)
-        {
-          it.m_pNode->key.~K();
-        }
+        it.m_pNode->data.~T();
+        it.m_pNode->key.~K();
       }
 
       free(m_pNodes); m_pNodes = nullptr;
@@ -1249,14 +1210,7 @@ namespace Dg
       pResult->pNext = nullptr;
       m_nItems++;
 
-      if (std::is_trivially_copy_constructible<K>::value)
-      {
-        memcpy(&(pResult->key), &a_key, sizeof(K));
-      }
-      else
-      {
-        new (&(pResult->key)) K(a_key);
-      }
+      new (&(pResult->key)) K(a_key);
 
       return pResult;
     }
@@ -1280,14 +1234,7 @@ namespace Dg
       pResult->pNext = nullptr;
       m_nItems++;
 
-      if (std::is_trivially_copy_constructible<K>::value)
-      {
-        memcpy(&(pResult->key), &a_key, sizeof(K));
-      }
-      else
-      {
-        new (&(pResult->key)) K(a_key);
-      }
+      new (&(pResult->key)) K(a_key);
 
       return pResult;
     }
@@ -1318,14 +1265,7 @@ namespace Dg
           Node * this_node(m_pBuckets[bi].pBegin);
           do
           {
-            if (std::is_trivially_copy_constructible<T>::value)
-            {
-              memcpy(&this_node->data, &that_node->data, sizeof(T));
-            }
-            else
-            {
-              new(&this_node->data) T(that_node->data);
-            }
+            new(&this_node->data) T(that_node->data);
 
             that_node = that_node->pNext;
 

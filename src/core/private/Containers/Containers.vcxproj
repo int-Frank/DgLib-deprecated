@@ -32,7 +32,6 @@
     <ClInclude Include="..\..\public\Dg_shared_ptr.h" />
     <ClInclude Include="..\..\public\DgDynamicArray.h" />
     <ClInclude Include="..\..\public\impl\DgContainerBase.h" />
-    <ClInclude Include="..\..\public\impl\DgSimplePage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgContainerBase.cpp" />

@@ -17,7 +17,7 @@ namespace Context
 
   struct Line
   {
-    int indices[2];
+    unsigned indices[2];
   };
 
   class LineMesh

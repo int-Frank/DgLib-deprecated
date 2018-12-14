@@ -108,7 +108,6 @@ TEST(Stack_math, creation_math)
   {
     CHECK(Dg::IsPrime(uint8_t(i)) == (isPrime[i] == 1));
   }
-
   CHECK(Dg::IsPrime(uint32_t(0xFFFFFFFB)));
 }
 

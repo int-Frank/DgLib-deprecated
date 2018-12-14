@@ -161,7 +161,7 @@ namespace Dg
     private:
       Vector<Real>   m_basis[3];       //[f, l, u]
       Vector<Real>   m_center;
-      Real            m_halfLengths[3]; //[f, l, u]
+      Real           m_halfLengths[3]; //[f, l, u]
     };
   }
 }
