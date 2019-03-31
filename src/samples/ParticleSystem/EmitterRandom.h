@@ -62,7 +62,6 @@ int EmitterRandom<Real>::EmitParticles(Dg::ParticleData<Real> & a_data, Real a_d
 {
   int nNewParticles = 0;
   int startIndex = a_data.GetCountAlive();
-  Dg::RNG rng;
 
   Real * pTimeSinceBirth = a_data.GetTimeSinceBirth();
   while (a_dt >= m_nextEmitTime)
@@ -80,7 +79,7 @@ int EmitterRandom<Real>::EmitParticles(Dg::ParticleData<Real> & a_data, Real a_d
       pTimeSinceBirth[parInd] = a_dt - m_nextEmitTime;
     }
     
-    Real rnd = rng.GetUniform(static_cast<Real>(0.0), static_cast<Real>(2.0));
+    Real rnd = Dg::RNG::GetUniform(static_cast<Real>(0.0), static_cast<Real>(2.0));
     
     //This function gives us a Gaussian-like distribution of samples, ranging from
     //0 to 2*m_mean.

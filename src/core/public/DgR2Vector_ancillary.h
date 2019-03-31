@@ -21,9 +21,7 @@ namespace Dg
     template<typename Real>
     Vector<Real> GetRandomVector()
     {
-      RNG generator;
-
-      Real theta = generator.GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(2.0) * Dg::Constants<Real>::PI);
+      Real theta = RNG::GetUniform<Real>(static_cast<Real>(0.0), static_cast<Real>(2.0) * Dg::Constants<Real>::PI);
 
       Real x = cos(theta);
       Real y = sin(theta);

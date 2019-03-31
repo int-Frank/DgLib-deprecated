@@ -80,14 +80,13 @@ RenderTestApp::RenderTestApp()
     translation.Translation(tvec);
 
     so.transform = scale * translation;
-
-    Dg::RNG rng;
-    float r = rng.GetUniform(0.0f, 1.0f);
-    float g = rng.GetUniform(0.0f, 1.0f);
-    float b = rng.GetUniform(0.0f, 1.0f);
+    \
+    float r = Dg::RNG::GetUniform(0.0f, 1.0f);
+    float g = Dg::RNG::GetUniform(0.0f, 1.0f);
+    float b = Dg::RNG::GetUniform(0.0f, 1.0f);
     lineMesh.color = vec4(r, g, b, 1.0f);
 
-    lineMesh.thickness = rng.GetUniform(1.0f, 10.0f);
+    lineMesh.thickness = Dg::RNG::GetUniform(1.0f, 10.0f);
 
     so.show = true;
     so.handle = m_contextLine.AddObject(lineMesh);
@@ -108,11 +107,10 @@ RenderTestApp::RenderTestApp()
     translation.Translation(tvec);
 
     so.transform = scale * translation;
-
-    Dg::RNG rng;
-    float r = rng.GetUniform(0.0f, 1.0f);
-    float g = rng.GetUniform(0.0f, 1.0f);
-    float b = rng.GetUniform(0.0f, 1.0f);
+    \
+    float r = Dg::RNG::GetUniform(0.0f, 1.0f);
+    float g = Dg::RNG::GetUniform(0.0f, 1.0f);
+    float b = Dg::RNG::GetUniform(0.0f, 1.0f);
     triangleMesh.color = vec4(r, g, b, 1.0f);
 
     so.show = true;
@@ -141,10 +139,9 @@ RenderTestApp::RenderTestApp()
 
     so.transform = scale * translation;
 
-    Dg::RNG rng;
-    float r = rng.GetUniform(0.0f, 1.0f);
-    float g = rng.GetUniform(0.0f, 1.0f);
-    float b = rng.GetUniform(0.0f, 1.0f);
+    float r = Dg::RNG::GetUniform(0.0f, 1.0f);
+    float g = Dg::RNG::GetUniform(0.0f, 1.0f);
+    float b = Dg::RNG::GetUniform(0.0f, 1.0f);
     triangleMeshes[i].color = vec4(r, g, b, 0.5f);
 
     so.show = true;

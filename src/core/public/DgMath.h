@@ -225,7 +225,7 @@ namespace Dg
   template<typename Real>
   void WrapAngle(Real& val)
   {
-    val = val - static_cast<Real>(Constants<Real>::PI * 2.0)*floor((val + Constants<Real>::PI) / (Constants<Real>::PI * 2.0));
+    val = val - static_cast<Real>(Constants<Real>::PI * 2.0)*floor((val + Constants<Real>::PI) * (Constants<Real>::INVPI * 0.5));
   }	//End: WrapAngle()
 
 

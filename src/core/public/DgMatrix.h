@@ -71,7 +71,7 @@ namespace Dg
     template<typename _Real, int R> friend class impl::Vector_generic;
 
   public:
-    //! Default constructor. Elements ore not initialised.
+    //! Default constructor. Elements are not initialised.
     Matrix();
     ~Matrix() {}
 

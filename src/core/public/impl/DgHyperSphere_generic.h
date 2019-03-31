@@ -194,12 +194,11 @@ namespace Dg
       Vector_generic<Real, R> result(m_origin);
       if (!Dg::IsZero(m_radius))
       {
-        RNG rng;
         do
         {
           for (int i = 0; i < R; i++)
           {
-            result[i] = rng.GetUniform(m_origin[i] - m_radius, m_origin[i] + m_radius);
+            result[i] = RNG::GetUniform(m_origin[i] - m_radius, m_origin[i] + m_radius);
           }
         } while (Vector_generic<Real, R>(result - m_origin).LengthSquared() > m_radius * m_radius);
       }

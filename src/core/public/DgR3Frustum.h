@@ -23,7 +23,7 @@ namespace Dg
     template<typename Real>
     struct FrustumData
     {
-      Plane<Real>            planes[6];    //[t, b, f, n, l, r]
+      Plane<Real>           planes[6];    //[t, b, f, n, l, r]
       Vector<Real>          origin;
       Vector<Real>          basis[3];     //[f, l, u]
     };

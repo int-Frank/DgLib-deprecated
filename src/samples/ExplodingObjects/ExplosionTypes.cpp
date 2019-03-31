@@ -38,17 +38,15 @@ TransformData ExplosionType_Complete::GetData(vec4 const & a_centroid)
   float mean = 2.f;
   float sd = 0.5;
 
-  Dg::RNG rng;
-
   float vMod;
-  do { vMod = rng.GetNormal(mean, sd); } while (vMod < 0.f);
+  do { vMod = Dg::RNG::GetNormal(mean, sd); } while (vMod < 0.f);
 
   float invLenSq = 1.f / td.translation.LengthSquared();
   td.translation *= (invLenSq * vMod);
 
   for (int i = 0; i < 3; ++i)
   {
-    td.rotation[i] = rng.GetNormal(6.f, 2.f);
+    td.rotation[i] = Dg::RNG::GetNormal(6.f, 2.f);
   }
   return td;
 }
@@ -89,15 +87,13 @@ TransformData ExplosionType_Chunked::GetData(vec4 const & a_centroid)
     float mean = 6.f;
     float sd = 2.f;
 
-    Dg::RNG rng;
-
     float vMod;
-    do { vMod = rng.GetNormal(mean, sd); } while (vMod < 0.f);
+    do { vMod = Dg::RNG::GetNormal(mean, sd); } while (vMod < 0.f);
     td.translation *= vMod;
 
     for (int i = 0; i < 3; ++i)
     {
-      td.rotation[i] = rng.GetNormal(6.f, 2.f);
+      td.rotation[i] = Dg::RNG::GetNormal(6.f, 2.f);
     }
   }
 

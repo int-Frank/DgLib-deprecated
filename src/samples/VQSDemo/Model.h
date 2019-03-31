@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "DgDynamicArray.h"
 #include "DgR3VQS.h"
 #include "DgR3Matrix.h"
 #include "./json/json.h"
@@ -42,7 +42,7 @@ public:
 private:
   
   T_Bone *           m_pTBone;
-  std::vector<Bone>  m_children;
+  Dg::DynamicArray<Bone>  m_children;
 };
 
 class ArmSkeleton

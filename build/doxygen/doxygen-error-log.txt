@@ -2,46 +2,47 @@ D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:1: warni
 D:/dev/projects/DgLib/deploy/DgLib/include/DgDoublyLinkedList.h:1: warning: the name `Dg_list.h' supplied as the second argument in the \file statement is not an input file
 D:/dev/projects/DgLib/deploy/DgLib/include/DgDynamicArray.h:1: warning: the name `Dg_vector.h' supplied as the second argument in the \file statement is not an input file
 D:/dev/projects/DgLib/deploy/DgLib/include/DgOpenHashTable.h:1: warning: the name `Dg_HashTable.h' supplied as the second argument in the \file statement is not an input file
+D:/dev/projects/DgLib/deploy/DgLib/include/DgVariableArray2D.h:1: warning: the name `Dg_vector.h' supplied as the second argument in the \file statement is not an input file
 D:/dev/projects/DgLib/deploy/DgLib/include/impl/DgHyperSphere_generic.h:1: warning: the name `DgBall_generic.h' supplied as the second argument in the \file statement is not an input file
 D:/dev/projects/DgLib/deploy/DgLib/include/impl/DgQueryLineHypersphere.h:1: warning: the name `DgR3QueryLineBall.h' supplied as the second argument in the \file statement is not an input file
 D:/dev/projects/DgLib/deploy/DgLib/include/impl/DgQuerySegmentHypersphere.h:1: warning: the name `DgR3QuerySegmentBall.h' supplied as the second argument in the \file statement is not an input file
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:374: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:364: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::iterator & Dg::CircularDoublyLinkedList::iterator::operator=(typename CircularDoublyLinkedList< T >::iterator const &other)
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:385: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:375: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::iterator & Dg::CircularDoublyLinkedList::iterator::operator++()
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:395: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:385: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::iterator Dg::CircularDoublyLinkedList::iterator::operator++(int)
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:406: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:396: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::iterator & Dg::CircularDoublyLinkedList::iterator::operator--()
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:416: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:406: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::iterator Dg::CircularDoublyLinkedList::iterator::operator--(int)
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:428: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:418: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::const_iterator & Dg::CircularDoublyLinkedList::const_iterator::operator=(typename CircularDoublyLinkedList< T >::const_iterator const &other)
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:439: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:429: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::const_iterator & Dg::CircularDoublyLinkedList::const_iterator::operator++()
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:449: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:439: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::const_iterator Dg::CircularDoublyLinkedList::const_iterator::operator++(int)
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:460: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:450: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::const_iterator & Dg::CircularDoublyLinkedList::const_iterator::operator--()
 
-D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:470: warning: no uniquely matching class member found for 
+D:/dev/projects/DgLib/deploy/DgLib/include/DgCircularDoublyLinkedList.h:460: warning: no uniquely matching class member found for 
   template < T >
   CircularDoublyLinkedList< T >::const_iterator Dg::CircularDoublyLinkedList::const_iterator::operator--(int)
 
