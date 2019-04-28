@@ -117,7 +117,7 @@ static Context::LineMesh GenerateArrow()
 
 CollisionApp::CollisionApp()
   : m_dTurn(0.0f)
-  , m_moveRate(20.0f)
+  , m_moveRate(2.0f)
   , m_turnRate(2.0f)
   , m_playerMoving(false)
 {
@@ -158,68 +158,68 @@ CollisionApp::CollisionApp()
   vec3 crossCenter(5.0f, 5.0f, 1.0f);
   vec3 lo = crossCenter + vec3(crossDim, crossDim, 0.0f);
 
-  //// Upper arm
-  //bl.length = 3.0f * crossDim;
-  //bl.line = Line(lo, vec3::yAxis());
-  //m_boundaryLines.push_back(bl);
+  // Upper arm
+  bl.length = 3.0f * crossDim;
+  bl.line = Line(lo, vec3::yAxis());
+  m_boundaryLines.push_back(bl);
 
-  //lo = crossCenter + vec3(crossDim, 4.0f * crossDim, 0.0f);
-  //bl.length = 2.0f * crossDim;
-  //bl.line = Line(lo, -vec3::xAxis());
-  //m_boundaryLines.push_back(bl);
+  lo = crossCenter + vec3(crossDim, 4.0f * crossDim, 0.0f);
+  bl.length = 2.0f * crossDim;
+  bl.line = Line(lo, -vec3::xAxis());
+  m_boundaryLines.push_back(bl);
 
-  //lo = crossCenter + vec3(-crossDim, 4.0f * crossDim, 0.0f);
-  //bl.length = 3.0f * crossDim;
-  //bl.line = Line(lo, -vec3::yAxis());
-  //m_boundaryLines.push_back(bl);
+  lo = crossCenter + vec3(-crossDim, 4.0f * crossDim, 0.0f);
+  bl.length = 3.0f * crossDim;
+  bl.line = Line(lo, -vec3::yAxis());
+  m_boundaryLines.push_back(bl);
 
-  //// Left arm
-  //lo = crossCenter + vec3(-crossDim, crossDim, 0.0f);
-  //bl.length = 3.0f * crossDim;
-  //bl.line = Line(lo, -vec3::xAxis());
-  //m_boundaryLines.push_back(bl);
+  // Left arm
+  lo = crossCenter + vec3(-crossDim, crossDim, 0.0f);
+  bl.length = 3.0f * crossDim;
+  bl.line = Line(lo, -vec3::xAxis());
+  m_boundaryLines.push_back(bl);
 
-  //lo = crossCenter + vec3(-4.0f * crossDim, crossDim, 0.0f);
-  //bl.length = 2.0f * crossDim;
-  //bl.line = Line(lo, -vec3::yAxis());
-  //m_boundaryLines.push_back(bl);
+  lo = crossCenter + vec3(-4.0f * crossDim, crossDim, 0.0f);
+  bl.length = 2.0f * crossDim;
+  bl.line = Line(lo, -vec3::yAxis());
+  m_boundaryLines.push_back(bl);
 
-  //lo = crossCenter + vec3(-4.0f * crossDim, -crossDim, 0.0f);
-  //bl.length = 3.0f * crossDim;
-  //bl.line = Line(lo, vec3::xAxis());
-  //m_boundaryLines.push_back(bl);
+  lo = crossCenter + vec3(-4.0f * crossDim, -crossDim, 0.0f);
+  bl.length = 3.0f * crossDim;
+  bl.line = Line(lo, vec3::xAxis());
+  m_boundaryLines.push_back(bl);
 
-  //// Bottom arm
-  //lo = crossCenter + vec3(-crossDim, -crossDim, 0.0f);
-  //bl.length = 3.0f * crossDim;
-  //bl.line = Line(lo, -vec3::yAxis());
-  //m_boundaryLines.push_back(bl);
+  // Bottom arm
+  lo = crossCenter + vec3(-crossDim, -crossDim, 0.0f);
+  bl.length = 3.0f * crossDim;
+  bl.line = Line(lo, -vec3::yAxis());
+  m_boundaryLines.push_back(bl);
 
-  //lo = crossCenter + vec3(-crossDim, -4.0f * crossDim, 0.0f);
-  //bl.length = 2.0f * crossDim;
-  //bl.line = Line(lo, vec3::xAxis());
-  //m_boundaryLines.push_back(bl);
+  lo = crossCenter + vec3(-crossDim, -4.0f * crossDim, 0.0f);
+  bl.length = 2.0f * crossDim;
+  bl.line = Line(lo, vec3::xAxis());
+  m_boundaryLines.push_back(bl);
 
-  //lo = crossCenter + vec3(crossDim, -4.0f * crossDim, 0.0f);
-  //bl.length = 3.0f * crossDim;
-  //bl.line = Line(lo, vec3::yAxis());
-  //m_boundaryLines.push_back(bl);
+  lo = crossCenter + vec3(crossDim, -4.0f * crossDim, 0.0f);
+  bl.length = 3.0f * crossDim;
+  bl.line = Line(lo, vec3::yAxis());
+  m_boundaryLines.push_back(bl);
 
-  //// Right arm
-  //lo = crossCenter + vec3(crossDim, -crossDim, 0.0f);
-  //bl.length = 3.0f * crossDim;
-  //bl.line = Line(lo, vec3::xAxis());
-  //m_boundaryLines.push_back(bl);
+  // Right arm
+  lo = crossCenter + vec3(crossDim, -crossDim, 0.0f);
+  bl.length = 3.0f * crossDim;
+  bl.line = Line(lo, vec3::xAxis());
+  m_boundaryLines.push_back(bl);
 
-  //lo = crossCenter + vec3(4.0f * crossDim, -crossDim, 0.0f);
-  //bl.length = 2.0f * crossDim;
-  //bl.line = Line(lo, vec3::yAxis());
-  //m_boundaryLines.push_back(bl);
+  lo = crossCenter + vec3(4.0f * crossDim, -crossDim, 0.0f);
+  bl.length = 2.0f * crossDim;
+  bl.line = Line(lo, vec3::yAxis());
+  m_boundaryLines.push_back(bl);
 
-  //lo = crossCenter + vec3(4.0f * crossDim, crossDim, 0.0f);
-  //bl.length = 3.0f * crossDim;
-  //bl.line = Line(lo, -vec3::xAxis());
-  //m_boundaryLines.push_back(bl);
+  lo = crossCenter + vec3(4.0f * crossDim, crossDim, 0.0f);
+  bl.length = 3.0f * crossDim;
+  bl.line = Line(lo, -vec3::xAxis());
+  m_boundaryLines.push_back(bl);
 
   //Player puck
   float playerRadius = 0.3f;
@@ -317,15 +317,16 @@ void CollisionApp::DoPhysics(double a_dt)
         Dg::R2::CPPointLine<float> cp;
         Dg::R2::CPPointLine<float>::Result result = cp(m_player.disk.Center(), bl.line);
         vec3 vDist = result.cp - m_player.disk.Center();
-        if (vDist.LengthSquared() - m_player.disk.Radius() * m_player.disk.Radius() < epsilon)
+        if ( result.u > 0.0f && result.u < bl.length
+          && vDist.LengthSquared() - m_player.disk.Radius() * m_player.disk.Radius() < epsilon)
         {
           bool towards = (vDist.Dot(v) >= 0.0f);
 
           if (towards)
           {
-            float ratio = abs(bl.line.Direction().Dot(v));
+            float ratio = bl.line.Direction().Dot(v);
 
-              speed *= (ratio);
+              speed *= abs(ratio);
 
               if (speed < epsilon)
               {
@@ -333,7 +334,7 @@ void CollisionApp::DoPhysics(double a_dt)
                 break;
               }
 
-              if (v.Dot(bl.line.Direction()) > 0.0f)
+              if (ratio > 0.0f)
               {
                 v = bl.line.Direction();
               }
