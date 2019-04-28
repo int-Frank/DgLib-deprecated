@@ -57,7 +57,7 @@ namespace Dg
       (Ray_generic<Real, R> const & a_ray0, Ray_generic<Real, R> const & a_ray1)
     {
       Result result;
-      result.code = QueryCode::Success;
+      result.code = QueryCode::QC_Success;
 
       Vector_generic<Real, R> o0(a_ray0.Origin());
       Vector_generic<Real, R> o1(a_ray1.Origin());
@@ -86,7 +86,7 @@ namespace Dg
         if (!(c < static_cast<Real>(0.0) &&
           b > static_cast<Real>(0.0)))
         {
-          result.code = QueryCode::Overlapping;
+          result.code = QueryCode::QC_Overlapping;
         }
       }
       else

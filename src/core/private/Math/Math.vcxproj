@@ -144,6 +144,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\public\DgR3ZCylinder.h" />
     <ClInclude Include="..\..\public\DgBoundedSND.h" />
     <ClInclude Include="..\..\public\DgFixedPoint.h" />
     <ClInclude Include="..\..\public\DgR2AABB.h" />
@@ -174,6 +175,10 @@
     <ClInclude Include="..\..\public\DgR3VQS.h" />
     <ClInclude Include="..\..\public\DgR3Segment.h" />
     <ClInclude Include="..\..\public\impl\DgAABB_generic.h" />
+    <ClInclude Include="..\..\public\impl\DgFPCQuery.h" />
+    <ClInclude Include="..\..\public\impl\DgFPCQueryHypersphereHypersphere.h" />
+    <ClInclude Include="..\..\public\impl\DgFPCQueryHypersphereLine.h" />
+    <ClInclude Include="..\..\public\impl\DgFPCQueryPointHypersphere.h" />
     <ClInclude Include="..\..\public\impl\DgHyperSphere_generic.h" />
     <ClInclude Include="..\..\public\impl\DgCPQuery.h" />
     <ClInclude Include="..\..\public\impl\DgFIQuery.h" />
@@ -208,7 +213,10 @@
     <ClInclude Include="..\..\public\impl\DgVector_generic.h" />
     <ClInclude Include="..\..\public\impl\DgQuerySegmentPlane.h" />
     <ClInclude Include="..\..\public\query\DgQueryCommon.h" />
+    <ClInclude Include="..\..\public\query\DgR2QueryDiskDisk.h" />
+    <ClInclude Include="..\..\public\query\DgR2QueryDiskLine.h" />
     <ClInclude Include="..\..\public\query\DgR2QueryLineLine.h" />
+    <ClInclude Include="..\..\public\query\DgR2QueryPointDisk.h" />
     <ClInclude Include="..\..\public\query\DgR2QueryPointLine.h" />
     <ClInclude Include="..\..\public\query\DgR2QueryPointRay.h" />
     <ClInclude Include="..\..\public\query\DgR2QueryPointSegment.h" />
@@ -216,6 +224,7 @@
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentLine.h" />
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentRay.h" />
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentSegment.h" />
+    <ClInclude Include="..\..\public\query\DgR3QueryPointSphere.h" />
     <ClInclude Include="..\..\public\query\DgR3QueryRayTriangle.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentLine.h" />
@@ -234,6 +243,8 @@
     <ClInclude Include="..\..\public\query\DgR3QueryLineSphere.h" />
     <ClInclude Include="..\..\public\query\DgR3QueryFrustumSphere.h" />
     <ClInclude Include="..\..\public\DgR2Segment.h" />
+    <ClInclude Include="..\..\public\DgR3Rectangle.h" />
+    <ClInclude Include="..\..\public\query\DgR3QuerySphereSphere.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

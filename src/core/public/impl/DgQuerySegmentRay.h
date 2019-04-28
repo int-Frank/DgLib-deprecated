@@ -59,7 +59,7 @@ namespace Dg
       (Segment_generic<Real, R> const & a_seg, Ray_generic<Real, R> const & a_ray)
     {
       Result result;
-      result.code = QueryCode::Success;
+      result.code = QueryCode::QC_Success;
 
       Vector_generic<Real, R> ds(a_seg.Direction());
       Vector_generic<Real, R> os(a_seg.Origin());
@@ -100,7 +100,7 @@ namespace Dg
         if (!(d < static_cast<Real>(0.0) &&
           w1.Dot(dr) < static_cast<Real>(0.0)))
         {
-          result.code = QueryCode::Overlapping;
+          result.code = QueryCode::QC_Overlapping;
         }
       }
       else

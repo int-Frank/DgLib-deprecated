@@ -108,8 +108,18 @@ namespace Dg
 
   public:
 
-    /// It doesn't make sense to create an array without specifying the dimension lengths
-    HyperArray() = delete;
+    //Default dimensions lengths are 1.
+    HyperArray()
+      : m_dataLength(0)
+      , m_pData(nullptr)
+    {
+      std::array<size_t, Dimensions> dim;
+      for (size_t i = 0; i < Dimensions; i++)
+      {
+        dim[i] = 1;
+      }
+      Set(dim);
+    }
 
     HyperArray(std::array<size_t, Dimensions> const & a_dimensions)
       : m_dataLength(0)

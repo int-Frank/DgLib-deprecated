@@ -76,7 +76,7 @@ namespace Dg
         //compute closest points
         result.ur = static_cast<Real>(0.0);
         result.ul = b;
-        result.code = QueryCode::Parallel;
+        result.code = QueryCode::QC_Parallel;
       }
       else
       {
@@ -97,7 +97,7 @@ namespace Dg
           result.ul = (b - a*d) * denom;
         }
 
-        result.code = Success;
+        result.code = QC_Success;
       }
 
       result.cpr = or +result.ur*dr;

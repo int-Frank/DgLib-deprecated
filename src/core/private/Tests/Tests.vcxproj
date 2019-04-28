@@ -172,6 +172,7 @@
     <ClCompile Include="TEST_DgMesh.cpp" />
     <ClCompile Include="TEST_DgR2Regression.cpp" />
     <ClCompile Include="TEST_DgR2_AABB.cpp" />
+    <ClCompile Include="TEST_DgR2_Disk.cpp" />
     <ClCompile Include="TEST_DgR2_Polygon.cpp" />
     <ClCompile Include="TEST_DgR3Triangle.cpp" />
     <ClCompile Include="TEST_DgR3_Frustum.cpp" />

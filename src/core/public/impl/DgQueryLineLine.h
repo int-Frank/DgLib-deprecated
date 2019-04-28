@@ -75,13 +75,13 @@ namespace Dg
       {
         result.u0 = static_cast<Real>(0.0);
         result.u1 = c;
-        result.code = QueryCode::Parallel;
+        result.code = QueryCode::QC_Parallel;
       }
       else
       {
         result.u0 = ((a*c - b) / d);
         result.u1 = ((c - a*b) / d);
-        result.code = QueryCode::Success;
+        result.code = QueryCode::QC_Success;
       }
 
       result.cp0 = o0 + result.u0 * d0;

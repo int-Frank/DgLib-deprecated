@@ -80,7 +80,7 @@ RenderTestApp::RenderTestApp()
     translation.Translation(tvec);
 
     so.transform = scale * translation;
-    \
+    
     float r = Dg::RNG::GetUniform(0.0f, 1.0f);
     float g = Dg::RNG::GetUniform(0.0f, 1.0f);
     float b = Dg::RNG::GetUniform(0.0f, 1.0f);

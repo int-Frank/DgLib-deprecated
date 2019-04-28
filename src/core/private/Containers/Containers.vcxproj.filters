@@ -55,6 +55,9 @@
     <ClInclude Include="..\..\public\Dg_map.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\DgVariableList2D.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DgContainerBase.cpp">

@@ -314,8 +314,38 @@
     <ClInclude Include="..\..\public\DgR3AABB.h">
       <Filter>Public Headers\R3</Filter>
     </ClInclude>
-    <ClInclude Include="DgCommonTypes.h">
-      <Filter>Public Headers</Filter>
+    <ClInclude Include="..\..\public\DgR3Rectangle.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgR3ZCylinder.h">
+      <Filter>Public Headers\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgFPCQuery.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgFPCQueryPointHypersphere.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgFPCQueryHypersphereHypersphere.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QueryPointDisk.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QueryDiskDisk.h">
+      <Filter>Public Headers\Query\R2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryPointSphere.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QuerySphereSphere.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\impl\DgFPCQueryHypersphereLine.h">
+      <Filter>Public Headers\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR2QueryDiskLine.h">
+      <Filter>Public Headers\Query\R2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

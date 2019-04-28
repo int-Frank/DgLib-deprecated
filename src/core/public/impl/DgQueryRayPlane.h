@@ -140,11 +140,11 @@ namespace Dg
         //check if ray is on the plane
         if (Dg::IsZero(a_plane.Distance(ro)))
         {
-          result.code = QueryCode::Overlapping;
+          result.code = QueryCode::QC_Overlapping;
         }
         else
         {
-          result.code = QueryCode::NotIntersecting;
+          result.code = QueryCode::QC_NotIntersecting;
         }
       }
       else
@@ -156,12 +156,12 @@ namespace Dg
         {
           result.u = static_cast<Real>(0.0);
           result.point = ro;
-          result.code = QueryCode::NotIntersecting;
+          result.code = QueryCode::QC_NotIntersecting;
         }
         else
         {
           result.point = ro + result.u * rd;
-          result.code = QueryCode::Intersecting;
+          result.code = QueryCode::QC_Intersecting;
         }
       }
 

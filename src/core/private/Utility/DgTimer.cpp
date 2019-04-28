@@ -64,6 +64,7 @@ namespace Dg
       LARGE_INTEGER t;
       QueryPerformanceCounter(&t);
       m_totalTime += t.QuadPart - m_startTime;
+      m_state = Paused;
     }
     else if (m_state == Paused)
     {
@@ -78,6 +79,7 @@ namespace Dg
       LARGE_INTEGER t;
       QueryPerformanceCounter(&t);
       m_startTime = t.QuadPart;
+      m_state = On;
     }
   }
 

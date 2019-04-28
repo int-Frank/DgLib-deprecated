@@ -104,13 +104,13 @@ namespace Dg
       //Parallel
 			if (!Dg::IsZero(us_numerator))
 			{
-				result.code = QueryCode::NotIntersecting;
+				result.code = QueryCode::QC_NotIntersecting;
 			}
 
       //Coincident
 			else
 			{
-				result.code = QueryCode::Overlapping;
+				result.code = QueryCode::QC_Overlapping;
 				result.p = a_seg.GetP0();
 				result.us = static_cast<Real>(0);
 				result.ul = a_line.Direction().Dot(w);
@@ -123,14 +123,14 @@ namespace Dg
 
 			if (IsInRange(static_cast<Real>(0), static_cast<Real>(1), us))
 			{
-				result.code = QueryCode::Intersecting;
+				result.code = QueryCode::QC_Intersecting;
 				result.us = us;
 				result.ul = ul;
 				result.p = a_seg.GetP0() + us * dir_s;
 			}
 			else
 			{
-        result.code = QueryCode::NotIntersecting;
+        result.code = QueryCode::QC_NotIntersecting;
 			}
 		}
 		return result;
@@ -168,16 +168,16 @@ namespace Dg
 
         if (IsZero(a))
         {
-          result.code = QueryCode::Success;
+          result.code = QueryCode::QC_Success;
         }
         else
         {
-          result.code = QueryCode::Parallel;
+          result.code = QueryCode::QC_Parallel;
         }
       }
       else
       {
-        result.code = QueryCode::Success;
+        result.code = QueryCode::QC_Success;
 
         // clamp result.uls within [0,1]
         Real sn = b*d - c;

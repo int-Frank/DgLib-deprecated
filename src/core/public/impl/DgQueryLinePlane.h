@@ -103,13 +103,13 @@ namespace Dg
         result.point = lo;
 
         //check if line is on the plane
-        result.code = Dg::IsZero(a_plane.SignedDistance(lo)) ? QueryCode::Overlapping : QueryCode::NotIntersecting;
+        result.code = Dg::IsZero(a_plane.SignedDistance(lo)) ? QueryCode::QC_Overlapping : QueryCode::QC_NotIntersecting;
       }
       else
       {
         result.u = -(lo.Dot(pn) + po) / denom;
         result.point = lo + result.u * ld;
-        result.code = QueryCode::Intersecting;
+        result.code = QueryCode::QC_Intersecting;
       }
 
       return result;

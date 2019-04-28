@@ -135,11 +135,11 @@ namespace Dg
         //check if line is on the plane
         if (Dg::IsZero(a_plane.Distance(so)))
         {
-          result.code = QueryCode::Overlapping;
+          result.code = QueryCode::QC_Overlapping;
         }
         else
         {
-          result.code = QueryCode::NotIntersecting;
+          result.code = QueryCode::QC_NotIntersecting;
         }
       }
       else
@@ -148,16 +148,16 @@ namespace Dg
         if (result.u < static_cast<Real>(0.0))
         {
           result.u = static_cast<Real>(0.0);
-          result.code = QueryCode::NotIntersecting;
+          result.code = QueryCode::QC_NotIntersecting;
         }
         else if (result.u > static_cast<Real>(1.0))
         {
           result.u = static_cast<Real>(1.0);
-          result.code = QueryCode::NotIntersecting;
+          result.code = QueryCode::QC_NotIntersecting;
         }
         else
         {
-          result.code = QueryCode::Intersecting;
+          result.code = QueryCode::QC_Intersecting;
         }
       }
 

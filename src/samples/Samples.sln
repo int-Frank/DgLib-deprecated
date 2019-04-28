@@ -36,6 +36,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RendererTest", "RendererTes
 		{501E62B1-A652-4086-A3F5-245912A86932} = {501E62B1-A652-4086-A3F5-245912A86932}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Collision", "Collision\Collision.vcxproj", "{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{501E62B1-A652-4086-A3F5-245912A86932} = {501E62B1-A652-4086-A3F5-245912A86932}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -124,6 +129,14 @@ Global
 		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Release|Win32.Build.0 = Release|Win32
 		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Release|x64.ActiveCfg = Release|x64
 		{84EBE8F8-CB7A-432F-99CC-027AF4728EDB}.Release|x64.Build.0 = Release|x64
+		{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}.Debug|Win32.Build.0 = Debug|Win32
+		{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}.Debug|x64.ActiveCfg = Debug|x64
+		{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}.Debug|x64.Build.0 = Debug|x64
+		{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}.Release|Win32.ActiveCfg = Release|Win32
+		{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}.Release|Win32.Build.0 = Release|Win32
+		{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}.Release|x64.ActiveCfg = Release|x64
+		{9E3D3D45-A6D0-4333-9F87-741B2F0F23C9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
