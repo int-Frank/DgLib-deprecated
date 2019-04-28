@@ -56,7 +56,6 @@ private:
   {
     Line    line;
     float   length;
-    bool    isHit;
   };
 
   struct BoundaryPoint

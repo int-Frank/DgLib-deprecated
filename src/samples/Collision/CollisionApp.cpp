@@ -225,8 +225,10 @@ CollisionApp::CollisionApp()
   float playerRadius = 0.3f;
   m_player.disk.SetRadius(playerRadius);
   float playerOffset = margin + playerRadius + 0.1f;
-  m_player.disk.SetCenter(vec3(0.799999952f, playerOffset, 1.0f));
-  m_player.angle = 2.46666574f;
+  m_player.disk.SetCenter(vec3(playerOffset, playerOffset, 1.0f));
+  m_player.angle =  0.0f;
+  //m_player.disk.SetCenter(vec3(0.799999952f, playerOffset, 1.0f));
+  //m_player.angle = 2.46666574f;
   m_player.speed = 0.0f;
   
   //------------------------------------------------------------------------------------
@@ -298,74 +300,59 @@ void CollisionApp::DoPhysics(double a_dt)
   m_player.angle += (m_dTurn * float(a_dt));
 
   float epsilon = 0.0001f;
-  for (BoundaryLine & bl : m_boundaryLines)
-  {
-    bl.isHit = false;
-  }
   if (abs(m_player.speed) > epsilon)
   {
-    float speed = m_player.speed;
     vec3 v(cos(m_player.angle), sin(m_player.angle), 0.0f);
-    int nSteps = 2;
     float dt = float(a_dt);
-    for (int i = 0; i < nSteps; i++)
+    for (int i = 0; i < 2; i++)
     {
       bool willCollide = false;
-      bool moving = true;
       float closestTime(FLT_MAX);
       BoundaryLine closestLine;
 
-      for (BoundaryLine & bl : m_boundaryLines)
-      {
-        //Are we already intersecting?
-        Dg::R2::CPPointLine<float> cp;
-        Dg::R2::CPPointLine<float>::Result result = cp(m_player.disk.Center(), bl.line);
-        vec3 vDist = result.cp - m_player.disk.Center();
-        if ( result.u > 0.0f && result.u < bl.length
-          && vDist.LengthSquared() - m_player.disk.Radius() * m_player.disk.Radius() < epsilon)
-        {
-          //TODO broken when moving backwards
-          bl.isHit = true;
-          bool towards = (vDist.Dot(speed * v) >= 0.0f);
+      //To pervent going through walls, this check was done to see if we are aleady
+      //touching a wall. Not used at the moment as we are just increasing the size
+      //of the player before determining collision time.
 
-          if (towards)
-          {
-            float ratio = bl.line.Direction().Dot(v);
-
-              speed *= abs(ratio);
-
-              if (abs(speed) < epsilon)
-              {
-                moving = false;
-                break;
-              }
-
-              if (ratio > 0.0f)
-              {
-                v = bl.line.Direction();
-              }
-              else
-              {
-                v = -bl.line.Direction();
-              }
-          }
-        }
-      }
-
-      if (!moving)
-      {
-        break;
-      }
+      //for (BoundaryLine & bl : m_boundaryLines)
+      //{
+      //  //Are we already intersecting?
+      //  Dg::R2::CPPointLine<float> cp;
+      //  Dg::R2::CPPointLine<float>::Result result = cp(m_player.disk.Center(), bl.line);
+      //  vec3 vDist = result.cp - m_player.disk.Center();
+      //  if ( result.u > 0.0f && result.u < bl.length
+      //    && vDist.LengthSquared() - m_player.disk.Radius() * m_player.disk.Radius() < epsilon)
+      //  {
+      //    bool towards = (vDist.Dot(speed * v) >= 0.0f);
+      //
+      //    if (towards)
+      //    {
+      //      float ratio = bl.line.Direction().Dot(v);
+      //      speed *= abs(ratio);
+      //
+      //      if (abs(speed) < epsilon)
+      //      {
+      //        speed = 0.0f;
+      //        break;
+      //      }
+      //
+      //      if (ratio > 0.0f)
+      //      {
+      //        v = bl.line.Direction();
+      //      }
+      //      else
+      //      {
+      //        v = -bl.line.Direction();
+      //      }
+      //    }
+      //  }
+      //}
 
       for (BoundaryLine const & bl : m_boundaryLines)
       {
-        if (bl.isHit)
-        {
-          continue;
-        }
-
         float tTemp(0.0f);
-        bool hitThis = WillCollide(dt, m_player.disk, speed* v, bl.line, bl.length, tTemp);
+
+        bool hitThis = WillCollide(dt, m_player.disk, m_player.speed * v, bl.line, bl.length, tTemp);
         if (hitThis && tTemp < closestTime)
         {
           closestTime = tTemp;
@@ -376,13 +363,20 @@ void CollisionApp::DoPhysics(double a_dt)
 
       if (!willCollide)
       {
-        m_player.disk.SetCenter(m_player.disk.Center() + dt * speed * v);
+        m_player.disk.SetCenter(m_player.disk.Center() + dt * m_player.speed * v);
         break;
       }
       else
       {
+        //Increase the disk size so we don't get so close
+        Disk larger(m_player.disk);
+        larger.SetRadius(m_player.disk.Radius() + epsilon);
+
+        Dg::R2::FPCDiskLine<float> fpc;
+        Dg::R2::FPCDiskLine<float>::Result result_fpc = fpc(larger, m_player.speed * v, closestLine.line, vec3::ZeroVector());
+
         //Move to almost on the target
-        m_player.disk.SetCenter(m_player.disk.Center() + (closestTime * speed * v));
+        m_player.disk.SetCenter(m_player.disk.Center() + (result_fpc.t * m_player.speed * v));
 
         //Find new velocity vector
         v = (v.Dot(closestLine.line.Direction())) * closestLine.line.Direction();
