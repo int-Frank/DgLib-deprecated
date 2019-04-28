@@ -56,11 +56,17 @@ private:
   {
     Line    line;
     float   length;
+    bool    isHit;
   };
 
   struct BoundaryPoint
   {
     vec3    p;
+  };
+
+  struct BoundaryPDisk
+  {
+    Disk disk;
   };
 
   typedef std::map<Context::ObjectHandle, ScreenObject> dMap;

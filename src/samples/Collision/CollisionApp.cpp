@@ -298,6 +298,10 @@ void CollisionApp::DoPhysics(double a_dt)
   m_player.angle += (m_dTurn * float(a_dt));
 
   float epsilon = 0.0001f;
+  for (BoundaryLine & bl : m_boundaryLines)
+  {
+    bl.isHit = false;
+  }
   if (abs(m_player.speed) > epsilon)
   {
     float speed = m_player.speed;
@@ -311,7 +315,7 @@ void CollisionApp::DoPhysics(double a_dt)
       float closestTime(FLT_MAX);
       BoundaryLine closestLine;
 
-      for (BoundaryLine const & bl : m_boundaryLines)
+      for (BoundaryLine & bl : m_boundaryLines)
       {
         //Are we already intersecting?
         Dg::R2::CPPointLine<float> cp;
@@ -320,7 +324,9 @@ void CollisionApp::DoPhysics(double a_dt)
         if ( result.u > 0.0f && result.u < bl.length
           && vDist.LengthSquared() - m_player.disk.Radius() * m_player.disk.Radius() < epsilon)
         {
-          bool towards = (vDist.Dot(v) >= 0.0f);
+          //TODO broken when moving backwards
+          bl.isHit = true;
+          bool towards = (vDist.Dot(speed * v) >= 0.0f);
 
           if (towards)
           {
@@ -328,7 +334,7 @@ void CollisionApp::DoPhysics(double a_dt)
 
               speed *= abs(ratio);
 
-              if (speed < epsilon)
+              if (abs(speed) < epsilon)
               {
                 moving = false;
                 break;
@@ -353,6 +359,10 @@ void CollisionApp::DoPhysics(double a_dt)
 
       for (BoundaryLine const & bl : m_boundaryLines)
       {
+        if (bl.isHit)
+        {
+          continue;
+        }
 
         float tTemp(0.0f);
         bool hitThis = WillCollide(dt, m_player.disk, speed* v, bl.line, bl.length, tTemp);
