@@ -7,6 +7,7 @@
 #include "imgui.h"
 #include "GLFW\glfw3.h"
 #include "query\DgR2QueryDiskLine.h"
+#include "query\DgR2QueryPointDisk.h"
 #include "query\DgR2QueryPointLine.h"
 
 bool WillCollide(float a_dt, 
@@ -33,6 +34,22 @@ bool WillCollide(float a_dt,
     willCollide = willCollide && (result_cp.u >= 0.0f);
     a_outTime = result_fpc.t;
   }
+
+  return willCollide;
+}
+
+bool WillCollide(float a_dt, 
+                 Disk const & a_disk, 
+                 vec3 const & a_vel, 
+                 vec3 const & a_point,
+                 float & a_outTime)
+{
+  Dg::R2::FPCPointDisk<float> fpc;
+  Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(a_disk, a_vel, a_point, vec3::ZeroVector());
+
+  bool willCollide = result_fpc.code == Dg::QC_Intersecting;
+  willCollide = willCollide && (result_fpc.t <= a_dt);
+  willCollide = willCollide && (result_fpc.t >= 0.0f);
 
   return willCollide;
 }
@@ -156,9 +173,9 @@ CollisionApp::CollisionApp()
 
   float crossDim = 0.6f;
   vec3 crossCenter(5.0f, 5.0f, 1.0f);
-  vec3 lo = crossCenter + vec3(crossDim, crossDim, 0.0f);
 
   // Upper arm
+  vec3 lo = crossCenter + vec3(crossDim, crossDim, 0.0f);
   bl.length = 3.0f * crossDim;
   bl.line = Line(lo, vec3::yAxis());
   m_boundaryLines.push_back(bl);
@@ -221,6 +238,24 @@ CollisionApp::CollisionApp()
   bl.line = Line(lo, -vec3::xAxis());
   m_boundaryLines.push_back(bl);
 
+  //Boundary points
+  vec3 bp = crossCenter + vec3(crossDim, 4.0f * crossDim, 0.0f);
+  m_boundaryPoints.push_back(bp);
+  bp = crossCenter + vec3(-crossDim, 4.0f * crossDim, 0.0f);
+  m_boundaryPoints.push_back(bp);
+  bp = crossCenter + vec3(-4.0f * crossDim, crossDim, 0.0f);
+  m_boundaryPoints.push_back(bp);
+  bp = crossCenter + vec3(-4.0f * crossDim, -crossDim, 0.0f);
+  m_boundaryPoints.push_back(bp);
+  bp = crossCenter + vec3(-crossDim, -4.0f * crossDim, 0.0f);
+  m_boundaryPoints.push_back(bp);
+  bp = crossCenter + vec3(crossDim, -4.0f * crossDim, 0.0f);
+  m_boundaryPoints.push_back(bp);
+  bp = crossCenter + vec3(4.0f * crossDim, -crossDim, 0.0f);
+  m_boundaryPoints.push_back(bp);
+  bp = crossCenter + vec3(4.0f * crossDim, crossDim, 0.0f);
+  m_boundaryPoints.push_back(bp);
+
   //Player puck
   float playerRadius = 0.3f;
   m_player.disk.SetRadius(playerRadius);
@@ -231,6 +266,7 @@ CollisionApp::CollisionApp()
   //m_player.angle = 2.46666574f;
   m_player.speed = 0.0f;
   
+
   //------------------------------------------------------------------------------------
   //  Add drawables
   //------------------------------------------------------------------------------------
@@ -304,60 +340,52 @@ void CollisionApp::DoPhysics(double a_dt)
   {
     vec3 v(cos(m_player.angle), sin(m_player.angle), 0.0f);
     float dt = float(a_dt);
+    float tTemp(0.0f);
     for (int i = 0; i < 2; i++)
     {
       bool willCollide = false;
       float closestTime(FLT_MAX);
-      BoundaryLine closestLine;
 
-      //To pervent going through walls, this check was done to see if we are aleady
-      //touching a wall. Not used at the moment as we are just increasing the size
-      //of the player before determining collision time.
-
-      //for (BoundaryLine & bl : m_boundaryLines)
-      //{
-      //  //Are we already intersecting?
-      //  Dg::R2::CPPointLine<float> cp;
-      //  Dg::R2::CPPointLine<float>::Result result = cp(m_player.disk.Center(), bl.line);
-      //  vec3 vDist = result.cp - m_player.disk.Center();
-      //  if ( result.u > 0.0f && result.u < bl.length
-      //    && vDist.LengthSquared() - m_player.disk.Radius() * m_player.disk.Radius() < epsilon)
-      //  {
-      //    bool towards = (vDist.Dot(speed * v) >= 0.0f);
-      //
-      //    if (towards)
-      //    {
-      //      float ratio = bl.line.Direction().Dot(v);
-      //      speed *= abs(ratio);
-      //
-      //      if (abs(speed) < epsilon)
-      //      {
-      //        speed = 0.0f;
-      //        break;
-      //      }
-      //
-      //      if (ratio > 0.0f)
-      //      {
-      //        v = bl.line.Direction();
-      //      }
-      //      else
-      //      {
-      //        v = -bl.line.Direction();
-      //      }
-      //    }
-      //  }
-      //}
-
-      for (BoundaryLine const & bl : m_boundaryLines)
+      enum 
       {
-        float tTemp(0.0f);
+        E_None,
+        E_Line, 
+        E_Disk,
+        E_Point
+      };
 
-        bool hitThis = WillCollide(dt, m_player.disk, m_player.speed * v, bl.line, bl.length, tTemp);
+      int colType = E_None;
+      size_t index;
+      for (size_t i = 0; i < m_boundaryLines.size(); i++)
+      {
+        bool hitThis = WillCollide(dt, 
+                                   m_player.disk, 
+                                   m_player.speed * v, 
+                                   m_boundaryLines[i].line, 
+                                   m_boundaryLines[i].length, 
+                                   tTemp);
         if (hitThis && tTemp < closestTime)
         {
           closestTime = tTemp;
-          closestLine = bl;
+          index = i;
+          colType = E_Line;
           willCollide = true;
+        }
+      }
+
+      //Weird stuff happens if we don't give boundary lines a priority over boundary points
+      if (colType != E_Line)
+      {
+        for (size_t i = 0; i < m_boundaryPoints.size(); i++)
+        {
+          bool hitThis = WillCollide(dt, m_player.disk, m_player.speed * v, m_boundaryPoints[i], tTemp);
+          if (hitThis && tTemp < closestTime)
+          {
+            closestTime = tTemp;
+            index = i;
+            colType = E_Point;
+            willCollide = true;
+          }
         }
       }
 
@@ -368,19 +396,43 @@ void CollisionApp::DoPhysics(double a_dt)
       }
       else
       {
-        //Increase the disk size so we don't get so close
-        Disk larger(m_player.disk);
-        larger.SetRadius(m_player.disk.Radius() + epsilon);
+        switch (colType)
+        {
+          case E_Line:
+          {
+            //Increase the disk size so we don't get so close, to account for floating point error
+            Disk larger(m_player.disk);
+            larger.SetRadius(m_player.disk.Radius() + epsilon);
 
-        Dg::R2::FPCDiskLine<float> fpc;
-        Dg::R2::FPCDiskLine<float>::Result result_fpc = fpc(larger, m_player.speed * v, closestLine.line, vec3::ZeroVector());
+            Dg::R2::FPCDiskLine<float> fpc;
+            Dg::R2::FPCDiskLine<float>::Result result_fpc = fpc(larger, m_player.speed * v, m_boundaryLines[index].line, vec3::ZeroVector());
 
-        //Move to almost on the target
-        m_player.disk.SetCenter(m_player.disk.Center() + (result_fpc.t * m_player.speed * v));
+            //Move to almost on the target
+            m_player.disk.SetCenter(m_player.disk.Center() + (result_fpc.t * m_player.speed * v));
 
-        //Find new velocity vector
-        v = (v.Dot(closestLine.line.Direction())) * closestLine.line.Direction();
+            //Find new velocity vector
+            v = (v.Dot(m_boundaryLines[index].line.Direction())) * m_boundaryLines[index].line.Direction();
+            break;
+          }
+          case E_Point:
+          {
+            //Increase the disk size so we don't get so close, to account for floating point error
+            Disk larger(m_player.disk);
+            larger.SetRadius(m_player.disk.Radius() + epsilon);
 
+            Dg::R2::FPCPointDisk<float> fpc;
+            Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(larger, m_player.speed * v, m_boundaryPoints[index], vec3::ZeroVector());
+
+            //Move to almost on the target
+            m_player.disk.SetCenter(m_player.disk.Center() + (result_fpc.t * m_player.speed * v));
+
+            //Find new velocity vector
+            vec3 v_dp = m_boundaryPoints[index] - m_player.disk.Center();
+            v_dp.Normalize();
+            v = v.Dot(-v_dp.Perpendicular()) * -v_dp.Perpendicular();
+            break;
+          }
+        }
         //adjust dt
         dt -= closestTime;
       }

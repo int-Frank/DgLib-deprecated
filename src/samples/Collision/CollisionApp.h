@@ -58,16 +58,6 @@ private:
     float   length;
   };
 
-  struct BoundaryPoint
-  {
-    vec3    p;
-  };
-
-  struct BoundaryPDisk
-  {
-    Disk disk;
-  };
-
   typedef std::map<Context::ObjectHandle, ScreenObject> dMap;
   typedef std::pair<Context::ObjectHandle, ScreenObject> dItem;
 
@@ -81,7 +71,8 @@ private:
 
   std::vector<Puck>           m_pucks;
   std::vector<BoundaryLine>   m_boundaryLines;
-  std::vector<BoundaryPoint>  m_boundaryPoints;
+  std::vector<vec3>           m_boundaryPoints;
+  std::vector<Disk>           m_boundaryDisks;
   float                       m_canvasDim;
 
   bool                        m_playerMoving;
