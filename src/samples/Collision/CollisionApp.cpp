@@ -15,7 +15,7 @@
 
 #define EPSILON_INTERSECTS 0.0001f
 #define EPSILON_SPEED 0.0001f
-#define EPSILON_RADIUS 0.0001f
+#define EPSILON_RADIUS 0.001f
 #define EPSILON_TIME 0.00001f
 
 bool WillCollide(float a_dt, 
@@ -51,11 +51,16 @@ bool WillCollide(float a_dt,
 bool WillCollide(float a_dt, 
                  Disk const & a_disk, 
                  vec3 const & a_vel, 
-                 vec3 const & a_point,
+                 BoundaryPoint const & a_point,
                  float & a_outTime)
 {
+  if (!a_point.IsInArc(a_disk.Center()))
+  {
+    return false;
+  }
+
   Dg::R2::FPCPointDisk<float> fpc;
-  Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(a_disk, a_vel, a_point, vec3::ZeroVector());
+  Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(a_disk, a_vel, a_point.origin, vec3::ZeroVector());
 
   bool willCollide = result_fpc.code == Dg::QC_Intersecting;
   willCollide = willCollide && (result_fpc.t <= a_dt);
@@ -79,6 +84,16 @@ bool WillCollide(float a_dt,
   willCollide = willCollide && (result_fpc.t >= 0.0f);
 
   return willCollide;
+}
+
+bool BoundaryPoint::IsInArc(vec3 const & a_point) const
+{
+  vec3 v = a_point - origin;
+
+  float loaPv = loa.PerpDot(v);
+  float roaPv = roa.PerpDot(v);
+
+  return (loaPv < 0.0f) && (roaPv > 0.0f);
 }
 
 void Log(std::string const & a_message, int a_logLevel)
@@ -272,21 +287,45 @@ CollisionApp::CollisionApp()
   m_boundaryLines.push_back(bl);
 
   //Boundary points
-  vec3 bp = crossCenter + vec3(crossDim, 4.0f * crossDim, 0.0f);
+  BoundaryPoint bp;
+  bp.origin = crossCenter + vec3(crossDim, 4.0f * crossDim, 0.0f);
+  bp.loa.Set(0.0f, 1.0f, 0.0f);
+  bp.roa.Set(1.0f, 0.0f, 0.0f);
   m_boundaryPoints.push_back(bp);
-  bp = crossCenter + vec3(-crossDim, 4.0f * crossDim, 0.0f);
+
+  bp.origin = crossCenter + vec3(-crossDim, 4.0f * crossDim, 0.0f);
+  bp.loa.Set(-1.0f, 0.0f, 0.0f);
+  bp.roa.Set(0.0f, 1.0f, 0.0f);
   m_boundaryPoints.push_back(bp);
-  bp = crossCenter + vec3(-4.0f * crossDim, crossDim, 0.0f);
+
+  bp.origin = crossCenter + vec3(-4.0f * crossDim, crossDim, 0.0f);
+  bp.loa.Set(-1.0f, 0.0f, 0.0f);
+  bp.roa.Set(0.0f, 1.0f, 0.0f);
   m_boundaryPoints.push_back(bp);
-  bp = crossCenter + vec3(-4.0f * crossDim, -crossDim, 0.0f);
+
+  bp.origin = crossCenter + vec3(-4.0f * crossDim, -crossDim, 0.0f);
+  bp.loa.Set(0.0f, -1.0f, 0.0f);
+  bp.roa.Set(-1.0f, 0.0f, 0.0f);
   m_boundaryPoints.push_back(bp);
-  bp = crossCenter + vec3(-crossDim, -4.0f * crossDim, 0.0f);
+
+  bp.origin = crossCenter + vec3(-crossDim, -4.0f * crossDim, 0.0f);
+  bp.loa.Set(0.0f, -1.0f, 0.0f);
+  bp.roa.Set(-1.0f, 0.0f, 0.0f);
   m_boundaryPoints.push_back(bp);
-  bp = crossCenter + vec3(crossDim, -4.0f * crossDim, 0.0f);
+
+  bp.origin = crossCenter + vec3(crossDim, -4.0f * crossDim, 0.0f);
+  bp.loa.Set(1.0f, 0.0f, 0.0f);
+  bp.roa.Set(0.0f, -1.0f, 0.0f);
   m_boundaryPoints.push_back(bp);
-  bp = crossCenter + vec3(4.0f * crossDim, -crossDim, 0.0f);
+
+  bp.origin = crossCenter + vec3(4.0f * crossDim, -crossDim, 0.0f);
+  bp.loa.Set(1.0f, 0.0f, 0.0f);
+  bp.roa.Set(0.0f, -1.0f, 0.0f);
   m_boundaryPoints.push_back(bp);
-  bp = crossCenter + vec3(4.0f * crossDim, crossDim, 0.0f);
+
+  bp.origin = crossCenter + vec3(4.0f * crossDim, crossDim, 0.0f);
+  bp.loa.Set(0.0f, 1.0f, 0.0f);
+  bp.roa.Set(1.0f, 0.0f, 0.0f);
   m_boundaryPoints.push_back(bp);
 
   //Boundary disks
@@ -371,21 +410,21 @@ CollisionApp::CollisionApp()
   m_contextLine.CommitLoadList();
 }
 
-bool CollisionApp::AllCPData::Empty() const
+bool AllCPData::Empty() const
 {
   return (lines.size() == 0)
     && (points.size() == 0)
     && (disks.size() == 0);
 }
 
-bool CollisionApp::AdjacentGeometry::Empty() const
+bool AdjacentGeometry::Empty() const
 {
   return (lines.size() == 0)
     && (points.size() == 0)
     && (disks.size() == 0);
 }
 
-void CollisionApp::AdjacentGeometry::Clear()
+void AdjacentGeometry::Clear()
 {
   lines.clear();
   points.clear();
@@ -398,7 +437,7 @@ void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_
   for (size_t i = 0; i < m_boundaryPoints.size(); i++)
   {
     CPDataPoint data;
-    data.vToPoint = m_boundaryPoints[i] - a_disk.Center();
+    data.vToPoint = m_boundaryPoints[i].origin - a_disk.Center();
     data.distSqToPoint = data.vToPoint.LengthSquared();
     data.index = i;
 
@@ -451,7 +490,7 @@ void CollisionApp::SetCPData(Disk const & a_disk, float a_maxDistSq, AllCPData &
 {
   for (size_t i = 0; i < a_out.points.size(); i++)
   {
-    a_out.points[i].vToPoint = m_boundaryPoints[a_out.points[i].index] - a_disk.Center();
+    a_out.points[i].vToPoint = m_boundaryPoints[a_out.points[i].index].origin - a_disk.Center();
     a_out.points[i].distSqToPoint = a_out.points[i].vToPoint.LengthSquared();
   }
 
@@ -495,10 +534,14 @@ void CollisionApp::RemoveIntersectingGeometry(AllCPData const & a_cpData,
   for (size_t i = 0; i < a_cpData.points.size(); i++)
   {
     //Find distance to point before puck moves
+    size_t index = a_cpData.points[i].index;
     float diff = a_cpData.points[i].distSqToPoint - radiusSq;
 
+    bool intersecting = diff < EPSILON_INTERSECTS;
+    intersecting = intersecting && m_boundaryPoints[index].IsInArc(a_puck.disk.Center());
+
     //If the puck is already intersecting
-    if (diff < EPSILON_INTERSECTS)
+    if (intersecting)
     {
       //Add the vector from the puck to the point to the direction mask  
       //TODO check for zero vector, but should we even? Will this ever happen?
@@ -518,16 +561,15 @@ void CollisionApp::RemoveIntersectingGeometry(AllCPData const & a_cpData,
       if (towards)
       {
         vec3 perpVec = v.Perpendicular();
-        float ratio = perpVec.PerpDot(a_puck.v);
+        float ratio = v.PerpDot(a_puck.v);
+        a_puck.speed *= abs(ratio);
         if (ratio > 0.0f)
         {
           a_puck.v = perpVec;
-          a_puck.speed *= ratio;
         }
         else
         {
           a_puck.v = -perpVec;
-          a_puck.speed *= (-ratio);
         }
       }
     }
@@ -691,23 +733,22 @@ void CollisionApp::TestAndMovePuck(AllCPData const & a_cpData,
         Disk larger(a_puck.disk.Center(), a_puck.disk.Radius() + EPSILON_RADIUS);
 
         Dg::R2::FPCPointDisk<float> fpc;
-        Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(larger, a_puck.speed * a_puck.v, m_boundaryPoints[index], vec3::ZeroVector());
+        Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(larger, a_puck.speed * a_puck.v, m_boundaryPoints[index].origin, vec3::ZeroVector());
 
         MovePuck(result_fpc.t, a_puck);
 
-        vec3 perpVec = m_boundaryPoints[index] - a_puck.disk.Center();
+        vec3 perpVec = m_boundaryPoints[index].origin - a_puck.disk.Center();
         perpVec.Normalize();
-        perpVec = perpVec.Perpendicular();
         float ratio = perpVec.PerpDot(a_puck.v);
+        perpVec = perpVec.Perpendicular();
+        a_puck.speed *= abs(ratio);
         if (ratio > 0.0f)
         {
           a_puck.v = perpVec;
-          a_puck.speed *= ratio;
         }
         else
         {
           a_puck.v = -perpVec;
-          a_puck.speed *= (-ratio);
         }
 
         break;

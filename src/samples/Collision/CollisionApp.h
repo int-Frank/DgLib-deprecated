@@ -11,77 +11,89 @@
 #include "DirectionMask.h"
 #include "DgDynamicArray.h"
 
+struct ScreenObject
+{
+  mat4    transform;
+  bool    draw;
+};
+
+struct Puck
+{
+  Disk    disk;
+  float   angle;
+  float   speed;
+};
+
+struct BoundaryLine
+{
+  Line    line;
+  float   length;
+};
+
+class BoundaryPoint
+{
+public:
+
+  bool IsInArc(vec3 const &) const;
+
+  vec3  origin;
+  vec3  loa;
+  vec3  roa;
+};
+
+struct CPDataPoint
+{
+  size_t index;
+  vec3   vToPoint;
+  float  distSqToPoint;
+};
+
+struct CPDataLine
+{
+  size_t        index;
+  float         u;
+  vec3          vToLine;
+  float         distSqToLine;
+};
+
+struct CPDataDisk
+{
+  size_t index;
+  vec3   vToDisk;
+  float  distSqToDisk;
+};
+
+class AllCPData
+{
+public:
+
+  bool Empty() const;
+
+  Dg::DynamicArray<CPDataLine>  lines;
+  Dg::DynamicArray<CPDataPoint> points;
+  Dg::DynamicArray<CPDataDisk>  disks;
+};
+
+class AdjacentGeometry
+{
+public:
+
+  bool Empty() const;
+  void Clear();
+
+  Dg::DynamicArray<size_t>  lines;
+  Dg::DynamicArray<size_t>  points;
+  Dg::DynamicArray<size_t>  disks;
+};
+
+struct ModifiedPuck
+{
+  float speed;
+  vec3  v;
+  Disk  disk;
+};
 class CollisionApp : public DgApp
 {
-  struct ScreenObject
-  {
-    mat4    transform;
-    bool    draw;
-  };
-
-  struct Puck
-  {
-    Disk    disk;
-    float   angle;
-    float   speed;
-  };
-
-  struct BoundaryLine
-  {
-    Line    line;
-    float   length;
-  };
-  struct CPDataPoint
-  {
-    size_t index;
-    vec3   vToPoint;
-    float  distSqToPoint;
-  };
-
-  struct CPDataLine
-  {
-    size_t        index;
-    float         u;
-    vec3          vToLine;
-    float         distSqToLine;
-  };
-
-  struct CPDataDisk
-  {
-    size_t index;
-    vec3   vToDisk;
-    float  distSqToDisk;
-  };
-
-  class AllCPData
-  {
-  public:
-
-    bool Empty() const;
-
-    Dg::DynamicArray<CPDataLine>  lines;
-    Dg::DynamicArray<CPDataPoint> points;
-    Dg::DynamicArray<CPDataDisk>  disks;
-  };
-
-  class AdjacentGeometry
-  {
-  public:
-
-    bool Empty() const;
-    void Clear();
-
-    Dg::DynamicArray<size_t>  lines;
-    Dg::DynamicArray<size_t>  points;
-    Dg::DynamicArray<size_t>  disks;
-  };
-
-  struct ModifiedPuck
-  {
-    float speed;
-    vec3  v;
-    Disk  disk;
-  };
 
 public:
 
@@ -126,7 +138,7 @@ private:
 
   std::vector<Puck>           m_pucks;
   std::vector<BoundaryLine>   m_boundaryLines;
-  std::vector<vec3>           m_boundaryPoints;
+  std::vector<BoundaryPoint>  m_boundaryPoints;
   std::vector<Disk>           m_boundaryDisks;
   float                       m_canvasDim;
 
