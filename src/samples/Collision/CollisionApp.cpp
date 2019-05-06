@@ -8,7 +8,15 @@
 #include "GLFW\glfw3.h"
 #include "query\DgR2QueryDiskLine.h"
 #include "query\DgR2QueryPointDisk.h"
+#include "query\DgR2QueryDiskDisk.h"
 #include "query\DgR2QueryPointLine.h"
+#include "Tests.h"
+#include "DgDynamicArray.h"
+
+#define EPSILON_INTERSECTS 0.0001f
+#define EPSILON_SPEED 0.0001f
+#define EPSILON_RADIUS 0.0001f
+#define EPSILON_TIME 0.00001f
 
 bool WillCollide(float a_dt, 
                  Disk const & a_disk, 
@@ -22,6 +30,8 @@ bool WillCollide(float a_dt,
 
   bool willCollide = result_fpc.code == Dg::QC_Intersecting;
   willCollide = willCollide && (result_fpc.t <= a_dt);
+
+  //TODO Even though the querty accounts for this, we still need to check for some reason
   willCollide = willCollide && (result_fpc.t >= 0.0f);
   if (willCollide)
   {
@@ -46,6 +56,23 @@ bool WillCollide(float a_dt,
 {
   Dg::R2::FPCPointDisk<float> fpc;
   Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(a_disk, a_vel, a_point, vec3::ZeroVector());
+
+  bool willCollide = result_fpc.code == Dg::QC_Intersecting;
+  willCollide = willCollide && (result_fpc.t <= a_dt);
+  willCollide = willCollide && (result_fpc.t >= 0.0f);
+
+  return willCollide;
+}
+
+bool WillCollide(float a_dt, 
+                 Disk const & a_disk0, 
+                 vec3 const & a_vel0, 
+                 Disk const & a_disk1, 
+                 vec3 const & a_vel1, 
+                 float & a_outTime)
+{
+  Dg::R2::FPCDiskDisk<float> fpc;
+  Dg::R2::FPCDiskDisk<float>::Result result_fpc = fpc(a_disk0, a_vel0, a_disk1, a_vel1);
 
   bool willCollide = result_fpc.code == Dg::QC_Intersecting;
   willCollide = willCollide && (result_fpc.t <= a_dt);
@@ -138,6 +165,12 @@ CollisionApp::CollisionApp()
   , m_turnRate(2.0f)
   , m_playerMoving(false)
 {
+  int tstDM = TestDirectionMask();
+  if (tstDM != 0)
+  {
+    char brk(0);
+  }
+
   this->ToggleOutputWindow(false);
   Context::Init(Log);
 
@@ -256,16 +289,23 @@ CollisionApp::CollisionApp()
   bp = crossCenter + vec3(4.0f * crossDim, crossDim, 0.0f);
   m_boundaryPoints.push_back(bp);
 
+  //Boundary disks
+  Disk dsk(vec3(1.0f, 8.0f, 1.0f), 0.3f);
+  m_boundaryDisks.push_back(dsk);
+
   //Player puck
   float playerRadius = 0.3f;
   m_player.disk.SetRadius(playerRadius);
   float playerOffset = margin + playerRadius + 0.1f;
-  m_player.disk.SetCenter(vec3(playerOffset, playerOffset, 1.0f));
-  m_player.angle =  0.0f;
+  //m_player.disk.SetCenter(vec3(playerOffset, playerOffset, 1.0f));
+  //m_player.angle =  0.0f;
+  m_player.disk.SetCenter(vec3(0.942994535f, 7.31161976, 1.0f));
+  m_player.angle = 2.36666584;
   //m_player.disk.SetCenter(vec3(0.799999952f, playerOffset, 1.0f));
   //m_player.angle = 2.46666574f;
   m_player.speed = 0.0f;
   
+
 
   //------------------------------------------------------------------------------------
   //  Add drawables
@@ -331,113 +371,414 @@ CollisionApp::CollisionApp()
   m_contextLine.CommitLoadList();
 }
 
-void CollisionApp::DoPhysics(double a_dt)
+bool CollisionApp::AllCPData::Empty() const
 {
-  m_player.angle += (m_dTurn * float(a_dt));
+  return (lines.size() == 0)
+    && (points.size() == 0)
+    && (disks.size() == 0);
+}
 
-  float epsilon = 0.0001f;
-  if (abs(m_player.speed) > epsilon)
+bool CollisionApp::AdjacentGeometry::Empty() const
+{
+  return (lines.size() == 0)
+    && (points.size() == 0)
+    && (disks.size() == 0);
+}
+
+void CollisionApp::AdjacentGeometry::Clear()
+{
+  lines.clear();
+  points.clear();
+  disks.clear();
+}
+
+//Develop a Potentially Collidable Set
+void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_out) const
+{
+  for (size_t i = 0; i < m_boundaryPoints.size(); i++)
   {
-    vec3 v(cos(m_player.angle), sin(m_player.angle), 0.0f);
-    float dt = float(a_dt);
-    float tTemp(0.0f);
-    for (int i = 0; i < 2; i++)
+    CPDataPoint data;
+    data.vToPoint = m_boundaryPoints[i] - a_disk.Center();
+    data.distSqToPoint = data.vToPoint.LengthSquared();
+    data.index = i;
+
+    if (data.distSqToPoint < a_maxDistSq)
     {
-      bool willCollide = false;
-      float closestTime(FLT_MAX);
+      a_out.points.push_back(data);
+    }
+  }
 
-      enum 
-      {
-        E_None,
-        E_Line, 
-        E_Disk,
-        E_Point
-      };
+  for (size_t i = 0; i < m_boundaryDisks.size(); i++)
+  {
+  }
 
-      int colType = E_None;
-      size_t index;
-      for (size_t i = 0; i < m_boundaryLines.size(); i++)
+  for (size_t i = 0; i < m_boundaryLines.size(); i++)
+  {
+    CPDataLine data;
+    Dg::R2::CPPointLine<float> cp;
+    Dg::R2::CPPointLine<float>::Result result = cp(a_disk.Center(), m_boundaryLines[i].line);
+
+    data.u = result.u;
+    data.vToLine = result.cp - a_disk.Center();
+    data.distSqToLine = data.vToLine.LengthSquared();
+    data.index = i;
+
+    float distSq = FLT_MAX;
+    if (result.u < 0.0f)
+    {
+      vec3 v = m_boundaryLines[i].line.Origin() - a_disk.Center();
+      distSq = v.LengthSquared();
+    }
+    else if (result.u > m_boundaryLines[i].length)
+    {
+      vec3 v = (m_boundaryLines[i].line.Origin() + m_boundaryLines[i].length * m_boundaryLines[i].line.Direction())- a_disk.Center();
+      distSq = v.LengthSquared();
+    }
+    else
+    {
+      distSq = data.distSqToLine;
+    }
+
+    if (distSq < a_maxDistSq)
+    {
+      a_out.lines.push_back(data);
+    }
+  }
+}
+
+//Set the potentially collidable set for a new puck position
+void CollisionApp::SetCPData(Disk const & a_disk, float a_maxDistSq, AllCPData & a_out) const
+{
+  for (size_t i = 0; i < a_out.points.size(); i++)
+  {
+    a_out.points[i].vToPoint = m_boundaryPoints[a_out.points[i].index] - a_disk.Center();
+    a_out.points[i].distSqToPoint = a_out.points[i].vToPoint.LengthSquared();
+  }
+
+  for (size_t i = 0; i < a_out.disks.size(); i++)
+  {
+  }
+
+  for (size_t i = 0; i < a_out.lines.size(); i++)
+  {
+    Dg::R2::CPPointLine<float> cp;
+    Dg::R2::CPPointLine<float>::Result result = cp(a_disk.Center(), m_boundaryLines[a_out.lines[i].index].line);
+
+    a_out.lines[i].u = result.u;
+    a_out.lines[i].vToLine = result.cp - a_disk.Center();
+    a_out.lines[i].distSqToLine = a_out.lines[i].vToLine.LengthSquared();
+  }
+}
+
+void CollisionApp::MovePuck(float a_dt, ModifiedPuck & a_out) const
+{
+  vec3 trajectory = a_dt * a_out.speed * a_out.v;
+  a_out.disk.SetCenter(a_out.disk.Center() + trajectory);
+}
+
+
+/*
+  Go through the potentially collidable set. If the puck is already intersecting an object,
+  adjust the puck's velocity vector to run along the object and then discard the object. 
+  Otherwise output the object.
+*/
+void CollisionApp::RemoveIntersectingGeometry(AllCPData const & a_cpData, 
+                                              AdjacentGeometry & a_adjacent,
+                                              ModifiedPuck & a_puck) const
+{
+  a_adjacent.Clear();
+  float radiusSq = a_puck.disk.Radius();
+  radiusSq *= radiusSq;
+
+  DirMask dm;
+
+  for (size_t i = 0; i < a_cpData.points.size(); i++)
+  {
+    //Find distance to point before puck moves
+    float diff = a_cpData.points[i].distSqToPoint - radiusSq;
+
+    //If the puck is already intersecting
+    if (diff < EPSILON_INTERSECTS)
+    {
+      //Add the vector from the puck to the point to the direction mask  
+      //TODO check for zero vector, but should we even? Will this ever happen?
+      vec3 v = a_cpData.points[i].vToPoint;
+      v.Normalize();
+      dm.Add(v);
+
+      //Check the trajectory of the puck against the mask 
+      if (dm.InMask(a_puck.v))
       {
-        bool hitThis = WillCollide(dt, 
-                                   m_player.disk, 
-                                   m_player.speed * v, 
-                                   m_boundaryLines[i].line, 
-                                   m_boundaryLines[i].length, 
-                                   tTemp);
-        if (hitThis && tTemp < closestTime)
-        {
-          closestTime = tTemp;
-          index = i;
-          colType = E_Line;
-          willCollide = true;
-        }
+        a_puck.speed = 0.0f;
+        return;
       }
 
-      //Weird stuff happens if we don't give boundary lines a priority over boundary points
-      if (colType != E_Line)
+      //Puck can still move along the line perpendicular to the point
+      bool towards = a_puck.v.Dot(v) > 0.0f;
+      if (towards)
       {
-        for (size_t i = 0; i < m_boundaryPoints.size(); i++)
+        vec3 perpVec = v.Perpendicular();
+        float ratio = perpVec.PerpDot(a_puck.v);
+        if (ratio > 0.0f)
         {
-          bool hitThis = WillCollide(dt, m_player.disk, m_player.speed * v, m_boundaryPoints[i], tTemp);
-          if (hitThis && tTemp < closestTime)
+          a_puck.v = perpVec;
+          a_puck.speed *= ratio;
+        }
+        else
+        {
+          a_puck.v = -perpVec;
+          a_puck.speed *= (-ratio);
+        }
+      }
+    }
+    else
+    {
+      //Not intersecting, but close enough that we'll check against this later
+      a_adjacent.points.push_back(i);
+    }
+  }
+
+  for (size_t i = 0; i < a_cpData.lines.size(); i++)
+  {
+    float diff = a_cpData.lines[i].distSqToLine - radiusSq;
+
+    size_t index = a_cpData.lines[i].index;
+
+    bool intersecting = (a_cpData.lines[i].u > 0.0f)
+      && (a_cpData.lines[i].u < m_boundaryLines[index].length)
+      && (diff < EPSILON_INTERSECTS);
+
+    //Intersecting!
+    if (intersecting)
+    {
+      //TODO check for zero vector, but should we even? Will this ever happen?
+      vec3 v = a_cpData.lines[i].vToLine;
+      v.Normalize();
+      dm.Add(v);
+
+      //We can't move anywhere 
+      if (dm.InMask(a_puck.v))
+      {
+        a_puck.speed = 0.0f;
+        return;
+      }
+
+      bool towards = a_puck.v.Dot(v) >= 0.0f;
+      if (towards)
+      {
+        float ratio = m_boundaryLines[index].line.Direction().Dot(a_puck.v);
+        a_puck.speed *= abs(ratio);
+
+        if (abs(a_puck.speed) < EPSILON_SPEED)
+        {
+          a_puck.speed = 0.0f;
+          return;
+        }
+
+        if (ratio > 0.0f)
+        {
+          a_puck.v = m_boundaryLines[index].line.Direction();
+        }
+        else
+        {
+          a_puck.v = -m_boundaryLines[index].line.Direction();
+        }
+      }
+    }
+    else
+    {
+      //Not intersecting, but close enough that we'll check against this later
+      a_adjacent.lines.push_back(i);
+    }
+  }
+}
+
+/*
+  Find the closest object the puck will strike (if any) and move the puck there.
+*/
+void CollisionApp::TestAndMovePuck(AllCPData const & a_cpData, 
+                                   AdjacentGeometry const & a_adjGeom, 
+                                   float & a_dt, 
+                                   ModifiedPuck & a_puck) const
+{
+  enum
+  {
+    E_None,
+    E_Point,
+    E_Line,
+    E_Disk
+  };
+
+  size_t index;
+  float closestTime(a_dt);
+  int colType = E_None;
+  float tTemp(0.0f);
+
+  for (size_t i = 0; i < a_adjGeom.lines.size(); i++)
+  {
+    size_t indLine = a_cpData.lines[a_adjGeom.lines[i]].index;
+    bool hitThis = WillCollide(a_dt, 
+                               a_puck.disk, 
+                               a_puck.speed * a_puck.v, 
+                               m_boundaryLines[indLine].line, 
+                               m_boundaryLines[indLine].length, 
+                               tTemp);
+    if (hitThis && tTemp < closestTime)
+    {
+      closestTime = tTemp;
+      index = indLine;
+      colType = E_Line;
+    }
+  }
+
+  for (size_t i = 0; i < a_adjGeom.points.size(); i++)
+  {
+    size_t indPoint = a_cpData.points[a_adjGeom.points[i]].index;
+    bool hitThis = WillCollide(a_dt, 
+                               a_puck.disk, 
+                               a_puck.speed * a_puck.v, 
+                               m_boundaryPoints[indPoint], 
+                               tTemp);
+    if (hitThis && tTemp < closestTime)
+    {
+      closestTime = tTemp;
+      index = indPoint;
+      colType = E_Point;
+    }
+  }
+
+  if (colType == E_None)
+  {
+    MovePuck(closestTime, a_puck);
+  }
+  else
+  {
+    switch (colType)
+    {
+      case E_Line:
+      {
+        Disk larger(a_puck.disk.Center(), a_puck.disk.Radius() + EPSILON_RADIUS);
+
+        Dg::R2::FPCDiskLine<float> fpc;
+        Dg::R2::FPCDiskLine<float>::Result result_fpc = fpc(larger, a_puck.speed * a_puck.v, m_boundaryLines[index].line, vec3::ZeroVector());
+        
+        MovePuck(result_fpc.t, a_puck);
+
+        //Find new velocity vector
+        float ratio = m_boundaryLines[index].line.Direction().Dot(a_puck.v);
+        a_puck.speed *= abs(ratio);
+
+        if (abs(a_puck.speed) < EPSILON_SPEED)
+        {
+          a_puck.speed = 0.0f;
+        }
+        else
+        {
+          if (ratio > 0.0f)
           {
-            closestTime = tTemp;
-            index = i;
-            colType = E_Point;
-            willCollide = true;
+            a_puck.v = m_boundaryLines[index].line.Direction();
+          }
+          else
+          {
+            a_puck.v = -m_boundaryLines[index].line.Direction();
           }
         }
-      }
 
-      if (!willCollide)
-      {
-        m_player.disk.SetCenter(m_player.disk.Center() + dt * m_player.speed * v);
         break;
       }
-      else
+      case E_Point:
       {
-        switch (colType)
+        Disk larger(a_puck.disk.Center(), a_puck.disk.Radius() + EPSILON_RADIUS);
+
+        Dg::R2::FPCPointDisk<float> fpc;
+        Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(larger, a_puck.speed * a_puck.v, m_boundaryPoints[index], vec3::ZeroVector());
+
+        MovePuck(result_fpc.t, a_puck);
+
+        vec3 perpVec = m_boundaryPoints[index] - a_puck.disk.Center();
+        perpVec.Normalize();
+        perpVec = perpVec.Perpendicular();
+        float ratio = perpVec.PerpDot(a_puck.v);
+        if (ratio > 0.0f)
         {
-          case E_Line:
-          {
-            //Increase the disk size so we don't get so close, to account for floating point error
-            Disk larger(m_player.disk);
-            larger.SetRadius(m_player.disk.Radius() + epsilon);
-
-            Dg::R2::FPCDiskLine<float> fpc;
-            Dg::R2::FPCDiskLine<float>::Result result_fpc = fpc(larger, m_player.speed * v, m_boundaryLines[index].line, vec3::ZeroVector());
-
-            //Move to almost on the target
-            m_player.disk.SetCenter(m_player.disk.Center() + (result_fpc.t * m_player.speed * v));
-
-            //Find new velocity vector
-            v = (v.Dot(m_boundaryLines[index].line.Direction())) * m_boundaryLines[index].line.Direction();
-            break;
-          }
-          case E_Point:
-          {
-            //Increase the disk size so we don't get so close, to account for floating point error
-            Disk larger(m_player.disk);
-            larger.SetRadius(m_player.disk.Radius() + epsilon);
-
-            Dg::R2::FPCPointDisk<float> fpc;
-            Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(larger, m_player.speed * v, m_boundaryPoints[index], vec3::ZeroVector());
-
-            //Move to almost on the target
-            m_player.disk.SetCenter(m_player.disk.Center() + (result_fpc.t * m_player.speed * v));
-
-            //Find new velocity vector
-            vec3 v_dp = m_boundaryPoints[index] - m_player.disk.Center();
-            v_dp.Normalize();
-            v = v.Dot(-v_dp.Perpendicular()) * -v_dp.Perpendicular();
-            break;
-          }
+          a_puck.v = perpVec;
+          a_puck.speed *= ratio;
         }
-        //adjust dt
-        dt -= closestTime;
+        else
+        {
+          a_puck.v = -perpVec;
+          a_puck.speed *= (-ratio);
+        }
+
+        break;
       }
     }
   }
+
+  a_dt -= closestTime;
+}
+
+vec3 CollisionApp::MovePuck(Puck const & a_puck, float a_dt) const
+{
+  //Objects further than this distance we can safely discard.
+  //We'll give it a buffer of 1.2
+  float buffer = 1.2f;
+  float maxObjDist = a_puck.disk.Radius() + a_puck.speed * a_dt * buffer;
+  float maxObjDistSq = maxObjDist * maxObjDist;
+
+  ModifiedPuck newPuck{a_puck.speed, vec3(cos(a_puck.angle), sin(a_puck.angle), 0.0f), a_puck.disk};
+
+  do
+  {
+    AllCPData cpData;
+    AdjacentGeometry adjGeom;
+
+    GetPCS(a_puck.disk, maxObjDistSq, cpData);
+    if (cpData.Empty())
+    {
+      MovePuck(a_dt, newPuck);
+      break;
+    }
+
+    RemoveIntersectingGeometry(cpData, adjGeom, newPuck);
+    if (newPuck.speed == 0.0f) break;
+    if (adjGeom.Empty())
+    {
+      MovePuck(a_dt, newPuck);
+      break;
+    }
+
+    TestAndMovePuck(cpData, adjGeom, a_dt, newPuck);
+    if (a_dt < EPSILON_TIME) 
+    {
+      break;
+    }
+
+    SetCPData(a_puck.disk, maxObjDistSq, cpData);
+    RemoveIntersectingGeometry(cpData, adjGeom, newPuck);
+    if (newPuck.speed == 0.0f) 
+    {
+      break;
+    }
+    if (adjGeom.Empty())
+    {
+      MovePuck(a_dt, newPuck);
+      break;
+    }
+    //We could do another one after this, but two should rounds should be enough
+    TestAndMovePuck(cpData, adjGeom, a_dt, newPuck);
+
+  } while (false);
+
+  return newPuck.disk.Center();
+}
+
+void CollisionApp::DoPhysics(double a_dt)
+{
+  float dt = float(a_dt);
+  m_player.angle += (m_dTurn * dt);
+
+  m_player.disk.SetCenter(MovePuck(m_player, dt));
 }
 
 void CollisionApp::KeyEvent(int a_key, int a_action)
@@ -562,6 +903,23 @@ void CollisionApp::Render()
     m_contextLine.SetMatrix(kv.second.transform * m_transform);
     m_contextLine.Draw(kv.first);
   }
+
+  for (auto const disk : m_boundaryDisks)
+  {
+    scale.Scaling(disk.Radius());
+
+    tvec[0] = disk.Center()[0];
+    tvec[1] = disk.Center()[1];
+    tvec[2] = 0.0f;
+    tvec[3] = 0.0f;
+
+    translation.Translation(tvec);
+
+    mat4 transform = scale * translation;
+    m_contextLine.SetMatrix(transform * m_transform);
+    m_contextLine.Draw(m_circleHandle);
+  }
+
   m_contextLine.Unbind();
 
   m_pViewport->EndDraw();

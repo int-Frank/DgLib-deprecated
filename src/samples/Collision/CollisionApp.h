@@ -5,40 +5,14 @@
 #include <map>
 
 #include "DgApp.h"
-#include "DgR2Vector.h"
-#include "DgR3Vector.h"
-#include "DgR2Disk.h"
-#include "DgR2Line.h"
-#include "DgR3Matrix.h"
+#include "Types.h"
 #include "Mod_Context_Line.h"
 #include "Mod_Window.h"
-
-typedef Dg::R2::Vector<float> vec3;
-typedef Dg::R3::Vector<float> vec4;
-typedef Dg::R3::Matrix<float> mat4;
-typedef Dg::R2::Disk<float>   Disk;
-typedef Dg::R2::Line<float>   Line;
+#include "DirectionMask.h"
+#include "DgDynamicArray.h"
 
 class CollisionApp : public DgApp
 {
-public:
-
-  CollisionApp();
-  ~CollisionApp(){}
-
-protected:
-
-  void BuildUI(){}
-  void DoFrame(double dt);
-  virtual void KeyEvent(int key, int action);
-
-private:
-
-  void DoPhysics(double dt);
-  void Render();
-
-private:
-
   struct ScreenObject
   {
     mat4    transform;
@@ -57,6 +31,87 @@ private:
     Line    line;
     float   length;
   };
+  struct CPDataPoint
+  {
+    size_t index;
+    vec3   vToPoint;
+    float  distSqToPoint;
+  };
+
+  struct CPDataLine
+  {
+    size_t        index;
+    float         u;
+    vec3          vToLine;
+    float         distSqToLine;
+  };
+
+  struct CPDataDisk
+  {
+    size_t index;
+    vec3   vToDisk;
+    float  distSqToDisk;
+  };
+
+  class AllCPData
+  {
+  public:
+
+    bool Empty() const;
+
+    Dg::DynamicArray<CPDataLine>  lines;
+    Dg::DynamicArray<CPDataPoint> points;
+    Dg::DynamicArray<CPDataDisk>  disks;
+  };
+
+  class AdjacentGeometry
+  {
+  public:
+
+    bool Empty() const;
+    void Clear();
+
+    Dg::DynamicArray<size_t>  lines;
+    Dg::DynamicArray<size_t>  points;
+    Dg::DynamicArray<size_t>  disks;
+  };
+
+  struct ModifiedPuck
+  {
+    float speed;
+    vec3  v;
+    Disk  disk;
+  };
+
+public:
+
+  CollisionApp();
+  ~CollisionApp(){}
+
+protected:
+
+  void BuildUI(){}
+  void DoFrame(double dt);
+  virtual void KeyEvent(int key, int action);
+
+private:
+
+  void DoPhysics(double dt);
+  void Render();
+
+  vec3 MovePuck(Puck const &, float dt) const;
+  void MovePuck(float dt, ModifiedPuck &) const;
+  void TestAndMovePuck(AllCPData const &, 
+                       AdjacentGeometry const &, 
+                       float & dt, 
+                       ModifiedPuck &) const;
+  void GetPCS(Disk const &, float, AllCPData &) const;
+  void RemoveIntersectingGeometry(AllCPData const &, 
+                                  AdjacentGeometry &,
+                                  ModifiedPuck &) const;
+  void SetCPData(Disk const &, float, AllCPData &) const;
+
+private:
 
   typedef std::map<Context::ObjectHandle, ScreenObject> dMap;
   typedef std::pair<Context::ObjectHandle, ScreenObject> dItem;

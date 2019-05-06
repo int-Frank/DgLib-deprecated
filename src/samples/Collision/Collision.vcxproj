@@ -143,10 +143,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CollisionApp.cpp" />
+    <ClCompile Include="DirectionMask.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionApp.h" />
+    <ClInclude Include="DirectionMask.h" />
+    <ClInclude Include="Tests.h" />
+    <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />

@@ -55,6 +55,8 @@ namespace Dg
         Vector_generic<Real, R> p_01 = a_sphere_1.Center() - a_sphere_0.Center();
         Real half_b = p_01.Dot(v_01);
 
+        //TODO Maybe we want to know negative values of t.
+        //     Add this as a template option
         //Disk is moving away
         if (half_b >= Real(0))
         {
@@ -70,7 +72,7 @@ namespace Dg
         Real discriminite = half_b*half_b - a*c;
 
         //Disk will come closer, but not collide
-        if (discriminite < 0.0f)
+        if (discriminite < Real(0))
         {
           result.code = QC_NotIntersecting;
           return result;

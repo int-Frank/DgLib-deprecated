@@ -7,6 +7,10 @@ namespace Dg
 {
   namespace impl
   {
+    //TODO all  FPC queries need a template parameter :
+    //             bool AllowNegative_t
+    //     may even Result has member t[2] which contains
+    //     both values of t
     //Find Point of Collision
     template <typename Real,
               int R,

@@ -62,6 +62,7 @@ namespace Dg
         Vector_generic<Real, R> a = u_ls - u_ls.Dot(a_line.Direction()) * a_line.Direction();
         Vector_generic<Real, R> b = v_ls - v_ls.Dot(a_line.Direction()) * a_line.Direction();
 
+        //No relative velocity between sphere and line
         Real dot_b_b = b.Dot(b);
         if (dot_b_b <= Real(0))
         {
@@ -69,8 +70,17 @@ namespace Dg
           return result;
         }
 
+        //TODO this needs to be tested
+        //Sphere moving away from line
+        Real dot_a_b = a.Dot(b);
+        if (dot_a_b >= Real(0))
+        {
+          result.code = QC_NotIntersecting;
+          return result;
+        }
+
         Real r_squared = a_sphere.Radius() * a_sphere.Radius();
-        result.t = (-a.Dot(b) - sqrt(r_squared * dot_b_b))/dot_b_b;
+        result.t = (-dot_a_b - sqrt(r_squared * dot_b_b))/dot_b_b;
         result.code = QC_Intersecting;
         return result;
       }

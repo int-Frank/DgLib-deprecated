@@ -92,7 +92,7 @@ namespace Dg
         Real discriminite = half_b*half_b - a*c;
 
         //Disk will come closer, but not collide
-        if (discriminite < 0.0f)
+        if (discriminite < Real(0))
         {
           result.code = QC_NotIntersecting;
           return result;
