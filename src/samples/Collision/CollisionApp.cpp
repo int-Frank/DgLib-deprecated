@@ -352,6 +352,7 @@ bool AllCPData::Empty() const
 //Develop a Potentially Collidable Set
 void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_out) const
 {
+  //TODO Compare with distance from disk edge to point
   for (size_t i = 0; i < m_boundaryPoints.size(); i++)
   {
     CPDataPoint data;
@@ -365,10 +366,24 @@ void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_
     }
   }
 
+  //TODO Compare with distance from disk edge to disk edge
   for (size_t i = 0; i < m_boundaryDisks.size(); i++)
   {
+    CPDataDisk data;
+    data.vToDisk = m_boundaryDisks[i].Center() - a_disk.Center();
+    data.distSqToDisk = data.vToDisk.LengthSquared();
+    data.index = i;
+
+    float radSq = m_boundaryDisks[i].Radius() + a_disk.Radius();
+    radSq *= radSq;
+
+    if (data.distSqToDisk  - radSq < a_maxDistSq)
+    {
+      a_out.disks.push_back(data);
+    }
   }
 
+  //TODO Compare with distance from disk edge to line
   for (size_t i = 0; i < m_boundaryLines.size(); i++)
   {
     CPDataLine data;
@@ -414,6 +429,8 @@ void CollisionApp::SetCPData(Disk const & a_disk, AllCPData & a_out) const
 
   for (size_t i = 0; i < a_out.disks.size(); i++)
   {
+    a_out.disks[i].vToDisk = m_boundaryDisks[a_out.disks[i].index].Center() - a_disk.Center();
+    a_out.disks[i].distSqToDisk = a_out.disks[i].vToDisk.LengthSquared();
   }
 
   for (size_t i = 0; i < a_out.lines.size(); i++)
@@ -451,6 +468,52 @@ void CollisionApp::DoIntersections(ModifiedPuck & a_puck, AllCPData const & a_cp
       //Add the vector from the puck to the point to the direction mask  
       //TODO check for zero vector, but should we even? Will this ever happen?
       vec3 v = a_cpData.points[i].vToPoint;
+      v.Normalize();
+      dm.Add(v);
+
+      //Check the trajectory of the puck against the mask 
+      if (dm.InMask(originalV))
+      {
+        a_puck.speed = 0.0f;
+        return;
+      }
+
+      //Puck can still move along the line perpendicular to the point
+      bool towards = a_puck.v.Dot(v) > 0.0f;
+      if (towards)
+      {
+        vec3 perpVec = v.Perpendicular();
+        float ratio = v.PerpDot(a_puck.v);
+        a_puck.speed *= abs(ratio);
+        if (ratio > 0.0f)
+        {
+          a_puck.v = perpVec;
+        }
+        else
+        {
+          a_puck.v = -perpVec;
+        }
+      }
+    }
+  }
+
+  for (size_t i = 0; i < a_cpData.disks.size(); i++)
+  {
+    //Find distance to point before puck moves
+    size_t index = a_cpData.disks[i].index;
+    float radSq = m_boundaryDisks[index].Radius() + a_puck.disk.Radius();
+    radSq *= radSq;
+
+    float diff = a_cpData.disks[i].distSqToDisk - radSq;
+
+    bool intersecting = diff < EPSILON_INTERSECTS;
+
+    //If the puck is already intersecting
+    if (intersecting)
+    {
+      //Add the vector from the puck to the point to the direction mask  
+      //TODO check for zero vector, but should we even? Will this ever happen?
+      vec3 v = a_cpData.disks[i].vToDisk;
       v.Normalize();
       dm.Add(v);
 
