@@ -80,6 +80,7 @@ struct ModifiedPuck
   vec3  v;
   Disk  disk;
 };
+
 class CollisionApp : public DgApp
 {
 

@@ -434,6 +434,7 @@ void CollisionApp::DoIntersections(ModifiedPuck & a_puck, AllCPData const & a_cp
   radiusSq *= radiusSq;
 
   DirMask dm;
+  vec3 originalV = a_puck.v;
 
   for (size_t i = 0; i < a_cpData.points.size(); i++)
   {
@@ -454,7 +455,7 @@ void CollisionApp::DoIntersections(ModifiedPuck & a_puck, AllCPData const & a_cp
       dm.Add(v);
 
       //Check the trajectory of the puck against the mask 
-      if (dm.InMask(a_puck.v))
+      if (dm.InMask(originalV))
       {
         a_puck.speed = 0.0f;
         return;
@@ -498,7 +499,7 @@ void CollisionApp::DoIntersections(ModifiedPuck & a_puck, AllCPData const & a_cp
       dm.Add(v);
 
       //We can't move anywhere 
-      if (dm.InMask(a_puck.v))
+      if (dm.InMask(originalV))
       {
         a_puck.speed = 0.0f;
         return;
