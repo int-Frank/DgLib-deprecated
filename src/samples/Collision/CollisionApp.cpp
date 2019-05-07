@@ -18,74 +18,6 @@
 #define EPSILON_RADIUS 0.001f
 #define EPSILON_TIME 0.00001f
 
-bool WillCollide(float a_dt, 
-                 Disk const & a_disk, 
-                 vec3 const & a_vel, 
-                 Line const & a_line, 
-                 float a_lineLength, 
-                 float & a_outTime)
-{
-  Dg::R2::FPCDiskLine<float> fpc;
-  Dg::R2::FPCDiskLine<float>::Result result_fpc = fpc(a_disk, a_vel, a_line, vec3::ZeroVector());
-
-  bool willCollide = result_fpc.code == Dg::QC_Intersecting;
-  willCollide = willCollide && (result_fpc.t <= a_dt);
-
-  //TODO Even though the querty accounts for this, we still need to check for some reason
-  willCollide = willCollide && (result_fpc.t >= 0.0f);
-  if (willCollide)
-  {
-    vec3 p = a_disk.Center() + result_fpc.t * a_vel;
-
-    Dg::R2::CPPointLine<float> cp;
-    Dg::R2::CPPointLine<float>::Result result_cp = cp(p, a_line);
-
-    willCollide = willCollide && (result_cp.u <= a_lineLength);
-    willCollide = willCollide && (result_cp.u >= 0.0f);
-    a_outTime = result_fpc.t;
-  }
-
-  return willCollide;
-}
-
-bool WillCollide(float a_dt, 
-                 Disk const & a_disk, 
-                 vec3 const & a_vel, 
-                 BoundaryPoint const & a_point,
-                 float & a_outTime)
-{
-  if (!a_point.IsInArc(a_disk.Center()))
-  {
-    return false;
-  }
-
-  Dg::R2::FPCPointDisk<float> fpc;
-  Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(a_disk, a_vel, a_point.origin, vec3::ZeroVector());
-
-  bool willCollide = result_fpc.code == Dg::QC_Intersecting;
-  willCollide = willCollide && (result_fpc.t <= a_dt);
-  willCollide = willCollide && (result_fpc.t >= 0.0f);
-
-  return willCollide;
-}
-
-bool WillCollide(float a_dt, 
-                 Disk const & a_disk0, 
-                 vec3 const & a_vel0, 
-                 Disk const & a_disk1, 
-                 vec3 const & a_vel1, 
-                 float & a_outTime)
-{
-  Dg::R2::FPCDiskDisk<float> fpc;
-  Dg::R2::FPCDiskDisk<float>::Result result_fpc = fpc(a_disk0, a_vel0, a_disk1, a_vel1);
-
-  bool willCollide = result_fpc.code == Dg::QC_Intersecting;
-  willCollide = willCollide && (result_fpc.t <= a_dt);
-  willCollide = willCollide && (result_fpc.t >= 0.0f);
-
-  return willCollide;
-}
-
 bool BoundaryPoint::IsInArc(vec3 const & a_point) const
 {
   vec3 v = a_point - origin;
@@ -417,20 +349,6 @@ bool AllCPData::Empty() const
     && (disks.size() == 0);
 }
 
-bool AdjacentGeometry::Empty() const
-{
-  return (lines.size() == 0)
-    && (points.size() == 0)
-    && (disks.size() == 0);
-}
-
-void AdjacentGeometry::Clear()
-{
-  lines.clear();
-  points.clear();
-  disks.clear();
-}
-
 //Develop a Potentially Collidable Set
 void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_out) const
 {
@@ -486,7 +404,7 @@ void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_
 }
 
 //Set the potentially collidable set for a new puck position
-void CollisionApp::SetCPData(Disk const & a_disk, float a_maxDistSq, AllCPData & a_out) const
+void CollisionApp::SetCPData(Disk const & a_disk, AllCPData & a_out) const
 {
   for (size_t i = 0; i < a_out.points.size(); i++)
   {
@@ -509,23 +427,9 @@ void CollisionApp::SetCPData(Disk const & a_disk, float a_maxDistSq, AllCPData &
   }
 }
 
-void CollisionApp::MovePuck(float a_dt, ModifiedPuck & a_out) const
-{
-  vec3 trajectory = a_dt * a_out.speed * a_out.v;
-  a_out.disk.SetCenter(a_out.disk.Center() + trajectory);
-}
 
-
-/*
-  Go through the potentially collidable set. If the puck is already intersecting an object,
-  adjust the puck's velocity vector to run along the object and then discard the object. 
-  Otherwise output the object.
-*/
-void CollisionApp::RemoveIntersectingGeometry(AllCPData const & a_cpData, 
-                                              AdjacentGeometry & a_adjacent,
-                                              ModifiedPuck & a_puck) const
+void CollisionApp::DoIntersections(ModifiedPuck & a_puck, AllCPData const & a_cpData) const
 {
-  a_adjacent.Clear();
   float radiusSq = a_puck.disk.Radius();
   radiusSq *= radiusSq;
 
@@ -572,11 +476,6 @@ void CollisionApp::RemoveIntersectingGeometry(AllCPData const & a_cpData,
           a_puck.v = -perpVec;
         }
       }
-    }
-    else
-    {
-      //Not intersecting, but close enough that we'll check against this later
-      a_adjacent.points.push_back(i);
     }
   }
 
@@ -627,188 +526,64 @@ void CollisionApp::RemoveIntersectingGeometry(AllCPData const & a_cpData,
         }
       }
     }
-    else
-    {
-      //Not intersecting, but close enough that we'll check against this later
-      a_adjacent.lines.push_back(i);
-    }
   }
-}
-
-/*
-  Find the closest object the puck will strike (if any) and move the puck there.
-*/
-void CollisionApp::TestAndMovePuck(AllCPData const & a_cpData, 
-                                   AdjacentGeometry const & a_adjGeom, 
-                                   float & a_dt, 
-                                   ModifiedPuck & a_puck) const
-{
-  enum
-  {
-    E_None,
-    E_Point,
-    E_Line,
-    E_Disk
-  };
-
-  size_t index;
-  float closestTime(a_dt);
-  int colType = E_None;
-  float tTemp(0.0f);
-
-  for (size_t i = 0; i < a_adjGeom.lines.size(); i++)
-  {
-    size_t indLine = a_cpData.lines[a_adjGeom.lines[i]].index;
-    bool hitThis = WillCollide(a_dt, 
-                               a_puck.disk, 
-                               a_puck.speed * a_puck.v, 
-                               m_boundaryLines[indLine].line, 
-                               m_boundaryLines[indLine].length, 
-                               tTemp);
-    if (hitThis && tTemp < closestTime)
-    {
-      closestTime = tTemp;
-      index = indLine;
-      colType = E_Line;
-    }
-  }
-
-  for (size_t i = 0; i < a_adjGeom.points.size(); i++)
-  {
-    size_t indPoint = a_cpData.points[a_adjGeom.points[i]].index;
-    bool hitThis = WillCollide(a_dt, 
-                               a_puck.disk, 
-                               a_puck.speed * a_puck.v, 
-                               m_boundaryPoints[indPoint], 
-                               tTemp);
-    if (hitThis && tTemp < closestTime)
-    {
-      closestTime = tTemp;
-      index = indPoint;
-      colType = E_Point;
-    }
-  }
-
-  if (colType == E_None)
-  {
-    MovePuck(closestTime, a_puck);
-  }
-  else
-  {
-    switch (colType)
-    {
-      case E_Line:
-      {
-        Disk larger(a_puck.disk.Center(), a_puck.disk.Radius() + EPSILON_RADIUS);
-
-        Dg::R2::FPCDiskLine<float> fpc;
-        Dg::R2::FPCDiskLine<float>::Result result_fpc = fpc(larger, a_puck.speed * a_puck.v, m_boundaryLines[index].line, vec3::ZeroVector());
-        
-        MovePuck(result_fpc.t, a_puck);
-
-        //Find new velocity vector
-        float ratio = m_boundaryLines[index].line.Direction().Dot(a_puck.v);
-        a_puck.speed *= abs(ratio);
-
-        if (abs(a_puck.speed) < EPSILON_SPEED)
-        {
-          a_puck.speed = 0.0f;
-        }
-        else
-        {
-          if (ratio > 0.0f)
-          {
-            a_puck.v = m_boundaryLines[index].line.Direction();
-          }
-          else
-          {
-            a_puck.v = -m_boundaryLines[index].line.Direction();
-          }
-        }
-
-        break;
-      }
-      case E_Point:
-      {
-        Disk larger(a_puck.disk.Center(), a_puck.disk.Radius() + EPSILON_RADIUS);
-
-        Dg::R2::FPCPointDisk<float> fpc;
-        Dg::R2::FPCPointDisk<float>::Result result_fpc = fpc(larger, a_puck.speed * a_puck.v, m_boundaryPoints[index].origin, vec3::ZeroVector());
-
-        MovePuck(result_fpc.t, a_puck);
-
-        vec3 perpVec = m_boundaryPoints[index].origin - a_puck.disk.Center();
-        perpVec.Normalize();
-        float ratio = perpVec.PerpDot(a_puck.v);
-        perpVec = perpVec.Perpendicular();
-        a_puck.speed *= abs(ratio);
-        if (ratio > 0.0f)
-        {
-          a_puck.v = perpVec;
-        }
-        else
-        {
-          a_puck.v = -perpVec;
-        }
-
-        break;
-      }
-    }
-  }
-
-  a_dt -= closestTime;
 }
 
 vec3 CollisionApp::MovePuck(Puck const & a_puck, float a_dt) const
 {
+  ModifiedPuck newPuck{a_puck.speed, vec3(cos(a_puck.angle), sin(a_puck.angle), 0.0f), a_puck.disk};
+
+  if (newPuck.speed < 0.0f)
+  {
+    newPuck.speed = - newPuck.speed;
+    newPuck.v = -newPuck.v;
+  }
+
+  //ratio of the puck's radius the puck can move before we need to
+  //check for collisions.
+  float maxStep = 0.25f; 
+  float puckDist = newPuck.speed * a_dt;
+  float ratio = puckDist / newPuck.disk.Radius();
+  float nSteps = ceil(ratio / maxStep);
+  float dt = a_dt / nSteps;
+
   //Objects further than this distance we can safely discard.
   //We'll give it a buffer of 1.2
   float buffer = 1.2f;
-  float maxObjDist = a_puck.disk.Radius() + a_puck.speed * a_dt * buffer;
+  float maxObjDist = newPuck.disk.Radius() + newPuck.speed * a_dt * buffer;
   float maxObjDistSq = maxObjDist * maxObjDist;
 
-  ModifiedPuck newPuck{a_puck.speed, vec3(cos(a_puck.angle), sin(a_puck.angle), 0.0f), a_puck.disk};
+  AllCPData cpData;
+
+  if (newPuck.speed != 0.0f)
+  {
+    char brk = 1;
+  }
+
+  GetPCS(newPuck.disk, maxObjDistSq, cpData);
 
   do
   {
-    AllCPData cpData;
-    AdjacentGeometry adjGeom;
-
-    GetPCS(a_puck.disk, maxObjDistSq, cpData);
-    if (cpData.Empty())
-    {
-      MovePuck(a_dt, newPuck);
-      break;
-    }
-
-    RemoveIntersectingGeometry(cpData, adjGeom, newPuck);
+    //Test for intersections
+    DoIntersections(newPuck, cpData);
     if (newPuck.speed == 0.0f) break;
-    if (adjGeom.Empty())
-    {
-      MovePuck(a_dt, newPuck);
-      break;
-    }
 
-    TestAndMovePuck(cpData, adjGeom, a_dt, newPuck);
-    if (a_dt < EPSILON_TIME) 
-    {
-      break;
-    }
+    //Move the puck
+    vec3 trajectory = dt * newPuck.speed * newPuck.v;
+    newPuck.disk.SetCenter(newPuck.disk.Center() + trajectory);
 
-    SetCPData(a_puck.disk, maxObjDistSq, cpData);
-    RemoveIntersectingGeometry(cpData, adjGeom, newPuck);
-    if (newPuck.speed == 0.0f) 
+    for (int i = 0; i < int(nSteps) - 1; i++)
     {
-      break;
-    }
-    if (adjGeom.Empty())
-    {
-      MovePuck(a_dt, newPuck);
-      break;
-    }
-    //We could do another one after this, but two should rounds should be enough
-    TestAndMovePuck(cpData, adjGeom, a_dt, newPuck);
+      SetCPData(newPuck.disk, cpData);
 
+      //Test for intersections
+      DoIntersections(newPuck, cpData);
+      if (newPuck.speed == 0.0f) break;
+
+      //Move the puck
+      vec3 trajectory = dt * newPuck.speed * newPuck.v;
+      newPuck.disk.SetCenter(newPuck.disk.Center() + trajectory);
+    }
   } while (false);
 
   return newPuck.disk.Center();

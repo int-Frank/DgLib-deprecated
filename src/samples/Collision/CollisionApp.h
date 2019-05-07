@@ -74,18 +74,6 @@ public:
   Dg::DynamicArray<CPDataDisk>  disks;
 };
 
-class AdjacentGeometry
-{
-public:
-
-  bool Empty() const;
-  void Clear();
-
-  Dg::DynamicArray<size_t>  lines;
-  Dg::DynamicArray<size_t>  points;
-  Dg::DynamicArray<size_t>  disks;
-};
-
 struct ModifiedPuck
 {
   float speed;
@@ -112,16 +100,10 @@ private:
   void Render();
 
   vec3 MovePuck(Puck const &, float dt) const;
-  void MovePuck(float dt, ModifiedPuck &) const;
-  void TestAndMovePuck(AllCPData const &, 
-                       AdjacentGeometry const &, 
-                       float & dt, 
-                       ModifiedPuck &) const;
+  void DoIntersections(ModifiedPuck &,
+                       AllCPData const &) const;
   void GetPCS(Disk const &, float, AllCPData &) const;
-  void RemoveIntersectingGeometry(AllCPData const &, 
-                                  AdjacentGeometry &,
-                                  ModifiedPuck &) const;
-  void SetCPData(Disk const &, float, AllCPData &) const;
+  void SetCPData(Disk const &, AllCPData &) const;
 
 private:
 
