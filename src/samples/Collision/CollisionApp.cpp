@@ -352,7 +352,6 @@ bool AllCPData::Empty() const
 //Develop a Potentially Collidable Set
 void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_out) const
 {
-  //TODO Compare with distance from disk edge to point
   for (size_t i = 0; i < m_boundaryPoints.size(); i++)
   {
     CPDataPoint data;
@@ -366,7 +365,6 @@ void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_
     }
   }
 
-  //TODO Compare with distance from disk edge to disk edge
   for (size_t i = 0; i < m_boundaryDisks.size(); i++)
   {
     CPDataDisk data;
@@ -383,7 +381,6 @@ void CollisionApp::GetPCS(Disk const & a_disk, float a_maxDistSq, AllCPData & a_
     }
   }
 
-  //TODO Compare with distance from disk edge to line
   for (size_t i = 0; i < m_boundaryLines.size(); i++)
   {
     CPDataLine data;
@@ -605,7 +602,7 @@ vec3 CollisionApp::MovePuck(Puck const & a_puck, float a_dt) const
 
   //ratio of the puck's radius the puck can move before we need to
   //check for collisions.
-  float maxStep = 0.25f; 
+  float const maxStep = 0.25f; 
   float puckDist = newPuck.speed * a_dt;
   float ratio = puckDist / newPuck.disk.Radius();
   float nSteps = ceil(ratio / maxStep);
@@ -618,11 +615,6 @@ vec3 CollisionApp::MovePuck(Puck const & a_puck, float a_dt) const
   float maxObjDistSq = maxObjDist * maxObjDist;
 
   AllCPData cpData;
-
-  if (newPuck.speed != 0.0f)
-  {
-    char brk = 1;
-  }
 
   GetPCS(newPuck.disk, maxObjDistSq, cpData);
 

@@ -5,6 +5,16 @@
 //------------------------------------------------------------------------------------------
 // States...
 //------------------------------------------------------------------------------------------
+class DM_Base
+{
+public:
+
+  virtual ~DM_Base(){}
+  virtual DM_Base * Add(vec3 const & dir) =0;
+  virtual bool InMask(vec3 const &) const =0;
+  virtual DM_Base * Clone() const =0;
+};
+
 class DM_None : public DM_Base
 {
 public:
