@@ -225,6 +225,7 @@
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentRay.h" />
     <ClInclude Include="..\..\public\query\DgR2QuerySegmentSegment.h" />
     <ClInclude Include="..\..\public\query\DgR3QueryPointSphere.h" />
+    <ClInclude Include="..\..\public\query\DgR3QueryPointZCylinder.h" />
     <ClInclude Include="..\..\public\query\DgR3QueryRayTriangle.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentLine.h" />

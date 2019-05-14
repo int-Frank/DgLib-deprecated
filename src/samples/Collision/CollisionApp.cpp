@@ -592,6 +592,11 @@ void CollisionApp::DoIntersections(ModifiedPuck & a_puck, AllCPData const & a_cp
 
 vec3 CollisionApp::MovePuck(Puck const & a_puck, float a_dt) const
 {
+  if (Dg::IsZero(a_puck.speed))
+  {
+    return a_puck.disk.Center();
+  }
+
   ModifiedPuck newPuck{a_puck.speed, vec3(cos(a_puck.angle), sin(a_puck.angle), 0.0f), a_puck.disk};
 
   if (newPuck.speed < 0.0f)
@@ -599,14 +604,6 @@ vec3 CollisionApp::MovePuck(Puck const & a_puck, float a_dt) const
     newPuck.speed = - newPuck.speed;
     newPuck.v = -newPuck.v;
   }
-
-  //ratio of the puck's radius the puck can move before we need to
-  //check for collisions.
-  float const maxStep = 0.25f; 
-  float puckDist = newPuck.speed * a_dt;
-  float ratio = puckDist / newPuck.disk.Radius();
-  float nSteps = ceil(ratio / maxStep);
-  float dt = a_dt / nSteps;
 
   //Objects further than this distance we can safely discard.
   //We'll give it a buffer of 1.2
@@ -620,9 +617,25 @@ vec3 CollisionApp::MovePuck(Puck const & a_puck, float a_dt) const
 
   do
   {
+    if (cpData.Empty())
+    {
+      //Move the puck
+      vec3 trajectory = a_dt * newPuck.speed * newPuck.v;
+      newPuck.disk.SetCenter(newPuck.disk.Center() + trajectory);
+      break;
+    }
+
     //Test for intersections
     DoIntersections(newPuck, cpData);
     if (newPuck.speed == 0.0f) break;
+
+    //ratio of the puck's radius the puck can move before we need to
+    //check for collisions.
+    float const maxStep = 0.25f; 
+    float puckDist = newPuck.speed * a_dt;
+    float ratio = puckDist / newPuck.disk.Radius();
+    float nSteps = ceil(ratio / maxStep);
+    float dt = a_dt / nSteps;
 
     //Move the puck
     vec3 trajectory = dt * newPuck.speed * newPuck.v;

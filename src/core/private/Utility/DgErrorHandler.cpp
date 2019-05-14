@@ -1,5 +1,6 @@
 
 #include <fstream>
+#include <Windows.h>
 
 #include "DgErrorHandler.h"
 
@@ -27,7 +28,7 @@ namespace Dg
           fs.close();
         }
 
-        abort();
+        DebugBreak();
       }
     }
   }

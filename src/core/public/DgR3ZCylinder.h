@@ -35,6 +35,14 @@ namespace Dg
         , m_radius(Real(1))
       {}
 
+      ZCylinder(Vector<Real> const & a_bottom, Real a_radius, Real a_height)
+        : m_bottomCentre(a_bottom)
+        , m_height(a_height)
+        , m_radius(a_radius)
+      {
+        m_bottomCentre[3] = static_cast<Real>(1);
+      }
+
       ~ZCylinder()
       {}
 
@@ -55,9 +63,30 @@ namespace Dg
         return *this;
       }
 
-      R2::Disk<Real> GetDisk2D() const;
+      void SetBottom(Vector<Real> const & a_bottom)
+      {
+        m_bottomCentre = a_bottom;
+        m_bottomCentre[3] = static_cast<Real>(1);
+      }
+
+      void SetRadius(Real a_radius)
+      {
+        m_radius = a_radius;
+      }
+
+      void SetHeight(Real a_height)
+      {
+        m_height = a_height;
+      }
+
+      R2::Disk<Real> GetDisk2D() const
+      {
+        return R2::Disk<Real>(R2::Vector<Real>(m_bottomCentre[0], m_bottomCentre[1], static_cast<Real>(1)), m_radius);
+      }
+
       Real GetHeight() const {return m_height;}
-      Real Getradius() const {return m_radius;}
+      Real GetRadius() const {return m_radius;}
+      Vector<Real> const & GetBottomCenter() const {return m_bottomCentre;}
 
     private:
       Vector<Real>  m_bottomCentre;

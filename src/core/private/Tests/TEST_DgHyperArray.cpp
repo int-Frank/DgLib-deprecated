@@ -33,7 +33,7 @@ TEST(Stack_DgHyperArray, creation_DgHyperArray)
     {
       for (size_t k = 0; k < z; k++)
       {
-        ary(i, j, k) = counter;
+        ary(i, j, k) = int(counter);
         counter++;
       }
     }

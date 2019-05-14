@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\public\DgAVLTreeMap.h" />
     <ClInclude Include="..\..\public\DgHyperArray.h" />
     <ClInclude Include="..\..\public\DgMap.h" />
     <ClInclude Include="..\..\public\DgStaticArray.h" />
@@ -32,6 +33,7 @@
     <ClInclude Include="..\..\public\Dg_set.h" />
     <ClInclude Include="..\..\public\Dg_shared_ptr.h" />
     <ClInclude Include="..\..\public\DgDynamicArray.h" />
+    <ClInclude Include="..\..\public\impl\DgContainerCommon.h" />
     <ClInclude Include="..\..\public\impl\DgContainerBase.h" />
   </ItemGroup>
   <ItemGroup>

@@ -347,5 +347,8 @@
     <ClInclude Include="..\..\public\query\DgR2QueryDiskLine.h">
       <Filter>Public Headers\Query\R2</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryPointZCylinder.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
