@@ -359,5 +359,11 @@
     <ClInclude Include="..\..\public\query\DgR3QueryRectangleLine.h">
       <Filter>Public Headers\Query\R3</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryRectangleRay.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\query\DgR3QueryRectangleSegment.h">
+      <Filter>Public Headers\Query\R3</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

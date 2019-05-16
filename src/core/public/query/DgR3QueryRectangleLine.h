@@ -70,9 +70,7 @@ namespace Dg
             for (int i0 = -1; i0 <= 1; i0 += 2)
             {
               R3::Vector<Real> segCenter = a_rect.GetCenter() + scaledDir[i1] * static_cast<Real>(i0);
-              //R3::Vector<Real> segDirection = a_rect.GetAxis(omi1);
-              //Real segExtent = a_rect.GetExtent(omi1);
-
+              
               R3::Vector<Real> p0(segCenter - scaledDir[omi1]);
               R3::Vector<Real> p1(segCenter + scaledDir[omi1]);
               R3::Segment<Real> segment(p0, p1);

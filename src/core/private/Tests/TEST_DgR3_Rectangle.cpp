@@ -4,11 +4,15 @@
 #include "query/DgR3QueryRectanglePoint.h"
 #include "query/DgR3QueryRectangleSphere.h"
 #include "query/DgR3QueryRectangleLine.h"
+#include "query/DgR3QueryRectangleRay.h"
+#include "query/DgR3QueryRectangleSegment.h"
 
 typedef Dg::R3::Rectangle<float>  Rect;
 typedef Dg::R3::Vector<float>     vec;
 typedef Dg::R3::Sphere<float>     Sphere;
 typedef Dg::R3::Line<float>       Line;
+typedef Dg::R3::Ray<float>        Ray;
+typedef Dg::R3::Segment<float>    Segment;
 
 TEST(Stack_DgRectangle, DgRectangle)
 {
@@ -325,4 +329,262 @@ TEST(Stack_DgRectangle_queryLine, DgRectangle_queryLine)
   CHECK(result.u == 1.0f);
   CHECK(result.rectangleParameter[0] == -2.0f);
   CHECK(result.rectangleParameter[1] == 3.0f);
+}
+
+TEST(Stack_DgRectangle_queryRay, DgRectangle_queryRay)
+{
+  Rect r;
+  r.SetCenter(vec(1.0f, 2.0f, 3.0f, 1.0f));
+  r.SetExtent(0, 2.0f);
+  r.SetExtent(1, 3.0f);
+  r.SetAxis(0, vec::zAxis());
+  r.SetAxis(1, -vec::xAxis());
+
+  Dg::R3::FIRectangleRay<float> query;
+  Dg::R3::FIRectangleRay<float>::Result result;
+  Ray ray;
+
+  //No intersections...
+  ray.Set(vec(-3.0f, 0.0f, 0.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(0.0f, 0.0f, 0.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(5.0f, 0.0f, 0.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(-5.0f, 0.0f, 3.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(5.0f, 0.0f, 3.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(-5.0f, 0.0f, 33.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(1.0f, 0.0f, 33.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(10.0f, 0.0f, 33.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  //Now the same but from the opposite side
+  ray.Set(vec(-3.0f, 10.0f, 0.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(0.0f, 20.0f, 0.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(5.0f, 30.0f, 0.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(-5.0f, 10.0f, 3.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(5.0f, 20.0f, 3.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(-5.0f, 30.0f, 33.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(1.0f, 10.0f, 33.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(10.0f, 20.0f, 33.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  //Intersecting...
+
+  //Absolutely intersecting..
+  ray.Set(vec(-1.0f, 0.0f, 2.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(-1.0f, 2.0f, 2.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == -1.0f);
+  CHECK(result.rectangleParameter[1] == 2.0f);
+
+  ray.Set(vec(-1.0f, 0.0f, 4.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(-1.0f, 2.0f, 4.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == 1.0f);
+  CHECK(result.rectangleParameter[1] == 2.0f);
+
+  ray.Set(vec(3.0f, 0.0f, 4.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(3.0f, 2.0f, 4.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == 1.0f);
+  CHECK(result.rectangleParameter[1] == -2.0f);
+
+  ray.Set(vec(3.0f, 0.0f, 2.0f, 1.0f), vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(3.0f, 2.0f, 2.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == -1.0f);
+  CHECK(result.rectangleParameter[1] == -2.0f);
+
+  //From the other side...
+  ray.Set(vec(-1.0f, 4.0f, 2.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(-1.0f, 2.0f, 2.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == -1.0f);
+  CHECK(result.rectangleParameter[1] == 2.0f);
+
+  ray.Set(vec(-1.0f, 4.0f, 4.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(-1.0f, 2.0f, 4.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == 1.0f);
+  CHECK(result.rectangleParameter[1] == 2.0f);
+
+  ray.Set(vec(3.0f, 4.0f, 4.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(3.0f, 2.0f, 4.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == 1.0f);
+  CHECK(result.rectangleParameter[1] == -2.0f);
+
+  ray.Set(vec(3.0f, 4.0f, 2.0f, 1.0f), -vec::yAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(3.0f, 2.0f, 2.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == -1.0f);
+  CHECK(result.rectangleParameter[1] == -2.0f);
+
+  //Parallel, not intersecting...
+
+  ray.Set(vec(1.0f, 1.0f, 1.5f, 1.0f), vec::xAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  ray.Set(vec(1.0f, 2.0f, 0.5f, 1.0f), vec::xAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  //Parallel, intersecting
+  //line direction is xAxis
+  ray.Set(vec(1.0f, 2.0f, 2.0f, 1.0f), vec::xAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(4.0f, 2.0f, 2.0f, 1.0f));
+  CHECK(result.u == 3.0f);
+  CHECK(result.rectangleParameter[0] == -1.0f);
+  CHECK(result.rectangleParameter[1] == -3.0f);
+
+  ray.Set(vec(-3.0f, 2.0f, 2.0f, 1.0f), vec::xAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(-2.0f, 2.0f, 2.0f, 1.0f));
+  CHECK(result.u == 1.0f);
+  CHECK(result.rectangleParameter[0] == -1.0f);
+  CHECK(result.rectangleParameter[1] == 3.0f);
+
+  ray.Set(vec(5.0f, 2.0f, 2.0f, 1.0f), -vec::xAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(4.0f, 2.0f, 2.0f, 1.0f));
+  CHECK(result.u == 1.0f);
+  CHECK(result.rectangleParameter[0] == -1.0f);
+  CHECK(result.rectangleParameter[1] == -3.0f);
+
+  //line direction is zAxis
+  ray.Set(vec(1.0f, 2.0f, -1.0f, 1.0f), vec::zAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(1.0f, 2.0f, 1.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == -2.0f);
+  CHECK(result.rectangleParameter[1] == 0.0f);
+
+  ray.Set(vec(1.0f, 2.0f, 7.0f, 1.0f), -vec::zAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(1.0f, 2.0f, 5.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == 2.0f);
+  CHECK(result.rectangleParameter[1] == 0.0f);
+
+  //On rectangle edge
+  ray.Set(vec(-3.0f, 2.0f, 1.0f, 1.0f), vec::xAxis());
+  result = query(r, ray);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(-2.0f, 2.0f, 1.0f, 1.0f));
+  CHECK(result.u == 1.0f);
+  CHECK(result.rectangleParameter[0] == -2.0f);
+  CHECK(result.rectangleParameter[1] == 3.0f);
+}
+
+TEST(Stack_DgRectangle_querySegment, DgRectangle_querySegment)
+{
+  Rect r;
+  r.SetCenter(vec(1.0f, 2.0f, 3.0f, 1.0f));
+  r.SetExtent(0, 2.0f);
+  r.SetExtent(1, 3.0f);
+  r.SetAxis(0, vec::zAxis());
+  r.SetAxis(1, -vec::xAxis());
+
+  Dg::R3::FIRectangleSegment<float> query;
+  Dg::R3::FIRectangleSegment<float>::Result result;
+  Segment seg;
+
+  //No intersections...
+  seg.Set(vec(-3.0f, 0.0f, 0.0f, 1.0f), vec(-3.0f, 4.0f, 0.0f, 1.0f));
+  result = query(r, seg);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  seg.Set(vec(1.0f, 0.0f, 3.0f, 1.0f), vec(1.0f, 1.0f, 3.0f, 1.0f));
+  result = query(r, seg);
+  CHECK(result.code == Dg::QC_NotIntersecting);
+
+  //Intersections
+  seg.Set(vec(1.0f, 0.0f, 3.0f, 1.0f), vec(1.0f, 4.0f, 3.0f, 1.0f));
+  result = query(r, seg);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(1.0f, 2.0f, 3.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == 0.0f);
+  CHECK(result.rectangleParameter[1] == 0.0f);
+
+  seg.Set(vec(1.0f, 4.0f, 3.0f, 1.0f), vec(1.0f, -3.0f, 3.0f, 1.0f));
+  result = query(r, seg);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(1.0f, 2.0f, 3.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == 0.0f);
+  CHECK(result.rectangleParameter[1] == 0.0f);
+
+  seg.Set(vec(0.0f, 4.0f, 2.0f, 1.0f), vec(0.0f, -3.0f, 2.0f, 1.0f));
+  result = query(r, seg);
+  CHECK(result.code == Dg::QC_Intersecting);
+  CHECK(result.point == vec(0.0f, 2.0f, 2.0f, 1.0f));
+  CHECK(result.u == 2.0f);
+  CHECK(result.rectangleParameter[0] == -1.0f);
+  CHECK(result.rectangleParameter[1] == 1.0f);
 }

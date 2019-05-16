@@ -228,6 +228,8 @@
     <ClInclude Include="..\..\public\query\DgR3QueryPointZCylinder.h" />
     <ClInclude Include="..\..\public\query\DgR3QueryRayTriangle.h" />
     <ClInclude Include="..\..\public\query\DgR3QueryRectangleLine.h" />
+    <ClInclude Include="..\..\public\query\DgR3QueryRectangleRay.h" />
+    <ClInclude Include="..\..\public\query\DgR3QueryRectangleSegment.h" />
     <ClInclude Include="..\..\public\query\DgR3QueryRectangleSphere.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentSphere.h" />
     <ClInclude Include="..\..\public\query\DgR3QuerySegmentLine.h" />
