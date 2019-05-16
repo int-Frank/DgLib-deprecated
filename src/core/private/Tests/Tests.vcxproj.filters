@@ -153,6 +153,9 @@
     <ClCompile Include="TEST_DgR3_zCylinder.cpp">
       <Filter>Tests\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="TEST_DgR3_Rectangle.cpp">
+      <Filter>Tests\Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="testini.ini">

@@ -29,9 +29,9 @@ namespace Dg
     public:
       //! Default constructor.
       Rectangle()
-        : m_ceneter(Vector<Real>::Origin())
-        , m_axis({Vector<Real>::xAxis(), Vector<Real>::yAxis()})
-        , m_extents({Real(1), Real(1)})
+        : m_center(Vector<Real>::Origin())
+        , m_axis{Vector<Real>::xAxis(), Vector<Real>::yAxis()}
+        , m_extents{Real(1), Real(1)}
       {}
 
       Rectangle(Vector<Real> const & a_center,
@@ -64,9 +64,14 @@ namespace Dg
         return *this;
       }
 
-      Real GetCenter() const {return m_center;}
-      Real GetAxis(int a_index) const {return m_axis[a_index];}
-      Real GetExtent(int a_index) const {return m_extent[a_index];}
+      Vector<Real> const & GetCenter() const {return m_center;}
+      Vector<Real> const & GetAxis(int a_index) const {return m_axis[a_index];}
+      Real GetExtent(int a_index) const {return m_extents[a_index];}
+
+      void SetCenter(Vector<Real> const & a_center){m_center = a_center;}
+      void SetAxis(int a_index, Vector<Real> const & a_val) {m_axis[a_index] = a_val;}
+      void SetExtent(int a_index, Real a_val) {m_extents[a_index] = a_val;}
+
       void GetVertices(Vector<Real> & a_v0,
                        Vector<Real> & a_v1,
                        Vector<Real> & a_v2,

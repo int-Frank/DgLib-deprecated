@@ -33,7 +33,6 @@
     <ClInclude Include="..\..\public\Dg_set.h" />
     <ClInclude Include="..\..\public\Dg_shared_ptr.h" />
     <ClInclude Include="..\..\public\DgDynamicArray.h" />
-    <ClInclude Include="..\..\public\impl\DgContainerCommon.h" />
     <ClInclude Include="..\..\public\impl\DgContainerBase.h" />
   </ItemGroup>
   <ItemGroup>

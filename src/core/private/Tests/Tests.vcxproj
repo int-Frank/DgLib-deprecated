@@ -179,6 +179,7 @@
     <ClCompile Include="TEST_DGGrids.cpp" />
     <ClCompile Include="TEST_DgIDManager.cpp" />
     <ClCompile Include="TEST_DgR3_Line.cpp" />
+    <ClCompile Include="TEST_DgR3_Rectangle.cpp" />
     <ClCompile Include="TEST_DgR3_Segment.cpp" />
     <ClCompile Include="TEST_DgR3_zCylinder.cpp" />
     <ClCompile Include="TEST_DgVariableArray2D.cpp" />

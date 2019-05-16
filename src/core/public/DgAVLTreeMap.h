@@ -1,7 +1,7 @@
 #ifndef DGAVLTREEMAP_H
 #define DGAVLTREEMAP_H
 
-#include "impl/DgContainerCommon.h"
+#include "impl/DgContainerBase.h"
 
 #ifdef STD_COMPATIBLE
 #include <iterator>
@@ -13,7 +13,7 @@
 namespace Dg
 {
   template<typename K, typename V>
-  class AVLTreeMap
+  class AVLTreeMap : public ContainerBase
   {
     typedef size_t sizeType;
     static sizeType const s_nullValue = -1;
@@ -79,8 +79,6 @@ namespace Dg
     KeyNode *   m_pKeys;
     V *         m_pData;
     sizeType    m_nEntries;
-    sizeType    m_poolSize;
-    int         m_poolTableIndex;
   };
 }
 

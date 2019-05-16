@@ -58,9 +58,6 @@
     <ClInclude Include="..\..\public\DgVariableList2D.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\impl\DgContainerCommon.h">
-      <Filter>Private</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgAVLTreeMap.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
