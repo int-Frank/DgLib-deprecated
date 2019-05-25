@@ -46,20 +46,23 @@
     <ClInclude Include="..\..\public\DgQuadTree.h">
       <Filter>Public Headers\deprecated</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\Dg_set.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgStaticArray.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\Dg_map.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\public\DgVariableList2D.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgAVLTreeMap.h">
       <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgPair.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\Dg_set.h">
+      <Filter>Public Headers\deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\Dg_map.h">
+      <Filter>Public Headers\deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\DgVariableList2D.h">
+      <Filter>Public Headers\deprecated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

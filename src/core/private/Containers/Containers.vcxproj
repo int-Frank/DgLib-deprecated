@@ -22,6 +22,7 @@
     <ClInclude Include="..\..\public\DgAVLTreeMap.h" />
     <ClInclude Include="..\..\public\DgHyperArray.h" />
     <ClInclude Include="..\..\public\DgMap.h" />
+    <ClInclude Include="..\..\public\DgPair.h" />
     <ClInclude Include="..\..\public\DgStaticArray.h" />
     <ClInclude Include="..\..\public\DgOpenHashTable.h" />
     <ClInclude Include="..\..\public\DgDoublyLinkedList.h" />

@@ -166,6 +166,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NonPODTests.cpp" />
     <ClCompile Include="TEST_BoundedSND.cpp" />
+    <ClCompile Include="TEST_DgAVLTreeMap.cpp" />
     <ClCompile Include="TEST_DGFixedPoint.cpp" />
     <ClCompile Include="TEST_DgHyperArray.cpp" />
     <ClCompile Include="TEST_DgMask.cpp" />

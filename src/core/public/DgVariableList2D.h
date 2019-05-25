@@ -19,6 +19,7 @@
 #define BASE_ITERATOR
 #endif
 
+//TODO This looks deprecated and not used. Consider removing
 namespace Dg
 {
   //! @ingroup DgContainers

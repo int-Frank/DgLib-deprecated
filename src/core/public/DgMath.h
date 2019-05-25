@@ -141,7 +141,7 @@ namespace Dg
   }
 
   //! Computes 2 numbers which are closest to sprt(val) but when
-  //! multiplied together are => val
+  //! multiplied together are >= val
   template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
   void ClosestSquare(T val, T & lower,  T & upper)
   {
