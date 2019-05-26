@@ -266,11 +266,11 @@ namespace Dg
 
     Node * RawKeyIndex(K const &) const;
     void Extend();
-    int GetBalance(Node *);
+    int GetBalance(Node *) const;
 
     // A utility function to get height  
     // of the tree  
-    int Height(Node *);
+    int Height(Node *) const;
     Node * LeftRotate(Node *);
     Node * RightRotate(Node * a_y);
 
@@ -1231,7 +1231,7 @@ namespace Dg
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  int AVLTreeMap<K, V, Compare>::GetBalance(Node * a_pNode)
+  int AVLTreeMap<K, V, Compare>::GetBalance(Node * a_pNode) const
   {  
     if (a_pNode == nullptr)
     {
@@ -1241,7 +1241,7 @@ namespace Dg
   } 
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  int AVLTreeMap<K, V, Compare>::Height(Node * a_pNode)  
+  int AVLTreeMap<K, V, Compare>::Height(Node * a_pNode) const  
   {  
     if (a_pNode == nullptr)  
       return 0;  
