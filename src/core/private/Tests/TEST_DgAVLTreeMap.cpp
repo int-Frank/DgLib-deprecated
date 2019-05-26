@@ -3,7 +3,7 @@
 #include "TestHarness.h"
 #include "DgAVLTreeMap.h"
 
-typedef Dg::AVLTreeMap<int, double> Map;
+typedef Dg::AVLTreeMap<int, int> Map;
 
 bool AreEqual(Map const & m0, Map const & m1)
 {

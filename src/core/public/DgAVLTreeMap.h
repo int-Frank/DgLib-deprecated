@@ -248,9 +248,12 @@ namespace Dg
 
     void clear();
 #ifdef DEBUG
-    sizeType Ind(Node * a_pNode) const;
-    void PrintNode(Node * a_pNode) const;
+  public:
     void Print() const;
+  private:
+    sizeType Ind(Node const *) const;
+    std::string ToString(Node const *) const;
+    void PrintNode(Node const * a_pNode) const;
 #endif
   private:
 
@@ -277,6 +280,7 @@ namespace Dg
     //Constructs a new node after a_pParent. New node will point back to a_pParent.
     Node * NewNode(Node * pParent, K const & key, V const & data);
     Node * EndNode();
+    Node const * EndNode() const;
 
     //Returns the pointer to the new node.
     //Assumes tree has at least 1 element
@@ -554,9 +558,7 @@ namespace Dg
       //If right, take right, then take left all the way you can, then return.
       m_pNode = m_pNode->pRight;
       while (m_pNode->pLeft != nullptr)
-      {
         m_pNode = m_pNode->pLeft;
-      }
       return *this;
     }
 
@@ -589,9 +591,7 @@ namespace Dg
       //If left, take left, then take left all the way you can, then return.
       m_pNode = m_pNode->pLeft;
       while (m_pNode->pRight != nullptr)
-      {
         m_pNode = m_pNode->pRight;
-      }
       return *this;
     }
 
@@ -687,9 +687,7 @@ namespace Dg
       //If right, take right, then take left all the way you can, then return.
       m_pNode = m_pNode->pRight;
       while (m_pNode->pLeft != nullptr)
-      {
         m_pNode = m_pNode->pLeft;
-      }
       return *this;
     }
 
@@ -722,9 +720,7 @@ namespace Dg
       //If left, take left, then take left all the way you can, then return.
       m_pNode = m_pNode->pLeft;
       while (m_pNode->pRight != nullptr)
-      {
         m_pNode = m_pNode->pRight;
-      }
       return *this;
     }
 
@@ -905,9 +901,7 @@ namespace Dg
   {
     Node * pNode = m_pRoot;
     while (pNode->pLeft != nullptr)
-    {
       pNode = pNode->pLeft;
-    }
     return iterator(pNode);
   }
 
@@ -924,9 +918,7 @@ namespace Dg
   {
     Node * pNode = m_pRoot;
     while (pNode->pLeft != nullptr)
-    {
       pNode = pNode->pLeft;
-    }
     return const_iterator(pNode);
   }
 
@@ -943,9 +935,7 @@ namespace Dg
   {
     Node * pNode;
     if (KeyExists(a_key, pNode))
-    {
       return const_iterator(pNode);
-    }
     return cend();
   }
 
@@ -955,9 +945,7 @@ namespace Dg
   {
     Node * pNode;
     if (KeyExists(a_key, pNode))
-    {
       return iterator(pNode);
-    }
     return end();
   }
 
@@ -1002,45 +990,37 @@ namespace Dg
 #ifdef DEBUG
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::sizeType
-    AVLTreeMap<K, V, Compare>::AVLTreeMap::Ind(Node * a_pNode) const
+    AVLTreeMap<K, V, Compare>::AVLTreeMap::Ind(Node const * a_pNode) const
   {
     return a_pNode - m_pNodes;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  void AVLTreeMap<K, V, Compare>::PrintNode(Node * a_pNode) const
+  std::string 
+    AVLTreeMap<K, V, Compare>::AVLTreeMap::ToString(Node const * a_pNode) const
   {
-    std::cout << "Index: ";
+    std::stringstream ss;
     if (a_pNode == nullptr)
-      std::cout << "NULL";
+      ss << "NULL";
     else
-      std::cout << Ind(a_pNode);
+      ss << Ind(a_pNode);
+    return ss.str();
+  }
 
-    std::cout << ", Left: ";
-    if (a_pNode->pLeft == nullptr)
-      std::cout << "NULL";
-    else
-      std::cout << Ind(a_pNode->pLeft);
-
-    std::cout << ", Right: ";
-    if (a_pNode->pRight == nullptr)
-      std::cout << "NULL";
-    else
-      std::cout << Ind(a_pNode->pRight);
-
-    std::cout << ", Parent: ";
-    if (a_pNode->pParent == nullptr)
-      std::cout << "NULL";
-    else
-      std::cout << Ind(a_pNode->pParent);
-
-    std::cout << ", Key: ";
+  template<typename K, typename V, bool (*Compare)(K const &, K const &)>
+  void AVLTreeMap<K, V, Compare>::PrintNode(Node const * a_pNode) const
+  {
+    std::cout << "Index: " << ToString(a_pNode)
+      << ", Parent: "  << ToString(a_pNode->pParent)
+      << ", Left: "  << ToString(a_pNode->pLeft)
+      << ", Right: "  << ToString(a_pNode->pRight)
+      << ", Key: ";
     if (a_pNode->pKV == nullptr)
       std::cout << "NULL";
     else
       std::cout << a_pNode->pKV->first;
 
-    std::cout << ", Height: " << a_pNode->height << "\n\n";
+    std::cout << ", Height: " << a_pNode->height << "\n";
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1049,10 +1029,12 @@ namespace Dg
     std::cout << "nItems: " << m_nItems << '\n';
     std::cout << "Root:\n";
     PrintNode(m_pRoot);
+    std::cout << '\n';
     for (sizeType i = 0; i < m_nItems; i++)
     {
       PrintNode(&m_pNodes[i]);
     } 
+    std::cout << '\n';
     std::cout << "End:\n";
     PrintNode(EndNode());
   }
@@ -1062,9 +1044,7 @@ namespace Dg
   void AVLTreeMap<K, V, Compare>::DestructAll()
   {
     for (sizeType i = 0; i < m_nItems; i++)
-    {
       m_pKVs[i].~ValueType();
-    }
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1115,10 +1095,8 @@ namespace Dg
     }
 
     //Don't construct data for the end node
-    for (sizeType i = 0; i <= m_nItems; i++)
-    {
+    for (sizeType i = 0; i < m_nItems; i++)
       new (&m_pKVs[i]) ValueType(a_other.m_pKVs[i]);
-    }
 
     m_pRoot = m_pNodes + (a_other.m_pRoot - a_other.m_pNodes);
   }
@@ -1128,14 +1106,9 @@ namespace Dg
   {
     a_out = m_pRoot;
     bool result = false;
-    do
+    while (a_out != EndNode())
     {
       ValueType * pKV = a_out->pKV;
-
-      //End node
-      if (!pKV)
-        break;
-
       bool left = Compare(a_key, pKV->first);
 
       if (left)
@@ -1157,7 +1130,7 @@ namespace Dg
         else
           break;
       }
-    } while (true);
+    }
     return result;
   }
 
@@ -1167,9 +1140,7 @@ namespace Dg
   {
     Node * pResult;
     if (!KeyExists(a_key, pResult))
-    {
       throw std::out_of_range("Invalid key!");
-    }
     return pResult;
   }
 
@@ -1187,7 +1158,7 @@ namespace Dg
     if (oldNodes != m_pNodes)
     {
       m_pRoot = m_pNodes + (m_pRoot - oldNodes);
-      for (sizeType i = 0; i < m_nItems + 1; i++)
+      for (sizeType i = 0; i <= m_nItems; i++)
       {
         if (m_pNodes[i].pParent)
           m_pNodes[i].pParent = m_pNodes + (m_pNodes[i].pParent - oldNodes);
@@ -1206,9 +1177,7 @@ namespace Dg
     if (oldKVs != m_pKVs)
     {
       for (sizeType i = 0; i < m_nItems; i++)
-      {
         m_pNodes[i].pKV = m_pKVs + (m_pNodes[i].pKV - oldKVs);
-      }
     }
   }
 
@@ -1216,9 +1185,7 @@ namespace Dg
   int AVLTreeMap<K, V, Compare>::GetBalance(Node * a_pNode) const
   {  
     if (a_pNode == nullptr)
-    {
       return 0;  
-    }
     return Height(a_pNode->pLeft) - Height(a_pNode->pRight);  
   } 
 
@@ -1309,11 +1276,9 @@ namespace Dg
     memcpy(&m_pNodes[m_nItems + 1], &m_pNodes[m_nItems], sizeof(Node));
     Node * endNode = &m_pNodes[m_nItems + 1];
 
+    //Notify the last element in the tree that the end node has shifted
     if (endNode->pParent)
-    {
-      //Notify the last element in the tree that the end node has shifted
       endNode->pParent->pRight = endNode;
-    }
 
     //Insert new node
     Node * newNode = &m_pNodes[m_nItems];
@@ -1330,6 +1295,13 @@ namespace Dg
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::Node * 
     AVLTreeMap<K, V, Compare>::EndNode()
+  {
+    return &m_pNodes[m_nItems];
+  }
+
+  template<typename K, typename V, bool (*Compare)(K const &, K const &)>
+  typename AVLTreeMap<K, V, Compare>::Node const * 
+    AVLTreeMap<K, V, Compare>::EndNode() const
   {
     return &m_pNodes[m_nItems];
   }
