@@ -204,13 +204,13 @@ namespace Dg
 
     iterator_rand begin_rand();
     iterator_rand end_rand();
-    const_iterator_rand cbegin_rand();
-    const_iterator_rand cend_rand();
+    const_iterator_rand cbegin_rand() const;
+    const_iterator_rand cend_rand() const;
 
     iterator begin();
     iterator end();
-    const_iterator cbegin();
-    const_iterator cend();
+    const_iterator cbegin() const;
+    const_iterator cend() const;
 
     //If the key already exists in the map, the data is 
     //inserted at this key
@@ -625,7 +625,7 @@ namespace Dg
   typename AVLTreeMap<K, V, Compare>::ValueType const & 
     AVLTreeMap<K, V, Compare>::const_iterator::operator*() const
   {
-    return &(*m_pNode->pKV);
+    return *m_pNode->pKV;
   }
 
   //------------------------------------------------------------------------------------------------
@@ -887,14 +887,14 @@ namespace Dg
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::AVLTreeMap::const_iterator_rand
-    AVLTreeMap<K, V, Compare>::AVLTreeMap::cbegin_rand()
+    AVLTreeMap<K, V, Compare>::AVLTreeMap::cbegin_rand() const
   {
     return const_iterator_rand(m_pKVs);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::AVLTreeMap::const_iterator_rand
-    AVLTreeMap<K, V, Compare>::AVLTreeMap::cend_rand()
+    AVLTreeMap<K, V, Compare>::AVLTreeMap::cend_rand() const
   {
     return const_iterator_rand(m_pKVs + m_nItems);
   }
@@ -920,7 +920,7 @@ namespace Dg
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::AVLTreeMap::const_iterator
-    AVLTreeMap<K, V, Compare>::AVLTreeMap::cbegin()
+    AVLTreeMap<K, V, Compare>::AVLTreeMap::cbegin() const
   {
     Node * pNode = m_pRoot;
     while (pNode->pLeft != nullptr)
@@ -932,7 +932,7 @@ namespace Dg
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::AVLTreeMap::const_iterator
-    AVLTreeMap<K, V, Compare>::AVLTreeMap::cend()
+    AVLTreeMap<K, V, Compare>::AVLTreeMap::cend() const
   {
     return const_iterator(m_pNodes + m_nItems);
   }
@@ -1103,19 +1103,30 @@ namespace Dg
     InitMemory();
 
     m_nItems = a_other.m_nItems;
-    m_pRoot = m_pNodes + (a_other.m_pRoot - a_other.m_pNodes);
 
-    for (sizeType i = 0; i < m_nItems; i++)
+    for (sizeType i = 0; i <= m_nItems; i++)
     {
-      Node newNode;
-      newNode.pParent = m_pNodes + (a_other.m_pNodes[i].pParent - a_other.m_pNodes);
-      newNode.pLeft = m_pNodes + (a_other.m_pNodes[i].pLeft - a_other.m_pNodes);
-      newNode.pRight = m_pNodes + (a_other.m_pNodes[i].pRight - a_other.m_pNodes);
-      newNode.pKV = m_pNodes + (a_other.m_pNodes[i].pKV - a_other.m_pKVs);
+      Node newNode{nullptr, nullptr, nullptr, nullptr, 0};
+
+      if (a_other.m_pNodes[i].pParent)
+        newNode.pParent = m_pNodes + (a_other.m_pNodes[i].pParent - a_other.m_pNodes);
+      
+      if (a_other.m_pNodes[i].pLeft)
+        newNode.pLeft = m_pNodes + (a_other.m_pNodes[i].pLeft - a_other.m_pNodes);
+        
+      if (a_other.m_pNodes[i].pRight)
+        newNode.pRight = m_pNodes + (a_other.m_pNodes[i].pRight - a_other.m_pNodes);
+
+      if (a_other.m_pNodes[i].pKV)
+        newNode.pKV = m_pKVs + (a_other.m_pNodes[i].pKV - a_other.m_pKVs);
 
       new (&m_pNodes[i]) Node(newNode);
-      new (&m_pKVs[i]) ValueType(a_other.m_pKVs[i]);
+
+      //Don't construct data for the end node
+      if (i < m_nItems)
+        new (&m_pKVs[i]) ValueType(a_other.m_pKVs[i]);
     }
+    m_pRoot = m_pNodes + (a_other.m_pRoot - a_other.m_pNodes);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
