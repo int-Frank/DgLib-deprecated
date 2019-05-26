@@ -34,17 +34,21 @@ namespace Dg
   template<typename K, typename V, bool (*Compare)(K const &, K const &) = impl::Less<K>>
   class AVLTreeMap : public ContainerBase
   {
+  public:
+
+    typedef Pair<K const, V> ValueType;
+
   private:
 
     typedef size_t sizeType;
 
     struct Node
     {
-      Node *        pParent;
-      Node *        pLeft;
-      Node *        pRight;
-      Pair<K, V> *  pKV;
-      int           height;
+      Node *       pParent;
+      Node *       pLeft;
+      Node *       pRight;
+      ValueType *  pKV;
+      int          height;
     };
 
   public:
@@ -58,7 +62,7 @@ namespace Dg
 
     private:
 
-      const_iterator_rand(Pair<K, V> const *  a_pKV);
+      const_iterator_rand(ValueType const *  a_pKV);
 
     public:
 
@@ -76,11 +80,11 @@ namespace Dg
       const_iterator_rand& operator--();
       const_iterator_rand operator--(int);
 
-      Pair<K, V> const * operator->() const;
-      Pair<K, V> const & operator*() const;
+      ValueType const * operator->() const;
+      ValueType const & operator*() const;
 
     private:
-      Pair<K, V> const *  m_pKV;
+      ValueType const *  m_pKV;
     };
 
     //Iterates through the map as it appears in memory. 
@@ -91,7 +95,7 @@ namespace Dg
 
     private:
 
-      iterator_rand(Pair<K, V> *  a_pKV);
+      iterator_rand(ValueType *  a_pKV);
 
     public:
 
@@ -111,11 +115,11 @@ namespace Dg
 
       operator const_iterator_rand() const;
 
-      Pair<K, V> * operator->();
-      Pair<K, V> & operator*();
+      ValueType * operator->();
+      ValueType & operator*();
 
     private:
-      Pair<K, V> *  m_pKV;
+      ValueType *  m_pKV;
     };
 
     //Iterates through the map as sorted by the criterion
@@ -138,8 +142,8 @@ namespace Dg
       bool operator==(const_iterator const & a_it) const;
       bool operator!=(const_iterator const & a_it) const;
 
-      Pair<K, V> const * operator->() const;
-      Pair<K, V> const & operator*() const;
+      ValueType const * operator->() const;
+      ValueType const & operator*() const;
 
       const_iterator & operator++();
       const_iterator operator++(int);
@@ -169,8 +173,8 @@ namespace Dg
       bool operator==(iterator const & a_it) const;
       bool operator!=(iterator const & a_it) const;
 
-      Pair<K, V> * operator->();
-      Pair<K, V> & operator*();
+      ValueType * operator->();
+      ValueType & operator*();
 
       iterator & operator++();
       iterator operator++(int);
@@ -283,7 +287,7 @@ namespace Dg
 
     Node *        m_pRoot;
     Node *        m_pNodes;
-    Pair<K, V> *  m_pKVs;
+    ValueType *   m_pKVs;
     sizeType      m_nItems;
   };
 
@@ -291,7 +295,7 @@ namespace Dg
   // const_iterator_rand
   //------------------------------------------------------------------------------------------------
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  AVLTreeMap<K, V, Compare>::const_iterator_rand::const_iterator_rand(Pair<K, V> const * a_pKV)
+  AVLTreeMap<K, V, Compare>::const_iterator_rand::const_iterator_rand(ValueType const * a_pKV)
     : m_pKV(a_pKV)
   {
 
@@ -372,14 +376,14 @@ namespace Dg
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  Pair<K, V> const * 
+  typename AVLTreeMap<K, V, Compare>::ValueType const * 
     AVLTreeMap<K, V, Compare>::const_iterator_rand::operator->() const
   {
     return m_pKV;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  Pair<K, V> const & 
+  typename AVLTreeMap<K, V, Compare>::ValueType const & 
     AVLTreeMap<K, V, Compare>::const_iterator_rand::operator*() const
   {
     return *m_pKV;
@@ -389,7 +393,7 @@ namespace Dg
   // iterator_rand
   //------------------------------------------------------------------------------------------------
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  AVLTreeMap<K, V, Compare>::iterator_rand::iterator_rand(Pair<K, V> * a_pKV)
+  AVLTreeMap<K, V, Compare>::iterator_rand::iterator_rand(ValueType * a_pKV)
     : m_pKV(a_pKV)
   {
 
@@ -477,14 +481,14 @@ namespace Dg
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  Pair<K, V> * 
+  typename AVLTreeMap<K, V, Compare>::ValueType * 
     AVLTreeMap<K, V, Compare>::iterator_rand::operator->()
   {
     return m_pKV;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  Pair<K, V> & 
+  typename AVLTreeMap<K, V, Compare>::ValueType & 
     AVLTreeMap<K, V, Compare>::iterator_rand::operator*()
   {
     return *m_pKV;
@@ -545,7 +549,7 @@ namespace Dg
   typename AVLTreeMap<K, V, Compare>::const_iterator & 
     AVLTreeMap<K, V, Compare>::const_iterator::operator++()
   {
-    if (m_pNode->Right != nullptr)
+    if (m_pNode->pRight != nullptr)
     {
       //If right, take right, then take left all the way you can, then return.
       m_pNode = m_pNode->pRight;
@@ -557,7 +561,7 @@ namespace Dg
     }
 
     //If no right, go up
-    Node * pOldNode;
+    Node const * pOldNode;
     do
     {
       pOldNode = m_pNode;
@@ -580,7 +584,7 @@ namespace Dg
     AVLTreeMap<K, V, Compare>::const_iterator::operator--()
   {
     //Try left
-    if (m_pNode->Right != nullptr)
+    if (m_pNode->pLeft != nullptr)
     {
       //If left, take left, then take left all the way you can, then return.
       m_pNode = m_pNode->pLeft;
@@ -592,7 +596,7 @@ namespace Dg
     }
 
     //If no right, go up
-    Node * pOldNode;
+    Node const * pOldNode;
     do
     {
       pOldNode = m_pNode;
@@ -611,14 +615,14 @@ namespace Dg
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  Pair<K, V> const * 
+  typename AVLTreeMap<K, V, Compare>::ValueType const * 
     AVLTreeMap<K, V, Compare>::const_iterator::operator->() const
   {
     return m_pNode->pKV;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  Pair<K, V> const & 
+  typename AVLTreeMap<K, V, Compare>::ValueType const & 
     AVLTreeMap<K, V, Compare>::const_iterator::operator*() const
   {
     return &(*m_pNode->pKV);
@@ -713,7 +717,7 @@ namespace Dg
     AVLTreeMap<K, V, Compare>::iterator::operator--()
   {
     //Try left
-    if (m_pNode->Right != nullptr)
+    if (m_pNode->pLeft != nullptr)
     {
       //If left, take left, then take left all the way you can, then return.
       m_pNode = m_pNode->pLeft;
@@ -744,14 +748,14 @@ namespace Dg
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  Pair<K, V> * 
+  typename AVLTreeMap<K, V, Compare>::ValueType * 
     AVLTreeMap<K, V, Compare>::iterator::operator->()
   {
     return m_pNode->pKV;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
-  Pair<K, V> & 
+  typename AVLTreeMap<K, V, Compare>::ValueType & 
     AVLTreeMap<K, V, Compare>::iterator::operator*()
   {
     return *m_pNode->pKV;
@@ -923,7 +927,7 @@ namespace Dg
     {
       pNode = pNode->pLeft;
     }
-    return const_iterator(mpNode);
+    return const_iterator(pNode);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1068,7 +1072,7 @@ namespace Dg
   {
     for (sizeType i = 0; i < m_nItems; i++)
     {
-      m_pKVs[i].~Pair<K, V>();
+      m_pKVs[i].~ValueType();
     }
   }
 
@@ -1076,7 +1080,7 @@ namespace Dg
   void AVLTreeMap<K, V, Compare>::InitMemory()
   {
     m_pNodes = static_cast<Node*> (realloc(m_pNodes, pool_size() * sizeof(Node)));
-    m_pKVs = static_cast<Pair<K, V>*> (realloc(m_pKVs, pool_size() * sizeof(Pair<K, V>)));
+    m_pKVs = static_cast<ValueType*> (realloc(m_pKVs, pool_size() * sizeof(ValueType)));
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1110,7 +1114,7 @@ namespace Dg
       newNode.pKV = m_pNodes + (a_other.m_pNodes[i].pKV - a_other.m_pKVs);
 
       new (&m_pNodes[i]) Node(newNode);
-      new (&m_pKVs[i]) Pair<K, V>(a_other.m_pKVs[i]);
+      new (&m_pKVs[i]) ValueType(a_other.m_pKVs[i]);
     }
   }
 
@@ -1124,7 +1128,7 @@ namespace Dg
       return false;
     }
 
-    Pair<K, V> * pKV = a_out->pKV;
+    ValueType * pKV = a_out->pKV;
 
     bool result = false;
     do
@@ -1181,10 +1185,10 @@ namespace Dg
     set_next_pool_size();
 
     Node * oldNodes = m_pNodes;
-    Pair<K, V> * oldKVs = m_pKVs;
+    ValueType * oldKVs = m_pKVs;
 
     m_pNodes = static_cast<Node*> (realloc(m_pNodes, pool_size() * sizeof(Node)));
-    m_pKVs = static_cast<Pair<K, V>*> (realloc(m_pKVs, pool_size() * sizeof(Pair<K, V>)));
+    m_pKVs = static_cast<ValueType*> (realloc(m_pKVs, pool_size() * sizeof(ValueType)));
 
     if (oldNodes != m_pNodes)
     {
@@ -1305,7 +1309,7 @@ namespace Dg
     AVLTreeMap<K, V, Compare>::NewNode(Node * a_pParent, K const & a_key, V const & a_data)
   {
     //Insert data
-    new (&m_pKVs[m_nItems]) Pair<K, V>{a_key, a_data};
+    new (&m_pKVs[m_nItems]) ValueType{a_key, a_data};
 
     //Shift end node over one
     memcpy(&m_pNodes[m_nItems + 1], &m_pNodes[m_nItems], sizeof(Node));
