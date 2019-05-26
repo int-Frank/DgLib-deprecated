@@ -228,7 +228,7 @@ namespace Dg
 
     //Searches the container for an element with a key equivalent to a_key and returns 
     //a handle to it if found, otherwise it returns an iterator to end().
-    iterator find(K const & a_key);
+    iterator find(K const &);
 
     //If k matches the key of an element in the container, the function returns 
     //a reference to its mapped value.
@@ -275,14 +275,15 @@ namespace Dg
     Node * RightRotate(Node * a_y);
 
     //Constructs a new node after a_pParent. New node will point back to a_pParent.
-    Node * NewNode(Node * a_pParent, K const & a_key, V const & a_data);
+    Node * NewNode(Node * pParent, K const & key, V const & data);
     Node * EndNode();
 
     //Returns the pointer to the new node.
     //Assumes tree has at least 1 element
     Node * __Insert(Node * a_pNode, Node * a_pParent, 
                     bool a_childIsRight, 
-                    K const & a_key, V const & a_data);
+                    K const & a_key, V const & a_data,
+                    Node *& newNode);
   private:
 
     Node *        m_pRoot;
@@ -946,7 +947,7 @@ namespace Dg
     {
       return const_iterator(pNode);
     }
-    return end();
+    return cend();
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -964,8 +965,8 @@ namespace Dg
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   V & AVLTreeMap<K, V, Compare>::AVLTreeMap::operator[](K const & a_key)
   {
-    Node * pNode = insert(a_key, V());
-    return pNode->pKV;
+    iterator it = insert(a_key, V());
+    return it->second;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -979,25 +980,24 @@ namespace Dg
       NewNode(nullptr, a_key, a_data);
       m_pRoot->pRight = EndNode();
       EndNode()->pParent = m_pRoot;
-    }
-    else
-    {
-      m_pRoot = __Insert(m_pRoot, nullptr, false, a_key, a_data);
+      return iterator(&m_pNodes[0]);
     }
 
-    return iterator(&m_pNodes[m_nItems - 1]);
+    Node * foundNode(nullptr);
+    m_pRoot = __Insert(m_pRoot, nullptr, false, a_key, a_data, foundNode);
+    return iterator(foundNode);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   V & AVLTreeMap<K, V, Compare>::AVLTreeMap::at(K const & a_key)
   {
-    return RawKeyIndex(a_key)->second;
+    return RawKeyIndex(a_key)->pKV->second;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   V const & AVLTreeMap<K, V, Compare>::AVLTreeMap::at(K const & a_key) const
   {
-    return RawKeyIndex(a_key)->second;
+    return RawKeyIndex(a_key)->pKV->second;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1121,11 +1121,14 @@ namespace Dg
         newNode.pKV = m_pKVs + (a_other.m_pNodes[i].pKV - a_other.m_pKVs);
 
       new (&m_pNodes[i]) Node(newNode);
-
-      //Don't construct data for the end node
-      if (i < m_nItems)
-        new (&m_pKVs[i]) ValueType(a_other.m_pKVs[i]);
     }
+
+    //Don't construct data for the end node
+    for (sizeType i = 0; i <= m_nItems; i++)
+    {
+      new (&m_pKVs[i]) ValueType(a_other.m_pKVs[i]);
+    }
+
     m_pRoot = m_pNodes + (a_other.m_pRoot - a_other.m_pNodes);
   }
 
@@ -1133,17 +1136,15 @@ namespace Dg
   bool AVLTreeMap<K, V, Compare>::KeyExists(K const & a_key, Node *& a_out) const
   {
     a_out = m_pRoot;
-
-    if (m_nItems == 0)
-    {
-      return false;
-    }
-
-    ValueType * pKV = a_out->pKV;
-
     bool result = false;
     do
     {
+      ValueType * pKV = a_out->pKV;
+
+      //End node
+      if (!pKV)
+        break;
+
       if (pKV->first == a_key)
       {
         result = true;
@@ -1156,7 +1157,7 @@ namespace Dg
       {
         if (a_out->pLeft != nullptr)
         {
-          a_out = a_out->Left;
+          a_out = a_out->pLeft;
         }
         else
         {
@@ -1355,7 +1356,8 @@ namespace Dg
   typename AVLTreeMap<K, V, Compare>::Node * 
     AVLTreeMap<K, V, Compare>::__Insert(Node * a_pNode, Node * a_pParent, 
       bool a_childIsRight, 
-      K const & a_key, V const & a_data)
+      K const & a_key, V const & a_data,
+      Node *& a_newNode)
   {
     //Check if leaf node or final node in the tree. The final node will point
     //to the end node.
@@ -1364,30 +1366,33 @@ namespace Dg
 
     if (a_pNode == nullptr || isEndNode )
     {
-      Node * pNode = NewNode(a_pParent, a_key, a_data);
+      a_newNode = NewNode(a_pParent, a_key, a_data);
 
       //The right child of the parent might be the end node.
       if (a_pParent && a_childIsRight)
       {
-        pNode->pRight = a_pParent->pRight;
+        a_newNode->pRight = a_pParent->pRight;
       }
 
       if (isEndNode)
       {
-        EndNode()->pParent = pNode;
+        EndNode()->pParent = a_newNode;
       }
 
-      return pNode;
+      return a_newNode;
     }
 
     //Same key
     if (a_key == a_pNode->pKV->first)
+    {
+      a_newNode = a_pNode;
       return a_pNode;
+    }
 
     if (Compare(a_key, a_pNode->pKV->first))
-      a_pNode->pLeft = __Insert(a_pNode->pLeft, a_pNode, false, a_key, a_data);
+      a_pNode->pLeft = __Insert(a_pNode->pLeft, a_pNode, false, a_key, a_data, a_newNode);
     else
-      a_pNode->pRight = __Insert(a_pNode->pRight, a_pNode, true, a_key, a_data);
+      a_pNode->pRight = __Insert(a_pNode->pRight, a_pNode, true, a_key, a_data, a_newNode);
 
     a_pNode->height = 1 + impl::Max(Height(a_pNode->pLeft), Height(a_pNode->pRight));
     int balance = GetBalance(a_pNode);
