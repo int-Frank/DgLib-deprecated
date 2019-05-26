@@ -280,8 +280,7 @@ namespace Dg
 
     //Returns the pointer to the new node.
     //Assumes tree has at least 1 element
-    Node * __Insert(Node * a_pNode, Node * a_pParent, 
-                    bool a_childIsRight, 
+    Node * __Insert(Node * a_pNode, Node * a_pParent,
                     K const & a_key, V const & a_data,
                     Node *& newNode);
   private:
@@ -975,16 +974,8 @@ namespace Dg
     if ((m_nItems + 1) == pool_size())
       Extend();
 
-    if (m_nItems == 0)
-    {
-      NewNode(nullptr, a_key, a_data);
-      m_pRoot->pRight = EndNode();
-      EndNode()->pParent = m_pRoot;
-      return iterator(&m_pNodes[0]);
-    }
-
     Node * foundNode(nullptr);
-    m_pRoot = __Insert(m_pRoot, nullptr, false, a_key, a_data, foundNode);
+    m_pRoot = __Insert(m_pRoot, nullptr, a_key, a_data, foundNode);
     return iterator(foundNode);
   }
 
@@ -1145,35 +1136,26 @@ namespace Dg
       if (!pKV)
         break;
 
-      if (pKV->first == a_key)
-      {
-        result = true;
-        break;
-      }
-
       bool left = Compare(a_key, pKV->first);
 
       if (left)
       {
         if (a_out->pLeft != nullptr)
-        {
           a_out = a_out->pLeft;
-        }
         else
-        {
           break;
-        }
+      }
+      else if (pKV->first == a_key)
+      {
+        result = true;
+        break;
       }
       else
       {
         if (a_out->pRight != nullptr)
-        {
           a_out = a_out->pRight;
-        }
         else
-        {
           break;
-        }
       }
     } while (true);
     return result;
@@ -1354,31 +1336,21 @@ namespace Dg
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::Node * 
-    AVLTreeMap<K, V, Compare>::__Insert(Node * a_pNode, Node * a_pParent, 
-      bool a_childIsRight, 
+    AVLTreeMap<K, V, Compare>::__Insert(Node * a_pNode, Node * a_pParent,
       K const & a_key, V const & a_data,
       Node *& a_newNode)
   {
     //Check if leaf node or final node in the tree. The final node will point
     //to the end node.
-
     bool isEndNode = a_pNode == EndNode();
-
     if (a_pNode == nullptr || isEndNode )
     {
       a_newNode = NewNode(a_pParent, a_key, a_data);
-
-      //The right child of the parent might be the end node.
-      if (a_pParent && a_childIsRight)
-      {
-        a_newNode->pRight = a_pParent->pRight;
-      }
-
       if (isEndNode)
       {
         EndNode()->pParent = a_newNode;
+        a_newNode->pRight = EndNode();
       }
-
       return a_newNode;
     }
 
@@ -1390,9 +1362,9 @@ namespace Dg
     }
 
     if (Compare(a_key, a_pNode->pKV->first))
-      a_pNode->pLeft = __Insert(a_pNode->pLeft, a_pNode, false, a_key, a_data, a_newNode);
+      a_pNode->pLeft = __Insert(a_pNode->pLeft, a_pNode, a_key, a_data, a_newNode);
     else
-      a_pNode->pRight = __Insert(a_pNode->pRight, a_pNode, true, a_key, a_data, a_newNode);
+      a_pNode->pRight = __Insert(a_pNode->pRight, a_pNode, a_key, a_data, a_newNode);
 
     a_pNode->height = 1 + impl::Max(Height(a_pNode->pLeft), Height(a_pNode->pRight));
     int balance = GetBalance(a_pNode);
