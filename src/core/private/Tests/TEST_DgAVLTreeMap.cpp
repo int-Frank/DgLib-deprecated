@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "TestHarness.h"
+
+#define DEBUG
 #include "DgAVLTreeMap.h"
 
 typedef Dg::AVLTreeMap<int, int> Map;
@@ -112,6 +114,7 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
 
   for (Map::iterator_rand itr = map.begin_rand(); itr != map.end_rand(); itr++)
   {
+    Map::const_iterator_rand citr(itr);
     std::cout << itr->first << ", "; 
   }
   std::cout << '\n';

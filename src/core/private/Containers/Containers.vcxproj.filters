@@ -40,9 +40,6 @@
     <ClInclude Include="..\..\public\DgVariableArray2D.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgMap.h">
-      <Filter>Public Headers\deprecated</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgQuadTree.h">
       <Filter>Public Headers\deprecated</Filter>
     </ClInclude>

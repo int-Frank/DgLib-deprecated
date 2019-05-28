@@ -8,7 +8,6 @@
 #include "impl/DgContainerBase.h"
 #include "DgErrorHandler.h"
 
-#define DEBUG
 #ifdef DEBUG
 #include <sstream>
 #include <iostream>
@@ -31,6 +30,7 @@ namespace Dg
     }
   }
 
+  //An end node will follow the last element in the tree.
   template<typename K, typename V, bool (*Compare)(K const &, K const &) = impl::Less<K>>
   class AVLTreeMap : public ContainerBase
   {
@@ -807,6 +807,8 @@ namespace Dg
     , m_nItems(0)
     , m_pRoot(nullptr)
   {
+    pool_size(a_other.pool_size());
+    InitMemory();
     Init(a_other);
   }
 
@@ -817,6 +819,13 @@ namespace Dg
     if (this != &a_other)
     {
       DestructAll();
+
+      if (pool_size() < a_other.pool_size())
+      {
+        pool_size(a_other.pool_size());
+        InitMemory();
+      }
+
       Init(a_other);
     }
     return *this;
@@ -829,6 +838,7 @@ namespace Dg
     , m_nItems(a_other.m_nItems)
     , m_pRoot(a_other.m_pRoot)
   {
+    pool_size(m_nItems);
     a_other.m_pKVs = nullptr;
     a_other.m_pNodes = nullptr;
     a_other.m_nItems = 0;
@@ -845,6 +855,7 @@ namespace Dg
       m_pNodes = a_other.m_pNodes;
       m_nItems = a_other.m_nItems;
       m_pRoot = a_other.m_pRoot;
+      pool_size(m_nItems);
 
       a_other.m_pKVs = nullptr;
       a_other.m_pNodes = nullptr;
@@ -1070,17 +1081,12 @@ namespace Dg
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   void AVLTreeMap<K, V, Compare>::Init(AVLTreeMap const & a_other)
   {
-    pool_size(a_other.pool_size());
-    InitMemory();
-
     m_nItems = a_other.m_nItems;
 
     for (sizeType i = 0; i <= m_nItems; i++)
     {
       Node newNode{nullptr, nullptr, nullptr, nullptr, 0};
-
-      if (a_other.m_pNodes[i].pParent)
-        newNode.pParent = m_pNodes + (a_other.m_pNodes[i].pParent - a_other.m_pNodes);
+      newNode.pParent = m_pNodes + (a_other.m_pNodes[i].pParent - a_other.m_pNodes);
       
       if (a_other.m_pNodes[i].pLeft)
         newNode.pLeft = m_pNodes + (a_other.m_pNodes[i].pLeft - a_other.m_pNodes);
@@ -1088,17 +1094,17 @@ namespace Dg
       if (a_other.m_pNodes[i].pRight)
         newNode.pRight = m_pNodes + (a_other.m_pNodes[i].pRight - a_other.m_pNodes);
 
-      if (a_other.m_pNodes[i].pKV)
-        newNode.pKV = m_pKVs + (a_other.m_pNodes[i].pKV - a_other.m_pKVs);
-
       new (&m_pNodes[i]) Node(newNode);
     }
 
-    //Don't construct data for the end node
     for (sizeType i = 0; i < m_nItems; i++)
+    {
       new (&m_pKVs[i]) ValueType(a_other.m_pKVs[i]);
+      m_pNodes[i].pKV = m_pKVs + (a_other.m_pNodes[i].pKV - a_other.m_pKVs);
+    }
 
     m_pRoot = m_pNodes + (a_other.m_pRoot - a_other.m_pNodes);
+    m_pRoot->pParent = nullptr;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1109,9 +1115,7 @@ namespace Dg
     while (a_out != EndNode())
     {
       ValueType * pKV = a_out->pKV;
-      bool left = Compare(a_key, pKV->first);
-
-      if (left)
+      if (Compare(a_key, pKV->first))
       {
         if (a_out->pLeft != nullptr)
           a_out = a_out->pLeft;
@@ -1160,18 +1164,15 @@ namespace Dg
       m_pRoot = m_pNodes + (m_pRoot - oldNodes);
       for (sizeType i = 0; i <= m_nItems; i++)
       {
-        if (m_pNodes[i].pParent)
-          m_pNodes[i].pParent = m_pNodes + (m_pNodes[i].pParent - oldNodes);
+        m_pNodes[i].pParent = m_pNodes + (m_pNodes[i].pParent - oldNodes);
 
         if (m_pNodes[i].pLeft)
           m_pNodes[i].pLeft = m_pNodes + (m_pNodes[i].pLeft - oldNodes);
 
         if (m_pNodes[i].pRight)
           m_pNodes[i].pRight = m_pNodes + (m_pNodes[i].pRight - oldNodes);
-
-        m_pNodes[i].height = m_pNodes[i].height;
-        m_pNodes[i].pKV = m_pNodes[i].pKV;
       }
+      m_pRoot->pParent = nullptr;
     }
 
     if (oldKVs != m_pKVs)
@@ -1314,7 +1315,7 @@ namespace Dg
   {
     //Check if leaf node or final node in the tree. The final node will point
     //to the end node.
-    bool isEndNode = a_pNode == EndNode();
+    bool isEndNode = (a_pNode == EndNode());
     if (a_pNode == nullptr || isEndNode )
     {
       a_newNode = NewNode(a_pParent, a_key, a_data);
@@ -1362,8 +1363,6 @@ namespace Dg
       a_pNode->pRight = RightRotate(a_pNode->pRight);
       return LeftRotate(a_pNode);
     }  
-
-    /* return the (unchanged) node pointer */
     return a_pNode;
   }
 }
