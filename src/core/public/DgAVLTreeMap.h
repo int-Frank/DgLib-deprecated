@@ -807,7 +807,6 @@ namespace Dg
     , m_nItems(0)
     , m_pRoot(nullptr)
   {
-    pool_size(a_other.pool_size());
     InitMemory();
     Init(a_other);
   }
@@ -833,12 +832,12 @@ namespace Dg
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   AVLTreeMap<K, V, Compare>::AVLTreeMap(AVLTreeMap && a_other)
-    : m_pKVs(a_other.m_pKVs)
+    : ContainerBase(a_other)
+    , m_pKVs(a_other.m_pKVs)
     , m_pNodes(a_other.m_pNodes)
     , m_nItems(a_other.m_nItems)
     , m_pRoot(a_other.m_pRoot)
   {
-    pool_size(m_nItems);
     a_other.m_pKVs = nullptr;
     a_other.m_pNodes = nullptr;
     a_other.m_nItems = 0;
@@ -851,11 +850,11 @@ namespace Dg
   {
     if (this != &a_other)
     {
+      ContainerBase::operator=(a_other);
       m_pKVs = a_other.m_pKVs;
       m_pNodes = a_other.m_pNodes;
       m_nItems = a_other.m_nItems;
       m_pRoot = a_other.m_pRoot;
-      pool_size(m_nItems);
 
       a_other.m_pKVs = nullptr;
       a_other.m_pNodes = nullptr;
