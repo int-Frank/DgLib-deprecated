@@ -1,4 +1,5 @@
 #include <iostream>
+#include <set>
 
 #include "TestHarness.h"
 
@@ -191,31 +192,6 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
   //----------------------------------------------------------------------------------------
   //Erasing
   //----------------------------------------------------------------------------------------
-  //map.clear();
-  //map.insert(1, 2);
-  //map.insert(2, 4);
-  //map.insert(3, 6);
-  //map.insert(4, 6);
-  //map.insert(5, 6);
-  ////map.insert(6, 6);
-  ////map.insert(4, 8);
-  ////map.Print();
-  ////map.erase(4);
-  ////map.Print();
-  ////map.erase(6);
-  //map.erase(5);
-  //map.Print();
-  //map.erase(4);
-  //map.Print();
-  //map.erase(3);
-  //map.Print();
-  //map.erase(2);
-  //map.Print();
-  ////map.erase(1);
-  ////map.Print();
-
-  /*char t(0);
-  std::cin >> t;*/
   map.clear();
   for (int i = 0; i < nItems; i++)
   {
@@ -250,6 +226,73 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
     }
   }
   
+  map = map2;
+  std::set<int> items;
+  for (int i = 1; i <= 20; i++)
+    items.insert(i);
+
+  for (int i = 0; i < nItems; i++)
+  {
+    map.erase(keys[i]);
+    items.erase(keys[i]);
+    std::set<int>::iterator sit = items.begin();
+    for (auto kv : map)
+    {
+      CHECK(kv.first == *sit);
+      CHECK(kv.second == 2 * *sit);
+      sit++;
+    }
+  }
+
+  map = map2;
+  it = map.begin();
+  for (int i = 1; i < nItems; i++)
+  {
+    it = map.erase(it);
+    CHECK(it->first == i+1);
+  }
+
+  it = map.erase(it);
+  CHECK(it == map.end());
+
+  map = map2;
+  it = map.end();
+  for (int i = nItems; i > 0; i--)
+  {
+    it--;
+    it = map.erase(it);
+    CHECK(it == map.end());
+  }
+
+  map = map2;
+  it = map.begin();
+  for (int i = 0; i < 5; i++)
+    it++;
+  //Erase 6
+  it = map.erase(it);
+  int val = it->first;
+  CHECK(it->first == 7);
+
+  for (int i = 0; i < 2; i++)
+    it++;
+
+  //Erase 9
+  it = map.erase(it);
+  CHECK(it->first == 10);
+
+  it--;
+  //Erase 8
+  it = map.erase(it);
+  CHECK(it->first == 10);
+
+  map = map2;
+  it = map.begin();
+  for (int i = 0; i < 8; i++)
+    it++;
+  //Erase 9 (root)
+  it = map.erase(it);
+  CHECK(it->first == 10);
+
   //----------------------------------------------------------------------------------------
   //Clearing
   //----------------------------------------------------------------------------------------
