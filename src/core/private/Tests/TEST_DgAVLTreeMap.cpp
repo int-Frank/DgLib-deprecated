@@ -191,8 +191,64 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
   //----------------------------------------------------------------------------------------
   //Erasing
   //----------------------------------------------------------------------------------------
-  
-  
+  //map.clear();
+  //map.insert(1, 2);
+  //map.insert(2, 4);
+  //map.insert(3, 6);
+  //map.insert(4, 6);
+  //map.insert(5, 6);
+  ////map.insert(6, 6);
+  ////map.insert(4, 8);
+  ////map.Print();
+  ////map.erase(4);
+  ////map.Print();
+  ////map.erase(6);
+  //map.erase(5);
+  //map.Print();
+  //map.erase(4);
+  //map.Print();
+  //map.erase(3);
+  //map.Print();
+  //map.erase(2);
+  //map.Print();
+  ////map.erase(1);
+  ////map.Print();
+
+  /*char t(0);
+  std::cin >> t;*/
+  map.clear();
+  for (int i = 0; i < nItems; i++)
+  {
+    map[keys[i]] = 2 * keys[i];
+  }
+
+  map2 = map;
+  for (int i = nItems; i >= 1; i--)
+  {
+    map.erase(i);
+
+    int value = 1;
+    for (auto kv : map)
+    {
+      CHECK(kv.first == value);
+      CHECK(kv.second == 2 * value);
+      value++;
+    }
+  }
+
+  map = map2;
+  for (int i = 1; i <= nItems; i++)
+  {
+    map.erase(i);
+
+    int value = i + 1;
+    for (auto kv : map)
+    {
+      CHECK(kv.first == value);
+      CHECK(kv.second == 2 * value);
+      value++;
+    }
+  }
   
   //----------------------------------------------------------------------------------------
   //Clearing
