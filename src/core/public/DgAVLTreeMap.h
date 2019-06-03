@@ -292,11 +292,11 @@ namespace Dg
 
     //Constructs a new node after a_pParent. New node will point back to a_pParent.
     Node * NewNode(Node * pParent, K const & key, V const & data);
-    Node * EndNode();
-    Node const * EndNode() const;
+    inline Node * EndNode();
+    inline Node const * EndNode() const;
 
-    ValueType * GetAssociatedKV(Node *);
-    ValueType const * GetAssociatedKV(Node const *) const;
+    inline ValueType * GetAssociatedKV(Node *);
+    inline ValueType const * GetAssociatedKV(Node const *) const;
 
     //Returns the pointer to the new node.
     //Assumes tree has at least 1 element
