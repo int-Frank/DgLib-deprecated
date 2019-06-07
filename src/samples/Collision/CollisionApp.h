@@ -8,8 +8,6 @@
 #include "Types.h"
 #include "Mod_Context_Line.h"
 #include "Mod_Window.h"
-#include "DirectionMask.h"
-#include "DgDynamicArray.h"
 
 #define MAX_OBJECTS 64
 

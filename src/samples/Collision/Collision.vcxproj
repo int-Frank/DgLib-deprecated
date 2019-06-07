@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CollisionApp.cpp" />
+    <ClCompile Include="CollisionCode.cpp" />
     <ClCompile Include="DirectionMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Tests.cpp" />

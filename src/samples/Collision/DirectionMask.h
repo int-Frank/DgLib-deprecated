@@ -7,6 +7,9 @@
 
 class DM_Base;
 
+//TODO instead of new stated being created on the heap,
+//     states should return the address of a static state.
+//     The only downside is this will then not be thread safe.
 class DirMask
 {
 public:
