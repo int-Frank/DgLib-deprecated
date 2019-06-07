@@ -10,8 +10,8 @@ import subprocess
 
 #You will need to set the path to these
 MSBuildPath         = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe")
-LibEXEPath64        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.10.25017/bin/HostX64/x64/lib.exe")
-LibEXEPath32        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.10.25017/bin/HostX86/x86/lib.exe")
+LibEXEPath64        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/lib.exe")
+LibEXEPath32        = os.path.abspath("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/HostX86/x86/lib.exe")
 DoxygenEXEPath      = os.path.abspath("D:/Programs/doxygen/bin/doxygen.exe")
 
 FailOnBadDocs       = False #Fail the build if there are errors in doc compilation

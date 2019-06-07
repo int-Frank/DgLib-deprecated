@@ -56,6 +56,9 @@ namespace Dg
 
     //! Copy constructor
     DynamicArray(DynamicArray const & a_other)
+      : ContainerBase(a_other.size())
+      , m_pData(nullptr)
+      , m_nItems(0)
     {
       init(a_other);
     }

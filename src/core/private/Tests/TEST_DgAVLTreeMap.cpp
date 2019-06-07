@@ -293,6 +293,58 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
   it = map.erase(it);
   CHECK(it->first == 10);
 
+  map = map2;
+  items.clear();
+  for (int i = 1; i <= 20; i++)
+    items.insert(i);
+
+  //Check deletion of each element only
+  for (int i = 0; i < nItems; i++)
+  {
+    items.erase(keys[i]);
+    map.erase(keys[i]);
+    std::set<int>::iterator sit = items.begin();
+    for (auto kv : map)
+    {
+      CHECK(kv.first == *sit);
+      CHECK(kv.second == 2 * *sit);
+      sit++;
+    }
+    map = map2;
+    items.insert(keys[i]);
+  }
+
+  //Check deletion of each element only via iterator
+  map = map2;
+  for (int i = 0; i < nItems; i++)
+  {
+    it = map.begin();
+    for (int j = 0; j < keys[i] - 1; j++)
+      it++;
+
+    items.erase(keys[i]);
+    it = map.erase(it);
+
+    if (keys[i] == 20)
+    {
+      CHECK(it == map.end());
+    }
+    else
+    {
+      CHECK(it->first == keys[i] + 1);
+    }
+
+    std::set<int>::iterator sit = items.begin();
+    for (auto kv : map)
+    {
+      CHECK(kv.first == *sit);
+      CHECK(kv.second == 2 * *sit);
+      sit++;
+    }
+    map = map2;
+    items.insert(keys[i]);
+  }
+
   //----------------------------------------------------------------------------------------
   //Clearing
   //----------------------------------------------------------------------------------------

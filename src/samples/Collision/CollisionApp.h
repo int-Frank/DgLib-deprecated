@@ -11,6 +11,8 @@
 #include "DirectionMask.h"
 #include "DgDynamicArray.h"
 
+#define MAX_OBJECTS 64
+
 struct ScreenObject
 {
   mat4    transform;
@@ -43,6 +45,7 @@ public:
 
 struct CPDataPoint
 {
+  bool active;
   size_t index;
   vec3   vToPoint;
   float  distSqToPoint;
@@ -50,6 +53,7 @@ struct CPDataPoint
 
 struct CPDataLine
 {
+  bool active;
   size_t        index;
   float         u;
   vec3          vToLine;
@@ -58,6 +62,7 @@ struct CPDataLine
 
 struct CPDataDisk
 {
+  bool active;
   size_t index;
   vec3   vToDisk;
   float  distSqToDisk;
@@ -68,10 +73,18 @@ class AllCPData
 public:
 
   bool Empty() const;
+  void SetFlags(bool);
 
-  Dg::DynamicArray<CPDataLine>  lines;
-  Dg::DynamicArray<CPDataPoint> points;
-  Dg::DynamicArray<CPDataDisk>  disks;
+  //TODO consider using dynamic arrays as this will break for more
+  //objects than MAX_OBJECTS. Example there may be a lot of projectiles
+  //on screen.
+  CPDataLine  lines[MAX_OBJECTS];
+  CPDataPoint points[MAX_OBJECTS];
+  CPDataDisk  disks[MAX_OBJECTS];
+
+  int nLines;
+  int nPoints;
+  int nDisks;
 };
 
 struct ModifiedPuck
@@ -101,11 +114,11 @@ private:
   void Render();
 
   vec3 MovePuck(Puck const &, float dt) const;
-  void DoIntersections(ModifiedPuck &,
-                       AllCPData const &) const;
-  void GetPCS(Disk const &, float, AllCPData &) const;
+  void FindIntersections(ModifiedPuck &,
+                       AllCPData &) const;
+  void GetPCS(Disk const &, AllCPData &) const;
   void SetCPData(Disk const &, AllCPData &) const;
-
+  float StepToNextIntersection(ModifiedPuck &, float, AllCPData const &) const;
 private:
 
   typedef std::map<Context::ObjectHandle, ScreenObject> dMap;

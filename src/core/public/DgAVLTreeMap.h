@@ -41,6 +41,12 @@ namespace Dg
     Node * GetPrevious(Node const *);
   }
 
+  //AVL tree implemented with an object pool. 
+  //Objectives:
+  // 1) Fast searching
+  // 2) No memory allocation on insert. Only caveat is on extending the object pool
+  // 3) No memory deallocation on erasing elements
+  // 4) Fast iteration over elements if order is not important (iterator_rand)
   //An end node will follow the last element in the tree.
   template<typename K, typename V, bool (*Compare)(K const &, K const &) = impl::Less<K>>
   class AVLTreeMap : public ContainerBase
@@ -1471,6 +1477,8 @@ namespace Dg
 
         //Shift last node to fill in empty slot
         impl::Node * oldNode = &m_pNodes[m_nItems - 1];
+
+        //We have several pointers to nodes in use that may need to be updated... 
         a_data.oldNodeAdd = oldNode;
         a_data.newNodeAdd = a_pRoot;
 
@@ -1481,6 +1489,7 @@ namespace Dg
           if (a_data.pNext == oldNode)
             a_data.pNext = a_pRoot;
         }
+
         *a_pRoot = *oldNode;
         if (a_pRoot->pParent)
         {
