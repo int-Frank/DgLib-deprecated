@@ -166,7 +166,7 @@ namespace Dg
   template<class T>
   VariableArray2D<T>::VariableArray2D(VariableArray2D<T> && a_other) 
     : m_data(std::move(a_other.m_data))
-    , m_indices(std::move(a_other.m_ indices))
+    , m_indices(std::move(a_other.m_indices))
   {
 
   }	//End: VariableArray2D::VariableArray2D()

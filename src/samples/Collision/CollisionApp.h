@@ -112,7 +112,8 @@ private:
   void Render();
 
   vec3 MovePuck(Puck const &, float dt) const;
-  void FindIntersections(ModifiedPuck &,
+  void MovePuck(ModifiedPuck &, float dt) const;
+  void HandleIntersections(ModifiedPuck &,
                        AllCPData &) const;
   void GetPCS(Disk const &, AllCPData &) const;
   void SetCPData(Disk const &, AllCPData &) const;
