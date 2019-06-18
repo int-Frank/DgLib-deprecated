@@ -6,13 +6,14 @@
 #include <cstring>
 #include "DgPair.h"
 #include "impl/DgContainerBase.h"
-#include "DgErrorHandler.h"
 
 #ifdef DEBUG
 #include <sstream>
 #include <iostream>
 #endif
 
+
+//TODO  the end node should be at the start of the array, then it will never move.
 namespace Dg
 {
   namespace impl
@@ -321,8 +322,8 @@ namespace Dg
 
     impl::Node *        m_pRoot;
     impl::Node *        m_pNodes;
-    ValueType *   m_pKVs;
-    sizeType      m_nItems;
+    ValueType *         m_pKVs;
+    sizeType            m_nItems;
   };
 
   //------------------------------------------------------------------------------------------------

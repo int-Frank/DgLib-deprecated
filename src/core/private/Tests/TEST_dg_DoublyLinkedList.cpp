@@ -1,10 +1,30 @@
 #include "TestHarness.h"
+#define DEBUG
 #include "DgDoublyLinkedList.h"
 #include <list>
 
 typedef int t;
 typedef std::list<t>                   list;
 typedef Dg::DoublyLinkedList<t>        DgList;
+
+#define BRK do{char t(0); std::cin >> t;}while(false)
+
+#include <iostream>
+void Print(std::list<t> const & a_list)
+{
+  std::cout << "std::list = ";
+  for (auto val : a_list)
+    std::cout << val << ", ";
+  std::cout << "\n";
+}
+
+void Print(DgList const & a_list)
+{
+  std::cout << "DgList    = ";
+  for (auto it = a_list.cbegin(); it != a_list.cend(); it++)
+    std::cout << *it << ", ";
+  std::cout << "\n";
+}
 
 bool CheckState(list & a_list, DgList & a_dgList)
 {
@@ -108,6 +128,7 @@ TEST(Stack_DgDoublyLinkedList, creation_DgDoublyLinkedList)
   dgit++; ++dgit;
   lit = lst.insert(lit, 23);
   dgit = dglst.insert(dgit, 23);
+
   CHECK(*lit == *dgit);
   CHECK(CheckState(lst, dglst));
 
@@ -115,6 +136,11 @@ TEST(Stack_DgDoublyLinkedList, creation_DgDoublyLinkedList)
   dgit++; ++dgit;
   lit = lst.erase(lit);
   dgit = dglst.erase(dgit);
+
+  //Print(lst);
+  //Print(dglst);
+  //BRK;
+
   CHECK(*lit == *dgit);
   CHECK(CheckState(lst, dglst));
 
@@ -143,6 +169,7 @@ TEST(Stack_DgDoublyLinkedList, creation_DgDoublyLinkedList)
 
   DgList newlst(dglst);
   DgList newlst2 = dglst;
+  
   CHECK(CheckState(lst, newlst));
   CHECK(CheckState(lst, newlst2));
 

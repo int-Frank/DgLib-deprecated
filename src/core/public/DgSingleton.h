@@ -8,6 +8,7 @@
 #ifndef SINGLETON_H
 #define SINGLETON_H
 
+//TODO need this?
 namespace Dg
 {
   //! @ingroup DgUtility_types

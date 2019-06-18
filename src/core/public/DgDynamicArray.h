@@ -17,6 +17,7 @@
 #include "DgMath.h"
 #include "DgErrorHandler.h"
 
+//TODO add iterator class
 namespace Dg
 {
   template<typename T>

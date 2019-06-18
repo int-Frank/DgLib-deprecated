@@ -13,7 +13,7 @@ namespace Dg
 {
   namespace impl
   {
-    //Assumes spheres are not already intersecting
+    //Assumes spheres is not already intersecting with the line
     template <typename Real, int R>
     class FPCQuery<Real, R,
                    Hypersphere_generic<Real, R>,
@@ -35,6 +35,7 @@ namespace Dg
       //! Perform query
       // In  this query, a_traj_l represents the velocity of the line tangental
       // to the line direction
+      // TODO the velocity of the line seems redundant. When will this ever happen?
       Result operator()(Hypersphere_generic<Real, R> const & a_sphere, 
                         Vector_generic<Real, R> const & a_traj_s,
                         Line_generic<Real, R> const & a_line,

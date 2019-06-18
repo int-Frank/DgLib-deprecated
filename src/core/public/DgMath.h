@@ -148,13 +148,9 @@ namespace Dg
     lower = static_cast<T>(round(sqrt(static_cast<double>(val))));
 
     if (lower * lower >= val)
-    {
       upper = lower;
-    }
     else
-    {
       upper = lower + 1;
-    }
   }
 
   //! Inverse error function. Uses Mclaurin series expansion approximation.
@@ -254,7 +250,6 @@ namespace Dg
   bool AreEqual(Real a, Real b)
   {
     return (Dg::IsZero(a - b));
-
   }	//End: AreEqual()
 
   //! @}

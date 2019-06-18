@@ -8,7 +8,7 @@
 #ifndef DGOBJECT_H
 #define DGOBJECT_H
 
-
+//TODO need this?
 namespace Dg
 {
   //! @ingroup DgUtility_types

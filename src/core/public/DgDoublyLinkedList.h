@@ -14,22 +14,14 @@
 #include <new>
 #include <type_traits>
 
-#ifdef STD_COMPATIBLE
-#include <iterator>
-#define BASE_ITERATOR : public std::iterator<std::bidirectional_iterator_tag, T>
-#else
-#define BASE_ITERATOR
-#endif
-
 #include "impl/DgContainerBase.h"
-#include "DgErrorHandler.h"
 
-//#define DG_DEBUG
-#ifdef DG_DEBUG
+#ifdef DEBUG
 #include <iostream>
 #include <cstddef>
 #endif
 
+//TODO change implementation to pack objects to the front of the object pool.
 namespace Dg
 {
   //! @ingroup DgContainers
@@ -41,27 +33,6 @@ namespace Dg
   //! size if extending DoublyLinkedList past that allocated, or manually resizing. This makes
   //! for fast insertion/erasing of elements.
   //!
-  //! A DoublyLinkedList with a memory pool the size of 8 item might typicall look like this in memory. 
-  //! The first element in the pool is always the root. The end method will return an 
-  //! iterator pointing to this element. The begin method will return an iterator built 
-  //! from whatever element 0 is pointing to next. For empty lists, this will be itself. 
-  //! When adding items to the DoublyLinkedList, the element pointed to by the m_pNextFree free pointer 
-  //! will be broken from the sub-DoublyLinkedList of free elements and added to the DoublyLinkedList of current items.
-  //! The last element in the pool is never used; the pool is always extended before it is used.
-  //!     
-  //!      v------------------------------------------------|   
-  //!     |     |->|     |->|     |->|     |->|     |->|     ||     |  |     |  |     |  |     |
-  //!     |  0  |  |  1  |  |  2  |  |  3  |  |  4  |  |  5  ||  6  |->|  7  |->|  8  |->|  9  |->NULL
-  //!     |     |<-|     |<-|     |<-|     |<-|     |<-|     ||     |  |     |  |     |  |     |
-  //!      |------------------------------------------------^    ^
-  //!                                                            Next free
-  //!
-  //!     Root node = [0]. The DoublyLinkedList begins at element [1].
-  //!
-  //! Constructors and destructors will be called if the elements types are not pod.
-  //!
-  //! The pool is extended when there is only one element left in the DoublyLinkedList of free elements.
-  //!
   //! @author Frank B. Hart
   //! @date 25/08/2016
   template<typename T>
@@ -69,59 +40,10 @@ namespace Dg
   {
   private:
     
-    //! Container to hold the object and pointers
-	  class Node
+	  struct Node
 	  {
-    public:
-
-      //! Default constructor
-		  Node(): pNext(nullptr), pPrev(nullptr) {}
-		
-      //! Copy the data in this node
-      inline void InitData(T const & a_item)
-      {
-        new (&data) T(a_item);
-      }
-
-      //! Destruct the data is a destructor exists for the type.
-      inline void DestructData()
-      {
-        data.~T();
-      }
-
-      //! Breaks a node out its chain.
-      //! Assumes pNext and pPrev are valid pointers.
-      inline void Break()
-      {
-        pNext->pPrev = pPrev;
-        pPrev->pNext = pNext;
-      }
-
-      //! Add node to the chain after the input node.
-      inline void InsertAfter(Node * a_pNode)
-      {
-        pNext = a_pNode->pNext;
-        pPrev = a_pNode;
-        a_pNode->pNext->pPrev = this;
-        a_pNode->pNext = this;
-      }
-
-      inline T & GetData()              { return data;}
-      inline T const & GetData() const  { return data; }
-
-      inline Node * Next()              { return pNext; }
-      inline Node const * Next() const  { return pNext; }
-      inline void Next(Node * a_pNext)  { pNext = a_pNext; }
-
-      inline Node * Prev()              { return pPrev; }
-      inline Node const * Prev() const  { return pPrev; }
-      inline void Prev(Node * a_pPrev)  { pPrev = a_pPrev; }
-
-    private:
-
 		  Node* pNext;
 		  Node* pPrev;
-		  T     data;
 	  };
 
   public:
@@ -132,22 +54,27 @@ namespace Dg
     //!
     //! @author Frank B. Hart
     //! @date 21/05/2016
-    class const_iterator BASE_ITERATOR
+    class const_iterator
 	  {
 	  private:
 		  friend class DoublyLinkedList;
 		
 	  private:
 		  //! Special constructor, not for external use
-		  const_iterator(Node const * _ptr) 
+		  const_iterator(Node const * a_pNode, Node const * a_pNodeBegin, T const * a_pData)
+        : m_pNode(a_pNode)
+        , m_pNodeBegin(a_pNodeBegin)
+        , m_pData(a_pData)
       {
-        m_pNode = _ptr;
+
       }
 
 	  public:
 
 		  const_iterator()
         : m_pNode(nullptr) 
+        , m_pNodeBegin(nullptr)
+        , m_pData(nullptr)
       {
       
       }
@@ -158,8 +85,10 @@ namespace Dg
       }
 
 		  //! Copy constructor
-		  const_iterator(const_iterator const & it)
-        : m_pNode(it.m_pNode)
+		  const_iterator(const_iterator const & a_it)
+        : m_pNode(a_it.m_pNode)
+        , m_pData(a_it.m_pData)
+        , m_pNodeBegin(a_it.m_pNodeBegin)
       {
 
       }
@@ -168,25 +97,27 @@ namespace Dg
 		  const_iterator& operator= (const_iterator const & a_other)
       {
         m_pNode = a_other.m_pNode;
+        m_pNodeBegin = a_other.m_pNodeBegin;
+        m_pData = a_other.m_pData;
         return *this;
       }
 		
 		  //! Comparison.
-		  bool operator==(const_iterator const & it) const 
+		  bool operator==(const_iterator const & a_it) const 
       {
-        return m_pNode == it.m_pNode;
+        return m_pNode == a_it.m_pNode;
       }
 
       //! Comparison.
-		  bool operator!=(const_iterator const & it) const 
+		  bool operator!=(const_iterator const & a_it) const 
       {
-        return m_pNode != it.m_pNode;
+        return m_pNode != a_it.m_pNode;
       }
 
 		  //! Post increment
 		  const_iterator& operator++()
       {
-        m_pNode = m_pNode->Next();
+        m_pNode = m_pNode->pNext;
         return *this;
       }
 
@@ -201,7 +132,7 @@ namespace Dg
       //! Post decrement
 		  const_iterator& operator--()
       {
-        m_pNode = m_pNode->Prev();
+        m_pNode = m_pNode->pPrev;
         return *this;
       }
 
@@ -216,17 +147,19 @@ namespace Dg
 		  //! Conversion. Returns pointer to data.
 		  T const * operator->() const 
       {
-        return &(m_pNode->GetData());
+        return m_pData + (m_pNode - m_pNodeBegin - 1);
       }
 
       //! Conversion. Returns reference to data.
 		  T const & operator*() const 
       {
-        return m_pNode->GetData();
+        return *(m_pData + (m_pNode - m_pNodeBegin - 1));
       }
 
 	  private:
-		  Node const * m_pNode;
+      Node const * m_pNode;
+      Node const * m_pNodeBegin;
+      T const * m_pData;
 	  };
 
 
@@ -236,65 +169,75 @@ namespace Dg
     //!
     //! @author Frank B. Hart
     //! @date 21/05/2016
-    class iterator BASE_ITERATOR
-	  {
-		  friend class DoublyLinkedList;
+    class iterator
+    {
+    private:
+      friend class DoublyLinkedList;
 
-	  private:
-		  //! Special constructor, not for external use
-		  iterator(Node* _ptr) 
+    private:
+      //! Special constructor, not for external use
+      iterator(Node * a_pNode, Node * a_pNodeBegin, T * a_pData)
+        : m_pNode(a_pNode)
+        , m_pNodeBegin(a_pNodeBegin)
+        , m_pData(a_pData)
       {
-        m_pNode = _ptr;
+
       }
 
-	  public:
+    public:
 
-		  iterator()
+      iterator()
         : m_pNode(nullptr) 
+        , m_pNodeBegin(nullptr)
+        , m_pData(nullptr)
       {
-      
+
       }
 
-		  ~iterator()
+      ~iterator()
       {
-      
+
       }
 
-		  //! Copy constructor.
-		  iterator(iterator const & it)
-        : m_pNode(it.m_pNode)
+      //! Copy constructor
+      iterator(iterator const & a_it)
+        : m_pNode(a_it.m_pNode)
+        , m_pData(a_it.m_pData)
+        , m_pNodeBegin(a_it.m_pNodeBegin)
       {
-      
+
       }
-		  
-      //! Assignment.
+
+      //! Assignment
       iterator& operator= (iterator const & a_other)
       {
         m_pNode = a_other.m_pNode;
+        m_pNodeBegin = a_other.m_pNodeBegin;
+        m_pData = a_other.m_pData;
         return *this;
-      }
-
-		  //! Comparison.
-		  bool operator==(iterator const & it) const 
-      {
-        return m_pNode == it.m_pNode;
       }
 
       //! Comparison.
-		  bool operator!=(iterator const & it) const 
+      bool operator==(iterator const & a_it) const 
       {
-        return m_pNode != it.m_pNode;
+        return m_pNode == a_it.m_pNode;
       }
 
-		  //! Pre increment
-		  iterator& operator++()
+      //! Comparison.
+      bool operator!=(iterator const & a_it) const 
       {
-        m_pNode = m_pNode->Next();
-        return *this;
+        return m_pNode != a_it.m_pNode;
       }
 
       //! Post increment
-		  iterator operator++(int)
+      iterator& operator++()
+      {
+        m_pNode = m_pNode->pNext;
+        return *this;
+      }
+
+      //! Pre increment
+      iterator operator++(int)
       {
         iterator result(*this);
         ++(*this);
@@ -302,53 +245,57 @@ namespace Dg
       }
 
       //! Post decrement
-		  iterator& operator--()
+      iterator& operator--()
       {
-        m_pNode = m_pNode->Prev();
+        m_pNode = m_pNode->pPrev;
         return *this;
       }
 
       //! Pre decrement
-		  iterator operator--(int)
+      iterator operator--(int)
       {
         iterator result(*this);
         --(*this);
         return result;
       }
 
-		  //! Conversion
-		  operator const_iterator() const 
+      //! Conversion. Returns pointer to data.
+      T * operator->()
+      {
+        return m_pData + (m_pNode - m_pNodeBegin - 1);
+      }
+
+      //! Conversion. Returns reference to data.
+      T & operator*()
+      {
+        return *(m_pData + (m_pNode - m_pNodeBegin - 1));
+      }
+
+      //! Conversion
+      operator const_iterator() const 
       {
         return const_iterator(m_pNode);
       }
 
-      //! Conversion
-		  T* operator->() const 
-      {
-        return &(m_pNode->GetData());
-      }
-
-      //! Conversion
-		  T& operator*() const 
-      {
-        return m_pNode->GetData();
-      }
-
-	  private:
-		  Node *m_pNode;
-	  };
-
+    private:
+      Node * m_pNode;
+      Node * m_pNodeBegin;
+      T * m_pData;
+    };
 
   public:
+
     //! Constructor 
     //! If the method fails to allocate memory, the error is logged to the Dg error file and 
     //! the code aborted.
     DoublyLinkedList()
       : ContainerBase()
+      , m_nItems(0)
+      , m_pNodes(nullptr)
       , m_pData(nullptr)
-      , m_pNextFree(nullptr)
     {
-      Init(1);
+      InitMemory();
+      InitEndNode();
     }
 
     //! Constructor 
@@ -356,10 +303,12 @@ namespace Dg
     //! the code aborted.
 	  DoublyLinkedList(size_t a_size)
       : ContainerBase(a_size)
+      , m_nItems(0)
+      , m_pNodes(nullptr)
       , m_pData(nullptr)
-      , m_pNextFree(nullptr)
     {
-      Init(pool_size());
+      InitMemory();
+      InitEndNode();
     }
 
     //! Destructor.
@@ -367,6 +316,7 @@ namespace Dg
     {
       DestructAll();
       free(m_pData);
+      free(m_pNodes);
     }
 
 	  //! Copy constructor
@@ -374,15 +324,12 @@ namespace Dg
     //! the code aborted.
 	  DoublyLinkedList(DoublyLinkedList const & a_other)
       : ContainerBase(a_other)
+      , m_nItems(0)
+      , m_pNodes(nullptr)
+      , m_pData(nullptr)
     {
-      Init(a_other.pool_size());
-
-      //Assign m_pData
-      DoublyLinkedList<T>::const_iterator it = a_other.cbegin();
-      for (it; it != a_other.cend(); it++)
-      {
-        push_back(*it);
-      }
+      InitMemory();
+      Init(a_other);
     }
 
     //! Assignment
@@ -390,32 +337,53 @@ namespace Dg
     //! the code aborted.
 	  DoublyLinkedList & operator=(DoublyLinkedList const & a_other)
     {
-      if (this == &a_other)
-        return *this;
-
-      ContainerBase::operator=(a_other);
-
-      resize(a_other.pool_size());
-
-      //Assign m_pData
-      DoublyLinkedList<T>::const_iterator it = a_other.cbegin();
-      for (it; it != a_other.cend(); it++)
+      if (this != &a_other)
       {
-        push_back(*it);
-      }
+        DestructAll();
 
+        if (pool_size() < a_other.pool_size())
+        {
+          pool_size(a_other.pool_size());
+          InitMemory();
+        }
+
+        Init(a_other);
+      }
       return *this;
     }
 
     //! Move constructor
     //! If the method fails to allocate memory, the error is logged to the Dg error file and 
     //! the code aborted.
-    DoublyLinkedList(DoublyLinkedList &&);
+    DoublyLinkedList(DoublyLinkedList && a_other)
+      : ContainerBase(a_other)
+      , m_nItems(a_other.m_nItems)
+      , m_pNodes(a_other.m_pNodes)
+      , m_pData(a_other.m_pData)
+    {
+      a_other.m_pNodes = nullptr;
+      a_other.m_pData = nullptr;
+      a_other.m_nItems = 0;
+    }
 
     //! Move assignment
     //! If the method fails to allocate memory, the error is logged to the Dg error file and 
     //! the code aborted.
-    DoublyLinkedList & operator=(DoublyLinkedList &&);
+    DoublyLinkedList & operator=(DoublyLinkedList && a_other)
+    {
+      if (this != &a_other)
+      {
+        ContainerBase::operator=(a_other);
+        m_pData = a_other.m_pData;
+        m_pNodes = a_other.m_pNodes;
+        m_nItems = a_other.m_nItems;
+
+        a_other.m_pNodes = nullptr;
+        a_other.m_pData = nullptr;
+        a_other.m_nItems = 0;
+      }
+      return *this;
+    }
 
 	  //! Returns an iterator pointing to the first data in the DoublyLinkedList container.
     //! If the container is empty, the returned iterator value shall not be dereferenced.
@@ -423,7 +391,7 @@ namespace Dg
     //! @return iterator
 	  iterator begin() 
     {
-      return iterator(m_pData[0].Next());
+      return iterator(m_pNodes[0].pNext, m_pNodes, m_pData);
     }
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the DoublyLinkedList container.
@@ -432,7 +400,7 @@ namespace Dg
     //! @return iterator
     iterator end() 
     {
-      return iterator(&m_pData[0]); 
+      return iterator(&m_pNodes[0], m_pNodes, m_pData); 
     }
 	  
     //! Returns a const iterator pointing to the first data in the DoublyLinkedList container.
@@ -441,7 +409,7 @@ namespace Dg
     //! @return const_iterator
     const_iterator cbegin() const 
     {
-      return const_iterator(m_pData[0].Next());
+      return const_iterator(m_pNodes[0].pNext, m_pNodes, m_pData);
     }
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the DoublyLinkedList container.
@@ -450,7 +418,7 @@ namespace Dg
     //! @return const_iterator
     const_iterator cend() const 
     {
-      return const_iterator(&m_pData[0]); 
+      return const_iterator(&m_pNodes[0], m_pNodes, m_pData); 
     }
 	  
     //! Returns number of elements in the DoublyLinkedList.
@@ -471,7 +439,7 @@ namespace Dg
     //! @return Reference to data type
     T & back() 
     { 
-      return m_pData[0].Prev()->GetData(); 
+      return *GetDataFromNode(m_pNodes[0].pPrev);
     }
      
     //! Returns a reference to the first data in the DoublyLinkedList container.
@@ -480,7 +448,7 @@ namespace Dg
     //! @return Reference to data type
     T & front() 
     { 
-      return m_pData[0].Next()->GetData(); 
+      return *GetDataFromNode(m_pNodes[0].pNext); 
     }
 
     //! Returns a const reference to the last data in the DoublyLinkedList container.
@@ -489,7 +457,7 @@ namespace Dg
     //! @return const reference to data type
     T const & back() const 
     { 
-      return m_pData[0].Prev()->GetData(); 
+      return GetDataFromNode(m_pNodes[0].pPrev);
     }
 
     //! Returns a const reference to the first data in the DoublyLinkedList container.
@@ -498,19 +466,19 @@ namespace Dg
     //! @return const reference to data type
     T const & front() const 
     { 
-      return m_pData[0].Next()->GetData(); 
+      return GetDataFromNode(m_pNodes[0].pNext); 
     }
 
 	  //! Add an data to the back of the DoublyLinkedList
     void push_back(T const & a_item)
     {
-      InsertNewAfter(m_pData[0].Prev(), a_item);
+      InsertNewAfter(m_pNodes[0].pPrev, a_item);
     }
 
     //!Add an data to the front of the DoublyLinkedList
     void push_front(T const & a_item)
     {
-      InsertNewAfter(&m_pData[0], a_item);
+      InsertNewAfter(&m_pNodes[0], a_item);
     }
     
     //! The container is extended by inserting a new element
@@ -520,19 +488,20 @@ namespace Dg
     //! @return iterator to the newly inserted data
     iterator insert(iterator const & a_position, T const & a_item)
     {
-      return iterator(InsertNewAfter(a_position.m_pNode->Prev(), a_item));
+      Node * pNode = InsertNewAfter(a_position.m_pNode->pPrev, a_item);
+      return iterator(pNode, m_pNodes, m_pData);
     }
 
     //! Erase last data
 	  void pop_back()
     {
-      Remove(m_pData[0].Prev());
+      Remove(m_pNodes[0].pPrev);
     }
 
     //! Erase last data
 	  void pop_front()
     {
-      Remove(m_pData[0].Next());
+      Remove(m_pNodes[0].pNext);
     }
 
     //! Erase an data from the DoublyLinkedList
@@ -540,9 +509,8 @@ namespace Dg
     //!         the last data erased by the function call.
 	  iterator erase(iterator const & a_position)
     {
-      iterator result(a_position.m_pNode->Next());
-      Remove(a_position.m_pNode);
-      return result;
+      Node * pNode = Remove(a_position.m_pNode);
+      return iterator(pNode, m_pNodes, m_pData);
     }
 	  
     //! Clear the DoublyLinkedList, retains allocated memory.
@@ -550,7 +518,7 @@ namespace Dg
     {
       DestructAll();
       m_nItems = 0;
-      AssignPointersToEmpty();
+      InitEndNode();
     }
 
     //! Resizes the DoublyLinkedList. This function also clears the DoublyLinkedList.
@@ -560,28 +528,19 @@ namespace Dg
       Init(a_newSize);
     }
 
-#ifdef DG_DEBUG
+#ifdef DEBUG
     void Print() const
     {
       std::cout << "\n\nSize: " << m_nItems;
       for (size_t i = 0; i < pool_size() + 1; ++i)
       {
         std::cout << "\n";
-        if (m_pData[i].Prev()) std::cout << "[" << (m_pData[i].Prev() - m_pData) << "]";
+        if (m_pData[i]pPrev) std::cout << "[" << (m_pData[i].Prev - m_pData) << "]";
         else std::cout << "NULL";
         std::cout << "\t<-[" << i << "]-> \t";
         if (m_pData[i].Next()) std::cout << "[" << (m_pData[i].Next() - m_pData) << "]";
         else std::cout << "NULL";
         std::cout << "\t: " << m_pData[i].GetData();
-      }
-      std::cout << "\nNext free: ";
-      if (m_pNextFree == nullptr)
-      {
-        std::cout << "NULL\n";
-      }
-      else
-      {
-        std::cout << "[" << (m_pNextFree - m_pData) << "]\n";
       }
     }
 #endif
@@ -590,103 +549,127 @@ namespace Dg
     // Increases the size of the underlying arrays by a factor of 2
     void Extend()
     {
-      size_t oldSize(pool_size());
-      Node * pOldData(m_pData);
-      size_t nextFreeInd(m_pNextFree - m_pData); //This assumes m_pNextFree is always valid
+      Node * pOldNodes(m_pNodes);
       set_next_pool_size();
 
-      DG_ASSERT(pool_size() > oldSize);
+      m_pNodes = static_cast<Node *>(realloc(m_pNodes, (pool_size()) * sizeof(Node)));
+      m_pData = static_cast<T *>(realloc(m_pData, (pool_size()) * sizeof(T)));
 
-      //Create new array
-      m_pData = static_cast<Node *>(realloc(m_pData, (pool_size() + 1) * sizeof(Node)));
-      DG_ASSERT(m_pData != nullptr);
-
-      for (size_t i = 0; i < oldSize; i++)
+      if (pOldNodes != m_pNodes)
       {
-        m_pData[i].Prev(&m_pData[m_pData[i].Prev() - pOldData]);
-        m_pData[i].Next(&m_pData[m_pData[i].Next() - pOldData]);
-      }
-
-      m_pData[oldSize].Prev(&m_pData[m_pData[oldSize].Prev() - pOldData]);
-      m_pData[oldSize].Next(&m_pData[oldSize + 1]);
-
-      m_pNextFree = &m_pData[nextFreeInd];
-
-      for (size_t i = oldSize + 1; i < pool_size(); ++i)
-      {
-        m_pData[i].Next(&m_pData[i + 1]);
-      }
-      m_pData[pool_size()].Next(nullptr);
-    }
-
-    // Destruct all objects in the DoublyLinkedList
-    void DestructAll()
-    {
-      for (iterator it = begin(); it != end(); it++)
-      {
-        it.m_pNode->DestructData();
+        for (size_t i = 0; i <= m_nItems; i++)
+        {
+          m_pNodes[i].pPrev = m_pNodes + (m_pNodes[i].pPrev - pOldNodes);
+          m_pNodes[i].pNext= m_pNodes + (m_pNodes[i].pNext - pOldNodes);
+        }
       }
     }
 
-    // Initialize the DoublyLinkedList and request a size.
-    void Init(size_t a_size)
-    {
-      pool_size(a_size + 1);
-      m_pData = static_cast<Node *>(realloc(m_pData, (pool_size() + 1) * sizeof(Node)));
-      DG_ASSERT(m_pData != nullptr);
-      m_nItems = 0;
-      AssignPointersToEmpty();
-    }
-
-    // Reset array pointers
-    void AssignPointersToEmpty()
-    {
-      m_pNextFree = &m_pData[1];
-
-      m_pData[0].Next(&m_pData[0]);
-      m_pData[0].Prev(&m_pData[0]);
-
-      for (size_t i = 1; i < pool_size(); i++)
-      {
-        m_pData[i].Next(&m_pData[i + 1]);
-      }
-      m_pData[pool_size()].Next(nullptr);
-    }
-
-    // Break a new node off from the DoublyLinkedList of free nodes and add it to the DoublyLinkedList after the input node.
     Node * InsertNewAfter(Node * a_pNode, T const & a_data)
     {
-      if (m_nItems >= (pool_size() - 1))
+      if (m_nItems == (pool_size() - 1))
       {
         //Extending might invalidate a_pNode, so we need to record its index in the pool.
-        size_t index(a_pNode - m_pData);
+        size_t index(a_pNode - m_pNodes);
         Extend();
-        a_pNode = &m_pData[index]; //Reset the pointer in case we have extended.
+        a_pNode = &m_pNodes[index]; //Reset the pointer in case we have extended.
       }
 
-      Node * newNode(m_pNextFree);
-      m_pNextFree = m_pNextFree->Next();
-      newNode->InitData(a_data);
-      newNode->InsertAfter(a_pNode);
+      new (&m_pData[m_nItems]) T(a_data);
       m_nItems++;
+
+      Node * newNode = &m_pNodes[m_nItems];
+      newNode->pPrev = a_pNode;
+      newNode->pNext = a_pNode->pNext;
+      a_pNode->pNext->pPrev = newNode;
+      a_pNode->pNext = newNode;
 
       return newNode;
     }
 
-    // Remove a node from the DoublyLinkedList and add to the DoublyLinkedList of free nodes.
-    void Remove(Node * a_pNode)
+    void DestructAll()
     {
-      a_pNode->DestructData();
-      a_pNode->Break();
-      a_pNode->Next(m_pNextFree);
-      m_pNextFree = a_pNode;
+      for (size_t i = 0; i < m_nItems; i++)
+        m_pData[i].~T();
+    }
+
+    void InitMemory()
+    {
+      m_pNodes = static_cast<Node*> (realloc(m_pNodes, pool_size() * sizeof(Node)));
+      m_pData = static_cast<T*> (realloc(m_pData, pool_size() * sizeof(T)));
+    }
+
+    void Init(DoublyLinkedList const & a_other)
+    {
+      m_nItems = a_other.m_nItems;
+
+      //We might as well sort the data in list order as we copy.
+      //It will cost us nothing.
+      Node const * node = &a_other.m_pNodes[0];
+      for (size_t i = 0; i < m_nItems; i++)
+      {
+        node = node->pNext;
+        size_t indOther = (node - a_other.m_pNodes);
+        new (&m_pData[i]) T(a_other.m_pData[indOther - 1]);
+      }
+
+      for (size_t i = 1; i <= m_nItems; i++)
+        m_pNodes[i].pPrev = &m_pNodes[i - 1];
+
+      for (size_t i = 0; i < m_nItems; i++)
+        m_pNodes[i].pNext = &m_pNodes[i + 1];
+
+      m_pNodes[0].pPrev = &m_pNodes[m_nItems];
+      m_pNodes[m_nItems].pNext = m_pNodes;
+    }
+
+    void InitEndNode()
+    {
+      m_pNodes[0].pNext = &m_pNodes[0];
+      m_pNodes[0].pPrev = &m_pNodes[0];
+    }
+
+    Node * Remove(Node * a_pNode)
+    {
+      Node * pNext(a_pNode->pNext);
+
+      //Break node form list
+      a_pNode->pPrev->pNext = a_pNode->pNext;
+      a_pNode->pNext->pPrev = a_pNode->pPrev;
+
+      T * pData = GetDataFromNode(a_pNode);
+      pData->~T();
+
+      if (&m_pNodes[m_nItems] != a_pNode)
+      {
+        //Move last node to fill gap
+        *a_pNode = m_pNodes[m_nItems];
+        a_pNode->pPrev->pNext = a_pNode;
+        a_pNode->pNext->pPrev = a_pNode;
+        memcpy(pData, &m_pData[m_nItems - 1], sizeof (T));
+      }
+
+      if (pNext == &m_pNodes[m_nItems])
+        pNext = a_pNode;
+
       m_nItems--;
+      return pNext;
+    }
+
+    T * GetDataFromNode(Node * a_pNode)
+    {
+      return m_pData + (a_pNode - m_pNodes - 1);
+    }
+
+    T const * GetDataFromNode(Node * a_pNode) const
+    {
+      return m_pData + (a_pNode - m_pNodes - 1);
     }
 
   private:
 
-	  Node *    m_pData;      //Pre-allocated block of memory to hold items
-	  Node *    m_pNextFree;  //Pointer to the next free item in the DoublyLinkedList;
+	  Node *    m_pNodes;      //Pre-allocated block of memory to hold items
+    T    *    m_pData;
 	  size_t    m_nItems;     //Number of items currently in the DoublyLinkedList
   };
 
