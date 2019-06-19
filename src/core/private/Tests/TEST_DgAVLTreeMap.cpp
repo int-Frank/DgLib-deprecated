@@ -289,9 +289,6 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
   it = map.erase(it);
   CHECK(it->first == 10);
 
-  map.Print();
-  BRK;
-
   it--;
   //Erase 8
   it = map.erase(it);

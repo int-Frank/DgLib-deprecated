@@ -4,6 +4,8 @@
 #include <exception>
 #include <new>
 #include <cstring>
+#include <exception>
+
 #include "DgPair.h"
 #include "impl/DgContainerBase.h"
 
@@ -12,9 +14,6 @@
 #include <iostream>
 #endif
 
-
-//TODO check for nullptr returns in realloc and throw
-//TODO  the end node should be at the start of the array, then it will never move.
 namespace Dg
 {
   namespace impl
@@ -1068,7 +1067,12 @@ namespace Dg
   void AVLTreeMap<K, V, Compare>::InitMemory()
   {
     m_pNodes = static_cast<impl::Node*> (realloc(m_pNodes, pool_size() * sizeof(impl::Node)));
+    if (m_pNodes == nullptr)
+      throw std::bad_alloc();
+
     m_pKVs = static_cast<ValueType*> (realloc(m_pKVs, pool_size() * sizeof(ValueType)));
+    if (m_pKVs == nullptr)
+      throw std::bad_alloc();
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1158,7 +1162,13 @@ namespace Dg
     impl::Node * oldNodes = m_pNodes;
 
     m_pNodes = static_cast<impl::Node*> (realloc(m_pNodes, pool_size() * sizeof(impl::Node)));
+    if (m_pNodes == nullptr)
+      throw std::bad_alloc();
+
     m_pKVs = static_cast<ValueType*> (realloc(m_pKVs, pool_size() * sizeof(ValueType)));
+    if (m_pKVs == nullptr)
+      throw std::bad_alloc();
+
 
     if (oldNodes != m_pNodes)
     {
@@ -1455,45 +1465,42 @@ namespace Dg
           returnNode = a_pRoot->pLeft;
         }
 
-        //Shift last KV to fill in empty slot
         ValueType * pKV = GetAssociatedKV(a_pRoot);
         pKV->~ValueType();
+
+        //Was this the last node? If not we need to move the last node to fill the gap.
         if (pKV != &m_pKVs[m_nItems - 1])
+        {
           memcpy(pKV, &m_pKVs[m_nItems - 1], sizeof(ValueType));
 
-        //Clear node
-        a_pRoot->pParent = nullptr;
-        a_pRoot->pLeft = nullptr;
-        a_pRoot->pRight = nullptr;
-        a_pRoot->height = 0;
+          //Shift last node to fill in empty slot
+          impl::Node * oldNode = &m_pNodes[m_nItems];
 
-        //Shift last node to fill in empty slot
-        impl::Node * oldNode = &m_pNodes[m_nItems];
+          //We have a couple of pointers to nodes in use that may need to be updated... 
+          a_data.oldNodeAdd = oldNode;
+          a_data.newNodeAdd = a_pRoot;
 
-        //We have several pointers to nodes in use that may need to be updated... 
-        a_data.oldNodeAdd = oldNode;
-        a_data.newNodeAdd = a_pRoot;
+          if (returnNode == oldNode)
+            returnNode = a_pRoot;
+          if constexpr (GetNext)
+          {
+            if (a_data.pNext == oldNode)
+              a_data.pNext = a_pRoot;
+          }
 
-        if (returnNode == oldNode)
-          returnNode = a_pRoot;
-        if constexpr (GetNext)
-        {
-          if (a_data.pNext == oldNode)
-            a_data.pNext = a_pRoot;
+          *a_pRoot = *oldNode;
+          if (a_pRoot->pParent)
+          {
+            if (a_pRoot->pParent->pLeft == oldNode)
+              a_pRoot->pParent->pLeft = a_pRoot;
+            else
+              a_pRoot->pParent->pRight = a_pRoot;
+          }
+          if (a_pRoot->pLeft)
+            a_pRoot->pLeft->pParent = a_pRoot;
+          if (a_pRoot->pRight)
+            a_pRoot->pRight->pParent = a_pRoot;
         }
-
-        *a_pRoot = *oldNode;
-        if (a_pRoot->pParent)
-        {
-          if (a_pRoot->pParent->pLeft == oldNode)
-            a_pRoot->pParent->pLeft = a_pRoot;
-          else
-            a_pRoot->pParent->pRight = a_pRoot;
-        }
-        if (a_pRoot->pLeft)
-          a_pRoot->pLeft->pParent = a_pRoot;
-        if (a_pRoot->pRight)
-          a_pRoot->pRight->pParent = a_pRoot;
 
         m_nItems--;
         a_pRoot = returnNode;

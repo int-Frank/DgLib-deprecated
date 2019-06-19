@@ -13,6 +13,7 @@
 #include <cstring>
 #include <new>
 #include <type_traits>
+#include <exception>
 
 #include "impl/DgContainerBase.h"
 
@@ -21,7 +22,6 @@
 #include <cstddef>
 #endif
 
-//TODO check for nullptr returns in realloc and throw
 namespace Dg
 {
   //! @ingroup DgContainers
@@ -541,7 +541,12 @@ namespace Dg
       set_next_pool_size();
 
       m_pNodes = static_cast<Node *>(realloc(m_pNodes, (pool_size()) * sizeof(Node)));
+      if (m_pNodes == nullptr)
+        throw std::bad_alloc();
+
       m_pData = static_cast<T *>(realloc(m_pData, (pool_size()) * sizeof(T)));
+      if (m_pData == nullptr)
+        throw std::bad_alloc();
 
       if (pOldNodes != m_pNodes)
       {
@@ -584,7 +589,12 @@ namespace Dg
     void InitMemory()
     {
       m_pNodes = static_cast<Node*> (realloc(m_pNodes, pool_size() * sizeof(Node)));
+      if (m_pNodes == nullptr)
+        throw std::bad_alloc();
+
       m_pData = static_cast<T*> (realloc(m_pData, pool_size() * sizeof(T)));
+      if (m_pData == nullptr)
+        throw std::bad_alloc();
     }
 
     void Init(DoublyLinkedList const & a_other)
