@@ -12,6 +12,7 @@
 
 #include "DgDynamicArray.h"
 
+//TODO check for nullptr returns in realloc and throw
 namespace Dg
 {
   //! @ingroup DgContainers

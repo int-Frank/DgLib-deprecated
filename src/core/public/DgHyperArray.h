@@ -4,6 +4,7 @@
 #include <array>
 #include <sstream>
 
+//TODO check for nullptr returns in realloc and throw
 namespace Dg
 {
   namespace impl

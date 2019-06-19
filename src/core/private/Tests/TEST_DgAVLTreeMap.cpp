@@ -4,6 +4,7 @@
 #include "TestHarness.h"
 
 #define DEBUG
+#define BRK do{char t(0); std::cin >> t;}while(false)
 #include "DgAVLTreeMap.h"
 
 typedef Dg::AVLTreeMap<int, int> Map;
@@ -16,7 +17,12 @@ bool AreEqual(Map const & m0, Map const & m1)
   Map::const_iterator m0_cit = m0.cbegin();
   Map::const_iterator m1_cit = m1.cbegin();
   for (; m0_cit != m0.cend(); m0_cit++, m1_cit++)
-  {
+  {/*
+    int v0 = m0_cit->first;
+    int v1 = m1_cit->first;
+    int v0s = m0_cit->second;
+    int v1s = m1_cit->second;
+*/
     if (m0_cit->first != m1_cit->first)
       return false;
     if (m0_cit->second != m1_cit->second)
@@ -44,6 +50,7 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
   {
     map2[keys[i]] = 2 * keys[i];
   }
+
   CHECK(AreEqual(map, map2));
 
   //----------------------------------------------------------------------------------------
@@ -193,6 +200,7 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
   //Erasing
   //----------------------------------------------------------------------------------------
   map.clear();
+
   for (int i = 0; i < nItems; i++)
   {
     map[keys[i]] = 2 * keys[i];
@@ -236,6 +244,7 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
     map.erase(keys[i]);
     items.erase(keys[i]);
     std::set<int>::iterator sit = items.begin();
+
     for (auto kv : map)
     {
       CHECK(kv.first == *sit);
@@ -279,6 +288,9 @@ TEST(Stack_dg_AVLTreeMap, creation_dg_AVLTreeMap)
   //Erase 9
   it = map.erase(it);
   CHECK(it->first == 10);
+
+  map.Print();
+  BRK;
 
   it--;
   //Erase 8

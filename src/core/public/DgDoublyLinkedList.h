@@ -21,7 +21,7 @@
 #include <cstddef>
 #endif
 
-//TODO change implementation to pack objects to the front of the object pool.
+//TODO check for nullptr returns in realloc and throw
 namespace Dg
 {
   //! @ingroup DgContainers
@@ -63,7 +63,7 @@ namespace Dg
 		  //! Special constructor, not for external use
 		  const_iterator(Node const * a_pNode, Node const * a_pNodeBegin, T const * a_pData)
         : m_pNode(a_pNode)
-        , m_pNodeBegin(a_pNodeBegin)
+        , m_pOffset(a_pNodeBegin)
         , m_pData(a_pData)
       {
 
@@ -73,7 +73,7 @@ namespace Dg
 
 		  const_iterator()
         : m_pNode(nullptr) 
-        , m_pNodeBegin(nullptr)
+        , m_pOffset(nullptr)
         , m_pData(nullptr)
       {
       
@@ -88,7 +88,7 @@ namespace Dg
 		  const_iterator(const_iterator const & a_it)
         : m_pNode(a_it.m_pNode)
         , m_pData(a_it.m_pData)
-        , m_pNodeBegin(a_it.m_pNodeBegin)
+        , m_pOffset(a_it.m_pOffset)
       {
 
       }
@@ -97,7 +97,7 @@ namespace Dg
 		  const_iterator& operator= (const_iterator const & a_other)
       {
         m_pNode = a_other.m_pNode;
-        m_pNodeBegin = a_other.m_pNodeBegin;
+        m_pOffset = a_other.m_pOffset;
         m_pData = a_other.m_pData;
         return *this;
       }
@@ -147,18 +147,18 @@ namespace Dg
 		  //! Conversion. Returns pointer to data.
 		  T const * operator->() const 
       {
-        return m_pData + (m_pNode - m_pNodeBegin - 1);
+        return m_pData + (m_pNode - m_pOffset);
       }
 
       //! Conversion. Returns reference to data.
 		  T const & operator*() const 
       {
-        return *(m_pData + (m_pNode - m_pNodeBegin - 1));
+        return *(m_pData + (m_pNode - m_pOffset));
       }
 
 	  private:
       Node const * m_pNode;
-      Node const * m_pNodeBegin;
+      Node const * m_pOffset;
       T const * m_pData;
 	  };
 
@@ -178,7 +178,7 @@ namespace Dg
       //! Special constructor, not for external use
       iterator(Node * a_pNode, Node * a_pNodeBegin, T * a_pData)
         : m_pNode(a_pNode)
-        , m_pNodeBegin(a_pNodeBegin)
+        , m_pOffset(a_pNodeBegin)
         , m_pData(a_pData)
       {
 
@@ -188,7 +188,7 @@ namespace Dg
 
       iterator()
         : m_pNode(nullptr) 
-        , m_pNodeBegin(nullptr)
+        , m_pOffset(nullptr)
         , m_pData(nullptr)
       {
 
@@ -203,7 +203,7 @@ namespace Dg
       iterator(iterator const & a_it)
         : m_pNode(a_it.m_pNode)
         , m_pData(a_it.m_pData)
-        , m_pNodeBegin(a_it.m_pNodeBegin)
+        , m_pOffset(a_it.m_pOffset)
       {
 
       }
@@ -212,7 +212,7 @@ namespace Dg
       iterator& operator= (iterator const & a_other)
       {
         m_pNode = a_other.m_pNode;
-        m_pNodeBegin = a_other.m_pNodeBegin;
+        m_pOffset = a_other.m_pOffset;
         m_pData = a_other.m_pData;
         return *this;
       }
@@ -262,13 +262,13 @@ namespace Dg
       //! Conversion. Returns pointer to data.
       T * operator->()
       {
-        return m_pData + (m_pNode - m_pNodeBegin - 1);
+        return m_pData + (m_pNode - m_pOffset);
       }
 
       //! Conversion. Returns reference to data.
       T & operator*()
       {
-        return *(m_pData + (m_pNode - m_pNodeBegin - 1));
+        return *(m_pData + (m_pNode - m_pOffset));
       }
 
       //! Conversion
@@ -279,15 +279,13 @@ namespace Dg
 
     private:
       Node * m_pNode;
-      Node * m_pNodeBegin;
+      Node * m_pOffset;
       T * m_pData;
     };
 
   public:
 
     //! Constructor 
-    //! If the method fails to allocate memory, the error is logged to the Dg error file and 
-    //! the code aborted.
     DoublyLinkedList()
       : ContainerBase()
       , m_nItems(0)
@@ -299,8 +297,6 @@ namespace Dg
     }
 
     //! Constructor 
-    //! If the method fails to allocate memory, the error is logged to the Dg error file and 
-    //! the code aborted.
 	  DoublyLinkedList(size_t a_size)
       : ContainerBase(a_size)
       , m_nItems(0)
@@ -320,8 +316,6 @@ namespace Dg
     }
 
 	  //! Copy constructor
-    //! If the method fails to allocate memory, the error is logged to the Dg error file and 
-    //! the code aborted.
 	  DoublyLinkedList(DoublyLinkedList const & a_other)
       : ContainerBase(a_other)
       , m_nItems(0)
@@ -333,8 +327,6 @@ namespace Dg
     }
 
     //! Assignment
-    //! If the method fails to allocate memory, the error is logged to the Dg error file and 
-    //! the code aborted.
 	  DoublyLinkedList & operator=(DoublyLinkedList const & a_other)
     {
       if (this != &a_other)
@@ -353,8 +345,6 @@ namespace Dg
     }
 
     //! Move constructor
-    //! If the method fails to allocate memory, the error is logged to the Dg error file and 
-    //! the code aborted.
     DoublyLinkedList(DoublyLinkedList && a_other)
       : ContainerBase(a_other)
       , m_nItems(a_other.m_nItems)
@@ -367,8 +357,6 @@ namespace Dg
     }
 
     //! Move assignment
-    //! If the method fails to allocate memory, the error is logged to the Dg error file and 
-    //! the code aborted.
     DoublyLinkedList & operator=(DoublyLinkedList && a_other)
     {
       if (this != &a_other)
@@ -391,7 +379,7 @@ namespace Dg
     //! @return iterator
 	  iterator begin() 
     {
-      return iterator(m_pNodes[0].pNext, m_pNodes, m_pData);
+      return iterator(m_pNodes[0].pNext, m_pNodes + 1, m_pData);
     }
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the DoublyLinkedList container.
@@ -400,7 +388,7 @@ namespace Dg
     //! @return iterator
     iterator end() 
     {
-      return iterator(&m_pNodes[0], m_pNodes, m_pData); 
+      return iterator(&m_pNodes[0], m_pNodes + 1, m_pData); 
     }
 	  
     //! Returns a const iterator pointing to the first data in the DoublyLinkedList container.
@@ -409,7 +397,7 @@ namespace Dg
     //! @return const_iterator
     const_iterator cbegin() const 
     {
-      return const_iterator(m_pNodes[0].pNext, m_pNodes, m_pData);
+      return const_iterator(m_pNodes[0].pNext, m_pNodes + 1, m_pData);
     }
     
     //! Returns an iterator referring to the <em>past-the-end</em> data in the DoublyLinkedList container.
@@ -418,7 +406,7 @@ namespace Dg
     //! @return const_iterator
     const_iterator cend() const 
     {
-      return const_iterator(&m_pNodes[0], m_pNodes, m_pData); 
+      return const_iterator(&m_pNodes[0], m_pNodes + 1, m_pData); 
     }
 	  
     //! Returns number of elements in the DoublyLinkedList.
@@ -489,7 +477,7 @@ namespace Dg
     iterator insert(iterator const & a_position, T const & a_item)
     {
       Node * pNode = InsertNewAfter(a_position.m_pNode->pPrev, a_item);
-      return iterator(pNode, m_pNodes, m_pData);
+      return iterator(pNode, m_pNodes + 1, m_pData);
     }
 
     //! Erase last data
@@ -510,7 +498,7 @@ namespace Dg
 	  iterator erase(iterator const & a_position)
     {
       Node * pNode = Remove(a_position.m_pNode);
-      return iterator(pNode, m_pNodes, m_pData);
+      return iterator(pNode, m_pNodes + 1, m_pData);
     }
 	  
     //! Clear the DoublyLinkedList, retains allocated memory.

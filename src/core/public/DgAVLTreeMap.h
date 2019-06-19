@@ -13,6 +13,7 @@
 #endif
 
 
+//TODO check for nullptr returns in realloc and throw
 //TODO  the end node should be at the start of the array, then it will never move.
 namespace Dg
 {
@@ -170,7 +171,7 @@ namespace Dg
 
     private:
       impl::Node const *      m_pNode;
-      impl::Node const *      m_pNodeBegin;
+      impl::Node const *      m_pOffset;
       ValueType const * m_pKVBegin;
     };
 
@@ -207,7 +208,7 @@ namespace Dg
 
     private:
       impl::Node *      m_pNode;
-      impl::Node *      m_pNodeBegin;
+      impl::Node *      m_pOffset;
       ValueType * m_pKVBegin;
     };
 
@@ -538,7 +539,7 @@ namespace Dg
                                                             impl::Node const * a_pNodeBegin,
                                                             ValueType const * a_pKVBegin)
     : m_pNode(a_pNode)
-    , m_pNodeBegin(a_pNodeBegin)
+    , m_pOffset(a_pNodeBegin)
     , m_pKVBegin(a_pKVBegin)
   {
 
@@ -547,7 +548,7 @@ namespace Dg
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   AVLTreeMap<K, V, Compare>::const_iterator::const_iterator()
     : m_pNode(nullptr)
-    , m_pNodeBegin(nullptr)
+    , m_pOffset(nullptr)
     , m_pKVBegin(nullptr)
   {
 
@@ -562,7 +563,7 @@ namespace Dg
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   AVLTreeMap<K, V, Compare>::const_iterator::const_iterator(const_iterator const & a_it)
     : m_pNode(a_it.m_pNode)
-    , m_pNodeBegin(a_it.m_pNodeBegin)
+    , m_pOffset(a_it.m_pOffset)
     , m_pKVBegin(a_it.m_pKVBegin)
   {
 
@@ -573,7 +574,7 @@ namespace Dg
     AVLTreeMap<K, V, Compare>::const_iterator::operator=(const_iterator const & a_it)
   {
     m_pNode = a_it.m_pNode;
-    m_pNodeBegin = a_it.m_pNodeBegin;
+    m_pOffset = a_it.m_pOffset;
     m_pKVBegin = a_it.m_pKVBegin;
     return *this;
   }
@@ -628,14 +629,14 @@ namespace Dg
   typename AVLTreeMap<K, V, Compare>::ValueType const * 
     AVLTreeMap<K, V, Compare>::const_iterator::operator->() const
   {
-    return m_pKVBegin + (m_pNode - m_pNodeBegin);
+    return m_pKVBegin + (m_pNode - m_pOffset);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::ValueType const & 
     AVLTreeMap<K, V, Compare>::const_iterator::operator*() const
   {
-    return *(m_pKVBegin + (m_pNode - m_pNodeBegin));
+    return *(m_pKVBegin + (m_pNode - m_pOffset));
   }
 
   //------------------------------------------------------------------------------------------------
@@ -646,7 +647,7 @@ namespace Dg
                                                 impl::Node * a_pNodeBegin,
                                                 ValueType * a_pKVBegin)
     : m_pNode(a_pNode)
-    , m_pNodeBegin(a_pNodeBegin)
+    , m_pOffset(a_pNodeBegin)
     , m_pKVBegin(a_pKVBegin)
   {
 
@@ -655,7 +656,7 @@ namespace Dg
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   AVLTreeMap<K, V, Compare>::iterator::iterator()
     : m_pNode(nullptr)
-    , m_pNodeBegin(nullptr)
+    , m_pOffset(nullptr)
     , m_pKVBegin(nullptr)
   {
 
@@ -670,7 +671,7 @@ namespace Dg
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   AVLTreeMap<K, V, Compare>::iterator::iterator(iterator const & a_it)
     : m_pNode(a_it.m_pNode)
-    , m_pNodeBegin(a_it.m_pNodeBegin)
+    , m_pOffset(a_it.m_pOffset)
     , m_pKVBegin(a_it.m_pKVBegin)
   {
 
@@ -681,7 +682,7 @@ namespace Dg
     AVLTreeMap<K, V, Compare>::iterator::operator=(iterator const & a_it)
   {
     m_pNode = a_it.m_pNode;
-    m_pNodeBegin = a_it.m_pNodeBegin;
+    m_pOffset = a_it.m_pOffset;
     m_pKVBegin = a_it.m_pKVBegin;
     return *this;
   }
@@ -736,14 +737,14 @@ namespace Dg
   typename AVLTreeMap<K, V, Compare>::ValueType * 
     AVLTreeMap<K, V, Compare>::iterator::operator->()
   {
-    return m_pKVBegin + (m_pNode - m_pNodeBegin);
+    return m_pKVBegin + (m_pNode - m_pOffset);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::ValueType & 
     AVLTreeMap<K, V, Compare>::iterator::operator*()
   {
-    return *(m_pKVBegin + (m_pNode - m_pNodeBegin));
+    return *(m_pKVBegin + (m_pNode - m_pOffset));
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -901,14 +902,14 @@ namespace Dg
     impl::Node * pNode = m_pRoot;
     while (pNode->pLeft != nullptr)
       pNode = pNode->pLeft;
-    return iterator(pNode, m_pNodes, m_pKVs);
+    return iterator(pNode, m_pNodes + 1, m_pKVs);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::AVLTreeMap::iterator
     AVLTreeMap<K, V, Compare>::AVLTreeMap::end()
   {
-    return iterator(m_pNodes + m_nItems, m_pNodes, m_pKVs);
+    return iterator(m_pNodes, m_pNodes + 1, m_pKVs);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -918,14 +919,14 @@ namespace Dg
     impl::Node * pNode = m_pRoot;
     while (pNode->pLeft != nullptr)
       pNode = pNode->pLeft;
-    return const_iterator(pNode, m_pNodes, m_pKVs);
+    return const_iterator(pNode, m_pNodes + 1, m_pKVs);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   typename AVLTreeMap<K, V, Compare>::AVLTreeMap::const_iterator
     AVLTreeMap<K, V, Compare>::AVLTreeMap::cend() const
   {
-    return const_iterator(m_pNodes + m_nItems, m_pNodes, m_pKVs);
+    return const_iterator(m_pNodes, m_pNodes + 1, m_pKVs);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -934,7 +935,7 @@ namespace Dg
   {
     impl::Node * pNode;
     if (KeyExists(a_key, pNode))
-      return const_iterator(pNode, m_pNodes, m_pKVs);
+      return const_iterator(pNode, m_pNodes + 1, m_pKVs);
     return cend();
   }
 
@@ -944,7 +945,7 @@ namespace Dg
   {
     impl::Node * pNode;
     if (KeyExists(a_key, pNode))
-      return iterator(pNode, m_pNodes, m_pKVs);
+      return iterator(pNode, m_pNodes + 1, m_pKVs);
     return end();
   }
 
@@ -963,7 +964,7 @@ namespace Dg
 
     impl::Node * foundNode(nullptr);
     m_pRoot = __Insert(m_pRoot, nullptr, a_key, a_data, foundNode);
-    return iterator(foundNode, m_pNodes, m_pKVs);
+    return iterator(foundNode, m_pNodes + 1, m_pKVs);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -979,7 +980,7 @@ namespace Dg
   {
     EraseData eData{nullptr, nullptr, nullptr};
     m_pRoot = __Erase<true>(m_pRoot, a_it->first, eData);
-    return iterator(eData.pNext, m_pNodes, m_pKVs);
+    return iterator(eData.pNext, m_pNodes + 1, m_pKVs);
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1045,7 +1046,7 @@ namespace Dg
     std::cout << "Root:\n";
     PrintNode(m_pRoot);
     std::cout << "\nItems:\n";
-    for (sizeType i = 0; i < m_nItems; i++)
+    for (sizeType i = 1; i <= m_nItems; i++)
     {
       PrintNode(&m_pNodes[i]);
     } 
@@ -1146,7 +1147,7 @@ namespace Dg
     impl::Node * pResult;
     if (!KeyExists(a_key, pResult))
       throw std::out_of_range("Invalid key!");
-    return pResult - m_pNodes;
+    return pResult - m_pNodes - 1;
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1268,13 +1269,7 @@ namespace Dg
     //Insert data
     new (&m_pKVs[m_nItems]) ValueType{a_key, a_data};
 
-    //Shift end node over one
-    memcpy(&m_pNodes[m_nItems + 1], &m_pNodes[m_nItems], sizeof(impl::Node));
-    impl::Node * endNode = &m_pNodes[m_nItems + 1];
-
-    //Notify the last element in the tree that the end node has shifted
-    if (endNode->pParent)
-      endNode->pParent->pRight = endNode;
+    m_nItems++;
 
     //Insert new node
     impl::Node * newNode = &m_pNodes[m_nItems];
@@ -1283,7 +1278,6 @@ namespace Dg
     newNode->pParent = a_pParent;
     newNode->height = 1;
 
-    m_nItems++;
     return newNode;
   }
 
@@ -1291,14 +1285,14 @@ namespace Dg
   impl::Node * 
     AVLTreeMap<K, V, Compare>::EndNode()
   {
-    return &m_pNodes[m_nItems];
+    return &m_pNodes[0];
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
   impl::Node const * 
     AVLTreeMap<K, V, Compare>::EndNode() const
   {
-    return &m_pNodes[m_nItems];
+    return &m_pNodes[0];
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1306,7 +1300,7 @@ namespace Dg
     AVLTreeMap<K, V, Compare>::GetAssociatedKV(impl::Node * a_pNode)
   {
     sizeType ind = a_pNode - m_pNodes;
-    return &m_pKVs[ind];
+    return &m_pKVs[ind - 1];
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1314,7 +1308,7 @@ namespace Dg
     AVLTreeMap<K, V, Compare>::GetAssociatedKV(impl::Node const * a_pNode) const
   {
     sizeType ind = a_pNode - m_pNodes;
-    return &m_pKVs[ind];
+    return &m_pKVs[ind - 1];
   }
 
   template<typename K, typename V, bool (*Compare)(K const &, K const &)>
@@ -1397,9 +1391,7 @@ namespace Dg
       if constexpr (GetNext)
       {
         if (a_data.pNext == nullptr)
-        {
           a_data.pNext = impl::GetNext(a_pRoot);
-        }
       }
 
       bool noLeftChild = a_pRoot->pLeft == nullptr;
@@ -1464,8 +1456,7 @@ namespace Dg
         }
 
         //Shift last KV to fill in empty slot
-        sizeType offset = a_pRoot - m_pNodes;
-        ValueType * pKV = m_pKVs + offset;
+        ValueType * pKV = GetAssociatedKV(a_pRoot);
         pKV->~ValueType();
         if (pKV != &m_pKVs[m_nItems - 1])
           memcpy(pKV, &m_pKVs[m_nItems - 1], sizeof(ValueType));
@@ -1477,7 +1468,7 @@ namespace Dg
         a_pRoot->height = 0;
 
         //Shift last node to fill in empty slot
-        impl::Node * oldNode = &m_pNodes[m_nItems - 1];
+        impl::Node * oldNode = &m_pNodes[m_nItems];
 
         //We have several pointers to nodes in use that may need to be updated... 
         a_data.oldNodeAdd = oldNode;
@@ -1504,27 +1495,6 @@ namespace Dg
         if (a_pRoot->pRight)
           a_pRoot->pRight->pParent = a_pRoot;
 
-        //Shift end node
-        m_pNodes[m_nItems - 1] = m_pNodes[m_nItems];
-        oldNode = &m_pNodes[m_nItems];
-        impl::Node * newEnd = &m_pNodes[m_nItems - 1];
-
-        if (returnNode == oldNode)
-          returnNode = newEnd;
-        if constexpr (GetNext)
-        {
-          if (a_data.pNext == oldNode)
-            a_data.pNext = newEnd;
-        }
-
-        if (newEnd->pParent)
-        {
-          if (newEnd->pParent->pLeft == oldNode)
-            newEnd->pParent->pLeft = newEnd;
-          else
-            newEnd->pParent->pRight = newEnd;
-        }
-
         m_nItems--;
         a_pRoot = returnNode;
       }  
@@ -1544,8 +1514,8 @@ namespace Dg
 
         // Copy the inorder successor's  
         // data to this node  
-        ValueType * pKVRoot = m_pKVs + (a_pRoot - m_pNodes);
-        ValueType * pKVSucc = m_pKVs + (successor - m_pNodes);
+        ValueType * pKVRoot = GetAssociatedKV(a_pRoot);
+        ValueType * pKVSucc = GetAssociatedKV(successor);
         pKVRoot->~ValueType();
         new (pKVRoot) ValueType(*pKVSucc);
 
@@ -1568,9 +1538,7 @@ namespace Dg
 
     //The tree only had one node
     if (a_pRoot == nullptr || a_pRoot == EndNode())
-    {
       return a_pRoot;
-    }
 
     a_pRoot->height = 1 + impl::Max(Height(a_pRoot->pLeft), Height(a_pRoot->pRight));
     int balance = GetBalance(a_pRoot);

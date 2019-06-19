@@ -22,6 +22,9 @@
 
 #define ARRAY_SIZE(a) sizeof(a) / sizeof(*a)
 
+//TODO check for nullptr returns in realloc and throw
+//TODO tightly pack the elements in a linked list in memory
+//TODO should the hash function be a template parameter?
 namespace Dg
 {
   template<typename K>
