@@ -103,17 +103,17 @@ void TCP_Server::BuildUI()
   {
   case State_On:
   {
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8, 0.0, 0.0, 1.0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8, 0.0, 0.0, 1.0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8, 0.0, 0.0, 1.0));
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
     if (ImGui::Button(" Stop  ")) m_desiredState = State_Off;
     break;
   }
   case State_Off:
   {
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0, 0.7, 0.0, 1.0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.7, 0.0, 1.0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.7, 0.0, 1.0));
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
     if (ImGui::Button(" Start ")) m_desiredState = State_On;
     break;
   }

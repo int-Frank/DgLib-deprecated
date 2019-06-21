@@ -23,7 +23,7 @@ namespace Dg
   //!
   //! @class DoublyLinkedList
   //!
-  //! Circular, pre-allocated doubly linked DoublyLinkedList. Similar to std::DoublyLinkedList with similarly named methods
+  //! Circular, pre-allocated doubly linked DoublyLinkedList. Similar to std::list with similarly named methods
   //! and functionality. The underlying array is preallocated and only change in
   //! size if extending DoublyLinkedList past that allocated, or manually resizing. This makes
   //! for fast insertion/erasing of elements.

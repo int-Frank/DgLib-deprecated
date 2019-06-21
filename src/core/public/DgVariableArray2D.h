@@ -77,45 +77,12 @@ namespace Dg
     //! Add element to the back of the array.
     void push_back(T const * pItems, size_t count);
 
-
     void clear();
 
   private:
 
-    void rangeCheck(size_t a_row, size_t a_element) const
-    {
-      std::ostringstream oss;
-      if (a_row >= m_indices.size())
-      {
-        oss << "Row '" << a_row << "' out of range. ";
-      }
-      else if (a_element >= m_indices[a_row].count)
-      {
-        oss << "Element '" << a_element << "' out of range for row " << a_row 
-          << ". This row has " a_indices[a_row].count << " elements. ";
-      }
-
-      // if nothing has been written to oss then all indices are valid
-      if (!oss.str().empty())
-      {
-        throw std::out_of_range(oss.str());
-      }
-    }
-
-    void rangeCheckRow(size_t a_row) const
-    {
-      std::ostringstream oss;
-      if (a_row >= m_indices.size())
-      {
-        oss << "Row '" << a_row << "' out of range. ";
-      }
-
-      // if nothing has been written to oss then all indices are valid
-      if (!oss.str().empty())
-      {
-        throw std::out_of_range(oss.str());
-      }
-    }
+    void rangeCheck(size_t a_row, size_t a_element) const;
+    void rangeCheckRow(size_t a_row) const;
 
     //Data members
     struct Index
@@ -128,54 +95,34 @@ namespace Dg
     DynamicArray<Index> m_indices;
   };
 
-
-  //--------------------------------------------------------------------------------
-  //	@	VariableArray2D<T>::VariableArray2D()
-  //--------------------------------------------------------------------------------
   template<class T>
   VariableArray2D<T>::VariableArray2D() 
   {
 
-  }	//End: VariableArray2D::VariableArray2D()
+  }
 
-
-    //--------------------------------------------------------------------------------
-    //	@	VariableArray2D<T>::~VariableArray2D()
-    //--------------------------------------------------------------------------------
   template<class T>
   VariableArray2D<T>::~VariableArray2D()
   {
 
-  }	//End: VariableArray2D::~VariableArray2D()
+  }
 
-
-    //--------------------------------------------------------------------------------
-    //	@	VariableArray2D<T>::VariableArray2D()
-    //--------------------------------------------------------------------------------
   template<class T>
   VariableArray2D<T>::VariableArray2D(VariableArray2D<T> const & a_other)
     : m_data(a_other.m_data)
     , m_indices(a_other.m_indices)
   {
 
-  }	//End: VariableArray2D::VariableArray2D()
+  }
 
-
-    //--------------------------------------------------------------------------------
-    //	@	VariableArray2D<T>::VariableArray2D()
-    //--------------------------------------------------------------------------------
   template<class T>
   VariableArray2D<T>::VariableArray2D(VariableArray2D<T> && a_other) 
     : m_data(std::move(a_other.m_data))
     , m_indices(std::move(a_other.m_indices))
   {
 
-  }	//End: VariableArray2D::VariableArray2D()
+  }
 
-
-    //--------------------------------------------------------------------------------
-    //	@	VariableArray2D<T>::VariableArray2D()
-    //--------------------------------------------------------------------------------
   template<class T>
   VariableArray2D<T> & VariableArray2D<T>::operator=(VariableArray2D<T> && a_other)
   {
@@ -185,12 +132,8 @@ namespace Dg
       m_indices = std::move(a_other.m_indices);
     }
     return *this;
-  }	//End: VariableArray2D::VariableArray2D()
+  }
 
-
-    //--------------------------------------------------------------------------------
-    //	@	VariableArray2D<T>::operator=()
-    //--------------------------------------------------------------------------------
   template<class T>
   VariableArray2D<T>& VariableArray2D<T>::operator=(VariableArray2D const & a_other)
   {
@@ -200,12 +143,8 @@ namespace Dg
       m_indices = a_other.m_indices;
     }
     return *this;
-  }	//End: VariableArray2D::operator=()
+  }
 
-
-    //--------------------------------------------------------------------------------
-    //	@	VariableArray2D<T>::push_back()
-    //--------------------------------------------------------------------------------
   template<class T>
   void VariableArray2D<T>::push_back(T const * a_pItems, size_t a_count)
   {
@@ -216,23 +155,15 @@ namespace Dg
     m_indices.push_back(ind);
 
     for (size_t i = 0; i < a_count; i++)
-    {
       m_data.push_back(a_pItems[i]);
-    }
-  }	//End: VariableArray2D<T>::push_back()
+  }
 
-
-    //--------------------------------------------------------------------------------
-    //	@	VariableArray2D<T>::clear()
-    //--------------------------------------------------------------------------------
   template<class T>
   void VariableArray2D<T>::clear()
   {
     m_data.clear();
     m_indices.clear();
-
-  }	//End: VariableArray2D::clear()
-
+  }
 
   template<class T>
   T & VariableArray2D<T>::operator()(size_t a_row, size_t a_element)
@@ -241,14 +172,12 @@ namespace Dg
     return m_data[ind.start + a_element];
   }
 
-
   template<class T>
   T const & VariableArray2D<T>::operator()(size_t a_row, size_t a_element) const
   {
     Index ind = m_indices[a_row];
     return m_data[ind.start + a_element];
   }
-
 
   template<class T>
   T & VariableArray2D<T>::at(size_t a_row, size_t a_element)
@@ -258,13 +187,41 @@ namespace Dg
     return m_data[ind.start + a_element];
   }
 
-
   template<class T>
   T const & VariableArray2D<T>::at(size_t a_row, size_t a_element) const
   {
     rangeCheck(a_row, a_element);
     Index ind = m_indices[a_row];
     return m_data[ind.start + a_element];
+  }
+
+  template<class T>
+  void VariableArray2D<T>::rangeCheck(size_t a_row, size_t a_element) const
+  {
+    std::ostringstream oss;
+    if (a_row >= m_indices.size())
+      oss << "Row '" << a_row << "' out of range. ";
+    else if (a_element >= m_indices[a_row].count)
+    {
+      oss << "Element '" << a_element << "' out of range for row " << a_row 
+        << ". This row has " a_indices[a_row].count << " elements. ";
+    }
+
+    // if nothing has been written to oss then all indices are valid
+    if (!oss.str().empty())
+      throw std::out_of_range(oss.str());
+  }
+
+  template<class T>
+  void VariableArray2D<T>::rangeCheckRow(size_t a_row) const
+  {
+    std::ostringstream oss;
+    if (a_row >= m_indices.size())
+      oss << "Row '" << a_row << "' out of range. ";
+
+    // if nothing has been written to oss then all indices are valid
+    if (!oss.str().empty())
+      throw std::out_of_range(oss.str());
   }
 }
 #endif

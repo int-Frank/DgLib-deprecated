@@ -66,9 +66,6 @@ TEST(Stack_dg_DynamicArray, creation_dg_DynamicArray)
     CHECK(CheckState(lst, dglst));
   }
 
-  int * pItem = Dg::Find(dglst, 3);
-  CHECK(pItem != nullptr);
-
   for (int i = 0; i < tMax; ++i)
   {
     dglst.pop_back();

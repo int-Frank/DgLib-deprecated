@@ -291,7 +291,7 @@ namespace IPC
         std::stringstream ss;
         ss << "Send() -> shutdown() failed with error: " << WSAGetLastError();
         Logger::Log(ss.str(), Dg::LL_Warning);
-        return SOCKET_ERROR;
+        return false;
       }
 
       return true;
