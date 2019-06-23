@@ -71,7 +71,6 @@ namespace Dg
           return result;
         }
 
-        //TODO this needs to be tested
         //Sphere moving away from line
         Real dot_a_b = a.Dot(b);
         if (dot_a_b >= Real(0))

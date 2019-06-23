@@ -43,4 +43,5 @@ TEST(Stack_DgR2Polygon, creation_DgR2Polygon)
 
   CHECK(poly.Area() == 4.f);
   CHECK(poly.Centroid() == vec::Origin());
+
 }

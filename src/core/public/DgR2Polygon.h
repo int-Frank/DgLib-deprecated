@@ -27,26 +27,6 @@ namespace Dg
     class Polygon : public CircularDoublyLinkedList<Vector<Real>>
     {
     public:
-      //! Default constructor.
-      Polygon() {}
-
-      //! Construct Polygon from origin and radius
-      ~Polygon() {}
-
-      //! Copy constructor
-      Polygon(Polygon const & a_other)
-        : CircularDoublyLinkedList(a_other)
-      {}
-
-      //! Assignment
-      Polygon& operator= (Polygon const & a_other)
-      {
-        if (this != &a_other)
-        {
-          ListCircular::operator=(a_other);
-        }
-        return *this;
-      }
 
       Vector<Real> Centroid() const
       {
