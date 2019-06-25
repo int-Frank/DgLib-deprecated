@@ -447,7 +447,7 @@ vec3 CollisionApp::MovePuck(Puck const & a_puck, float a_dt) const
 
     //We can loop through as many times as we want, but 2 should be enough. 2 is
     //also the minimum for this algorithm to work
-    int counter = 2;
+    unsigned counter = 2;
     while (true)
     {
       counter--;

@@ -8,7 +8,6 @@
 #ifndef DGPARTICLESYSTEM_H
 #define DGPARTICLESYSTEM_H
 
-#include "Dg_map.h"
 #include "DgParticleEmitter.h"
 #include "DgParticleUpdater.h"
 #include "DgParticleData.h"
@@ -91,9 +90,9 @@ namespace Dg
     void Clear();
 
   private:
-    Dg::map<int, ObjectWrapper<ParticleEmitter<Real>>>   m_emitters;
+    Dg::AVLTreeMap<int, ObjectWrapper<ParticleEmitter<Real>>>   m_emitters;
     ParticleData<Real>                                   m_particleData;
-    Dg::map<int, ObjectWrapper<ParticleUpdater<Real>>>   m_updaters;
+    Dg::AVLTreeMap<int, ObjectWrapper<ParticleUpdater<Real>>>   m_updaters;
   };
 
 
@@ -196,10 +195,10 @@ namespace Dg
   template<typename Real>
   ParticleEmitter<Real> * ParticleSystem<Real>::GetEmitter(int a_key)
   {
-    int index(0);
-    if (m_emitters.find(a_key, index))
+    auto it = m_emitters.find(a_key);
+    if (it != m_emitters.end())
     {
-      return m_emitters[index];
+      return it->second;
     }
     return nullptr;
   }	//End: ParticleSystem::GetEmitter()
@@ -211,10 +210,10 @@ namespace Dg
   template<typename Real>
   ParticleUpdater<Real> * ParticleSystem<Real>::GetUpdater(int a_key)
   {
-    int index(0);
-    if (m_updaters.find(a_key, index))
+    auto it = m_updaters.find(a_key);
+    if (it != m_updaters.end())
     {
-      return m_updaters[index];
+      return it->second;
     }
     return nullptr;
   }	//End: ParticleSystem::GetUpdater()
@@ -266,10 +265,8 @@ namespace Dg
   template<typename Real>
   void ParticleSystem<Real>::StartAllEmitters()
   {
-    for (int i = 0; i < m_emitters.size(); i++)
-    {
-      m_emitters[i]->Start();
-    }
+    for (auto it = m_emitters.begin_rand(); it != m_emitters.end_rand(); it++)
+      it->second->Start();
   }	//End: ParticleSystem::StartAllEmitters()
 
 
@@ -279,10 +276,8 @@ namespace Dg
   template<typename Real>
   void ParticleSystem<Real>::StopAllEmitters()
   {
-    for (int i = 0; i < m_emitters.size(); i++)
-    {
-      m_emitters[i]->Stop();
-    }
+    for (auto it = m_emitters.begin_rand(); it != m_emitters.end_rand(); it++)
+      it->second->Stop();
   }	//End: ParticleSystem::StopAllEmitters()
 
 
@@ -305,28 +300,22 @@ namespace Dg
   void ParticleSystem<Real>::Update(Real a_dt)
   {
     //Update all particles
-    for (int i = 0; i < m_updaters.size(); i++)
-    {
-      m_updaters[i]->Update(m_particleData, 0,  a_dt);
-    }
+    for (auto it = m_updaters.begin_rand(); it != m_updaters.end_rand(); it++)
+      it->second->Update(m_particleData, 0,  a_dt);
 
     //Emit new particles, keep tally of particles emitted
     //from the various emitters
     int nNewParticles = 0;
-    for (int i = 0; i < m_emitters.size(); i++)
-    {
-      nNewParticles += m_emitters[i]->EmitParticles(m_particleData, a_dt);
-    }
+    for (auto it = m_emitters.begin_rand(); it != m_emitters.end_rand(); it++)
+      nNewParticles += it->second->EmitParticles(m_particleData, a_dt);
 
     //Update all newly emitted particles. Since new particles are added to the end of the 
     //particle data, we simply update the last set of new particles.
     int startIndex = m_particleData.GetCountAlive() - nNewParticles;
     if (nNewParticles)
     {
-      for (int u = 0; u < m_updaters.size(); u++)
-      {
-        m_updaters[u]->UpdateNew(m_particleData, startIndex, a_dt);
-      }
+      for (auto it = m_updaters.begin_rand(); it != m_updaters.end_rand(); it++)
+        it->second->UpdateNew(m_particleData, startIndex, a_dt);
     }
   }	//End: ParticleSystem::Update()
 }

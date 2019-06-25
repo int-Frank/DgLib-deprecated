@@ -165,9 +165,7 @@ namespace Dg
 	  static_assert(nTerms <= N_C_INVERF, "Max terms for the inverf is 512");
 
 	  if (a_x < static_cast<Real>(-1.0) || a_x > static_cast<Real>(1.0))
-	  {
 		  return static_cast<Real>(0.0);
-	  }
 
 	  Real x0Sq = a_x * a_x;
 	  Real x = a_x;

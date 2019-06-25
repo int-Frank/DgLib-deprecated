@@ -89,9 +89,9 @@ int EmitterRandom<Real>::EmitParticles(Dg::ParticleData<Real> & a_data, Real a_d
   m_nextEmitTime -= a_dt;
 
   //Generate new particles
-  for (int g = 0; g < m_generators.size(); ++g)
+  for (auto it = m_generators.begin_rand(); it != m_generators.end_rand(); it++)
   {
-    m_generators[g]->Generate(a_data, startIndex, startIndex + nNewParticles - 1);
+    it->second->Generate(a_data, startIndex, startIndex + nNewParticles - 1);
   }
 
   return nNewParticles;

@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#include "Dg_map.h"
+#include "DgAVLTreeMap.h"
 #include "DgSingleton.h"
 #include "ResourceTypes.h"
 #include "DgTypes.h"
@@ -83,7 +83,7 @@ namespace Dg
         };
 
         uint32_t m_options;
-        Dg::map<RKey, ResourceContainer> m_resourceList;
+        Dg::AVLTreeMap<RKey, ResourceContainer> m_resourceList;
       };
     }
   }

@@ -24,10 +24,10 @@
     <ClCompile Include="DgStringFunctions.cpp">
       <Filter>Private</Filter>
     </ClCompile>
-    <ClCompile Include="DgErrorHandler.cpp">
+    <ClCompile Include="DgTimer.cpp">
       <Filter>Private</Filter>
     </ClCompile>
-    <ClCompile Include="DgTimer.cpp">
+    <ClCompile Include="Dg_Assert.cpp">
       <Filter>Private</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,9 +59,6 @@
     <ClInclude Include="..\..\public\DgMakeGrid.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\public\DgErrorHandler.h">
-      <Filter>Public Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\public\DgMapKeyIterator.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
@@ -72,6 +69,9 @@
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\public\DgMask.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\Dg_Assert.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
   </ItemGroup>

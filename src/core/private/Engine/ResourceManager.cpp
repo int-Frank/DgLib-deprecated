@@ -103,16 +103,13 @@ namespace Dg
       //--------------------------------------------------------------------------------
       ErrorCode ResourceManager::InitResource(RKey a_key)
       {
-        int index(0);
-        if (!m_resourceList.find(a_key, index))
-        {
-          return Err_Failure;
-        }
+        auto it = m_resourceList.find(a_key);
 
-        if (!m_resourceList[index].m_resource->IsInitialised())
-        {
-          return m_resourceList[index].m_resource->Init();
-        }
+        if (it == m_resourceList.end())
+          return Err_Failure;
+
+        if (!it->second.m_resource->IsInitialised())
+          return it->second.m_resource->Init();
 
         return Err_None;
       }// End: ResourceManager::InitResource()
@@ -143,16 +140,13 @@ namespace Dg
       //--------------------------------------------------------------------------------
       void ResourceManager::DeinitResource(RKey a_key, bool a_force)
       {
-        int index(0);
-        if (!m_resourceList.find(a_key, index))
-        {
-          return;
-        }
+        auto it = m_resourceList.find(a_key);
 
-        if (m_resourceList[index].m_nUsers == 0 || a_force)
-        {
-          m_resourceList[index].m_resource->DeInit();
-        }
+        if (it == m_resourceList.end())
+          return;
+
+        if (it->second.m_nUsers == 0 || a_force)
+          it->second.m_resource->DeInit();
       }// End: ResourceManager::DeinitResource()
 
 
@@ -188,16 +182,16 @@ namespace Dg
       //--------------------------------------------------------------------------------
       void ResourceManager::DeregisterUser(RKey a_key)
       {
-        int index(0);
-        if (!m_resourceList.find(a_key, index))
-        {
-          return;
-        }
+        auto it = m_resourceList.find(a_key);
 
-        m_resourceList[index].m_nUsers--;
-        if (m_resourceList[index].m_nUsers == 0 && (m_resourceList[index].m_opts & rAutoDeinit) != 0)
+        if (it == m_resourceList.end())
+          return;
+
+        it->second.m_nUsers--;
+
+        if (it->second.m_nUsers == 0 && (it->second.m_opts & rAutoDeinit) != 0)
         {
-          m_resourceList[index].m_resource->DeInit();
+          it->second.m_resource->DeInit();
         }
       }// End: ResourceManager::DeregisterUser()
 
@@ -207,23 +201,22 @@ namespace Dg
       //--------------------------------------------------------------------------------
       Resource * ResourceManager::RegisterUser(RKey a_key)
       {
-        int index(0);
-        if (!m_resourceList.find(a_key, index))
-        {
-          return nullptr;
-        }
+        auto it = m_resourceList.find(a_key);
 
-        if (!m_resourceList[index].m_resource->IsInitialised())
+        if (it == m_resourceList.end())
+          return nullptr;
+
+        if (!it->second.m_resource->IsInitialised())
         {
-          if ((m_resourceList[index].m_opts & rInitWhenInUse)
-            && m_resourceList[index].m_resource->Init() != Err_None)
+          if ((it->second.m_opts & rInitWhenInUse)
+            && it->second.m_resource->Init() != Err_None)
           {
             return nullptr;
           }
         }
 
-        m_resourceList[index].m_nUsers++;
-        return m_resourceList[index].m_resource;
+        it->second.m_nUsers++;
+        return it->second.m_resource;
       }// End: ResourceManager::RegisterUser()
 
 
@@ -258,12 +251,11 @@ namespace Dg
                                                   uint32_t a_options)
       {
         if (a_resource == nullptr)
-        {
           return Err_Failure;
-        }
 
-        int index(0);
-        if (m_resourceList.find(a_resource->GetKey(), index))
+        auto it = m_resourceList.find(a_resource->GetKey());
+
+        if (it != m_resourceList.end())
         {
           delete a_resource;
           return Err_Duplicate;

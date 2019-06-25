@@ -11,148 +11,33 @@
 #include <math.h>
 
 #include "DgTypes.h"
-
 #include "DgMath.h"
-#include "DgRNG.h"
 
+//TODO remove dependancy to RNG. Get() should be Get(size_t index), where
+//     index is a number between 0 and a_nValues. Better yet, this should 
+//     just be a function which fills a pre-allocated table with values.
 namespace Dg
 {
-
-   //! @ingroup DgMath_types
-   //!
-   //! @class BoundedSND
-   //!
-   //! @brief Gets gaussian distributed random values from a predefined table.
-   //!
-   //! @author Frank Hart
-   //! @date 4/8/2015
+  //! Initiate the table of values.
+  //! @param a_mean Mean
+  //! @param a_sd Standard deviation
+  //! @param a_lower Lower bound on the normal distribution
+  //! @param a_upper Upper bound on the normal distribution
+  //! @param a_nValues Number of values in the table to generate.
+  //! @return Err_None on success.
   template<typename Real>
-  class BoundedSND
-  {
-  public:
-
-    BoundedSND() : m_values(nullptr), m_nValues(0) {}
-    ~BoundedSND();
-
-    //! Copy constructor.
-    BoundedSND(const BoundedSND&);
-
-    //! Assignment
-    BoundedSND& operator=(const BoundedSND&);
-
-    //! Initiate the table of values.
-    //! @param a_mean Mean
-    //! @param a_sd Standard deviation
-    //! @param a_lower Lower bound on the normal distribution
-    //! @param a_upper Upper bound on the normal distribution
-    //! @param a_nValues Number of values in the table to generate.
-    //! @return Err_None on success.
-    ErrorCode Init(Real a_mean,
-                   Real a_sd, 
-                   Real a_lower,
-                   Real a_upper,
-                   unsigned int a_nValues = 1024);
-
-    //! Has the object been successfully initiated?
-    bool IsGood() const { return (m_nValues != 0); }
-
-    //! Clear the table of values.
-    void Clean();
-
-    //! Get a random value from the table.
-    Real Get() const;
-
-  private:
-
-    void _init(const BoundedSND&);
-
-  private:
-
-    Real * m_values;
-    unsigned int m_nValues;
-
-  };
-
-  //--------------------------------------------------------------------------------
-  //	@	BoundedSND<Real>::~BoundedSND()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  BoundedSND<Real>::~BoundedSND()
-  {
-    delete[] m_values;
-  }
-
-  //--------------------------------------------------------------------------------
-  //	@	BoundedSND<Real>::_init()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  void BoundedSND<Real>::_init(const BoundedSND<Real>& a_other)
-  {
-    Clean();
-
-    if (a_other.m_nValues)
-    {
-      m_nValues = a_other.m_nValues;
-      m_values = (Real*)malloc(m_nValues * sizeof(Real));
-      memcpy(m_values, a_other.m_values, m_nValues * sizeof(Real));
-    }
-  }
-
-  //--------------------------------------------------------------------------------
-  //	@	BoundedSND<Real>::operator=()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  BoundedSND<Real>::BoundedSND(const BoundedSND& a_other) : m_values(nullptr), m_nValues(0)
-  {
-    _init(a_other);
-  }
-
-  //--------------------------------------------------------------------------------
-  //	@	BoundedSND<Real>::BoundedSND()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  BoundedSND<Real>& BoundedSND<Real>::operator=(const BoundedSND<Real>& a_other)
-  {
-    if (this == &a_other)
-    {
-      return *this;
-    }
-
-    _init(a_other);
-
-    return *this;
-  }
-
-  //--------------------------------------------------------------------------------
-  //	@	BoundedSND<Real>::Clean()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  void BoundedSND<Real>::Clean()
-  {
-    free(m_values);
-    m_values = nullptr;
-    m_nValues = 0;
-  }
-
-  //--------------------------------------------------------------------------------
-  //	@	BoundedSND<Real>::Init()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  ErrorCode BoundedSND<Real>::Init(Real a_mean,
-                                   Real a_sd,
-                                   Real a_lower,
-                                   Real a_upper,
-                                   unsigned int a_nValues)
+  ErrorCode Init(Real a_mean,
+                 Real a_sd,
+                 Real a_lower,
+                 Real a_upper,
+                 unsigned int a_nValues,
+                 Real * a_out)
   {
     Clean();
 
     //Check input
-    if (a_lower >= a_upper
-      || Dg::IsZero(a_sd)
-      || a_nValues == 0)
-    {
+    if (a_lower >= a_upper || Dg::IsZero(a_sd) || a_nValues == 0)
       return Err_OutOfBounds;
-    }
 
     Real zLower = 0.5 * (1.0 + std::erf((a_lower - a_mean) / (a_sd * Dg::Constants<Real>::SQRT2)));
     Real zUpper = 0.5 * (1.0 + std::erf((a_upper - a_mean) / (a_sd * Dg::Constants<Real>::SQRT2)));
@@ -165,28 +50,11 @@ namespace Dg
       double c = static_cast<double>(zLower + (zUpper - zLower) * static_cast<double>(i) / static_cast<double>(m_nValues - 1));
       c = 2.0 * c - 1.0;
       Real inverfResult = static_cast<Real>(inverf<double, N_C_INVERF>(c));
-      m_values[i] = a_sd * Dg::Constants<Real>::SQRT2 * inverfResult + a_mean;
+      a_out[i] = a_sd * Dg::Constants<Real>::SQRT2 * inverfResult + a_mean;
     }
 
     return Err_None;
   }
-
-  //--------------------------------------------------------------------------------
-  //	@	BoundedSND<Real>::Get()
-  //--------------------------------------------------------------------------------
-  template<typename Real>
-  Real BoundedSND<Real>::Get() const
-  {
-    if (m_nValues == 0)
-    {
-      return static_cast<Real>(0.0);
-    }
-
-    RNG rng;
-    unsigned int index = rng.GetUint(0, m_nValues - 1);
-    return m_values[index];
-  }
-
 }
 
 #endif

@@ -409,10 +409,11 @@ void Application::UpdateParSysAttr()
     }
   }
 
+  //TODO attractors broken
   for (int i = 0; i < m_projData.newAttractors; ++i)
   {
     m_projData.dirty = true;
     AddAttractor();
   }
   m_projData.newAttractors = 0;
-}
+} 

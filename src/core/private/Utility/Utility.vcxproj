@@ -143,7 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DgErrorHandler.cpp" />
+    <ClCompile Include="Dg_Assert.cpp" />
     <ClCompile Include="DgParser_INI.cpp" />
     <ClCompile Include="DgPriorityMutex.cpp" />
     <ClCompile Include="DgStringFunctions.cpp" />
@@ -162,7 +162,7 @@
     <ClInclude Include="..\..\public\DgStringFunctions.h" />
     <ClInclude Include="..\..\public\DgTimer.h" />
     <ClInclude Include="..\..\public\DgTypes.h" />
-    <ClInclude Include="..\..\public\DgErrorHandler.h" />
+    <ClInclude Include="..\..\public\Dg_Assert.h" />
     <ClInclude Include="..\..\public\DgMapKeyIterator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

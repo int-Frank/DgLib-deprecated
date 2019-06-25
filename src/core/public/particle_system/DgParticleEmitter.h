@@ -8,7 +8,7 @@
 #ifndef DGPARTICLEEMITTER_H
 #define DGPARTICLEEMITTER_H
 
-#include "Dg_map.h"
+#include "DgAVLTreeMap.h"
 #include "DgObjectWrapper.h"
 #include "DgParticleGenerator.h"
 
@@ -83,7 +83,7 @@ namespace Dg
     virtual ParticleEmitter<Real> * Clone() const { return new ParticleEmitter<Real>(*this); }
 
   protected:
-    Dg::map<int, ObjectWrapper<ParticleGenerator<Real>>>   m_generators;
+    Dg::AVLTreeMap<int, ObjectWrapper<ParticleGenerator<Real>>>   m_generators;
 
   private:
     bool m_isOn;
@@ -120,12 +120,12 @@ namespace Dg
   template<typename Real>
   ParticleGenerator<Real> * ParticleEmitter<Real>::GetGenerator(int a_key)
   {
-    int index = 0;
-    if (!m_generators.find(a_key, index))
-    {
+    auto it = m_generators.find(a_key);
+
+    if (it == m_generators.end())
       return nullptr;
-    }
-    return m_generators[index];
+
+    return it->second;
   } //End: ParticleEmitter::GetGenerator()
 }
 

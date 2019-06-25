@@ -19,7 +19,8 @@ namespace Dg
 	//!
 	//! @author Frank Hart
 	//! @date 4/8/2015
-  // TODO Should all methods be static? Or maybe should RNG just be a namespace?
+  // TODO Make this a class again as then we can have multiple RNGs across
+  //      multiple threads, i.e. it will be thread safe.
 	namespace RNG
 	{
 		//! Seed the internal generator from one value.
@@ -48,9 +49,7 @@ namespace Dg
     Real GetUniform(Real a, Real b)
     {
       if (b < a)
-      {
         return a;
-      }
 
       Real range = b - a;
       return GetUniform<Real>() * range + a;
@@ -83,9 +82,7 @@ namespace Dg
     Real GetNormal(Real mean, Real std)
     {
       if (std <= Real(0.0))
-      {
         return mean;
-      }
       return mean + std*GetNormal<Real>();
 
     }	//End: RNG::GetNormal()
@@ -123,7 +120,6 @@ namespace Dg
         /*string msg = string.Format("Shape must be positive. Received {0}.", shape);
         throw new ArgumentOutOfRangeException(msg)*/
         return Real(-1.0);
-
       }
       else
       {

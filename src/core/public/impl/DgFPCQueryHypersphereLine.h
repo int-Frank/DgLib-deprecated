@@ -65,6 +65,7 @@ namespace Dg
 
         //No relative velocity between sphere and line
         Real dot_b_b = b.Dot(b);
+        //TODO This should be IsZero(dot_b_b)
         if (dot_b_b <= Real(0))
         {
           result.code = QC_NotIntersecting;

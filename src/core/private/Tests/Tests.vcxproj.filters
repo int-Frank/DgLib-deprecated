@@ -105,16 +105,7 @@
     <ClCompile Include="TEST_DgR2_AABB.cpp">
       <Filter>Tests\Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="TEST_dg_map.cpp">
-      <Filter>Tests\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_dg_set.cpp">
-      <Filter>Tests\Containers</Filter>
-    </ClCompile>
     <ClCompile Include="TEST_dg_HashTable.cpp">
-      <Filter>Tests\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="TEST_dg_QuadTree.cpp">
       <Filter>Tests\Containers</Filter>
     </ClCompile>
     <ClCompile Include="TEST_DgR2Regression.cpp">
